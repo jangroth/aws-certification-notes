@@ -1,4 +1,4 @@
-# AWS Certificiation Notes
+# AWS Certification Notes
 
 * [DevOps Engineer Professional](devops-engineer-professional.md) (2019)
 * [Solutions Architect Associate](solutions-architect-associate.md) (2019)
