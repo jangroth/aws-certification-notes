@@ -25,7 +25,7 @@
 <a name="1"></a>
 # [↖](#top)[↑](#)[↓](#2) AWS-DevOps Engineer Professional
 
-> 10/2019 -
+> 10/2019 - *current*
 
 ---
 
