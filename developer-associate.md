@@ -24,7 +24,7 @@
 ---
 [toc_end]::
 <a name="1"></a>
-# [↖](#top)[↑](#)[↓](#2) AWS Developer Associate
+# [↖](#top)[↑](#)[↓](#2) Developer Associate
 > 6/2017 - 8/2017
 
 <a name="2"></a>

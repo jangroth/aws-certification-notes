@@ -23,7 +23,7 @@
 ---
 [toc_end]::
 <a name="1"></a>
-# [↖](#top)[↑](#)[↓](#2) AWS-DevOps Engineer Professional
+# [↖](#top)[↑](#)[↓](#2) DevOps Engineer Professional
 
 > 10/2019 - *current*
 

@@ -8,4 +8,4 @@
 ---
 
 * View as [GitHub Pages](https://jangroth.github.io/aws-certification-notes/)
-* TOCs with [MarkDownHelper](https://github.com/jangroth/markdownhelper) 
+* TOCs generated with [MarkDownHelper](https://github.com/jangroth/markdownhelper) 

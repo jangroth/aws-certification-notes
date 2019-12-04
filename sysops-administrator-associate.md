@@ -49,7 +49,7 @@
 ---
 [toc_end]::
 <a name="1"></a>
-# [↖](#top)[↑](#)[↓](#2) AWS-SysOps-Administrator-Associate
+# [↖](#top)[↑](#)[↓](#2) SysOps Administrator Associate
 > 5/2018 - 9/2018
 
 ---

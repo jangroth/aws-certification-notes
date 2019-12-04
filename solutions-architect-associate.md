@@ -119,7 +119,7 @@
 ---
 [toc_end]::
 <a name="1"></a>
-# [↖](#top)[↑](#)[↓](#2) AWS-Solutions-Architect
+# [↖](#top)[↑](#)[↓](#2) Solutions Architect Associate
 
 > 9/2018 - 2/2019
 
