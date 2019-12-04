@@ -1,53 +1,64 @@
-# AWS-SysOps<a name="top"></a>
-> 1/2018
-* [Monitoring And Metrics](#m)
-  * [Virtualization Types](#m1)
-  * [Instance Types](#m2)
-  * [EC2 Monitoring](#m3)
-  * [EBS Monitoring](#m4)
-  * [EFS Monitoring](#m5)
-  * [CloudWatch](#m6)
-* [Costs](#c)
-  * [Consolidated Billing](#c1)
-  * [Billing Metrics & Alarms](#c2)
-  * [Costs Optimization](#c3)
-  * [Cost Explorer](#c4)
-* [High Availability](#ha)
-  * [Scalability & Elastacity Fundamentals](#ha1)
-  * [Reserved Instances](#ha2)
-  * [Autoscaling vs Resizing](#ha3)
-  * [Loadbalancer](#ha4)
-  * [HA for RDS](#ha5)
-  * [HA for IP-based Applications](#ha6)
-  * [HA/Fault Tolerance for Bastion Hosts](#ha7)
-* [Analysis](#an)
-  * [Optimize the Environment to Ensure Maximum Performance](#an1)
-  * [Identify Performance Bottlenecks and Implement Remedies](#an2)
-  * [Identify Potential Issues on a Given Application Deployment](#an3)
-* [OpsWorks](#ow)
-  * [Overview and components](#ow1)
-  * [Cloudformation](#ow2)
-* [Backups](#ba)
-  * [AWS Services with automated backups](#ba1)
-  * [Disaster Recovery Scenarios](#ba2)
-  * [Storing log files and backups](#ba3)
-* [Security](#se)
-  * [Implement and Manage Security Policies](#se1)
-  * [Ensure Data Integrity and Access Controls when Using the AWS Platform](#se2)
-  * [Share Responsibility Model](#se3)
-  * [AWS and IT Audits](#se4)
-* [Networking](#ne)
-  * [Route53 Routing Policies](#ne1)
-  * [VPC Essentials ](#ne2)
-* [Etc](#et)
-  * [Accessing the OS](#et1)
+[toc_start]::
+<a name="top"></a>
+---
+* [AWS-SysOps-Administrator-Associate](#1)
+* [Monitoring And Metrics](#2)
+  * [Virtualization Types](#2_1)
+  * [EC2 Instance Types](#2_2)
+  * [EC2 Monitoring](#2_3)
+  * [EBS Monitoring](#2_4)
+  * [EFS Monitoring](#2_5)
+  * [CloudWatch](#2_6)
+* [Costs](#3)
+  * [Consolidated Billing](#3_1)
+  * [Billing Metrics & Alarms](#3_2)
+  * [Costs Optimization](#3_3)
+  * [Cost Explorer](#3_4)
+* [High Availability](#4)
+  * [Scalability & Elasticity Fundamentals](#4_1)
+  * [Reserved Instances](#4_2)
+  * [Autoscaling vs Resizing](#4_3)
+  * [Load Balancers](#4_4)
+  * [RDS HA](#4_5)
+  * [HA for IP-based Applications](#4_6)
+  * [HA/Fault Tolerance for Bastion Hosts](#4_7)
+* [Analysis](#5)
+  * [Optimize the environment to ensure maximum performance](#5_1)
+  * [Identify Performance Bottlenecks and Implement Remedies](#5_2)
+  * [Identify Potential Issues on a Given Application Deployment](#5_3)
+* [OpsWorks](#6)
+  * [Overview and components](#6_1)
+  * [Cloudformation](#6_2)
+* [Backups & Recovery](#7)
+  * [AWS Services with automated backups](#7_1)
+  * [Disaster Recovery Scenarios](#7_2)
+  * [Storing log files and backups](#7_3)
+* [Security](#8)
+  * [Implement and Manage Security Policies](#8_1)
+  * [Ensure Data Integrity and Access Controls when Using the AWS Platform](#8_2)
+  * [Share responsibility model](#8_3)
+  * [AWS and IT Audits](#8_4)
+* [Networking](#9)
+  * [Route53 Routing Policies](#9_1)
+  * [VPC Essentials](#9_2)
+  * [Limits:](#9_3)
+* [Etc](#10)
+  * [Accessing the OS](#10_1)
+  * [SQS](#10_2)
+  * [DynamoDb](#10_3)
+---
+[toc_end]::
+<a name="1"></a>
+# [↖](#top)[↑](#)[↓](#2) AWS-SysOps-Administrator-Associate
+> 5/2018 - 9/2018
 
 ---
 
-[top](#top)
-## Monitoring And Metrics<a name="m"></a>
+<a name="2"></a>
+# [↖](#top)[↑](#1)[↓](#2_1) Monitoring And Metrics
 
-### Virtualization Types<a name="m1"></a>
+<a name="2_1"></a>
+## [↖](#top)[↑](#2)[↓](#2_2) Virtualization Types
 
 Linux Amazon Machine Images use one of two types of virtualization:
 
@@ -56,7 +67,8 @@ AMI|Type|Effect
 **PV**|Paravirtual|Historically better performance than HVM, but no longer the case
 **HVM**|Hardware virtual machine|More modern, same or better performance than PV
 
-### EC2 Instance Types<a name="m2"></a>
+<a name="2_2"></a>
+## [↖](#top)[↑](#2_1)[↓](#2_3) EC2 Instance Types
 
 **General Purpose**|Balance of computer, memory and networking
 -|-
@@ -101,9 +113,11 @@ AMI|Type|Effect
 
 .*
 
-### EC2 Monitoring<a name="m3"></a>
+<a name="2_3"></a>
+## [↖](#top)[↑](#2_2)[↓](#2_3_1) EC2 Monitoring
 
-#### EC2 Status Checks
+<a name="2_3_1"></a>
+### EC2 Status Checks
 * AWS performs automated checks on every running EC2 instance
 * Performed every minute
 * Each returns a pass or a fail status
@@ -129,9 +143,11 @@ AMI|Type|Effect
   * Stop and start instance
   * Terminate and re-launch instance, potentially with more memory/network/disk/...
 
-### EBS Monitoring<a name="m4"></a>
+<a name="2_4"></a>
+## [↖](#top)[↑](#2_3_1)[↓](#2_4_1) EBS Monitoring
 
-#### EBS Status Checks
+<a name="2_4_1"></a>
+### EBS Status Checks
 * Run every 5 minutes
   * `insufficient data` if checks a running
   * `ok` if all checks pass
@@ -142,7 +158,8 @@ AMI|Type|Effect
   * Changes status to `impaired`
   * This behaviour can be disabled
 
-#### EBS Performance Essentials
+<a name="2_4_2"></a>
+### EBS Performance Essentials
 **IOPS** (Input/Output Operations Per Second) is a common performance measurement used to benchmark
 computer storage devices like hard disk drives (HDD), solid state drives (SSD), and storage area
 networks (SAN).
@@ -168,19 +185,22 @@ IOPS|* 3 IOPS per GB (larger volume means more IOPS)<br/>* 100 IOPS <-> 10,000 I
   * No longer needed for new EBS volumes
   * Storage blocks on volumes restored from snapshots do need to be initialized (read from)
 
-### EFS Monitoring<a name="m5"></a>
+<a name="2_5"></a>
+## [↖](#top)[↑](#2_4_2)[↓](#2_5_1) EFS Monitoring
 
 * Two throughput modes to choose from for your file system
   * **Bursting** Throughput - throughput on Amazon EFS scales as your file system grows
   * **Provisioned** Throughput - you can instantly provision the throughput of your file system (in MiB/s) independent of the amount of data stored.
 
-#### Performance comparison
+<a name="2_5_1"></a>
+### Performance comparison
 .|Amazon EFS|Amazon EBS Provisioned IOPS (`io1`)
 -|-|-
 Per-operation latency|Low, consistent latency.|Lowest, consistent latency.
 Throughput scale|10+ GB per second.|Up to 2 GB per second.
 
-#### Storage Characteristics Comparison
+<a name="2_5_2"></a>
+### Storage Characteristics Comparison
 
 .|Amazon EFS|Amazon EBS Provisioned IOPS
 -|-|-
@@ -188,7 +208,8 @@ Availability and durability|Data is stored redundantly across multiple AZs.|Data
 Access|Up to thousands of Amazon EC2 instances, from multiple AZs, can connect concurrently to a file system.|A single Amazon EC2 instance in a single AZ can connect to a file system.
 Use cases|Big data and analytics, media processing workflows, content management, web serving, and home directories.|Boot volumes, transactional and NoSQL databases, data warehousing, and ETL.
 
-#### S3 vs EFS vs EBS Comparison
+<a name="2_5_3"></a>
+### S3 vs EFS vs EBS Comparison
 
 Amazon S3|Amazon EBS|Amazon EFS
 -|-|-
@@ -199,7 +220,8 @@ Scalable|Hardly scalable|Scalable
 Slower than EBS and EFS|Faster than S3 and EFS|Faster than S3, slower than EBS
 Good for storing backups|Is meant to be EC2 drive|Good for shareable applications and workloads
 
-### CloudWatch<a name="m6"></a>
+<a name="2_6"></a>
+## [↖](#top)[↑](#2_5_3)[↓](#2_6_1) CloudWatch
 Monitoring service that plugs into many other services
 
 * **Metrics**
@@ -218,7 +240,8 @@ Monitoring service that plugs into many other services
   * Define `cron`-based events
   * Events are recorded constantly over time
 
-#### Key metrics for EC2
+<a name="2_6_1"></a>
+### Key metrics for EC2
 
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
@@ -239,7 +262,8 @@ Metric|Effect
 
 * Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
-#### Key metrics for EBS
+<a name="2_6_2"></a>
+### Key metrics for EBS
 Metric|Effect
 -|-
 `VolumeReadBytes`,`VolumeWriteBytes`|`sum` reports total bytes transferred, `average` also useful
@@ -251,7 +275,8 @@ Metric|Effect
 
 * Can **not** monitor **disk usage percentage**
 
-#### Key metrics for EFS
+<a name="2_6_3"></a>
+### Key metrics for EFS
 Metric|Effect
 -|-
 `BurstCreditBalance`|The number of burst credits that a file system has.
@@ -262,7 +287,8 @@ Metric|Effect
 `PermittedThroughput`|The maximum amount of throughput a file system is allowed.
 `TotalIOBytes`|The number of bytes for each file system operation, including data read, data write, and metadata operations.
 
-#### Key metrics for ELB (classic load balancer)
+<a name="2_6_4"></a>
+### Key metrics for ELB (classic load balancer)
 Metric|Effect
 -|-
 `Latency`|Time it takes to receive an response. Measure `max` and `average`
@@ -281,7 +307,8 @@ Metric|Effect
 * Typically this means that the backend system cannot process requests as fast as they are coming in
   * Ideally load balance into an autoscaling group.
 
-#### Key metrics for ALB (active load balancer)
+<a name="2_6_5"></a>
+### Key metrics for ALB (active load balancer)
 Metric|Effect
 -|-
 `RequestCount`|Number of completed requests
@@ -289,7 +316,8 @@ Metric|Effect
 `TargetResponseTime`|The time elapsed after the request leaves the load balancer until a response from the target is received.
 `HTTPCode_ELB_3XX_Count`<br/>`HTTPCode_ELB_4XX_Count`<br/>`HTTPCode_ELB_5XX_Count`|The number of HTTP XXX server error codes that originate from the *load balancer*. This count does *not* include any response codes generated by the targets.
 
-#### Key metrics for NLB (network load balancer)
+<a name="2_6_6"></a>
+### Key metrics for NLB (network load balancer)
 Metric|Effect
 -|-
 `processedbyte `|The total number of bytes processed by the load balancer, including TCP/IP headers.
@@ -297,7 +325,8 @@ Metric|Effect
 `tcp_elb_reset_count`|the total number of reset (rst) packets generated by the load balancer.
 `tcp_target_reset_coun`|the total number of reset (rst) packets sent from a target to a client.
 
-#### Key metrics for elasticache
+<a name="2_6_7"></a>
+### Key metrics for elasticache
 Supports *memcached* and *redis*
 
 Metric|**memcached**|**redis**
@@ -310,7 +339,8 @@ Metric|**memcached**|**redis**
 
 .*
 
-#### Key metrics for RDS
+<a name="2_6_8"></a>
+### Key metrics for RDS
 Metric|Effect
 -|-
 `CPUUtilization`|Percentage of CPU utilization
@@ -329,10 +359,11 @@ Metric|Effect
 
 ---
 
-[top](#top)
-## Costs<a name="c"></a>
+<a name="3"></a>
+# [↖](#top)[↑](#2_6_8)[↓](#3_1) Costs
 
-### Consolidated Billing<a name="c1"></a>
+<a name="3_1"></a>
+## [↖](#top)[↑](#3)[↓](#3_2) Consolidated Billing
 Set up a **billing account** to pay for multiple **linked accounts** at the same time.
 
 * Allows for **consolidated billing**. Does *not* give IAM visibility into linked accounts.
@@ -344,13 +375,15 @@ will be billed under the reserved instance price. Similar for *RDS* instances.
 Limits:
 * Up to 20 linked accounts
 
-### Billing Metrics & Alarms<a name="c2"></a>
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1)[↓](#3_3) Billing Metrics & Alarms
 * Only shows metrics of services that have been used.
 * Set up *billing alarms* based on billing metrics.
   * *Overall* billing alarm, or *service-specific* alarms
   * Can still be account-specific, even with consolidated billing
 
-### Costs Optimization<a name="c3"></a>
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2)[↓](#3_4) Costs Optimization
 * Purchase **EC2 Reserved Instances**
   * Commit for 1-3 years and get a discount
 * Minimize the number of running instances
@@ -366,17 +399,19 @@ Limits:
 * Look for idle **RDS** instances
   * Check for 0 connections
 
-### Cost Explorer<a name="c4"></a>
+<a name="3_4"></a>
+## [↖](#top)[↑](#3_3)[↓](#4) Cost Explorer
 * Costs per *time frame* per *service*, various grouping and filtering options
 * Provides forecasts
 * **Pricing API** allows to download pricing information for specific services
 
 ---
 
-[top](#top)
-## High Availability<a name="ha"></a>
+<a name="4"></a>
+# [↖](#top)[↑](#3_4)[↓](#4_1) High Availability
 
-### Scalability & Elasticity Fundamentals<a name="ha1"></a>
+<a name="4_1"></a>
+## [↖](#top)[↑](#4)[↓](#4_2) Scalability & Elasticity Fundamentals
 * Pay only for *what* you need *when* you need it
   * Define minimum capacity
   * Define what needs to stretch out
@@ -388,7 +423,8 @@ Limits:
 *EC2*|Use autoscaling|More instances or bigger instance types
 *RDS*|./.|Bigger instances, more read replicas
 
-### Reserved Instances<a name="ha2"></a>
+<a name="4_2"></a>
+## [↖](#top)[↑](#4_1)[↓](#4_3) Reserved Instances
 * *Reserve* instances for a specific period of time
   * *Standard* reserved instances (fixed instance type)
   * *Convertible* reserved instances (can be exchanged against another convertible instance type)
@@ -405,7 +441,8 @@ Limits:
   * Elastic MapReduce (*reserved EC2 instances*)
   * ECR (*reserved EC2 instances*)
 
-### Autoscaling vs Resizing<a name="ha3"></a>
+<a name="4_3"></a>
+## [↖](#top)[↑](#4_2)[↓](#4_4) Autoscaling vs Resizing
 * **Auto Scaling** distributes load across multiple instances
   * *Scheduled Scaling* allows to scale or shrink on a schedule
   * Relativly complex to set up
@@ -422,7 +459,8 @@ Limits:
   * Not as flexible as auto scaling. Not elastic
   * Within an autoscaling group the to-be-resized instance might be treated as unhealthy
 
-### Load Balancers<a name="ha4"></a>
+<a name="4_4"></a>
+## [↖](#top)[↑](#4_3)[↓](#4_4_1) Load Balancers
 
 .|**ALB**|**NLB**|**ELB**
 -|-|-|-
@@ -457,9 +495,11 @@ User authenticaion|✔|.|.
 Redirects|✔|.|.
 Fixed responses|✔|.|.
 
-#### Elastic Load Balancer ('Classic LB')
+<a name="4_4_1"></a>
+### Elastic Load Balancer ('Classic LB')
 
-#### Overview
+<a name="4_4_2"></a>
+### Overview
 * *External* load balancer
   * Public facing
   * Often used to distribute load between web servers
@@ -475,14 +515,16 @@ Fixed responses|✔|.|.
   * Connection draining (maximum time for the load balancer to keep connections alive before reporting the instance as
     de-registered)
 
-#### Sticky Sessions
+<a name="4_4_3"></a>
+### Sticky Sessions
 * Need to make sure that session is maintained between instances
   * Load Balancer generated stickiness (*duration based* session stickiness)
   * Application generated stickiness (*application based* session stickiness)
   * For HA, use *ElastiCache* to persist and share session state. So maintaining
     stickiness doesn't matter any more
 
-### RDS HA<a name="ha5"></a>
+<a name="4_5"></a>
+## [↖](#top)[↑](#4_4_3)[↓](#4_6) RDS HA
 * Create *subnets* in different AZs
 * Create *subnet group* in RDS dashboard
   * Collection of subnets (typically private) in a VPC that is desgnated for DB instances
@@ -502,13 +544,15 @@ Fixed responses|✔|.|.
   * DNS records are modified to point to the standby instance
   * Application re-establishes existing DB connections
 
-### HA for IP-based Applications<a name="ha6"></a>
+<a name="4_6"></a>
+## [↖](#top)[↑](#4_5)[↓](#4_7) HA for IP-based Applications
 * If the application requires specific IPs (that are hardcoded somewhere), autoscaling cannot be used
 * Use *Elastic IP* and standby instances in different AZs instead
   * Cannot use Elastic IP across different regions though
   * Scale by increasing instance size (vertical scaling)
 
-### HA/Fault Tolerance for Bastion Hosts<a name="ha7"></a>
+<a name="4_7"></a>
+## [↖](#top)[↑](#4_6)[↓](#5) HA/Fault Tolerance for Bastion Hosts
 * Assign Elastic IP to bastion host in AZ 1
   * This IP can also be whitelisted to comply with corporate regulations
 * Have another instance on standby in different AZ
@@ -518,12 +562,14 @@ Fixed responses|✔|.|.
 
 ---
 
-[top](#top)
-## Analysis<a name="an"></a>
+<a name="5"></a>
+# [↖](#top)[↑](#4_7)[↓](#5_1) Analysis
 
-### Optimize the environment to ensure maximum performance<a name="an1"></a>
+<a name="5_1"></a>
+## [↖](#top)[↑](#5)[↓](#5_1_1) Optimize the environment to ensure maximum performance
 
-#### Offloading database workload
+<a name="5_1_1"></a>
+### Offloading database workload
 * Using **read replicas**
   * Read queries are routed to *read replicas*, reducing load on primary db instance
     (*source instance*)
@@ -556,7 +602,8 @@ Fixed responses|✔|.|.
   promote to master instance
   * Useful for database sharding, could create replicas for each shard
 
-#### Looking at EBS volumes
+<a name="5_1_2"></a>
+### Looking at EBS volumes
 * EBS *pre-warming*
   * Used to be required for maximum performance
   * Performance is reduced the very first time each block is accessed
@@ -566,7 +613,8 @@ Fixed responses|✔|.|.
     * Use `dd` or `fio` to *read* from every block
     * Only required if performance matters, obviously
 
-#### Prewarming ELBs
+<a name="5_1_3"></a>
+### Prewarming ELBs
 * ELB is designed to increase its resource capacity gradually
 * Prevents `http 503` (ELB cannot handle anymore requests)
 * Can contact AWS to `pre-warm` ELB
@@ -574,9 +622,11 @@ Fixed responses|✔|.|.
   * Use load testing tools to get a rough estimate of what the current ELB can handle
     * Increase at a rate no more than 50% per 5min.
 
-### Identify Performance Bottlenecks and Implement Remedies<a name="an2"></a>
+<a name="5_2"></a>
+## [↖](#top)[↑](#5_1_3)[↓](#5_2_1) Identify Performance Bottlenecks and Implement Remedies
 
-#### Resizing or changing EBS root volumes
+<a name="5_2_1"></a>
+### Resizing or changing EBS root volumes
 * If EBS is at capacity
   * Either upgrade volume size to increase the amount of IOPS available
   * Or switch to provisiones IOPS volumes (`io1`)
@@ -588,7 +638,8 @@ Fixed responses|✔|.|.
   * Stop instance
   * Attach new volume
 
-#### Setting up certificates for Elastic Load Balancers
+<a name="5_2_2"></a>
+### Setting up certificates for Elastic Load Balancers
 * Offloading overhead from the instances behind the ELB
   * Create ELB and configure https
   * Certificate from
@@ -596,7 +647,8 @@ Fixed responses|✔|.|.
     * IAM (for external certificiates)
     * Upload directly
 
-#### Network bottlenecks
+<a name="5_2_3"></a>
+### Network bottlenecks
 * Primary network bottlenecks
   * EC2 instances
     * Instances in different AZs or regions
@@ -610,15 +662,18 @@ Fixed responses|✔|.|.
   * Connection to on-prem networks
     * Use `Direct Connect`
 
-### Identify Potential Issues on a Given Application Deployment<a name="an3"></a>
+<a name="5_3"></a>
+## [↖](#top)[↑](#5_2_3)[↓](#5_3_1) Identify Potential Issues on a Given Application Deployment
 
-#### EBS Root Devices on Terminated Instances - Ensuring Data Durability
+<a name="5_3_1"></a>
+### EBS Root Devices on Terminated Instances - Ensuring Data Durability
 * *EBS root volumes* will be deleted on instance termination as per default option
   * Could create snapshot before termination to backup data
   * Could change default settings
 * *Instance store root volumes* will be left untouched on instance termination
 
-#### Troubleshooting Auto Scaling Issues
+<a name="5_3_2"></a>
+### Troubleshooting Auto Scaling Issues
 * Attempting to use wrong subnet
 * AZ no longer available or supported (outage)
 * Security group does not exist
@@ -636,10 +691,11 @@ Fixed responses|✔|.|.
 
 ---
 
-[top](#top)
-## OpsWorks<a name="ow"></a>
+<a name="6"></a>
+# [↖](#top)[↑](#5_3_2)[↓](#6_1) OpsWorks
 
-### Overview and components<a name="ow1"></a>
+<a name="6_1"></a>
+## [↖](#top)[↑](#6)[↓](#6_1_1) Overview and components
 * Declarative desired state engine
   * Automate, monitor and maintain deployments
 * **Cookbooks** define **recipes**
@@ -690,15 +746,18 @@ Fixed responses|✔|.|.
 		* Handles *loadbalancing*, *autoscaling* and *autohealing*
 		* Supports *lifecycle* events
 
-#### BerkShelf
+<a name="6_1_1"></a>
+### BerkShelf
 * Addresses an *OpsWorks* shortcoming from old versions - only one repository for recipes
 * Was added in *OpsWorks* 11.10 and allows to install cookbooks from many repositories
 
 TODO: Quickstart OpsWorks
 
-### Cloudformation<a name="ow2"></a>
+<a name="6_2"></a>
+## [↖](#top)[↑](#6_1_1)[↓](#6_2_1) Cloudformation
 
-#### Overview
+<a name="6_2_1"></a>
+### Overview
 * Allows to create and provision **resources** in a reusable **template** fashion
 	* A *CloudFormation* template is a `JSON` or `YAML` formatted text file
 * Related resources are managed in a single unit called a **stack**
@@ -713,7 +772,8 @@ TODO: Quickstart OpsWorks
 * Will **rollback** stack if it fails to create (can be disabled via API/console)
 * A **stack policy** is an *IAM*-style policy statements that governs who can do what
 
-#### Templates
+<a name="6_2_2"></a>
+### Templates
 * `AWSTemplateFormatVersion`
 * `Description`
 * `Metadata`
@@ -749,7 +809,8 @@ TODO: Quickstart OpsWorks
 		* Pseudo parameter
 		* Output from a function like `fn::getAtt` or `Ref`
 
-#### Intrinsic Functions
+<a name="6_2_3"></a>
+### Intrinsic Functions
 * Used to pass in values that are not available until runtime
 * Usable in `resource` properties, `metadata` attributes, and `update policy` attributes (auto-scaling)
 * `Ref`
@@ -784,10 +845,11 @@ TODO: Quickstart OpsWorks
 
 ---
 
-[top](#top)
-## Backups & Recovery<a name="ba"></a>
+<a name="7"></a>
+# [↖](#top)[↑](#6_2_3)[↓](#7_1) Backups & Recovery
 
-### AWS Services with automated backups<a name="ba1"></a>
+<a name="7_1"></a>
+## [↖](#top)[↑](#7)[↓](#7_2) AWS Services with automated backups
 * RDS
   * Backups
     * *Transactional* storage engine recommended as DB engine
@@ -821,17 +883,21 @@ TODO: Quickstart OpsWorks
     * Every snapshot will restore *all* data, even if older snapshots are deleted
     * Backups are stored internaly on S3
 
-### Disaster Recovery Scenarios<a name="ba2"></a>
+<a name="7_2"></a>
+## [↖](#top)[↑](#7_1)[↓](#7_2_1) Disaster Recovery Scenarios
 
-#### DR of on-prem infra
+<a name="7_2_1"></a>
+### DR of on-prem infra
 * Use AWS as backup solution by storing VMs, snapshots and other data
 * 'Pilot light' - have bare minimum infra always ready and scale up as required
 * 'Hot standby' (aka 'multi site') - has everything ready to go
 
-#### DR of cloud infra
+<a name="7_2_2"></a>
+### DR of cloud infra
 * Duplicate the environment from one region to another
 
-#### DR of RDS data
+<a name="7_2_3"></a>
+### DR of RDS data
 * Protection from multiple AZs being down
 * Reduce latency for global audience
 * Replica lag will most likely go up
@@ -840,7 +906,8 @@ TODO: Quickstart OpsWorks
 * Create read replica from existing DB instance, pick different region
   * Trigger setup process that will take some time
 
-### Storing log files and backups<a name="ba3"></a>
+<a name="7_3"></a>
+## [↖](#top)[↑](#7_2_3)[↓](#8) Storing log files and backups
 * Implement centralized logging
   * From there
     * Send to 3rd party tool for analyis
@@ -856,12 +923,14 @@ TODO: Quickstart OpsWorks
 
 ---
 
-[top](#top)
-## Security<a name="se"></a>
+<a name="8"></a>
+# [↖](#top)[↑](#7_3)[↓](#8_1) Security
 
-### Implement and Manage Security Policies<a name="se1"></a>
+<a name="8_1"></a>
+## [↖](#top)[↑](#8)[↓](#8_1_1) Implement and Manage Security Policies
 
-#### IAM
+<a name="8_1_1"></a>
+### IAM
 IAM is a global service that helps to securely control access to AWS resources.
 
 * **Users** hold credentials
@@ -873,7 +942,8 @@ IAM is a global service that helps to securely control access to AWS resources.
 	EC2 instance when the instance starts.
 * Users and/or services assume roles
 
-##### Policies
+<a name="8_1_1_1"></a>
+#### Policies
 * Any actions on resources that are not explicitly allowed are **denied by default**
 * Structure
 	* **E** - `effect` (*allow*/*deny*)
@@ -919,7 +989,8 @@ IAM is a global service that helps to securely control access to AWS resources.
 		]
 	}
 ```
-##### IAM Policies
+<a name="8_1_1_2"></a>
+#### IAM Policies
 * Managed policies (the new way)
 	* Can be attached to multiple users, groups and roles
 	* AWS managed policies
@@ -927,7 +998,8 @@ IAM is a global service that helps to securely control access to AWS resources.
   * Customer managed policies
 * Inline policies (the old way)
 
-##### IAM roles and EC2
+<a name="8_1_1_3"></a>
+#### IAM roles and EC2
 
 * Create an IAM role.
   * Define which accounts or AWS services can assume the role.
@@ -938,16 +1010,19 @@ IAM is a global service that helps to securely control access to AWS resources.
 
 * Only one role can be assigned to an EC2 instance, and all applications share the same role and permissions
 
-#### S3 IAM and bucket policy concepts
+<a name="8_1_2"></a>
+### S3 IAM and bucket policy concepts
 
-##### Defaults
+<a name="8_1_2_1"></a>
+#### Defaults
 * Bucket is *owned* by the AWS account that created it
 	* Bucket ownership is not transferable
 * Bucket owner gets full permission (ACL)
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
 
-##### Bucket policies (resource level)
+<a name="8_1_2_2"></a>
+#### Bucket policies (resource level)
 * Specify what actions are allowed or denied for which principals on the bucket that the policy
   is attached to
 * Attached *only* to S3 buckets. Can however effect object in buckets.
@@ -987,7 +1062,8 @@ IAM is a global service that helps to securely control access to AWS resources.
 }
 ```
 
-##### ACLs
+<a name="8_1_2_3"></a>
+#### ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -1018,7 +1094,8 @@ bucket.
 </AccessControlPolicy> 
 ```
 
-##### IAM policies (user level)
+<a name="8_1_2_4"></a>
+#### IAM policies (user level)
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
@@ -1032,12 +1109,15 @@ bucket.
 `arn:aws:s3:::mybucket/mykey`|`mykey` in `mybucket`
 `arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
 
-##### Cloudfront
+<a name="8_1_2_5"></a>
+#### Cloudfront
 * Can use Cloudfront Origin Access Identity to restrict access to S3 objects
 
-### Ensure Data Integrity and Access Controls when Using the AWS Platform<a name="se2"></a>
+<a name="8_2"></a>
+## [↖](#top)[↑](#8_1_2_5)[↓](#8_2_1) Ensure Data Integrity and Access Controls when Using the AWS Platform
 
-#### MFA
+<a name="8_2_1"></a>
+### MFA
 * *Should* be turned on for all console access
 * *Can* be enabled for API access as well
   * The administrator configures an AWS MFA device for each user who needs to make API requests that
@@ -1067,7 +1147,8 @@ bucket.
 }
 ```
 
-#### Secure Token Service (STS)
+<a name="8_2_2"></a>
+### Secure Token Service (STS)
 * Allows to grant **temporary access** to authenticated users
 	* IAM users
 	* Web-based identity providers (google, facebook, ...)
@@ -1076,7 +1157,8 @@ bucket.
 	* Access key
 	* Session token
 
-##### Terms
+<a name="8_2_2_1"></a>
+#### Terms
 * **Federation**
 	* Trust relationship between identity provider and AWS
 * **Identity broker**
@@ -1086,7 +1168,8 @@ bucket.
 * **Identities**
 	* Users
 
-##### Scenarios
+<a name="8_2_2_2"></a>
+#### Scenarios
 * Temporary credentials with EC2
 	* Assign IAM role to instance
 	* Get temp credentials from *instance metadata*
@@ -1096,7 +1179,8 @@ bucket.
 	* *Sign request* with temp credentials
 	* Add AC/SK to request (*header* or *query string*)
 
-### Share responsibility model<a name="se3"></a>
+<a name="8_3"></a>
+## [↖](#top)[↑](#8_2_2_2)[↓](#8_4) Share responsibility model
 * **Shared responsibility** environment
 * AWS is responsible for:
 	* Server/Host level and below
@@ -1114,7 +1198,8 @@ bucket.
 	* ACL (resource based policy)
 	* VPC
 
-### AWS and IT Audits<a name="se4"></a>
+<a name="8_4"></a>
+## [↖](#top)[↑](#8_3)[↓](#9) AWS and IT Audits
 * AWS performs self audits of changes to key services to monitor quality, maintain high standards, and
 facilitate continuous improvement of the change management process
 *  For audits, AWS provides:
@@ -1131,17 +1216,19 @@ facilitate continuous improvement of the change management process
 
 ---
 
-[top](#top)
-## Networking<a name="ne"></a>
+<a name="9"></a>
+# [↖](#top)[↑](#8_4)[↓](#9_1) Networking
 
-### Route53 Routing Policies<a name="ne1"></a>
+<a name="9_1"></a>
+## [↖](#top)[↑](#9)[↓](#9_1_1) Route53 Routing Policies
   * *Simple*
   * *Weighted*
   * *Latency*
   * *Failover*
   * *Geolocation*
 
-#### DNS Failover
+<a name="9_1_1"></a>
+### DNS Failover
 * Can set up *health checks* for endpoints or domains from within *Route53*
   * Route 53 has health checkers in locations around the world. When you create a health check that
     monitors an endpoint, health checkers start to send requests to the endpoint that you specify
@@ -1150,15 +1237,18 @@ facilitate continuous improvement of the change management process
 * DNS entries are then being associated with health checks and can be configured to failover as
   well (1 primary and n secondary recordsets)
 
-#### Weighted
+<a name="9_1_2"></a>
+### Weighted
 * Control distribution of traffic with DNS entries
   * This can be based on a certain percentage
   * Set *routing policy* to weighted (instead of failover)
 
-#### Latency-based
+<a name="9_1_3"></a>
+### Latency-based
 * Control distribution of traffic based on latency.
 
-### VPC Essentials<a name="ne2"></a>
+<a name="9_2"></a>
+## [↖](#top)[↑](#9_1_3)[↓](#9_2_1) VPC Essentials
 * Provisions a logically isolated section of the AWS cloud
 * Spans over all AZs in a region
 * Allows to create layered architecture
@@ -1166,30 +1256,35 @@ facilitate continuous improvement of the change management process
 * *Security groups* and subnet *network ACLs*
 * Ability to extend on-premise network to cloud
 
-#### Default VPC (Amazon specific)
+<a name="9_2_1"></a>
+### Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
 * Has different subnets in different AZs and an internet gateway per AZ
 * Each instance launched automatically receives a *public IP* (very different to non-default VPC)
 * Cannot be restored if deleted
 
-#### Non-default VPC (regular VPC)
+<a name="9_2_2"></a>
+### Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
 * Does not have a gateway attached
 
-#### VPC Peering
+<a name="9_2_3"></a>
+### VPC Peering
 * Connect VPCs through direct network routing
 * Can occur between different accounts and VPCs, but must be in the same region
 * Allows instances to communicate with each other as if they were in the same network
 * CIDRs must not overlap
 
-#### VPC Scenarios
+<a name="9_2_4"></a>
+### VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
 * VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
-#### Components
+<a name="9_2_5"></a>
+### Components
 * **Subnet**
 	* In exactly one AZ
 	* If a subnet doesn't have a route to the Internet gateway, it's known as a *private* subnet
@@ -1237,21 +1332,25 @@ facilitate continuous improvement of the change management process
 	* *NAT Gateway*
 		* AWS-mananged service
 
-#### Security
-##### Network ACL
+<a name="9_2_6"></a>
+### Security
+<a name="9_2_6_1"></a>
+#### Network ACL
 * Subnet level, acting as firewall
 * Rules for inbound and outbound traffic
 * Rules have numbers and are evaluated from low to high, first matching rule wins, others are *not* evaluated
 * *Stateless*
 
-##### Security Groups
+<a name="9_2_6_2"></a>
+#### Security Groups
 * Acts as a virtual firewall to control inbound and outbound traffic to instances
 * Acts on instance level, not subnet level
 * Rules for inbound and outbound traffic
 * *Stateful* - will always allow response to (allowed) outbound traffic
 * Can refer to other security group, e.g. allow traffic from there
 
-##### Structure & package flow
+<a name="9_2_6_3"></a>
+#### Structure & package flow
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
 	* Routes (one per subnet, can be shared)
@@ -1268,7 +1367,8 @@ facilitate continuous improvement of the change management process
   * Security Group
   * Instance
 
-##### Connection To On-prem Network/Direct Connect
+<a name="9_2_6_4"></a>
+#### Connection To On-prem Network/Direct Connect
 * VPC
   * (has attached) Virtual Private Gateway
   * (has attached) VPN Connection
@@ -1276,7 +1376,8 @@ facilitate continuous improvement of the change management process
 
 TODO: VPN vs direct connect. Can I use VPN instead of DC?
 
-### Limits:
+<a name="9_3"></a>
+## [↖](#top)[↑](#9_2_6_4)[↓](#10) Limits:
 .|.
 -|-
 VPCs per region|5
@@ -1290,10 +1391,11 @@ VPN connections per region|50
 Route tables per region|200
 Security groups per region|500
 
-[top](#top)
-## Etc<a name="et"></a>
+<a name="10"></a>
+# [↖](#top)[↑](#9_3)[↓](#10_1) Etc
 
-### Accessing the OS<a name="et1"></a>
+<a name="10_1"></a>
+## [↖](#top)[↑](#10)[↓](#10_2) Accessing the OS
 * Services that allow access the the underlaying OS
   * EC2
   * ECS
@@ -1304,10 +1406,12 @@ Security groups per region|500
   * DynamoDB
   * RDS
 
-### SQS
+<a name="10_2"></a>
+## [↖](#top)[↑](#10_1)[↓](#10_3) SQS
   * Default message retention period: 4 days (max 14 days)
   * `DelaySeconds` will delay a message appearing in the queue
   * Setting `WaitTimeSeconds` will enable *long polling* (can be more cost efficient)
 
-### DynamoDb
+<a name="10_3"></a>
+## [↖](#top)[↑](#10_2)[↓](#) DynamoDb
   * Prefix partition key with hash to enforce even distribution of IO across many partitions
