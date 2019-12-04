@@ -1,74 +1,159 @@
-# AWS-Solutions-Architect<a name="top"></a>
+[toc_start]::
+<a name="top"></a>
+---
+* [AWS-Solutions-Architect](#1)
+* [10000 Feet Overview ](#2)
+* [IAM ](#3)
+  * [Overview](#3_1)
+  * [Policies](#3_2)
+  * [Limits](#3_3)
+* [STS ](#4)
+  * [Overview](#4_1)
+  * [Scenarios](#4_2)
+* [KMS ](#5)
+  * [Overview](#5_1)
+  * [Benfits](#5_2)
+* [S3 ](#6)
+  * [Overview](#6_1)
+  * [Getting Data In And Out](#6_2)
+  * [Access Control](#6_3)
+  * [Encryption](#6_4)
+  * [Etc](#6_5)
+* [Glacier ](#7)
+  * [Overview](#7_1)
+* [CloudFront ](#8)
+  * [Overview](#8_1)
+* [Storage Gateway ](#9)
+  * [Overview](#9_1)
+  * [Gateway types](#9_2)
+* [Snowball ](#10)
+* [Elastic Compute Cloud (EC2) ](#11)
+  * [Overview](#11_1)
+  * [Storage Options](#11_2)
+  * [Payment model](#11_3)
+  * [Instance metadata & userdata](#11_4)
+  * [AMIs](#11_5)
+  * [Autoscaling](#11_6)
+  * [Placement Groups](#11_7)
+  * [Load Balancers](#11_8)
+  * [Limits:](#11_9)
+* [Elastic Block Storage (EBS) ](#12)
+  * [Volume options](#12_1)
+* [Elastic File System (EFS) ](#13)
+  * [Overview](#13_1)
+* [CloudWatch ](#14)
+  * [Key metrics for EC2](#14_1)
+* [Lambda ](#15)
+  * [Overview](#15_1)
+* [Route53 ](#16)
+  * [DNS Overview](#16_1)
+* [Relational Database Service (RDS) ](#17)
+  * [RDS Backup](#17_1)
+  * [Multi-AZ deployments](#17_2)
+  * [Replicating RDS](#17_3)
+  * [Etc](#17_4)
+* [Dynamo DB ](#18)
+  * [Overview](#18_1)
+  * [Keys and indexes](#18_2)
+  * [Secondary indexes](#18_3)
+  * [Capacity provisioning](#18_4)
+  * [Pricing](#18_5)
+* [Amazon Redshift ](#19)
+  * [Overview](#19_1)
+  * [Pricing](#19_2)
+* [ElastiCache ](#20)
+  * [Overview](#20_1)
+* [Aurora ](#21)
+  * [Overview](#21_1)
+  * [Scaling](#21_2)
+  * [Replicas](#21_3)
+* [Athena ](#22)
+  * [Overview](#22_1)
+* [Virtual Private Cloud (VPC) ](#23)
+  * [Overview](#23_1)
+  * [Components](#23_2)
+  * [Structure & Package Flow](#23_3)
+  * [VPC Endpoints](#23_4)
+  * [Limits:](#23_5)
+* [Simple Queue Service (SQS) ](#24)
+  * [Overview](#24_1)
+  * [Core features](#24_2)
+  * [Limits:](#24_3)
+* [Simple Workflow Service (SWF) ](#25)
+  * [Overview](#25_1)
+  * [Core components](#25_2)
+  * [Limits:](#25_3)
+* [Simple Notification Service (SNS) ](#26)
+  * [Overview](#26_1)
+  * [Components](#26_2)
+  * [Limits](#26_3)
+* [Elastic Transcoder](#27)
+  * [Overview](#27_1)
+* [API Gateway](#28)
+  * [Overview](#28_1)
+* [Kinesis](#29)
+  * [Overview](#29_1)
+* [Elastic Map Reduce](#30)
+  * [Overview](#30_1)
+* [Direct Connect](#31)
+  * [Overview](#31_1)
+* [ECS](#32)
+  * [Overview](#32_1)
+  * [Components](#32_2)
+* [Workspaces](#33)
+  * [Overview](#33_1)
+* [OpsWorks](#34)
+  * [Overview](#34_1)
+* [AWS Organizations](#35)
+  * [Overview](#35_1)
+  * [Limits:](#35_2)
+* [Resource Groups](#36)
+  * [Overview](#36_1)
+* [The Well Architected Framework](#37)
+  * [Overview](#37_1)
+  * [Security](#37_2)
+  * [Reliability](#37_3)
+  * [Performance Efficiency](#37_4)
+  * [Cost efficiency](#37_5)
+  * [Operational excellence](#37_6)
+---
+[toc_end]::
+<a name="1"></a>
+# [↖](#top)[↑](#)[↓](#2) AWS-Solutions-Architect
 
 > 9/2018 - 2/2019
 
-* [10000 Feet Overview](#ov)
-* [API Gateway](#apg)
-* [Aurora](#aur)
-* [Athena](#ath)
-* [AWS Organizations](#awo)
-* [CloudFront](#cft)
-* [Cloudwatch](#clw)
-* [Direct Connect](#dic)
-* [DynamoDb](#ddb)
-* [EBS](#ebs)
-* [EC2](#ec2)
-* [ECS](#ecs)
-* [EFS](#efs)
-* [Elastic Map Reduce](#emr)
-* [Elastic Transcoder](#elt)
-* [ElastiCache](#red)
-* [Glacier](#gla)
-* [IAM](#iam)
-* [Kinesis](#kin)
-* [KMS](#kms)
-* [Lambda](#lbd)
-* [OpsWorks](#opw)
-* [RDS](#rds)
-* [Redshift](#red)
-* [Resource Groups](#reg)
-* [Route53](#r53)
-* [Secure Token Service](#sts)
-* [Simple Storage Service (S3)](#s3)
-* [Simple Queue Service](#sqs)
-* [Simple Workflow Service](#swf)
-* [Simple Notification Service](#sns)
-* [Snowball](#snb)
-* [Storage Gateway](#stg)
-* [VPC](#vpc)
-* [Well Architected Framework](#waf)
-* [Workspaces](#wos)
-
 ---
 
-## 10000 Feet Overview <a name="ov"></a>
+<a name="2"></a>
+# [↖](#top)[↑](#1)[↓](#3) 10000 Feet Overview 
 
 Area|Covered|Other
 -|-|-
-**Compute**|[**EC2**](#ec2)|EKS
-.|[**ECS**](#ecs)|Lightsail
-.|[**Lambda**](#lmb)|Batch
+**Compute**||EKS
+.||Lightsail
+.||Batch
 .|.|ECR
 .|.|Elastic Beanstalk
-**Storage**|[**S3**](#s3)|FSx
-.|[**Storage Gateway**](#stg)|AWS Backup
-.|[**EFS**](#efs)|.
-.|[**Glacier**](#gla)|.
-**Database**|[**RDS**](#rds)|Neptune
-.|[**DynamoDB**](#ddb)|Amazon DocumentDB
-.|[**Amazon Redshift**](#red)|.
-.|[**ElastiCache**](#elc)|.
-**Migration**|[**Snowball**](#snb)|AWS Migration Hub
+**Storage**||FSx
+.||AWS Backup
+.||.
+.||.
+**Database**||Neptune
+.||Amazon DocumentDB
+.||.
+.||.
+**Migration**||AWS Migration Hub
 .|.|Application Discovery Service
 .|.|Database Migration Service
 .|.|Server /Migration Service
 .|.|AWS Transfer for SFTP
 .|.|DataSync
-**Networking & Content Delivery**|[**VPC**](#vpc)|Global Accelerator
-.|[**Route 53**](#r53)|AWS Cloud Map
-.|[**CloudFront**](#cft)|.
-.|[**API Gateway**](#apg)|.
-.|[**Direct Connect**](#dic)|.
+**Networking & Content Delivery**||Global Accelerator
+.||AWS Cloud Map
+.||.
+.||.
+.||.
 **Tools**|.|CodeStar
 .|.|CodeCommit
 .|.|CodeBuild
@@ -79,15 +164,15 @@ Area|Covered|Other
 **Robotics**|.|AWS RoboMaker
 **Blockchain**|.|Amazon Managed Blockchain
 **Satellite**|.|Ground Station
-**Management Tools**|[**CloudWatch**](#clw)|AWS Auto Scaling
+**Management Tools**||AWS Auto Scaling
 .|**CloudFormation**|Service Catalog
 .|**CloudTrail**|Systems Manager
 .|**Config**|Managed Services
-.|[**OpsWorks**](#opw)|Control Tower
+.||Control Tower
 .|**Trusted Advisor**|AWS License Manager
 .|.|AWS Well-Architected Tool
 .|.|Personal Health Dashboard
-**Media Services**|[**Elastic Transcoder**](#elt)|Kinesis Video Streams
+**Media Services**||Kinesis Video Streams
 .|.|MediaConvert
 .|.|MediaLive
 .|.|MediaPackage
@@ -105,17 +190,17 @@ Area|Covered|Other
 .|.|Amazon Personalize
 .|.|Amazon Forecast
 .|.|Amazon Textract
-**Analytics**|[**Elastic Map Reduce (EMR)**](#emr)|MKS
-.|[**Kinesis**](#kin)|CloudSearch
+**Analytics**||MKS
+.||CloudSearch
 .|**Data Pipeline**|Elasticsearch Service
-.|[**Athena**](#ath)|QuickSight
+.||QuickSight
 .|.|AWS Glue
-**Security, Identity & Compliance**|[**IAM**](#iam)|Cognito
+**Security, Identity & Compliance**||Cognito
 .|**Inspector**|Secrets Manager
 .|**Certificate Manager**|GuardDuty
 .|**Directory Service**|Amazon Macie
-.|[**KMS**](#kms)|Security Hub
-.|[**STS**](#sts)|AWS Single Sign-On
+.||Security Hub
+.||AWS Single Sign-On
 .|.|CloudHSM
 .|.|WAF & Shield
 .|.|Artifact
@@ -129,9 +214,9 @@ Area|Covered|Other
 .|.|Device Farm
 .|.|AWS Amplify
 **AR & VR**|.|Amazon Sumerian
-**Application Integration**|[**Simple Notification Service**](#sns)|Step Functions
-.|[**Simple Queue Service**](#sqs)|Amazon MQ
-.|[**Simple Workflow Service (SWF)**](#swf)|.
+**Application Integration**||Step Functions
+.||Amazon MQ
+.||.
 **Customer Engagement**|**Simple Email Service**|Amazon Connect
 .|.|Pinpoint
 **Business Applications**|.|Alexa for Business
@@ -155,10 +240,11 @@ Area|Covered|Other
 
 ---
 
-[top](#top)
-## IAM <a name="iam"></a>
+<a name="3"></a>
+# [↖](#top)[↑](#2)[↓](#3_1) IAM 
 
-### Overview
+<a name="3_1"></a>
+## [↖](#top)[↑](#3)[↓](#3_2) Overview
 IAM is a *global* service that helps to securely control access to AWS resources.
 
 * **Users** - end users
@@ -173,7 +259,8 @@ IAM is a *global* service that helps to securely control access to AWS resources
 * An **instance profile** is a container for an IAM role that you can use to pass role information to an
 	EC2 instance when the instance starts.
 
-### Policies
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1)[↓](#3_2_1) Policies
 * Any actions on resources that are not explicitly allowed are **denied by default**
 * Structure
 	* **E** - `effect` (*allow* / *deny*)
@@ -220,7 +307,8 @@ IAM is a *global* service that helps to securely control access to AWS resources
 		]
 	}
 ```
-#### IAM Policies
+<a name="3_2_1"></a>
+### IAM Policies
 * Managed policies (the new way)
 	* *Customer managed* policies
 	* *AWS managed* policies
@@ -229,7 +317,8 @@ IAM is a *global* service that helps to securely control access to AWS resources
 * Inline policies (the old way)
   * Cannot be reused
 
-### Limits
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2_1)[↓](#4) Limits
 .|.
 -|-
 Groups per account|100
@@ -240,15 +329,17 @@ Users|5000
 
 ---
 
-[top](#top)
-## STS <a name="sts"></a>
+<a name="4"></a>
+# [↖](#top)[↑](#3_3)[↓](#4_1) STS 
 
-### Overview
+<a name="4_1"></a>
+## [↖](#top)[↑](#4)[↓](#4_2) Overview
 The *AWS Security Token Service* (STS) is a global web service that enables you to request temporary,
 limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
 you authenticate (federated users).
 
-### Scenarios
+<a name="4_2"></a>
+## [↖](#top)[↑](#4_1)[↓](#5) Scenarios
 * Identity Federation
   * Enterprise Identity Federation
     * SAML or custom federation broker
@@ -262,17 +353,19 @@ you authenticate (federated users).
 
 ---
 
-[top](#top)
-## KMS <a name="kms"></a>
+<a name="5"></a>
+# [↖](#top)[↑](#4_2)[↓](#5_1) KMS 
 
-### Overview
+<a name="5_1"></a>
+## [↖](#top)[↑](#5)[↓](#5_2) Overview
 AWS Key Management Service (KMS) makes it easy for you to create and manage keys and control the
 use of encryption across a wide range of AWS services and in your applications. AWS KMS is a
 secure and resilient service that uses FIPS 140-2 validated hardware security modules to protect
 your keys. AWS KMS is integrated with AWS CloudTrail to provide you with logs of all key usage to
 help meet your regulatory and compliance needs.
 
-### Benfits
+<a name="5_2"></a>
+## [↖](#top)[↑](#5_1)[↓](#6) Benfits
 * Fully managed
 * Centralized key management
 * Manage Encryption for AWS services
@@ -285,14 +378,15 @@ help meet your regulatory and compliance needs.
 
 ---
 
-[top](#top)
-## S3 <a name="s3"></a>
-* [Getting Data In And Out](#s31)
-* [Access Control](#s32)
-* [Encryption](#s33)
-* [Etc](#s34)
+<a name="6"></a>
+# [↖](#top)[↑](#5_2)[↓](#6_1) S3 
+* 
+* 
+* 
+* 
 
-### Overview
+<a name="6_1"></a>
+## [↖](#top)[↑](#6)[↓](#6_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
 scale past trillions of objects worldwide.
@@ -314,9 +408,11 @@ scale past trillions of objects worldwide.
     * `http://s3.amazonaws.com/<bucket-name>`
     * `http://s3-<aws-region>.amazonaws.com/<bucket-name>`
 
-### Getting Data In And Out<a name="s31"></a>
+<a name="6_2"></a>
+## [↖](#top)[↑](#6_1)[↓](#6_2_1) Getting Data In And Out
 
-#### Perfomance & Consistency
+<a name="6_2_1"></a>
+### Perfomance & Consistency
 * Bucket operations **get** - **list** - **put** - **delete** - **head**
 	* Implemented through *http* operations: `GET` - `PUT` - `DELETE` - `HEAD`
 	* *Read-after-write consistency* for `PUT` of *new* objects.
@@ -338,7 +434,8 @@ scale past trillions of objects worldwide.
 	* Can pause & resume
 	* Can upload file while it's being created
 
-#### Versioning
+<a name="6_2_2"></a>
+### Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
 * **Version ids** are automatically assigned to objects
@@ -358,7 +455,8 @@ scale past trillions of objects worldwide.
 * Can enable *MFA delete* for an extra layer of security.
 * Versioning integrates with lifecycle rules.
 
-#### Logging
+<a name="6_2_3"></a>
+### Logging
 * *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
   stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
   specific events.
@@ -366,14 +464,16 @@ scale past trillions of objects worldwide.
   * Provide detailed records for the requests that are made to a bucket
   * Needs to be enabled on bucket level
 
-#### Transfer Acceleration
+<a name="6_2_4"></a>
+### Transfer Acceleration
 *Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers of files over long distances
 between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally
 distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an
 optimized network path.
 * File upload through an Edge location via a dedicated CloudFront endpoint
 
-#### Cross-Region Replication
+<a name="6_2_5"></a>
+### Cross-Region Replication
 * Buckets *must* be in different regions
   * Can replicate cross-account
 * *Must* have versioning enabled
@@ -383,7 +483,8 @@ optimized network path.
 * Deleting of individual versions or delete markers is *not* replicated
 * Best way to copy existing objects over is using AWS CLI
 
-#### Hosting Static Websites
+<a name="6_2_6"></a>
+### Hosting Static Websites
 `<bucket-name>.s3-website-<AWS-Region>.amazonaws.com`
 * Bucket name *must* match domain name. Every hosted bucket recieves its own URL
 * Use *AWS Route 53* to integrate custom domains (also to automatically fail-over from dynamic website)
@@ -391,7 +492,8 @@ optimized network path.
 * In *AWS Route 53*: create hosted zone & record set
 * Might need to add CORS configuration to bucket (cross origin resource sharing)
 
-#### Storage classes
+<a name="6_2_7"></a>
+### Storage classes
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
 S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
@@ -402,25 +504,29 @@ Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *stand
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-### Access Control<a name="s32"></a>
+<a name="6_3"></a>
+## [↖](#top)[↑](#6_2_7)[↓](#6_3_1) Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
-#### Defaults
+<a name="6_3_1"></a>
+### Defaults
 * Bucket is *owned* by the AWS account that created it
   * Ownership refers to the identity and email address used to create the account
 	* Bucket ownership is not transferable
 * Bucket owner gets full permission (ACL)
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
-#### IAM
+<a name="6_3_2"></a>
+### IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
-#### Bucket policies
+<a name="6_3_3"></a>
+### Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
 * Defined as JSON
@@ -428,7 +534,8 @@ attached to
 * Contain *principal* element (unnecessary for IAM)
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
-#### ACLs
+<a name="6_3_4"></a>
+### ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -439,7 +546,8 @@ attached to
 	* grant permission to bucket sub-resources (eg. lifecycle or static website configurations)
 * Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a
 bucket.
-#### How to specify resources in a policy:
+<a name="6_3_5"></a>
+### How to specify resources in a policy:
 .|.
 -|-
 `arn:partition:service:region:namespace:relative-id`|`arn:aws:s3:::mybucket`
@@ -448,14 +556,17 @@ bucket.
 `arn:aws:s3:::mybucket/*`|All objects in `mybucket`
 `arn:aws:s3:::mybucket/mykey`|`mykey` in `mybucket`
 `arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
-#### Pre-signed URLs
+<a name="6_3_6"></a>
+### Pre-signed URLs
 All objects are private by default. Only the object owner has permission to access these objects.
 However, the object owner can optionally share objects with others by creating a **pre-signed URL**,
 using their own security credentials, to grant time-limited permission to download the objects.
 
-### Encryption<a name="s33"></a>
+<a name="6_4"></a>
+## [↖](#top)[↑](#6_3_6)[↓](#6_4_1) Encryption
 
-#### Protecting data in transit
+<a name="6_4_1"></a>
+### Protecting data in transit
 * Using an AWS KMS–Managed Customer Master Key (CMK)
 	* Before *uploading* to S3, Client makes request to KMS, receives plain text encryption key and
 	cypher blob, to upload to S3 as object metadata. Decrypt by sending cypher blob to KMS, retrieving
@@ -470,7 +581,8 @@ using their own security credentials, to grant time-limited permission to downlo
 	* *Uploads* material description as part of the object metadata.
 	* On *download* S3 client uses metadata to determine the right master key to use for decryption.
 * Use *SSL encryption*
-#### Protecting data at rest
+<a name="6_4_2"></a>
+### Protecting data at rest
 * Uses *AES-256* (or others)
 * Encryption can be enforced via bucket policy.
 * Enable server-side encryption by adding specific header to request (`x-amz-server-side-encryption`).
@@ -484,9 +596,11 @@ using their own security credentials, to grant time-limited permission to downlo
 * Server-Side Encryption with *Customer-Provided Keys* (SSE-C)
 	* Key is not stored with AWS (stores salted HMAC valued instead)
 
-### Etc<a name="s34"></a>
+<a name="6_5"></a>
+## [↖](#top)[↑](#6_4_2)[↓](#6_5_1) Etc
 
-#### Pricing
+<a name="6_5_1"></a>
+### Pricing
 Charged by
   * Storage
   * Requests
@@ -496,7 +610,8 @@ Charged by
     * For cross-region transfers only
   * Transfer acceleration (feature)
 
-#### Limits
+<a name="6_5_2"></a>
+### Limits
 .|.
 -|-
 Buckets per account|100
@@ -506,10 +621,11 @@ Object size in a single `PUT`|5GB
 
 ---
 
-[top](#top)
-## Glacier <a name="gla"></a>
+<a name="7"></a>
+# [↖](#top)[↑](#6_5_2)[↓](#7_1) Glacier 
 
-### Overview
+<a name="7_1"></a>
+## [↖](#top)[↑](#7)[↓](#8) Overview
 *Amazon S3 Glacier* is a secure, durable, and extremely low-cost cloud storage service for data
 archiving and long-term backup. It is designed to deliver 99.999999999% durability, and provides
 comprehensive security and compliance capabilities that can help meet even the most stringent
@@ -521,10 +637,11 @@ options for access to archives, from a few minutes to several hours.
 
 ---
 
-[top](#top)
-## CloudFront <a name="cft"></a>
+<a name="8"></a>
+# [↖](#top)[↑](#7_1)[↓](#8_1) CloudFront 
 
-### Overview
+<a name="8_1"></a>
+## [↖](#top)[↑](#8)[↓](#9) Overview
 * A *content delivery network* (CDN) is a system of distributed servers (network) that delivers
   web pages and other web content to a user based on the geographic location of the user, the
   origin of the webpage and a content delivery server.
@@ -544,10 +661,11 @@ options for access to archives, from a few minutes to several hours.
 
 ---
 
-[top](#top)
-## Storage Gateway <a name="stg"></a>
+<a name="9"></a>
+# [↖](#top)[↑](#8_1)[↓](#9_1) Storage Gateway 
 
-### Overview
+<a name="9_1"></a>
+## [↖](#top)[↑](#9)[↓](#9_2) Overview
 *AWS Storage Gateway* is a hybrid cloud storage service that connects your existing on-premises
 environments with the AWS Cloud. Its features make it easy for you to run hybrid cloud workloads at
 any stage of your cloud adoption, whether it's getting started with cloud backups, running cloud
@@ -559,16 +677,19 @@ AWS Backup, providing storage for files, volumes, snapshots, and virtual tapes i
 
 * Download as VM image, install on host in datacenter
 
-### Gateway types
+<a name="9_2"></a>
+## [↖](#top)[↑](#9_1)[↓](#9_2_1) Gateway types
 
-#### File gateway (NFS, SMB)
+<a name="9_2_1"></a>
+### File gateway (NFS, SMB)
 The *File Gateway* presents a file interface that enables you to store files as objects in Amazon S3
 using the industry-standard NFS and SMB file protocols, and access those files via NFS and SMB
 from your datacenter or Amazon EC2, or access those files as objects with the S3 API.
 * Can be managed as S3 native objects (bucket policies, cross-region replication etc)
 * File gateway offers SMB or NFS-based access to data in Amazon S3 with local caching.
 
-#### Volume gateway (iSCSI)
+<a name="9_2_2"></a>
+### Volume gateway (iSCSI)
 The *Volume Gateway* presents your applications storage volumes using the iSCSI block protocol. Data
 written to these volumes can be asynchronously backed up as point-in-time snapshots of your volumes,
 and stored in the cloud as Amazon EBS snapshots. You can set the schedule for when snapshots occur or
@@ -577,7 +698,8 @@ capture only changed blocks. All snapshot storage is also compressed to minimize
 * *Stored* volumes (all data on-prem, EBS snapshots in cloud, stored on S3)
 * *Cached* volumes (only recently used data on-prem, EBS volumes in cloud, stored on S3)
 
-#### Tape gateway (VTL)
+<a name="9_2_3"></a>
+### Tape gateway (VTL)
 The *Tape Gateway* presents itself to your existing backup application as an industry-standard
 iSCSI-based virtual tape library (VTL), consisting of a virtual media changer and virtual tape drives.
 You can continue to use your existing backup applications and workflows while writing to a nearly
@@ -588,8 +710,8 @@ top of Amazon Glacier cloud storage, further reducing storage costs.
 
 ---
 
-[top](#top)
-## Snowball <a name="snb"></a>
+<a name="10"></a>
+# [↖](#top)[↑](#9_2_3)[↓](#11) Snowball 
 
 Snowball is a petabyte-scale data transport solution that uses devices designed to be secure to transfer
 large amounts of data into and out of the AWS Cloud. Using Snowball addresses common challenges with
@@ -610,10 +732,11 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 
 ---
 
-[top](#top)
-## Elastic Compute Cloud (EC2) <a name="ec2"></a>
+<a name="11"></a>
+# [↖](#top)[↑](#10)[↓](#11_1) Elastic Compute Cloud (EC2) 
 
-### Overview
+<a name="11_1"></a>
+## [↖](#top)[↑](#11)[↓](#11_2) Overview
 * Resizable **compute capacity** in the cloud
 * Amazon Machine Image (AMI)
 	* Unit of deployment
@@ -621,18 +744,20 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 	* Can create AMI from configured *EC2* instance
 * Can have _termination protection_ enabled (`off` by default)
 
-### Storage Options
+<a name="11_2"></a>
+## [↖](#top)[↑](#11_1)[↓](#11_2_1) Storage Options
 * **Instance Store** (ephemeral)
   * Located on disks that are physically attached to the host computer
   * Will preserve data over *reboot*
   * Will *loose* data over *stop*, *termination* or *failure* of the underlaying host
   * Cannot detach
   * Cannot opt for non-deletion of root volume if instance get deleted
-* [**Elastic Block Store**](#ebs)
-* [**Elastic File System**](#efs)
-* [**Simple Storage Service**](#s3)
+* 
+* 
+* 
 
-#### S3 vs EFS vs EBS Comparison
+<a name="11_2_1"></a>
+### S3 vs EFS vs EBS Comparison
 
 Amazon S3|Amazon EBS|Amazon EFS
 -|-|-
@@ -643,7 +768,8 @@ Scalable|Hardly scalable|Scalable
 Slowest|Fastest|Faster than S3, slower than EBS
 Good for storing backups|Is meant to be EC2 drive|Good for shareable applications and workloads
 Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, only pay for used storage
-### Payment model
+<a name="11_3"></a>
+## [↖](#top)[↑](#11_2_1)[↓](#11_3_1) Payment model
 * **On-demand instances**
 	* Pay for compute capacity by the hour, instance can be terminated by Amazon
 * **Reserved instances**
@@ -666,7 +792,8 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 * **Dedicated hosts**
 	* A physical server with EC2 instance capacity fully dedicated to your use
 
-#### Pricing by
+<a name="11_3_1"></a>
+### Pricing by
 * Instance Type
 * Compute time
 * Data transfer
@@ -675,7 +802,8 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 * Monitoring
 * Elastic load balancer
 
-#### Instance Types<a name="m2"></a>
+<a name="11_3_2"></a>
+### Instance Types
 Family|Mnemomic|Description
 -|-|-
 **F**|FPGA|Can be reprogrammed on the fly and be tuned for  specific applications, making them faster than traditional CPU/GPU combinations
@@ -690,7 +818,8 @@ Family|Mnemomic|Description
 **P**|Graphics (pics)|GPU optimized
 **X**|eXtreme memory|Lowest prize for *memory* performance
 
-### Instance metadata & userdata
+<a name="11_4"></a>
+## [↖](#top)[↑](#11_3_2)[↓](#11_5) Instance metadata & userdata
 * Data about an instance that can be used to configure or manage the running instance
 * Contains various data about the current instance (static & dynamic)
 * Can specify user-data
@@ -699,7 +828,8 @@ Family|Mnemomic|Description
   * `http://169.254.169.254/latest/meta-data/`
   * `http://169.254.169.254/latest/user-data/`
 
-### AMIs
+<a name="11_5"></a>
+## [↖](#top)[↑](#11_4)[↓](#11_6) AMIs
 Choose by
 * Region
 * OS
@@ -711,7 +841,8 @@ Need to manually copy
 * Launch permission
 * S3 bucket permissions
 
-### Autoscaling
+<a name="11_6"></a>
+## [↖](#top)[↑](#11_5)[↓](#11_7) Autoscaling
 **Auto Scaling** distributes load across multiple instances
 * *Scheduled Scaling* allows to scale or shrink on a schedule
 * Relatively complex to set up
@@ -722,7 +853,8 @@ Need to manually copy
   * *Scaling Policy*
   * *Cloudwatch Alarms*
 
-### Placement Groups
+<a name="11_7"></a>
+## [↖](#top)[↑](#11_6)[↓](#11_8) Placement Groups
 * Determine how instances are placed on underlying hardware
 * **Cluster**
   * Clusters instances into a low-latency group in a single Availability Zone
@@ -736,7 +868,8 @@ Need to manually copy
 * Recommendation to stick to one instance family
 * Cannot move existing instance into placement group
 
-### Load Balancers
+<a name="11_8"></a>
+## [↖](#top)[↑](#11_7)[↓](#11_9) Load Balancers
 .|**ALB**|**NLB**|**ELB**
 -|-|-|-
 .|Active Load Balancer|Network Load Balancer|Classic Load Balancer
@@ -748,15 +881,16 @@ Protocoll|HTTP, HTTPS|TCP|TCP, SSL, HTTP, HTTPS
 * ALBs now supports host-based and path-based routing
   * `api.example.com/production`, `mobile.example.com/test`
 
-### Limits:
+<a name="11_9"></a>
+## [↖](#top)[↑](#11_8)[↓](#12) Limits:
 .|.
 -|-
 Elastic IP addresses for EC2-Classic|5
 
 ---
 
-[top](#top)
-## Elastic Block Storage (EBS) <a name="ebs"></a>
+<a name="12"></a>
+# [↖](#top)[↑](#11_9)[↓](#12_1) Elastic Block Storage (EBS) 
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
 * Only accessible by a *single instance*
@@ -766,7 +900,8 @@ Elastic IP addresses for EC2-Classic|5
 * Only root volumes are terminated if instance gets terminate
 * Can be striped together to RAID
 
-#### Volume options
+<a name="12_1"></a>
+## [↖](#top)[↑](#12)[↓](#12_1_1) Volume options
 .|.|.
 -|-|-
 **General purpose SSD**|GP2|`<= 10,000 IOPS`
@@ -777,7 +912,8 @@ Elastic IP addresses for EC2-Classic|5
 
 * Can change volume size on the fly, also storage type
 
-#### Snaphosts
+<a name="12_1_1"></a>
+### Snaphosts
 * Stored incrementally on S3
 * Should stop instance if taking a snapshot of root volume
 * Snaphots of encrypted volumes are encrypted automatically
@@ -786,14 +922,16 @@ Elastic IP addresses for EC2-Classic|5
 * In order to take snapshots from RAID arrays, make sure all applications are stopped and caches are flushed to disk
 * Lifecycle policies have been introduced for snapshots
 
-#### Moving Instances/Volumes To A Different AZ/Region
+<a name="12_1_2"></a>
+### Moving Instances/Volumes To A Different AZ/Region
 * Create snapshot in AZ1
 * Use that to create volume in AZ2
 * Also could have *copied* snapshot into different region
 
 * TODO: Look into moving instances into different regions / AZs
 
-#### Encrypting root volumes
+<a name="12_1_3"></a>
+### Encrypting root volumes
 * Stop instance
 * Create snapshot
 * Copy to different region
@@ -803,10 +941,11 @@ Elastic IP addresses for EC2-Classic|5
 
 ---
 
-[top](#top)
-## Elastic File System (EFS) <a name="efs"></a>
+<a name="13"></a>
+# [↖](#top)[↑](#12_1_3)[↓](#13_1) Elastic File System (EFS) 
 
-### Overview
+<a name="13_1"></a>
+## [↖](#top)[↑](#13)[↓](#14) Overview
 * **Scalable file storage** for use with *Amazon EC2 instances*
 * Elastic storage capacity, growing and shrinking as files are added or removed
 * *Multiple EC2 instances* from *multiple AZs* can access an EFS file system at the same time
@@ -818,8 +957,8 @@ Elastic IP addresses for EC2-Classic|5
 
 ---
 
-[top](#top)
-## CloudWatch <a name="clw"></a>
+<a name="14"></a>
+# [↖](#top)[↑](#13_1)[↓](#14_1) CloudWatch 
 Monitoring service that plugs into many other services
 
 * **Metrics**
@@ -838,7 +977,8 @@ Monitoring service that plugs into many other services
   * Define `cron`-based events
   * Events are recorded constantly over time
 
-#### Key metrics for EC2
+<a name="14_1"></a>
+## [↖](#top)[↑](#14)[↓](#15) Key metrics for EC2
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
 * Can install Cloudwatch agent (new)
@@ -860,10 +1000,11 @@ Metric|Effect
 
 ---
 
-[top](#top)
-## Lambda <a name="lmb"></a>
+<a name="15"></a>
+# [↖](#top)[↑](#14_1)[↓](#15_1) Lambda 
 
-### Overview
+<a name="15_1"></a>
+## [↖](#top)[↑](#15)[↓](#16) Overview
 *AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the
 compute time you consume - there is no charge when your code is not running. With Lambda, you can
 run code for virtually any type of application or backend service - all with zero administration.
@@ -895,26 +1036,30 @@ call it directly from any web or mobile app.
 
 ---
 
-[top](#top)
-## Route53 <a name="r53"></a>
+<a name="16"></a>
+# [↖](#top)[↑](#15_1)[↓](#16_1) Route53 
 
-### DNS Overview
+<a name="16_1"></a>
+## [↖](#top)[↑](#16)[↓](#16_1_1) DNS Overview
 Domain Name System (**DNS**) is a system for naming computers and network services that is organized
 into a hierarchy of domains. DNS naming is used in TCP/IP networks, such as the Internet, to locate
 computers and services with user-friendly names. When a user enters a DNS name in an application,
 DNS services can resolve the name to other information that is associated with the name, such as
 an IP address.
 
-##### Terminology
+<a name="16_1_1"></a>
+### Terminology
 * **Hosts** - Computers or services accessible within a domain
 * **Name Server** - Translates domain names into IP addresses
 * **Zone File** - Text file that contains mappings between domain names and IP addresses
 * **Records** - Entries in zone file, mappings beween resources and names
 
-##### Basic Flow
+<a name="16_1_1_1"></a>
+#### Basic Flow
 Root Server -> TLD Server -> Domain-Level Name Server -> Zone File
 
-##### Zone File & Records
+<a name="16_1_1_2"></a>
+#### Zone File & Records
 Zone file stores records. Various records exists:
 
 Type|Definition|Example
@@ -927,7 +1072,8 @@ Type|Definition|Example
 **PTR**|Maps ip4 address to host name (inverse to A record)|`10.27/1.168.192.in-addr.arpa.  1800  PTR mail.example.com.`
 **SVR**|Points one domain to another domain name using a specific destination port|`_sip._tcp.example.com. 86400 IN SRV 0 5 5060 sipserver.example.com.`
 
-#### Route53 specifics
+<a name="16_1_2"></a>
+### Route53 specifics
 * Global service
 * **Alias** record
   * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality.
@@ -940,7 +1086,8 @@ Type|Definition|Example
   for example.com that routes traffic to www.example.com
   * Preferred choice over CNAME (TODO: why?)
 
-#### Route53 Routing Policies<a name="ne1"></a>
+<a name="16_1_3"></a>
+### Route53 Routing Policies
   * **Simple**
     * Default policy, typically used if only a single resource performs functionality
   * **Weighted**
@@ -976,8 +1123,8 @@ Type|Definition|Example
 
 ---
 
-[top](#top)
-## Relational Database Service (RDS) <a name="rds"></a>
+<a name="17"></a>
+# [↖](#top)[↑](#16_1_3)[↓](#17_1) Relational Database Service (RDS) 
 * Set up, operate, and scale a **relational database** in the cloud
 * Supports
 	* Amazon Aurora
@@ -1003,7 +1150,8 @@ Type|Definition|Example
 	* Acts as a “container” for engine configuration values that can be applied to one or more DB
 	Instances
 
-### RDS Backup
+<a name="17_1"></a>
+## [↖](#top)[↑](#17)[↓](#17_2) RDS Backup
 * Two types of backups
   * Automated backups
     * Enabled by default
@@ -1025,7 +1173,8 @@ Type|Definition|Example
   * Can change to different storage engine if closely related and enough space available
   * Restored version will always be a *new* RDS instance with a *new* DNS endpoint
 
-### Multi-AZ deployments
+<a name="17_2"></a>
+## [↖](#top)[↑](#17_1)[↓](#17_3) Multi-AZ deployments
 Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a
 single AWS Region.
 
@@ -1041,7 +1190,8 @@ single AWS Region.
     * Backups
   * *Aurora* can replicate accross 3 AZs
 
-### Replicating RDS
+<a name="17_3"></a>
+## [↖](#top)[↑](#17_2)[↓](#17_4) Replicating RDS
 * Using **read replicas**
   * Read queries are routed to *read replicas*, reducing load on primary db instance
     (*source instance*)
@@ -1074,7 +1224,8 @@ single AWS Region.
   * This will break replication
   * Useful for database sharding, could create replicas for each shard
 
-### Etc
+<a name="17_4"></a>
+## [↖](#top)[↑](#17_3)[↓](#18) Etc
 * *DB security groups* are used with DB instances that are not in a VPC and on the EC2-Classic platform.
   * Don't need to specify a destination port number when you create DB security group rules
 * *RDS Reserved instances* are available for multi-AZ deployments.
@@ -1082,10 +1233,11 @@ single AWS Region.
 
 ---
 
-[top](#top)
-## Dynamo DB <a name="ddb"></a>
+<a name="18"></a>
+# [↖](#top)[↑](#17_4)[↓](#18_1) Dynamo DB 
 
-### Overview
+<a name="18_1"></a>
+## [↖](#top)[↑](#18)[↓](#18_2) Overview
 * Fully managed **NoSQL** database
 * Always stored on SSD
 * *HA* through different AZs, automatically spreads data and traffic accross servers
@@ -1098,26 +1250,31 @@ single AWS Region.
 * Option between **eventual consistency** or **strongly consistency**
 * Conditional updates and concurrency control (**atomic counters**)
 
-### Keys and indexes
+<a name="18_2"></a>
+## [↖](#top)[↑](#18_1)[↓](#18_2_1) Keys and indexes
 
-#### Partion key (PK)
+<a name="18_2_1"></a>
+### Partion key (PK)
 * **Partition key** is also called **hash attribute** or **primary key**
 * Must be unique, used for internal hash function (*unordered*)
 * Used to retrieve data
 * You should design your application for uniform activity across all logical partition keys in the
   Table and its secondary indexes.
 
-#### PK & Sort key
+<a name="18_2_2"></a>
+### PK & Sort key
 * **Composite PK**: *index* composed of hashed PK (*unordered*) and SK (*ordered*)
 * **Sort key** is also called **range attribute** or **range key**
 * Different items can have the same *PK*, must have different *SK*
 
-### Secondary indexes
+<a name="18_3"></a>
+## [↖](#top)[↑](#18_2_2)[↓](#18_3_1) Secondary indexes
 * Associated with exactly one table, from which it obtains its data
 * Allows to query or scan data by an *alternate key* (other than PK/SK)
 * Only for `read` operations, `write` is not supported.
 
-#### Projected attributes
+<a name="18_3_1"></a>
+### Projected attributes
 * Attributes copied from the base table into an *index*
 * Makes them queryable
 * Different projection types
@@ -1125,7 +1282,8 @@ single AWS Region.
 	* *INCLUDE* - Only the specified table attributes are projected into the index
 	* *ALL* - All of the table attributes are projected into the index
 
-#### Local secondary index
+<a name="18_3_2"></a>
+### Local secondary index
 * Uses the *same PK*, but offers different *SK*
 * Every partition of a local secondary index is scoped to a base table partition that has the same
   partition key value
@@ -1136,7 +1294,8 @@ single AWS Region.
 * Can request *not-projected* attributes for query or scan operation
 * Consumes read/write throughput from the original table.
 
-#### Global secondary index
+<a name="18_3_3"></a>
+### Global secondary index
 * Uses *different PK* and offers additional *SK* (or none).
 * *PK* does not have to be unique (unlike base table)
 * Queries on the global index can span all of the data in the base table, across all partitions
@@ -1147,7 +1306,8 @@ single AWS Region.
 * Global as in "over many partitions"
 * Cannot request not-projected attributes for query or scan operation
 
-### Capacity provisioning
+<a name="18_4"></a>
+## [↖](#top)[↑](#18_3_3)[↓](#18_5) Capacity provisioning
 * Unit for operations:
 	* 1 *strongly consistent* `read` per second (up to 4KB/s)
 	* 2 *eventual consistent* `read` per second (up to 8KB/s)
@@ -1161,7 +1321,8 @@ Calculate read / writes per second|`300r/60s = 5r/s`
 Multiply with payload factor|`5r/s * (11KB/4KB) = 15cu`
 If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 
-### Pricing
+<a name="18_5"></a>
+## [↖](#top)[↑](#18_4)[↓](#19) Pricing
 * Storage cost
   * Per GB per month
 * Provisioned throughput capacity *per table*
@@ -1171,10 +1332,11 @@ If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 
 ---
 
-[top](#top)
-## Amazon Redshift <a name="red"></a>
+<a name="19"></a>
+# [↖](#top)[↑](#18_5)[↓](#19_1) Amazon Redshift 
 
-### Overview
+<a name="19_1"></a>
+## [↖](#top)[↑](#19)[↓](#19_2) Overview
 Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. You can
 start with just a few hundred gigabytes of data and scale to a petabyte or more.
 
@@ -1195,17 +1357,19 @@ approach (which would be better for transaction-processing (*OLTP*)):
 
 Redshift is a good answer if your database is feeling stress because it's running OLAP transactions.
 
-### Pricing
+<a name="19_2"></a>
+## [↖](#top)[↑](#19_1)[↓](#20) Pricing
 * Compute-Node hours
 * Backup
 * Data transfer
 
 ---
 
-[top](#top)
-## ElastiCache <a name="elc"></a>
+<a name="20"></a>
+# [↖](#top)[↑](#19_2)[↓](#20_1) ElastiCache 
 
-### Overview
+<a name="20_1"></a>
+## [↖](#top)[↑](#20)[↓](#21) Overview
 Amazon ElastiCache offers fully managed *Redis* and *Memcached*. Seamlessly deploy, run, and scale
 popular open source compatible in-memory data stores.
 
@@ -1224,10 +1388,11 @@ ElastiCache is a good choice if database is read-heavy and not prone to frequent
 
 ---
 
-[top](#top)
-## Aurora <a name="aur"></a>
+<a name="21"></a>
+# [↖](#top)[↑](#20_1)[↓](#21_1) Aurora 
 
-### Overview
+<a name="21_1"></a>
+## [↖](#top)[↑](#21)[↓](#21_2) Overview
 *Amazon Aurora* is a MySQL and PostgreSQL-compatible relational database built for the cloud, that
 combines the performance and availability of traditional enterprise databases with the simplicity
 and cost-effectiveness of open source databases.
@@ -1249,7 +1414,8 @@ across three Availability Zones (AZs).
 * *Continuous Backups*
   * Backups are continuous and incremental so you can quickly restore to any point within the
     backup retention period.
-### Scaling
+<a name="21_2"></a>
+## [↖](#top)[↑](#21_1)[↓](#21_3) Scaling
 * Starts with 10GB, scales in 10GB increments (storage scaling)
 * Compute resources scale up to 32vCPUs and 244GB of memory
 * 2 copies of data is contained in each AZ, with a minimum of 3 AZs (6 copies of data in total)
@@ -1257,17 +1423,19 @@ across three Availability Zones (AZs).
   * Up to 3 copies without affecting *read*
   * (this is storage only, it still has the DB engine has a single point of failure)
 
-### Replicas
+<a name="21_3"></a>
+## [↖](#top)[↑](#21_2)[↓](#22) Replicas
 * 2 types
   * Up to 15 *Aurora replicas*
   * Up to 5 *MySQL read replicas*
 
 ---
 
-[top](#top)
-## Athena <a name="ath"></a>
+<a name="22"></a>
+# [↖](#top)[↑](#21_3)[↓](#22_1) Athena 
 
-### Overview
+<a name="22_1"></a>
+## [↖](#top)[↑](#22)[↓](#23) Overview
 
 Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3
 using standard SQL. Athena is serverless, so there is no infrastructure to manage, and you pay
@@ -1287,10 +1455,11 @@ Supports different formats
 
 ---
 
-[top](#top)
-## Virtual Private Cloud (VPC) <a name="vpc"></a>
+<a name="23"></a>
+# [↖](#top)[↑](#22_1)[↓](#23_1) Virtual Private Cloud (VPC) 
 
-### Overview
+<a name="23_1"></a>
+## [↖](#top)[↑](#23)[↓](#23_1_1) Overview
 * Provisions a logically isolated section of the AWS cloud
 * Spans over all AZs in a region
 * Allows to create layered architecture
@@ -1299,17 +1468,20 @@ Supports different formats
 * *Security groups* and subnet-level *network ACLs*
 * Ability to extend on-premise network to cloud
 
-#### Default VPC (Amazon specific)
+<a name="23_1_1"></a>
+### Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
 * Has different subnets in different AZs and an internet gateway (HA, spread out to all AZs)
 * Each instance launched automatically receives a *public IP* (and a private IP), this is
   usually not the case for non-default VPCs)
 * Cannot be restored if deleted
 * Comes with default NACL that allows all inbound/outbound traffic
-#### Non-default VPC (regular VPC)
+<a name="23_1_2"></a>
+### Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
-#### VPC Peering
+<a name="23_1_3"></a>
+### VPC Peering
 * Connect VPCs through direct network routing
 * Can occur between different accounts and regions
 * Cannot have matching or overlapping CIDR blocks
@@ -1318,13 +1490,15 @@ Supports different formats
 * Only routes traffic between source and destination VPC
   * Does not support edge to edge routing
   * Does not share VPN connection into datacenter
-#### VPC Scenarios
+<a name="23_1_4"></a>
+### VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
 * VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
-### Components
+<a name="23_2"></a>
+## [↖](#top)[↑](#23_1_4)[↓](#23_3) Components
 * **Subnet**
 	* In exactly one AZ
 	* If traffic is routed to an Internet gateway, the subnet is known as a public subnet
@@ -1396,8 +1570,10 @@ Supports different formats
   * Can have any number of instances within a security group
   * Cannot block individual IP adresses (use NACL for that)
 
-### Structure & Package Flow
-#### Package flow through VPC components
+<a name="23_3"></a>
+## [↖](#top)[↑](#23_2)[↓](#23_3_1) Structure & Package Flow
+<a name="23_3_1"></a>
+### Package flow through VPC components
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
   * Router
@@ -1407,7 +1583,8 @@ Supports different formats
 	* Security Group (on VPC level)
 	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
 
-#### VPC Flow Logs
+<a name="23_3_2"></a>
+### VPC Flow Logs
 VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to
 and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs
 and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen
@@ -1418,7 +1595,8 @@ Can be created at 3 levels:
 * Subnet
 * Network interface
 
-### VPC Endpoints
+<a name="23_4"></a>
+## [↖](#top)[↑](#23_3_2)[↓](#23_5) VPC Endpoints
 Allows instances with a VPC to connect to services without going via public internet.
 
 Supported by:
@@ -1431,7 +1609,8 @@ SQS, AWS Systems Manager, Endpoint services hosted by other AWS accounts, Suppor
 Marketplace partner services
 
 
-### Limits:
+<a name="23_5"></a>
+## [↖](#top)[↑](#23_4)[↓](#24) Limits:
 .|.
 -|-
 VPCs per region|5
@@ -1447,10 +1626,11 @@ TODO: Build own VPC from memory
 
 ---
 
-[top](#top)
-## Simple Queue Service (SQS) <a name="sqs"></a>
+<a name="24"></a>
+# [↖](#top)[↑](#23_5)[↓](#24_1) Simple Queue Service (SQS) 
 
-### Overview
+<a name="24_1"></a>
+## [↖](#top)[↑](#24)[↓](#24_2) Overview
 * Oldest AWS service
 * Scalable **message queue** service
 * Allows *loose coupling* and *asynchronous processing*
@@ -1459,7 +1639,8 @@ TODO: Build own VPC from memory
 * Allows for asynchronous processing
 * Protection against data loss on application failure
 
-### Core features
+<a name="24_2"></a>
+## [↖](#top)[↑](#24_1)[↓](#24_3) Core features
 * Redundant infrastructure
 * Multiple readers / writers at the same time
 * Access control via *SQS policies* (similar to *IAM*)
@@ -1493,7 +1674,8 @@ TODO: Build own VPC from memory
 	* Value >0 enables *long polling*
 	* Between 0s and 20s, default 0s (*short polling*)
 
-### Limits:
+<a name="24_3"></a>
+## [↖](#top)[↑](#24_2)[↓](#25) Limits:
 .|.
 -|-
 Max message size|256KB
@@ -1501,10 +1683,11 @@ Max inflight messages|120,000
 
 ---
 
-[top](#top)
-## Simple Workflow Service (SWF) <a name="swf"></a>
+<a name="25"></a>
+# [↖](#top)[↑](#24_3)[↓](#25_1) Simple Workflow Service (SWF) 
 
-### Overview
+<a name="25_1"></a>
+## [↖](#top)[↑](#25)[↓](#25_2) Overview
 * **Task coordination** and **state management** service
 * Distributed, scales up and down depending on task
 * Works with *on-premise* and *cloud* apps
@@ -1513,7 +1696,8 @@ Max inflight messages|120,000
 * Guaranteed order of execution
 * Tasks can live up to one year (`31,536,000 seconds`)
 
-### Core components
+<a name="25_2"></a>
+## [↖](#top)[↑](#25_1)[↓](#25_3) Core components
 * **Workflow**
 	* A workflow is a set of *activities* that carry out some objective, together with logic that
 	coordinates the activities.
@@ -1542,7 +1726,8 @@ Max inflight messages|120,000
       arrive while the *workflow* is in progress, and ultimately ends (or closes) the *workflow* when the
       objective has been completed.
 
-### Limits:
+<a name="25_3"></a>
+## [↖](#top)[↑](#25_2)[↓](#26) Limits:
 .|.
 -|-
 Maximum registered domains|100
@@ -1550,10 +1735,11 @@ Maximum registered domains|100
 
 ---
 
-[top](#top)
-## Simple Notification Service (SNS) <a name="sns"></a>
+<a name="26"></a>
+# [↖](#top)[↑](#25_3)[↓](#26_1) Simple Notification Service (SNS) 
 
-### Overview
+<a name="26_1"></a>
+## [↖](#top)[↑](#26)[↓](#26_2) Overview
 * **Publishes** messages to **subscribers** via topic
 * **Pub-Sub-Service** for messaging
 	* Scenarios:
@@ -1563,7 +1749,8 @@ Maximum registered domains|100
 * **Mobile Notifications** to mobile devices
 	* Sends *push notifications* to iOS, Android, Fire OS, Windows and Baidu-based devices
 
-### Components
+<a name="26_2"></a>
+## [↖](#top)[↑](#26_1)[↓](#26_3) Components
 * **Publisher** (producer)
 	* Communicates asynchronously with subscribers
 	* Policies determine which topic(s) publishers can write to
@@ -1590,17 +1777,19 @@ Maximum registered domains|100
 
 * *Amazon MQ* can send messages as well (to Apache ActiveMQ)
 
-### Limits
+<a name="26_3"></a>
+## [↖](#top)[↑](#26_2)[↓](#27) Limits
 .|.
 -|-
 Subscibers per topic|10 mio
 
 ---
 
-[top](#top)
-## Elastic Transcoder<a name="elt"></a>
+<a name="27"></a>
+# [↖](#top)[↑](#26_3)[↓](#27_1) Elastic Transcoder
 
-### Overview
+<a name="27_1"></a>
+## [↖](#top)[↑](#27)[↓](#28) Overview
 
 *Amazon Elastic Transcoder* is media transcoding in the cloud. It is designed to be a highly scalable,
 easy to use and a cost effective way for developers and businesses to convert (or “transcode”)
@@ -1609,10 +1798,11 @@ tablets and PCs.
 
 ---
 
-[top](#top)
-## API Gateway<a name="apg"></a>
+<a name="28"></a>
+# [↖](#top)[↑](#27_1)[↓](#28_1) API Gateway
 
-### Overview
+<a name="28_1"></a>
+## [↖](#top)[↑](#28)[↓](#29) Overview
 
 *Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish,
 maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console,
@@ -1630,10 +1820,11 @@ communication applications.
 
 ---
 
-[top](#top)
-## Kinesis<a name="kin"></a>
+<a name="29"></a>
+# [↖](#top)[↑](#28_1)[↓](#29_1) Kinesis
 
-### Overview
+<a name="29_1"></a>
+## [↖](#top)[↑](#29)[↓](#30) Overview
 
 *Amazon Kinesis* makes it easy to collect, process, and analyze real-time, streaming data so you can
 get timely insights and react quickly to new information. Amazon Kinesis offers key capabilities
@@ -1662,10 +1853,11 @@ typically send in the data records simulataneously, and in small sizes
 
 ---
 
-[top](#top)
-## Elastic Map Reduce<a name="emr"></a>
+<a name="30"></a>
+# [↖](#top)[↑](#29_1)[↓](#30_1) Elastic Map Reduce
 
-### Overview
+<a name="30_1"></a>
+## [↖](#top)[↑](#30)[↓](#31) Overview
 
 *Amazon EMR* provides a managed Hadoop framework that makes it easy, fast, and cost-effective to
 process vast amounts of data across dynamically scalable Amazon EC2 instances. You can also run
@@ -1680,10 +1872,11 @@ and bioinformatics.
 
 ---
 
-[top](#top)
-## Direct Connect<a name="dic"></a>
+<a name="31"></a>
+# [↖](#top)[↑](#30_1)[↓](#31_1) Direct Connect
 
-### Overview
+<a name="31_1"></a>
+## [↖](#top)[↑](#31)[↓](#32) Overview
 *AWS Direct Connect* is a cloud service solution that makes it easy to establish a *dedicated* network
 connection from your premises to AWS. Using AWS Direct Connect, you can establish private
 connectivity between AWS and your datacenter, office, or colocation environment, which in many
@@ -1698,10 +1891,11 @@ network experience than Internet-based connections.
 
 ---
 
-[top](#top)
-## ECS<a name="ecs"></a>
+<a name="32"></a>
+# [↖](#top)[↑](#31_1)[↓](#32_1) ECS
 
-### Overview
+<a name="32_1"></a>
+## [↖](#top)[↑](#32)[↓](#32_2) Overview
 *Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management
 service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host
 your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your
@@ -1709,7 +1903,8 @@ services or tasks using the Fargate launch type. For more control you can host y
 cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2
 launch type.
 
-### Components
+<a name="32_2"></a>
+## [↖](#top)[↑](#32_1)[↓](#33) Components
 
 * **Task Definition**
   * The task definition is a text file, in JSON format, that describes one or more containers, up
@@ -1730,10 +1925,11 @@ launch type.
 
 ---
 
-[top](#top)
-## Workspaces<a name="wos"></a>
+<a name="33"></a>
+# [↖](#top)[↑](#32_2)[↓](#33_1) Workspaces
 
-### Overview
+<a name="33_1"></a>
+## [↖](#top)[↑](#33)[↓](#34) Overview
 *Amazon WorkSpaces* is a managed, secure cloud desktop service. You can use Amazon WorkSpaces to
 provision either Windows or Linux desktops in just a few minutes and quickly scale to provide
 thousands of desktops to workers across the globe. You can pay either monthly or hourly, just for
@@ -1748,10 +1944,11 @@ of their choice that they can access anywhere, anytime, from any supported devic
 
 ---
 
-[top](#top)
-## OpsWorks<a name="opw"></a>
+<a name="34"></a>
+# [↖](#top)[↑](#33_1)[↓](#34_1) OpsWorks
 
-### Overview
+<a name="34_1"></a>
+## [↖](#top)[↑](#34)[↓](#35) Overview
 * Orchestration services that uses Chef
 * Components
   * *Stack*
@@ -1762,10 +1959,11 @@ of their choice that they can access anywhere, anytime, from any supported devic
 
 ---
 
-[top](#top)
-## AWS Organizations<a name="awo"></a>
+<a name="35"></a>
+# [↖](#top)[↑](#34_1)[↓](#35_1) AWS Organizations
 
-### Overview
+<a name="35_1"></a>
+## [↖](#top)[↑](#35)[↓](#35_2) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
 you can create groups of accounts, automate account creation, apply and manage policies for those
 groups. Organizations enables you to centrally manage policies across multiple accounts, without
@@ -1786,7 +1984,8 @@ no additional charge.
     * One *paying account* linked to many *linked accounts*
     * Pricing benefits (Volumes, Storage, Instances)
 
-### Limits:
+<a name="35_2"></a>
+## [↖](#top)[↑](#35_1)[↓](#36) Limits:
 .|.
 -|-
 Maximum linked accounts|20
@@ -1795,10 +1994,11 @@ TODO: Look at AWS Organization in root account
 
 ---
 
-[top](#top)
-## Resource Groups<a name="reg"></a>
+<a name="36"></a>
+# [↖](#top)[↑](#35_2)[↓](#36_1) Resource Groups
 
-### Overview
+<a name="36_1"></a>
+## [↖](#top)[↑](#36)[↓](#37) Overview
 * **Classic**
   * In AWS, a resource is an entity that you can work with. Examples include an Amazon EC2 instance,
     an AWS CloudFormation stack, and an Amazon S3 bucket. If you work with multiple resources, you
@@ -1818,17 +2018,19 @@ TODO: Look at AWS Organization in root account
 
 ---
 
-[top](#top)
-## The Well Architected Framework<a name="waf"></a>
+<a name="37"></a>
+# [↖](#top)[↑](#36_1)[↓](#37_1) The Well Architected Framework
 
-### Overview
+<a name="37_1"></a>
+## [↖](#top)[↑](#37)[↓](#37_2) Overview
 * Security
 * Reliability
 * Performance Efficiency
 * Cost Optimization
 * Operational Excellence
 
-### Security
+<a name="37_2"></a>
+## [↖](#top)[↑](#37_1)[↓](#37_3) Security
 * Data protection
   * Encrypting and Protecting data at rest
   * Encrypting and Protecting data in transit (SSL)
@@ -1844,7 +2046,8 @@ TODO: Look at AWS Organization in root account
 * Detective Controls
   * How are you capturing and analysing AWS logs?
 
-### Reliability
+<a name="37_3"></a>
+## [↖](#top)[↑](#37_2)[↓](#37_4) Reliability
 * Foundations
   * How do you manage AWS service limits for your account?
   * How are you planning your network topology?
@@ -1858,7 +2061,8 @@ TODO: Look at AWS Organization in root account
   * How does your system withstand component failures?
   * How are you planning for recovery?
 
-### Performance Efficiency
+<a name="37_4"></a>
+## [↖](#top)[↑](#37_3)[↓](#37_5) Performance Efficiency
 * Compute
   * How do you select the appropriate instance type for your system?
   * How do you ensure to continue to use the most appropriate instance type?
@@ -1880,7 +2084,8 @@ TODO: Look at AWS Organization in root account
   * How do you monitor your proximity and caching solution post launch?
   * How do you ensure the quantity of your proximity and caching solution matches demand
 
-### Cost efficiency
+<a name="37_5"></a>
+## [↖](#top)[↑](#37_4)[↓](#37_6) Cost efficiency
 * Matched supply and demand
   * How do you make sure your capacity matches your demand, but does not substantially exceed it?
   * How are you optimizing your usage of AWS services?
@@ -1895,7 +2100,8 @@ TODO: Look at AWS Organization in root account
 * Optimizing over time
   * How do you manage and/or consider the adoption of new services?
 
-### Operational excellence
+<a name="37_6"></a>
+## [↖](#top)[↑](#37_5)[↓](#) Operational excellence
 * Preparation
   * What best practices of cloud oprations are you using
   * How are you doing configuration management for your workload?
