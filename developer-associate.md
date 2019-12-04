@@ -1,37 +1,52 @@
-# AWS-Dev <a name="top"></a>
+[toc_start]::
+<a name="top"></a>
+---
+* [AWS Developer Associate](#1)
+* [AWS Fundamentals](#2)
+  * [Global infrastructure](#2_1)
+  * [Storage overview](#2_2)
+  * [Security Concepts](#2_3)
+* [Services](#3)
+  * [IAM](#3_1)
+  * [Secure Token Service (STS)](#3_2)
+  * [S3](#3_3)
+  * [Dynamo DB](#3_4)
+  * [Elastic Compute Cloud (EC2)](#3_5)
+  * [Elastic Load Balancer (ELB)](#3_6)
+  * [SNS](#3_7)
+  * [SQS](#3_8)
+  * [Cloudformation](#3_9)
+  * [Elastic Beanstalk (EB)](#3_10)
+  * [Simple Workflow Service (SWF)](#3_11)
+  * [Virtual Private Cloud (VPC)](#3_12)
+  * [Relational Database Service (RDS)](#3_13)
+* [Etc](#4)
+---
+[toc_end]::
+<a name="1"></a>
+# [↖](#top)[↑](#)[↓](#2) AWS Developer Associate
 > 6/2017 - 8/2017
-* [AWS Fundamentals](#aws)
-* [Identity and Access Management (IAM)](#iam)
-* [Secure Token Service (STS)](#secure)
-* [Simple Storage Service (S3)](#s3)
-* [DynamoDB](#dynamo)
-* [Elastic Compute Cloud (EC2)](#ec2)
-* [Elastic Load Balancer (ELB)](#elb)
-* [Simple Notification Service (SNS)](#sns)
-* [Simple Queue Service (SQS)](#sqs)
-* [Cloudformation (CFN)](#cloudformation)
-* [Elastic Beanstalk (EB)](#eb)
-* [Simple Workflow Service (SWS)](#sws)
-* [Virtual Private Cloud (VPC)](#vpc)
-* [Relational Database Service (RDS)](#rds)
-* [Etc](#etc)
 
-[top](#top)
-## AWS Fundamentals <a name="aws"></a>
+<a name="2"></a>
+# [↖](#top)[↑](#1)[↓](#2_1) AWS Fundamentals
 
-### Global infrastructure
+<a name="2_1"></a>
+## [↖](#top)[↑](#2)[↓](#2_2) Global infrastructure
 * **Region** - grouping of data centers
 * **AZ** - indidvidual data center in a region. Redundancy throughout AZs in one region
 * **Edge Location** - location to deliver cached data fast -> Use *Cloudfront* CDN to cache data
 close to where it's being used
 
-### Storage overview
-#### Instance store volumes
+<a name="2_2"></a>
+## [↖](#top)[↑](#2_1)[↓](#2_2_1) Storage overview
+<a name="2_2_1"></a>
+### Instance store volumes
 * **Temporary block storage**
 * Physically attached to the host computer of the instance
 * Useful for often-changing data like caches & buffers
 * *Data is lost* when EC2 instance stops or terminates (*ephemeral* data)
-#### Elastic Block Storage (EBS)
+<a name="2_2_2"></a>
+### Elastic Block Storage (EBS)
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
 * Only accessible by a *single instance*
@@ -42,26 +57,32 @@ close to where it's being used
 	* General purpose SSD
 	* Provisioned IOPS
 	* Magnetic volumes
-#### Elastic File System (EFS)
+<a name="2_2_3"></a>
+### Elastic File System (EFS)
 * **Scalable file storage** for use with *Amazon EC2 instances*
 * Elastic storage capacity, growing and shrinking as files are added or removed
 * *Multiple EC2 instances* from *multiple AZs* can access an EFS file system at the same time
 * Stores redundantly in multiple AZs
-#### Amazon Glacier
+<a name="2_2_4"></a>
+### Amazon Glacier
 * Low cost, very slow retrieval
 * Can be intergrated with S3 lifecycle policy
-#### Database Storage
+<a name="2_2_5"></a>
+### Database Storage
 * *DynamoDB*
 * *RDS*
 * DBs on EC2 instances
 * *AWS Redshift* (data warehouse service)
-#### In-memory caching
+<a name="2_2_6"></a>
+### In-memory caching
 * *ElastiCache* (Memcached and Redis)
 * Software on EC2 instances
-#### Storage gateway
+<a name="2_2_7"></a>
+### Storage gateway
 * Integrate existing *on-premises storage* infrastructure and data with the AWS Cloud
 
-### Security Concepts
+<a name="2_3"></a>
+## [↖](#top)[↑](#2_2_7)[↓](#3) Security Concepts
 * **Shared responsibility** environment
 * AWS is responsible for:
 	* Server / Host level and below
@@ -79,8 +100,10 @@ close to where it's being used
 	* ACL (resource based policy)
 	* VPC
 
-[top](#top)
-## IAM <a name="iam"></a>
+<a name="3"></a>
+# [↖](#top)[↑](#2_3)[↓](#3_1) Services
+<a name="3_1"></a>
+## [↖](#top)[↑](#3)[↓](#3_1_1) IAM
 IAM is a global service that helps to securely control access to AWS resources.
 
 * **Users** hold credentials
@@ -88,10 +111,11 @@ IAM is a global service that helps to securely control access to AWS resources.
 * **Roles** hold policies.
 	* Can have **trust relationships** with trusted entities that can *assume* this role
 * **Policies** can be attached to users, groups or roles (preferred)
-* An **instance profile** is a container for an IAM role that you can use to pass role information to an 
-	EC2 instance when the instance starts. 
+* An **instance profile** is a container for an IAM role that you can use to pass role information to an
+	EC2 instance when the instance starts.
 * Users and / or services assume roles
 
+<a name="3_1_1"></a>
 ### Policies
 * Any actions on resources that are not explicitly allowed are **denied by default**
 * Structure
@@ -138,6 +162,7 @@ IAM is a global service that helps to securely control access to AWS resources.
 		]
 	}
 ```
+<a name="3_1_1_1"></a>
 #### IAM Policies
 * Managed policies (the new way)
 	* Can be attached to multiple users, groups and roles
@@ -145,6 +170,7 @@ IAM is a global service that helps to securely control access to AWS resources.
 		* Updated by AWS if new API come out
 * Inline policies (the old way)
 
+<a name="3_1_2"></a>
 ### Limits
 .|.
 -|-
@@ -154,8 +180,8 @@ Roles|500
 Server certificates|20
 Users|5000
 
-[top](#top)
-## Secure Token Service (STS) <a name="secure"></a>
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1_2)[↓](#3_2_1) Secure Token Service (STS)
 * Allows to grant **temporary access** to authenticated users
 	* IAM users
 	* Web-based identity providers (google, facebook, ...)
@@ -164,6 +190,7 @@ Users|5000
 	* Access key
 	* Session token
 
+<a name="3_2_1"></a>
 ### Terms
 * **Federation**
 	* Trust relationship between identity provider and AWS
@@ -174,6 +201,7 @@ Users|5000
 * **Identities**
 	* Users
 
+<a name="3_2_2"></a>
 ### Scenarios
 * Temporary credentials with EC2
 	* Assign IAM role to instance
@@ -184,8 +212,8 @@ Users|5000
 	* *Sign request* with temp credentials
 	* Add AC / SK to request (*header* or *query string*)
 
-[top](#top)
-## S3 <a name="s3"></a>
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2_2)[↓](#3_3_1) S3
 
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 durability and
@@ -204,6 +232,7 @@ scale past trillions of objects worldwide.
 	* `http://s3.amazonaws.com/bucket`
 	* `http://s3-aws-region.amazonaws.com/bucket`
 
+<a name="3_3_1"></a>
 ### Perfomance & Consistency
 * Bucket operations **get** - **list** - **put** - **delete** - **head**
 	* Implemented through *http* operations: `GET` - `PUT` - `DELETE` - `HEAD`
@@ -239,6 +268,7 @@ scale past trillions of objects worldwide.
 				<CompleteMultipartUpload>...
 				```
 
+<a name="3_3_2"></a>
 ### Hosting Static Websites
 `<bucket-name>.s3-website-<AWS-Region>.amazonaws.com`
 * Bucket name *must* match domain name. Every hosted bucket recieves its own URL
@@ -247,23 +277,27 @@ scale past trillions of objects worldwide.
 * In *AWS Route 53*: create hosted zone & record set
 * Might need to add CORS configuration to bucket (cross origin resource sharing)
 
+<a name="3_3_3"></a>
 ### Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
+<a name="3_3_3_1"></a>
 #### Defaults
 * Bucket is *owned* by the AWS account that created it
 	* Bucket ownership is not transferable
 * Bucket owner gets full permission (ACL)
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
+<a name="3_3_3_2"></a>
 #### IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
+<a name="3_3_3_3"></a>
 #### Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
@@ -272,6 +306,7 @@ attached to
 * Contain *principal* element (unnecessary for IAM)
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
+<a name="3_3_3_4"></a>
 #### ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
@@ -283,6 +318,7 @@ attached to
 	* grant permission to bucket sub-resources (eg. lifecycle or static website configurations)
 * Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a
 bucket.
+<a name="3_3_3_5"></a>
 #### How to specify resources in a policy:
 .|.
 -|-
@@ -292,17 +328,20 @@ bucket.
 `arn:aws:s3:::mybucket/*`|All objects in `mybucket`
 `arn:aws:s3:::mybucket/mykey`|`mykey` in `mybucket`
 `arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
+<a name="3_3_3_6"></a>
 #### Pre-signed URLs
 All objects are private by default. Only the object owner has permission to access these objects.
 However, the object owner can optionally share objects with others by creating a **pre-signed URL**,
 using their own security credentials, to grant time-limited permission to download the objects.
 
+<a name="3_3_4"></a>
 ### Logging
 * *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
 stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
 specific events.
 * *S3 Server Access Logs* log on object level.
 
+<a name="3_3_5"></a>
 ### Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
@@ -321,7 +360,9 @@ object stored thereafter
 move to *AWS Glacier*.
 * Different versions of the same object can have different permissions.
 
+<a name="3_3_6"></a>
 ### Encryption
+<a name="3_3_6_1"></a>
 #### Protecting data in transit
 * Using an AWS KMS–Managed Customer Master Key (CMK)
 	* Before *uploading* to S3, Client makes request to KMS, receives plain text encryption key and
@@ -337,6 +378,7 @@ move to *AWS Glacier*.
 	* *Uploads* material description as part of the object metadata.
 	* On *download* S3 client uses metadata to determine the right master key to use for decryption.
 * Use *SSL encryption*
+<a name="3_3_6_2"></a>
 #### Protecting data at rest
 * Uses *AES-256* (or others)
 * Encryption can be enforced via bucket policy.
@@ -351,6 +393,7 @@ move to *AWS Glacier*.
 * Server-Side Encryption with *Customer-Provided Keys* (SSE-C)
 	* Key is not stored with AWS (stores salted HMAC valued instead)
 
+<a name="3_3_7"></a>
 ### Storage classes
 .|.
 -|-
@@ -361,6 +404,7 @@ S3 IA (infrequent access)|Durability 11x9
 S3 RRS (reduced redundancy storage)|Durability 4x9
  |Availability 4x9
 
+<a name="3_3_8"></a>
 ### Request/response headers
 Request|Response
 -|-
@@ -369,6 +413,7 @@ Request|Response
 `x-amz-security-token`|`x-amz-request-id`
  |`x-amz-version-id `
 
+<a name="3_3_9"></a>
 ### Error codes
 .|.
 -|-
@@ -386,6 +431,7 @@ Request|Response
 409 Conflict|`BucketAlreadyExists`
 409 Conflict|`BucketNotEmpty`
 
+<a name="3_3_10"></a>
 ### Limits
 .|.
 -|-
@@ -394,9 +440,10 @@ Bucket policy max size|20KB
 Object size|0B to 5TB
 Object size in a single `PUT`|5GB
 
-[top](#top)
-## Dynamo DB <a name="dynamo"></a>
+<a name="3_4"></a>
+## [↖](#top)[↑](#3_3_10)[↓](#3_4_1) Dynamo DB
 
+<a name="3_4_1"></a>
 ### Overview
 * Fully managed **NoSQL** database
 * *HA* through different AZs, automatically spreads data and traffic accross servers
@@ -409,6 +456,7 @@ Object size in a single `PUT`|5GB
 * Option between **eventual consistency** or **strongly consistency**
 * Conditional updates and concurrency control (**atomic counters**)
 
+<a name="3_4_2"></a>
 ### Core components
 * A **table** is a collection of items.
 	* Can be updated through a single `UpdateTable` command at a time (`ACTIVE` -> `UPDATING`)
@@ -424,24 +472,29 @@ beforehand
 * **Data plane** operations perform CRUD actions on data in a table
 * **DynamoDB streams** operations capture data modification events in DynamoDB tables
 
+<a name="3_4_3"></a>
 ### Keys and indexes
+<a name="3_4_3_1"></a>
 #### Partion key (PK)
 * **Partition key** is also called **hash attribute** or **primary key**
 * Must be unique, used for internal hash function (*unordered*)
 * Used to retrieve data
+<a name="3_4_3_2"></a>
 #### PK & Sort key
 * **Composite PK**: *index* composed of hashed PK (*unordered*) and SK (*ordered*)
 * **Sort key** is also called **range attribute** or **range key**
 * Different items can have the same *PK*, must have different *SK*
 
+<a name="3_4_4"></a>
 ### Secondary indexes
 * Associated with exactly one table, from which it obtains its data
 * Allows to query or scan data by an *alternate key* (other than PK/SK)
 * All secondary indexes are automatically maintained by DynamoDB as sparse objects
 	* Items will only appear in an index if they exist in the base table
-	* Makes querying very efficient 
+	* Makes querying very efficient
 * Only for `read` operations, `write` is not supported.
 * Tables with secondary indexes need to be created sequentially (`LimitExceededException`)
+<a name="3_4_4_1"></a>
 #### Projected attributes
 * Attributes copied from the base table into an *index*
 * Makes them queryable
@@ -449,6 +502,7 @@ beforehand
 	* *KEYS_ONLY* - Only the index and primary keys are projected into the index
 	* *INCLUDE* - Only the specified table attributes are projected into the index
 	* *ALL* - All of the table attributes are projected into the index
+<a name="3_4_4_2"></a>
 #### Local secondary index
 * Uses the *same PK*, but offers different *SK*
 * Every partition of a local secondary index is scoped to a base table partition that has the same
@@ -459,6 +513,7 @@ partition key value
 * *Local* as in "co-located on the same partition"
 * Can request *not-projected* attributes for query or scan operation
 * Consumes read/write throughput from the original table.
+<a name="3_4_4_3"></a>
 #### Global secondary index
 * Uses *different PK* and offers additional *SK* (or none).
 * *PK* does not have to be unique (unlike base table)
@@ -470,6 +525,7 @@ partition key value
 * Global as in "over many partitions"
 * Cannot request not-projected attributes for query or scan operation
 
+<a name="3_4_5"></a>
 ### Capacity provisioning
 * Unit for operations:
 	* 1 *strongly consistent* `read` per second (up to 4KB/s)
@@ -504,7 +560,9 @@ If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 	* Write (to items in the base table that are indexed)
 		* Putting, Updating, or Deleting items in a table consumes the index' write capacity units
 
+<a name="3_4_6"></a>
 ### Query and scan operation
+<a name="3_4_6_1"></a>
 #### Query
 * Finds items based on PK values
 * Can *only* query any table or secondary index that have a composite primary key
@@ -515,6 +573,7 @@ If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 * Eventually consistent per default, can request consistent read
 * Can use *conditional attributes*
 
+<a name="3_4_7"></a>
 ### Scan
 * Reads every item in table (much worse performance than queries)
 * Can *filter* result (slows down performance)
@@ -523,20 +582,25 @@ If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 * Try to avoid scans
 * Use *Page Size* to limit how much data is retrieved at the same time
 
+<a name="3_4_8"></a>
 ### Atomic and conditional updates
+<a name="3_4_8_1"></a>
 #### Atomic Counters
 * Increment or decrement the value of an existing attribute without interfering with other writes
 * Request are applied in the order they are received
 * *Not idempotent*
+<a name="3_4_8_2"></a>
 #### Conditional updates
 * Only proceed if condition is met
 * *Idempotent*
 
+<a name="3_4_9"></a>
 ### How to grant temporary access
 * *Web Identity Federation* - use existing OpenId provider, eg. Amazon, Google, Facebook
 * *Amazon Cognito* does Web Identity Federation, also synchronizes app data
 * *IAM* - contains role for users to assume
 
+<a name="3_4_10"></a>
 ### API
 * Control Plane
 
@@ -573,6 +637,7 @@ Deleting data|.|conditional?
 `BatchWriteItem`|Puts or deletes multiple items in one or more tables|no
  |Called in a loop it typically checks for unprocesses items and submits a new `BWI` request for those
 
+<a name="3_4_11"></a>
 ### Limits
 .|.
 -|-
@@ -588,14 +653,15 @@ Single `BatchGetItem`|Max 100 items, must be <16MB
 Single `BatchWriteItem`|Up to 25 *PutItem* or *DeleteItem*, must be <16MB
 *Query* and *Scan* result set limit|1MB data per call
 
-[top](#top)
-## Elastic Compute Cloud (EC2) <a name="ec2"></a>
+<a name="3_5"></a>
+## [↖](#top)[↑](#3_4_11)[↓](#3_5_1) Elastic Compute Cloud (EC2)
 * Resizable **compute capacity** in the cloud
 * Amazon Machine Image (AMI)
 	* Unit of deployment
 	* Packaged-up environment that includes all the necessary bits to set up and boot an instance
 	* Can create AMI from configured *EC2* instance
 
+<a name="3_5_1"></a>
 ### Different options
 * Payment models
 	* **On-demand instances**
@@ -619,6 +685,7 @@ Single `BatchWriteItem`|Up to 25 *PutItem* or *DeleteItem*, must be <16MB
 	* Monitoring
 	* Elastic load balancer
 
+<a name="3_5_2"></a>
 ### Instance metadata & userdata
 * Data about an instance that can be used to configure or manage the running instance
 * Available from *running instance* under `http://169.254.169.254/latest/meta-data/`
@@ -626,41 +693,44 @@ Single `BatchWriteItem`|Up to 25 *PutItem* or *DeleteItem*, must be <16MB
 * Can specify user-data
 	* Allows to launch individual instances from same AMI
 
+<a name="3_5_3"></a>
 ### API
 .|.
 -|-
 `DescribeImages`|Describe an Amazon Machine Image
 `RegisterImage`|Final process of creating an AMI
 
+<a name="3_5_4"></a>
 ### Limits:
 .|.
 -|-
 Elastic IP addresses for EC2-Classic|5
 
-[top](#top)
-## Elastic Load Balancer (ELB) <a name="elb"></a>
+<a name="3_6"></a>
+## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) Elastic Load Balancer (ELB)
 * **Distributes traffic** between instances that belong to the ELB group
 * Stops sending requests to unhealthy instances
 * Can store SSL certificates (offloads encryption to load balancer level)
 * Can configure session stickyness:
-	* *LB issued cookie* 
+	* *LB issued cookie*
 		* Easy to implement, not best balancing
-	* *Application issued cookie* 
+	* *Application issued cookie*
 		* Cookies based on application session, marginally better
 	* *ElastiCache*
-		* Better distribution, requires state to be stored in *DB* or in *EC* memory. 
+		* Better distribution, requires state to be stored in *DB* or in *EC* memory.
 		* EC memory is the much better option
 * Relies on DNS / *Route53*
 * Can route traffic into instances running in private subnets
 	* Needs to be configured with (empty) public subnets though.
 
+<a name="3_6_1"></a>
 ### Limits:
 .|.
 -|-
 Total load balancers per region (ALB & ELB)|20
 
-[top](#top)
-## SNS <a name="sns"></a>
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_1)[↓](#3_7_1) SNS
 * **Publishes** messages to **subscribers** via topic
 * **Pub-Sub-Service** for messaging
 	* Scenarios:
@@ -670,6 +740,7 @@ Total load balancers per region (ALB & ELB)|20
 * **Mobile Notifications** to mobile devices
 	* Sends *push notifications* to iOS, Android, Fire OS, Windows and Baidu-based devices
 
+<a name="3_7_1"></a>
 ### Components
 * **Publisher** (producer)
 	* Communicates asynchronously with subscribers
@@ -694,6 +765,7 @@ Total load balancers per region (ALB & ELB)|20
 		* `Message`, `MessageId`, `Signature`, `SignatureVersion`, `SigningCertURL`, `Subject`,
 		`Timestamp`, `TopicArn`, `Type`, `UnsubscribeURL`
 
+<a name="3_7_2"></a>
 ### Managing access
 * Owner creates topic and controls access to it
 * Can use own API (Access Control) and / or *IAM*, similar to *S3*
@@ -704,6 +776,7 @@ Total load balancers per region (ALB & ELB)|20
 		* More fine grained or very coarse, can include conditions
 		* Can grant temporary security credentials
 
+<a name="3_7_3"></a>
 ### Mobile push notifications
 * Does not push to endpoint, but to PN-service (platform/provider specific)
 	1. Request *credentials* from mobile platforms (ADM, APNS, etc...)
@@ -713,6 +786,7 @@ Total load balancers per region (ALB & ELB)|20
 	5. Publish a *message* to the mobile endpoint
 * A single message can contain different data for different platforms
 
+<a name="3_7_4"></a>
 ### API
 .|.
 -|-
@@ -726,13 +800,14 @@ Total load balancers per region (ALB & ELB)|20
 `ConfirmSubscription`|Respond to a confirmation message, confirming to receive notifications from the topic
 `UnSubscribe`|Cancel a previously registered subscription
 
+<a name="3_7_5"></a>
 ### Limits:
 .|.
 -|-
 Topics per account|100,000
 
-[top](#top)
-## SQS <a name="sqs"></a>
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_5)[↓](#3_8_1) SQS
 * Scalable **message queue** service
 * Allows *loose coupling* and *asynchronous processing*
 * **Pull** from *SQS* (*Push* to *SNS*)
@@ -740,6 +815,7 @@ Topics per account|100,000
 * Allows for asynchronous processing
 * Protection against data loss on application failure
 
+<a name="3_8_1"></a>
 ### Core features
 * Redundant infrastructure
 * Multiple readers / writers at the same time
@@ -773,11 +849,12 @@ Topics per account|100,000
 	* Value >0 enables *long polling*
 	* Between 0s and 20s, default 0s (*short polling*)
 
+<a name="3_8_2"></a>
 ### Message lifecycle
 * Component 1 sends message A to queue
 	* `SendMessage`/`SendMessageBatch`
-* Component 2 retrieves A from queue. 
-	* A remains in queue while it's being processed, but is not returned to any other components 
+* Component 2 retrieves A from queue.
+	* A remains in queue while it's being processed, but is not returned to any other components
 	* Message is now considered to be *in flight*.
 	* `ReceiveMessage`
 * Component 2 deletes A from queue during visibility timeout
@@ -785,11 +862,13 @@ Topics per account|100,000
 	* SQS will never delete messages
 	* `DeleteMessage`/`DeleteMessageBatch`
 
+<a name="3_8_3"></a>
 ### Long polling vs short polling
 * **Short polling** returns immediately, could be *false empty* (e.g. message not fully propagated yet)
 * **Long polling** won't return unless there's a message in the queue or receive message wait time is
 exceeded. Also checks *every server* to avoid false empty responses
 
+<a name="3_8_4"></a>
 ### API
 .|.
 -|-
@@ -803,24 +882,26 @@ exceeded. Also checks *every server* to avoid false empty responses
 `DeleteQueue`|
 `ListQueues`|
 
+<a name="3_8_5"></a>
 ### Limits:
 .|.
 -|-
 Max message size|256KB
 Max inflight messages|120,000
 
-[top](#top)
-## Cloudformation <a name="cloudformation"></a>
+<a name="3_9"></a>
+## [↖](#top)[↑](#3_8_5)[↓](#3_9_1) Cloudformation
 * Allows to create and provision **resources** in a reusable **template** fashion
 	* A *CloudFormation* template is a `JSON` or `YAML` formatted text file
 * Related resources are managed in a single unit called a **stack**
 	* All the resources in a stack are defined by the stack's *CloudFormation* template
 * Two ways to update a stack
-	* *Direct update* 
+	* *Direct update*
 	* Create **change set**
 		* Summary of proposed changes
 * Will **rollback** stack if it fails to create (can be disabled via API / console)
 
+<a name="3_9_1"></a>
 ### Anatomy of template
 * *AWSTemplateFormatVersion*
 * *Description*
@@ -836,9 +917,10 @@ Max inflight messages|120,000
 * *Resources*
 	* Creates resources
 * *Outputs*
-	* Values to be exposed from the console or from API calls. 
+	* Values to be exposed from the console or from API calls.
 	* Can be used in a different stack (*cross stack references*)
 
+<a name="3_9_2"></a>
 ### Intrinsic Functions
 * Used to pass in values that are not available until runtime
 * Usable in *resource* properties, *metadata* attributes, and *update policy* attributes (auto-scaling)
@@ -855,13 +937,14 @@ Max inflight messages|120,000
 * `Fn::ImportValue`
 	* Returns the value of an *Output* exported by another stack
 * `Fn::Split`
-	* Split a string into a list of string values so that you can select an element from the resulting 
+	* Split a string into a list of string values so that you can select an element from the resulting
 string list
 * `Fn::Sub`
 	* Substitutes variables in an input string with values that you specify
 * `Ref`
 	* Returns the value of the specified parameter or resource
 
+<a name="3_9_3"></a>
 ### Limits:
 .|.
 -|-
@@ -872,14 +955,15 @@ Mappings|100
 Resources|200
 Outputs|60
 
-[top](#top)
-## Elastic Beanstalk (EB) <a name="eb"></a>
+<a name="3_10"></a>
+## [↖](#top)[↑](#3_9_3)[↓](#3_10_1) Elastic Beanstalk (EB)
 * **Full stack** that provisions *capacity*, sets up *load balancing* and *auto-scaling* and configures
 *monitoring*
 * No need to create / manage infrastructure
 * Not good if full control of resource configuration is needed
 * Not everything fits into the EB model
 
+<a name="3_10_1"></a>
 ### AWS-Stack
 * *EC2* instance
 * Instance *Security Group*
@@ -895,6 +979,7 @@ Outputs|60
 * *Domain name*
 	* `subdomain.region.elasticbeanstalk.com`
 
+<a name="3_10_2"></a>
 ### Supports
 * Platform-specific application *source bundle* (e.g. Java `war` for Tomcat)
 	* Go
@@ -912,13 +997,14 @@ Outputs|60
 	* Preconfigured Docker (Python 3.x)
 	* Preconfigured Docker (Go)
 
+<a name="3_10_3"></a>
 ### Core components
 * **Application**
-	* Logical collection of *Elastic Beanstalk* components, including *environments*, *versions*, and 
-	*environment configurations*. In Elastic Beanstalk an application is conceptually similar to a 
+	* Logical collection of *Elastic Beanstalk* components, including *environments*, *versions*, and
+	*environment configurations*. In Elastic Beanstalk an application is conceptually similar to a
 	folder.
 * **Application version**
-	* An *application version* refers to a specific, labeled iteration of deployable code for a web 
+	* An *application version* refers to a specific, labeled iteration of deployable code for a web
 	application
 * **Environment**
 	* An environment is a version that is deployed onto AWS resources
@@ -930,6 +1016,7 @@ Outputs|60
 * **Configuration template**
 	* Starting point for creating unique environment configurations
 
+<a name="3_10_4"></a>
 ### Limits:
 .|.
 -|-
@@ -937,8 +1024,8 @@ Applications|75
 Application Versions|1000
 Environments|200
 
-[top](#top)
-## Simple Workflow Service (SWF) <a name="sws"></a>
+<a name="3_11"></a>
+## [↖](#top)[↑](#3_10_4)[↓](#3_11_1) Simple Workflow Service (SWF)
 * **Task coordination** and **state management** service
 * Distributed, scales up and down depending on task
 * Works with *on-premise* and *cloud* apps
@@ -947,9 +1034,10 @@ Environments|200
 * Guaranteed order of execution
 * Tasks can live up to one year (`31,536,000 seconds`)
 
+<a name="3_11_1"></a>
 ### Core components
 * **Workflow**
-	* A workflow is a set of *activities* that carry out some objective, together with logic that 
+	* A workflow is a set of *activities* that carry out some objective, together with logic that
 	coordinates the activities.
 * **Domain**
 	* Scope of a *workflow*
@@ -957,30 +1045,31 @@ Environments|200
 	* *Workflows* in different *domains* cannot interact
 * **Workflow Starter**
 	* Any application that can initiate workflow executions
-* **Activity** 
+* **Activity**
 	* Things carried out by a *workflow*
-* **Activity Task** 
+* **Activity Task**
 	* Represents one invocation of an *activity*
 	* Can run synchronously or asynchronously
 	* Gets assigned to worker
 	* *Decision task* tells decider that state of workflow has changed
-* **Activity Worker** 
+* **Activity Worker**
 	* Is a program that receives *activity tasks*, performs them, and provides results back
 	* Might be used by a person
 	* Can live on *EC2* or on-premise
 * **Decider**
 	* Coordination logic in a *workflow*
-	* Schedules *activity tasks*, provides input data to the *activity workers*, processes events that 
-		arrive while the *workflow* is in progress, and ultimately ends (or closes) the *workflow* when the 
+	* Schedules *activity tasks*, provides input data to the *activity workers*, processes events that
+		arrive while the *workflow* is in progress, and ultimately ends (or closes) the *workflow* when the
 		objective has been completed.
 
+<a name="3_11_2"></a>
 ### Limits:
 .|.
 -|-
-Maximum registered domains|100 
+Maximum registered domains|100
 
-[top](#top)
-## Virtual Private Cloud (VPC) <a name="vpc"></a>
+<a name="3_12"></a>
+## [↖](#top)[↑](#3_11_2)[↓](#3_12_1) Virtual Private Cloud (VPC)
 * Provisions a logically isolated section of the AWS cloud
 * Spans over all AZs in a region
 * Allows to create layered architecture
@@ -988,25 +1077,31 @@ Maximum registered domains|100
 * *Security groups* and subnet *network ACLs*
 * Ability to extend on-premise network to cloud
 
+<a name="3_12_1"></a>
 ### Overview
+<a name="3_12_1_1"></a>
 #### Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
 * Has different subnets in different AZs and an internet gateway per AZ
 * Each instance launched automatically receives a *public IP* (very different to non-default VPC)
 * Cannot be restored if deleted
+<a name="3_12_1_2"></a>
 #### Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
+<a name="3_12_1_3"></a>
 #### VPC Peering
 * Connect VPCs through direct network routing
 * Can occur between different accounts and VPCs, but must be  in the same region
 * Allows instances to communicate with each other as if they were in the same network
+<a name="3_12_1_4"></a>
 #### VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
 * VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
+<a name="3_12_2"></a>
 ### Components
 * **Subnet**
 	* In exactly one AZ
@@ -1048,6 +1143,7 @@ Maximum registered domains|100
 		* Manually configured instance from an NAT AMI
 	* *NAT Gateway*
 		* AWS-mananged service
+<a name="3_12_2_1"></a>
 #### Structure & package flow
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
@@ -1057,12 +1153,15 @@ Maximum registered domains|100
 	* Security Group (on VPC level)
 	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
 
+<a name="3_12_3"></a>
 ### Security
+<a name="3_12_3_1"></a>
 #### Network ACL
 * Subnet level, acting as firewall
 * Rules for inbound and outbound traffic
 * Rules have numbers and are evaluated from low to high
 * *Stateless*
+<a name="3_12_3_2"></a>
 #### Security Groups
 * Acts as a virtual firewall to control inbound and outbound traffic to instances
 * Acts on instance level, not subnet level
@@ -1070,6 +1169,7 @@ Maximum registered domains|100
 * *Stateful* - will always allow response to (allowed) outbound traffic
 * Can refer to other security group, e.g. allow traffic from there
 
+<a name="3_12_4"></a>
 ### Limits:
 .|.
 -|-
@@ -1082,10 +1182,10 @@ VPN connections per region|50
 Route tables per region|200
 Security groups per region|500
 
-[top](#top)
-## Relational Database Service (RDS)<a name="rds"></a>
+<a name="3_13"></a>
+## [↖](#top)[↑](#3_12_4)[↓](#4) Relational Database Service (RDS)
 * Set up, operate, and scale a **relational database** in the cloud
-* Supports 
+* Supports
 	* Amazon Aurora
 	* MySQL
 	* MariaDB
@@ -1103,17 +1203,17 @@ Security groups per region|500
 * **DB instance**
 	* Database environment in the cloud with specified *compute* and *storage* resources
 * **Multi-AZ deployments**
-	* Provide enhanced availability and durability for DB Instances, making them a natural fit for 
+	* Provide enhanced availability and durability for DB Instances, making them a natural fit for
 	production database workloads
 * **DB subnet group**
 	* Collection of subnets that you are designated for the RDS DB Instances in a VPC
 * **Maintenance window**
 	* Needs to be specified (or defaults to weekly) for maintenance events like scaling and patching
 * **DB Parameter group**
-	* Acts as a “container” for engine configuration values that can be applied to one or more DB 
+	* Acts as a “container” for engine configuration values that can be applied to one or more DB
 	Instances
 
-[top](#top)
-## Etc <a name="etc"></a>
+<a name="4"></a>
+# [↖](#top)[↑](#3_13)[↓](#) Etc
 * *us-east-1* is the default region for all SDKs
 * *Penetration tests* need to be anounced
