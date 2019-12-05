@@ -834,7 +834,8 @@ TODO: Compare chapter against LinuxAcademy
 
 <a name="4_3_1"></a>
 ### Overview
-Amazon CloudWatch is a monitoring and management service built for developers, system operators,
+
+*Amazon CloudWatch* is a monitoring and management service built for developers, system operators,
 site reliability engineers (SRE), and IT managers. CloudWatch provides you with data and
 actionable insights to monitor your applications, understand and respond to system-wide
 performance changes, optimize resource utilization, and get a unified view of operational health.
@@ -844,8 +845,6 @@ on-premises servers. You can use CloudWatch to set high resolution alarms, visua
 metrics side by side, take automated actions, troubleshoot issues, and discover insights to
 optimize your applications, and ensure they are running smoothly.
 
-<a name="4_3_1_1"></a>
-#### Benefits
 * Access all your data from a single platform
 * Easiest way to collect custom and granular metrics for AWS resources
 * Visibility across your applications, infrastructure, and services
@@ -853,45 +852,78 @@ optimize your applications, and ensure they are running smoothly.
 * Optimize applications and operational resources
 * Derive actionable insights from logs
 
-* **Metrics**
-  * Based on currently used service
-  * Not everything is available out of the box, e.g. no data on memory usage of EC2 instances
-	* *High resolution metrics* down to 1 second
-	* Data is kept for 3h to 3m, depending on the metric resolution
-		* Higher resolution data automatically aggregates into lower resolution data
-* **Alarms**
-  * Based on thresholds defined on metrics
-  * Can be added to dashboard
-  * Invoke *Lambda*, *SNS*, email, ...
-  * Takes place once, at a specific point in time
-    * Disable with `mon-disable-alarm-actions` via CLI
-	* *High resolution alarms* down to 10 seconds
-* **Logs**
-  * Log into *log groups*
-TODO: Look into insights
-* **Events**
-  * Define actions on things that happened
-  * Define `cron`-based events
-  * Events are recorded constantly over time
-		* *Targets* process events (Lambda, SNS, SQS, ...)
-		* *Rules* match incoming events and route them to targets
-		* E.g. CodeCommit automatically triggers CodePipeline on new commits
+<a name="4_3_1_1"></a>
+### Concepts
 
-<a name="4_3_2"></a>
-### Setup
+**Namespaces**
+* Container for CloudWatch metrics
+* Metrics in different namespaces are isolated from each other
+* The AWS namespaces typically use the following naming convention: `AWS/service`
 
-* Install CloudWatch agent on instance
-* Adjust config files on instance
+**Metrics**
+* Metrics are the fundamental concept in CloudWatch. 
+* A metric represents a time-ordered set of *data points* that are published to CloudWatch.
+* *High resolution metrics* down to 1 second
+* Data is kept for 3h to 15m, depending on the metric resolution
+  * Higher resolution data automatically aggregates into lower resolution data
+* Available metrics are based on currently used service
+* Not everything is available out of the box, e.g. no data on memory usage of EC2 instances
+* Can also create *Custom Metrics*
+  * Publish individual *data points* via AWS CLI or API
+  * Exist only in the region where they were created
+  * Expire after 15 months if no data is published
+  * `aws cloudwatch put-metric-data --metric-name PageViewCount --namespace MyService --value 2 --timestamp 2016-10-20T12:00:00.000Z`
+
+**Time Stamps**
+* Each metric data point must be associated with a time stamp.
+* Can be up to two weeks in the past and up to two hours into the future.
+
+**Dimension**
+* A dimension is a name/value pair that is part of the identity of a metric.
+* You can assign up to 10 dimensions to a metric. 
+* Every metric has specific characteristics that describe it, and you can think of dimensions as categories for those characteristics.
+* For example 'ec2 instance id'
+
+**Statistics**
+* Statistics are metric data aggregations over specified periods of time
+* Average, Sum, Minimum, Maximum, Sample Count, pNN.NN (value of specified percentile)
+* Can be computed for any time periods between 60-seconds and 1-day
+
+**Period**
+* The length of time associated with a specific Amazon CloudWatch statistic
+
+**Aggregation**
+* CloudWatch aggregates statistics according to the period length that you specify when retrieving statistics
+
+**Alarms**
+* Based on thresholds defined on metrics
+* Can trigger *Lambda*, *SNS*, email, ...
+* Can be added to dashboard
+* *High resolution alarms* down to 10 seconds
+* Takes place once, at a specific point in time
+  * Disable with `mon-disable-alarm-actions` via CLI
+
+**Logs**
+* *Log events* are the activies being reported
+* *Log streams* are sequences of log events from the same source
+* *Log groups* are groupings of log events that the same properties
+* *Metric filters* allow to which metrics to extract and to publish to CW
+* Can export to S3 for durable storage
+
+**Events**
+* Define actions on things that happened
+* Define `cron`-based events
+* Events are recorded constantly over time
+  * *Targets* process events (Lambda, SNS, SQS, ...)
+  * *Rules* match incoming events and route them to targets
+  * E.g. CodeCommit automatically triggers CodePipeline on new commits
 
 <a name="4_3_3"></a>
 ### Key metrics for EC2
+
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
-* Can install Cloudwatch agent (new)
-  * Provides access to more metrics
-* Can use Cloudwatch monitoring scripts (old) to provide more metrics
-  * Perl-scripts provided by AWS, need to manually install on instance
-  * Use `cron` to automate sending data to CloudWatch
+* Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
 Metric|Effect
 -|-
@@ -902,7 +934,10 @@ Metric|Effect
 `NetworkPacketsIn`,`NetworkPacketsOut`|The number of packets received (sent) on all network interfaces by the instance
 `StatusCheckFailed`,`StatusCheckFailed_Instance`,`StatusCheckFailed_System`|Reports whether the instance has passed both/instance/system status check in the last minute.
 
-* Can **not** monitor **memory usage**, **available disk space**, **swap usage**
+**Setup**
+* Install CloudWatch agent on EC2 instance
+  * Old way: Cloudwatch monitoring scripts (perl-based)
+* Adjust config files on instance
 
 ---
 
