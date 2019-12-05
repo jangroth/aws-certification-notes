@@ -420,6 +420,11 @@ Options:
   * Specify time and date
 * Dynamic based on demand
   * Create Scaling Policies
+    * With *simple* and *step* scaling policies, you choose scaling metrics and threshold values for the CloudWatch alarms that trigger the scaling process.
+    * We recommend that you use step scaling policies instead of simple scaling policies, even if you have a single scaling adjustment
+    * After a scaling activity is started, the policy continues to respond to additional alarms, even while a scaling activity or health check replacement is in progress.
+    * Therefore, all alarms that are breached are evaluated by Amazon EC2 Auto Scaling as it receives the alarm messages.
+    * However, scaling actions from previous alarms are taken into account (thereby not changing the absolute outcome of the scaling action)
   * Trigger via Cloudwatch Alarms
 * Predictive scaling
   * AWS using data collection from actual EC2 usage
@@ -872,7 +877,7 @@ optimize your applications, and ensure they are running smoothly.
 * The AWS namespaces typically use the following naming convention: `AWS/service`
 
 **Metrics**
-* Metrics are the fundamental concept in CloudWatch. 
+* Metrics are the fundamental concept in CloudWatch.
 * A metric represents a time-ordered set of *data points* that are published to CloudWatch.
 * *High resolution metrics* down to 1 second
 * Data is kept for 3h to 15m, depending on the metric resolution
@@ -891,7 +896,7 @@ optimize your applications, and ensure they are running smoothly.
 
 **Dimension**
 * A dimension is a name/value pair that is part of the identity of a metric.
-* You can assign up to 10 dimensions to a metric. 
+* You can assign up to 10 dimensions to a metric.
 * Every metric has specific characteristics that describe it, and you can think of dimensions as categories for those characteristics.
 * For example 'ec2 instance id'
 
@@ -927,7 +932,6 @@ optimize your applications, and ensure they are running smoothly.
 
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
-* Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
 Metric|Effect
 -|-
@@ -938,10 +942,25 @@ Metric|Effect
 `NetworkPacketsIn`,<br/>`NetworkPacketsOut`|The number of packets received (sent) on all network interfaces by the instance
 `StatusCheckFailed`,<br/>`StatusCheckFailed_Instance`,<br/>`StatusCheckFailed_System`|Reports whether the instance has passed both/instance/system status check in the last minute.
 
+* Can **not** monitor **memory usage**, **available disk space**, **swap usage**
+
 **Setup**
 * Install CloudWatch agent on EC2 instance
   * Old way: Cloudwatch monitoring scripts (perl-based)
 * Adjust config files on instance
+
+### Key metrics for Auto Scaling Group
+
+Metric|Effect
+-|-
+`GroupMinSize`|The minimum size of the Auto Scaling group.
+`GroupMaxSize`|The maximum size of the Auto Scaling group.
+`GroupDesiredCapacity`|The number of instances that the Auto Scaling group attempts to maintain.
+`GroupInServiceInstances`|The number of instances that are running as part of the Auto Scaling group. This metric does not include instances that are pending or terminating.
+`GroupPendingInstances`|The number of instances that are pending. A pending instance is not yet in service. This metric does not include instances that are in service or terminating.
+`GroupStandbyInstances`|The number of instances that are in a Standby state. Instances in this state are still running but are not actively in service.
+`GroupTerminatingInstances`|The number of instances that are in the process of terminating. This metric does not include instances that are in service or pending.
+`GroupTotalInstances`|The total number of instances in the Auto Scaling group. This metric identifies the number of instances that are in service, pending, and terminating.
 
 ### Key metrics for ELB (classic load balancer)
 
