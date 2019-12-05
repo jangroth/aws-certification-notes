@@ -975,6 +975,7 @@ Metric|Effect
 `RequestCount`|Number of completed requests
 `HealthyHostCount`,`UnhealthyHostCount`|Self explainatory
 
+* Elastic Load Balancing reports metrics only when requests are flowing through the load balancer. If there are requests flowing through the load balancer, Elastic Load Balancing measures and sends its metrics in 60-second intervals.
 * In case of sudden and very large increases in traffic it's possible to contact AWS and have them
 'pre-warm' the *ELB*.
 
