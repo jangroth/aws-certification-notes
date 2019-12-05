@@ -211,8 +211,6 @@ Can be paused to allow for multi-version testing|Many moving parts, requires orc
 <a name="3_1_5"></a>
 ### Blue/green deployment
 
-Also called red/black deployment
-
 System|Deploy|.
 -|-|-
 (`v1` `v1` `v1`)()|Initial State|Blue environment, all traffic goes here
@@ -245,6 +243,14 @@ Clean & controlled cutover (various options)|.
 Easy rollback|.
 Can be fully automated using advanced templating|.
 By far the best method in terms of risk mitigation and minimal user impact|.
+
+### Red/black deployment
+
+> ... are just like blue/green, but they happen at a much faster rate.
+
+Example:
+1. `DNS` -> `LB` -> `ASG1`
+2. `DNS` -> `LB` -> `ASG2`
 
 <a name="3_1_6"></a>
 ### A/B testing
@@ -863,11 +869,13 @@ optimize your applications, and ensure they are running smoothly.
 #### Logging
 
 **Logs**
-* *Log events* are the activies being reported
+* *Log events* are records of some activity recorded by the application or resource being monitored
 * *Log streams* are sequences of log events from the same source
-* *Log groups* are groupings of log events that the same properties
-* *Metric filters* allow to which metrics to extract and to publish to CW
-* Can export to S3 for durable storage
+* *Log groups* are groups of log streams that share the same retention, monitoring, and access control settings
+* *Metric filters* allow to extract metric observations from ingested events and transform them to data points in a CloudWatch metric
+* *Retention settings* can be used to specify how long log events are kept in CloudWatch Logs
+
+Logs can be exported to S3 for durable storage
 
 #### Metrics & Alarms
 
@@ -880,8 +888,8 @@ optimize your applications, and ensure they are running smoothly.
 * Metrics are the fundamental concept in CloudWatch.
 * A metric represents a time-ordered set of *data points* that are published to CloudWatch.
 * *High resolution metrics* down to 1 second
-* Data is kept for 3h to 15m, depending on the metric resolution
   * Higher resolution data automatically aggregates into lower resolution data
+* Data is kept for 3h to 15m, depending on the metric resolution
 * Available metrics are based on currently used service
 * Not everything is available out of the box, e.g. no data on memory usage of EC2 instances
 * Can also create *Custom Metrics*
@@ -976,8 +984,6 @@ Metric|Effect
 `HealthyHostCount`,`UnhealthyHostCount`|Self explainatory
 
 * Elastic Load Balancing reports metrics only when requests are flowing through the load balancer. If there are requests flowing through the load balancer, Elastic Load Balancing measures and sends its metrics in 60-second intervals.
-* In case of sudden and very large increases in traffic it's possible to contact AWS and have them
-'pre-warm' the *ELB*.
 
 > spillover and surge queue give an indication of the ELB being overloaded
 
@@ -1029,10 +1035,10 @@ you use.
 ---
 
 <a name="4_4_2"></a>
-### CodeCommit
+## CodeCommit
 
 <a name="4_4_3"></a>
-### Overview
+## Overview
 *AWS CodeCommit* is a fully-managed source control service that hosts secure Git-based repositories.
 It makes it easy for teams to collaborate on code in a secure and highly scalable ecosystem.
 CodeCommit eliminates the need to operate your own source control system or worry about scaling
@@ -1040,7 +1046,7 @@ its infrastructure. You can use CodeCommit to securely store anything from sourc
 and it works seamlessly with your existing Git tools.
 
 <a name="4_4_3_1"></a>
-#### Benefits
+### Benefits
 * Fully managed
 * Highly available
 * Faster development cycle
@@ -1052,7 +1058,7 @@ and it works seamlessly with your existing Git tools.
 ---
 
 <a name="4_4_4"></a>
-### CodeDeploy
+## CodeDeploy
 
 <a name="4_4_5"></a>
 ### Overview
@@ -1077,7 +1083,7 @@ TODO: ECS/Fargate/Lambda?
   * `appspec.yml` in source code
 
 <a name="4_4_5_1"></a>
-#### Benefits
+### Benefits
 * Automated deployments
   * EC2, ECS, Fargate, Lambda
 * Minimize downtime
@@ -1087,7 +1093,7 @@ TODO: ECS/Fargate/Lambda?
 ---
 
 <a name="4_4_6"></a>
-### CodePipeline
+## CodePipeline
 
 <a name="4_4_7"></a>
 ### Overview
@@ -1099,10 +1105,6 @@ features and updates. You can easily integrate AWS CodePipeline with third-party
 GitHub or with your own custom plugin. With AWS CodePipeline, you only pay for what you use. There
 are no upfront fees or long-term commitments.
 
-* **stage**
-  * **action group**
-    * **action**
-
 <a name="4_4_7_1"></a>
 #### Benefits
 * Rapid delivery
@@ -1112,10 +1114,45 @@ are no upfront fees or long-term commitments.
 * Easy to integrate
   * Plugin concept to integrate with other components
 
+#### Components
+
+* **stage**
+  * **action group**
+    * **action**
+
+#### Pipeline Actions
+
+##### Source
+* S3
+* CodeCommit
+* Github
+
+##### Build
+* CodeBuild
+* Jenkins
+* TeamCity
+* etc
+
+##### Test
+* CodeBuild
+* Jenkins
+* Ghost Inspector
+
+##### Deploy
+* CodeDeploy
+* CloudFormation
+* etc
+
+##### Invoke
+* Lambda
+
+##### Approval
+* SNS
+
 ---
 
 <a name="4_4_8"></a>
-### Config
+## Config
 
 <a name="4_4_9"></a>
 ### Overview
