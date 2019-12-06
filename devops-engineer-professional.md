@@ -1050,7 +1050,7 @@ you use.
 ## [↖](#top)[↑](#4_4_1_1)[↓](#4_6) CodeCommit
 
 <a name="4_6"></a>
-## [↖](#top)[↑](#4_5)[↓](#4_6_1) Overview
+### [↖](#top)[↑](#4_5)[↓](#4_6_1) Overview
 *AWS CodeCommit* is a fully-managed source control service that hosts secure Git-based repositories.
 It makes it easy for teams to collaborate on code in a secure and highly scalable ecosystem.
 CodeCommit eliminates the need to operate your own source control system or worry about scaling
@@ -1064,8 +1064,51 @@ and it works seamlessly with your existing Git tools.
 * Faster development cycle
   * Code lives close to actual environments
 * Secure
+  * Encryption, IAM integration
 * Collaborate on code
 * Use existing tools
+  * CodeBuild, Jenkins, other CI tools
+* Fully enabled for automation
+	* Provides notifacations and triggers for all repository events
+
+### How To
+
+#### Protect branches
+
+Use IAM policy:
+
+```
+"Condition": {
+		"StringEqualsIfExists": {
+				"codecommit:References": [
+						"refs/heads/master"   
+				]
+		},
+		"Null": {
+				"codecommit:References": false
+		}
+}
+```
+
+#### Send Notifications
+
+Use CloudWatch Event Rules under the hood
+
+* Set up notification / notification rules:
+	* Pick triggering event (`on commit`, ..., `brunch updated`)
+	* Pick SNS topic as target
+	* Add subscriber to target
+
+* Set up Cloudwatch Events directly:
+	* Pick event *source* (AWS service)
+	* Pick event *type* (different types, also includes CloudTrail)
+	* Pick target (many different types, e.g. Lambda, SNS, SSM, Code*)
+
+#### Trigger SNS / Lambda
+
+More limited in scope than Notifications. Do not us CloudWatch Events under the hood.
+
+* Configure CodeCommit as Lambda trigger
 
 ---
 
