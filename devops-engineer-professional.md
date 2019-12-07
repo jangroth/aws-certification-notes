@@ -1035,14 +1035,93 @@ use your own build tools. With CodeBuild, you are charged by the minute for the 
 you use.
 
 <a name="4_4_1_1"></a>
-#### Benefits
+### Benefits
 * Fully managed build service
+	* Serverless
+	* Leverages Docker under the hood
+	* Can use own docker images
 * Continuous scaling
 * Extensible
   * Can use own build tools and runtimes
 * Pay as you go
 * Enables CI/CD
 * Secure
+	* Integrates with KMS, IAM, VPC and CloudTrail
+
+### Components
+* Source code from CodeCommit, S3, GitHub, Bitbucket
+* Build defined in `buildspec.yml`
+* Build timeouts up to 8h
+* Uses queue to process build jobs
+* Logs to CloudWatch or S3
+* Metrics to monitor CodeBuild statistics
+	* Cloudwatch Events/Alarms to monitor builds
+	* SNS notification
+
+#### How it works
+
+* CodeBuild is provided with a *build project*.
+	* Defines how Codebuild runs
+		* Source code location, build environment to use, build commands
+* CodeBuild uses information from build project to create *build environment*
+* Download sourcecode into build environment, use *buildspec* to build
+* If there is build output, upload to S3
+* While build is running, the build environments sends information to CloudWatch and CodeBuild
+	* Can also use console, CLI, SDK to retrieve information about runnign build
+
+#### Buildspec
+
+```
+version: 0.2
+
+run-as: Linux-user-name
+
+env:
+  variables:
+    key: "value"
+  parameter-store:
+    key: "value"
+  exported-variables:
+    - variable
+  secrets-manager:
+    key: secret-id:json-key:version-stage:version-id
+  git-credential-helper: yes
+
+proxy:
+    upload-artifacts: yes
+    logs: yes
+
+phases:
+  install:
+    run-as: Linux-user-name
+    runtime-versions:
+      runtime: version
+    commands:
+      - command
+    finally:
+      - command
+  pre_build:
+    run-as: Linux-user-name
+    commands:
+      - command
+    finally:
+      - command
+  build:
+		as_above
+  post_build:
+		as_above
+  reports:
+	...
+  artifacts:
+	...
+  secondary-artifacts:
+	...
+cache:
+  paths:
+    - path
+```
+
+* *Artifacts* are what is kept after the build has finished.
 
 ---
 
