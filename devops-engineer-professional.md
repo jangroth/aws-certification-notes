@@ -1065,9 +1065,9 @@ you use.
 	* Defines how Codebuild runs
 		* Source code location, build environment to use, build commands
 * CodeBuild uses information from build project to create *build environment*
-  * Build runs in phases
+  * Build runs in container, in phases
   * `submitted`, `queued`, `provisioning`, `download_source`, `install`, `pre_build`, `build`, `post_build`, `upload_artifacts`, `finalizing`, `completed`
-* Download sourcecode into build environment, use *buildspec* to build
+* Download source code into build environment, use *buildspec* to build
 * If there is build output, upload to S3
 * While build is running, the build environments sends information to CloudWatch and CodeBuild
 	* Can also use console, CLI, SDK to retrieve information about runnign build
