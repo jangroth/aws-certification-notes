@@ -1051,12 +1051,13 @@ you use.
 ### Components
 * Source code from CodeCommit, S3, GitHub, Bitbucket
 * Build defined in `buildspec.yml`
-* Build timeouts up to 8h
-* Uses queue to process build jobs
-* Logs to CloudWatch or S3
-* Metrics to monitor CodeBuild statistics
-	* Cloudwatch Events/Alarms to monitor builds
-	* SNS notification
+  * Build timeouts up to 8h
+  * Uses queue to process build jobs
+* Cloudwatch integration
+  * Logs (can also go to S3)
+  * *Metrics* to monitor CodeBuild statistics
+	* Can set up *Alarms* on top of those
+  * Can schedule CloudWatch *Events*
 
 #### How it works
 
@@ -1064,6 +1065,8 @@ you use.
 	* Defines how Codebuild runs
 		* Source code location, build environment to use, build commands
 * CodeBuild uses information from build project to create *build environment*
+  * Build runs in phases
+  * `submitted`, `queued`, `provisioning`, `download_source`, `install`, `pre_build`, `build`, `post_build`, `upload_artifacts`, `finalizing`, `completed`
 * Download sourcecode into build environment, use *buildspec* to build
 * If there is build output, upload to S3
 * While build is running, the build environments sends information to CloudWatch and CodeBuild
@@ -1122,6 +1125,9 @@ cache:
 ```
 
 * *Artifacts* are what is kept after the build has finished.
+  * Uploaded to S3, encrypted by default
+  * With default configuration, artifacts are overwritten each time
+* Envrironment variables can come from SSM / Secrets-manager.
 
 ---
 
@@ -1137,11 +1143,7 @@ its infrastructure. You can use CodeCommit to securely store anything from sourc
 and it works seamlessly with your existing Git tools.
 
 <a name="4_6_1"></a>
-### Benefits
-* Fully managed
-* Highly available
-* Faster development cycle
-  * Code lives close to actual environments
+### Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments
 * Secure
   * Encryption, IAM integration
 * Collaborate on code
