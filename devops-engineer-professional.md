@@ -1162,7 +1162,7 @@ Use IAM policy:
 "Condition": {
 		"StringEqualsIfExists": {
 				"codecommit:References": [
-						"refs/heads/master"   
+						"refs/heads/master"
 				]
 		},
 		"Null": {
@@ -1205,28 +1205,108 @@ downtime during application deployment, and handles the complexity of updating y
 You can use AWS CodeDeploy to automate software deployments, eliminating the need for error-prone
 manual operations. The service scales to match your deployment needs.
 
-* Requires *agent* (ruby) running on instances
-* Can deploy into
-  * *autoscaling group*
-  * EC2 instances (using tags)
-  * On-prem instances
-TODO: ECS/Fargate/Lambda?
-
-* Takes code from S3 or github if invoked directly, does not directly support CodeCommit
-  * Workaround: Use a simple 2 stage CodePipeline
-
-* Provides hooks to configure deploy process
-  * `appspec.yml` in source code
+* CodeDeploy can be chained into CodePipeline and can use artifacts from there
+* CodeDeploy does not provision resources
 
 <a name="4_7_2"></a>
 ### Benefits
 * Automated deployments
-  * EC2, ECS, Fargate, Lambda
+  * EC2, on-prem, (ASG), ECS, (Fargate), Lambda
 * Minimize downtime
 * Centralized control
 * Easy to adopt
 
----
+
+### How it works
+
+#### Overview
+* CodeDeploy Agent continuously polls CodeDeploy
+* CodeDeploy sends `appspec.yml`
+* Application is pulled from S3 or github
+* EC2 will run deploy instructions
+  * *In-place* or *blue/green*
+  * Run in phases `ApplicationStop`, `DownloadBundle`, `BeforeInstall`, `Install`, `AfterInstall`, `ApplicationStart`, `ValidateService`
+* CodeDeploy Agent reports back success/failure
+
+#### CloudWatch integration
+	* Events can report and notify other services
+	* CloudWatch Log Agent on machine can push logs to CloudWatch
+	* Deployments can notify SNS
+
+#### Rollback
+* *Manual Rollback* by deploying a previous version
+* *Automated Rollbacks*
+	* Options	
+		* When deployment fails
+			* Rollback when any deployments on any instance fails
+		* When alarm thresholds are met
+			* Add CloudWatch Alarm to deployment group
+	* Can define `cleanup` file to help removing already installed files
+
+#### On-prem Deploys
+* Configure each on-premise instance, register it with CodeDeploy, and then tag it. 
+	* Can create IAM User per instance
+		* Needs configuration file with AK/SAK
+		* Use `register` or `register-on-premises-instances` command
+		* Best for only few instances
+	* Can create IAM Role
+		* Use `register-on-premises-instances` command together with STS token service
+		* Best for many instances, also more secure
+		* Setup more complicated 
+* Need to install CodeDeploy agent, obviously
+
+* Deploy application revisions to the on-premises instance. 
+
+### Components
+
+* *Application*
+  * *Deployment*
+    * *Deployment Group*
+      * Set of instances, defined by tags, e.g. 'environment=prod'
+			* Can be associated with CW Alarms that would stop the deployment if triggered
+    * *Deployment configuration*
+      * `CodeDeployDefault.OneAtATime`, ..., `CodeDeployDefault.LambdaCanary10Percent10Minutes`
+      * Can create own
+        * Define _minimum healthy hosts_ by percentage or number
+
+#### AppSpec
+
+* Slightly different format for EC2/ECS/Lambda. Different hooks according to deploy phases. Many for EC2. Also
+depends which deployment type is being used
+
+* Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`), allow to implement
+logic in installation process.
+
+
+```
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/WordPress
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/change_permissions.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server.sh
+    - location: scripts/create_test_db.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: root
+```
+
+
+
+--
 
 <a name="4_8"></a>
 ## [↖](#top)[↑](#4_7_2)[↓](#4_8_1) CodePipeline
