@@ -1277,6 +1277,7 @@ hooks:
 #### CloudWatch integration
 	* Events can report and notify other services
 	* CloudWatch Log Agent on machine can push logs to CloudWatch
+		* *No logs* for ECS / Lambda deploys
 	* Deployments can notify SNS
 
 #### Rollback
@@ -1310,6 +1311,8 @@ hooks:
 	* *Canary* - deploy in 2 increments
 	* *Linear* - deploy in many increments
 	* *All-at-once*
+* Lambda deploys a new *version* under an *alias*, and traffic is shifted between old and new version
+	* (Versions and Aliases are native Lambda features)
 
 --
 
