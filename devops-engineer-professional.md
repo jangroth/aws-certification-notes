@@ -1357,44 +1357,52 @@ are no upfront fees or long-term commitments.
 #### Components
 
 * **stage**
-  * **action group**
-    * **action**
+  * **action group** (run in sequence)
+    * **action** (run in sequnece _or_ parallel)
+      * Various *action providers* provide functionality
+      * `runOrder` allows to decide about sequential and parallel
+
+* Stages create *Artifacts*
+  * Stored in S3, passed on to the next stage
+    * *Default* setting for artifact store would create one bucket per pipe, can also specify *Custom* location
+    * Store must be in the same region as pipeline
+    * Always encrypted, default KMS or CMK
+  * Artifacts are the way different pipeline stages 'communicate' with each other
+  * CodePipelin artifacts are sightly different to CodeBuild artifacts
+
+* Integrates with CloudWatch events
 
 <a name="4_7_1_3"></a>
 #### Pipeline Actions
 
-<a name="4_7_1_3_1"></a>
-##### Source
-* S3
-* CodeCommit
-* Github
-
-<a name="4_7_1_3_2"></a>
-##### Build
-* CodeBuild
-* Jenkins
-* TeamCity
-* etc
-
-<a name="4_7_1_3_3"></a>
-##### Test
-* CodeBuild
-* Jenkins
-* Ghost Inspector
-
-<a name="4_7_1_3_4"></a>
-##### Deploy
-* CodeDeploy
-* CloudFormation
-* etc
-
-<a name="4_7_1_3_5"></a>
-##### Invoke
-* Lambda
-
-<a name="4_7_1_3_6"></a>
-##### Approval
-* SNS
+* Source
+  * S3
+  * CodeCommit
+    * -> Must have *one* pipeline *per* branch!
+    * Change detection Cloudwatch (recommended), or CodePipeline (poll periodically)
+    * Creates CloudWatch event rule in the background
+  * Github
+  * ECR
+* Build
+  * CodeBuild
+  * Jenkins
+  * TeamCity
+  * etc
+* Test
+  * CodeBuild
+  * Jenkins
+  * Ghost Inspector
+* Deploy
+  * CodeDeploy
+    * Can deploy into different region
+  * CloudFormation
+  * Beanstalk
+  * ECS
+  * etc
+* Invoke
+  * Lambda
+* Approval
+  * SNS
 
 ---
 
