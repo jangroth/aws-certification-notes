@@ -1257,20 +1257,25 @@ manual operations. The service scales to match your deployment needs.
 
 * Deploy application revisions to the on-premises instance. 
 
-### Components
+#### Lambda/ECS Deploys
+* Simpler `appspec`
+* No source code uploads to S3 (?)
 
+### Components
 * *Application*
   * *Deployment*
     * *Deployment Group*
       * Set of instances, defined by tags, e.g. 'environment=prod'
-			* Can be associated with CW Alarms that would stop the deployment if triggered
+			* Can be associated with 
+				* CW Alarms that would stop the deployment if triggered
+				* Triggers for notification
+				* Rollbacks
     * *Deployment configuration*
       * `CodeDeployDefault.OneAtATime`, ..., `CodeDeployDefault.LambdaCanary10Percent10Minutes`
       * Can create own
         * Define _minimum healthy hosts_ by percentage or number
 
 #### AppSpec
-
 * Slightly different format for EC2/ECS/Lambda. Different hooks according to deploy phases. Many for EC2. Also
 depends which deployment type is being used
 
