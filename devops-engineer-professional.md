@@ -1230,7 +1230,7 @@ manual operations. The service scales to match your deployment needs.
   * *Deployment*
     * *Deployment Group*
       * Set of instances, defined by tags, e.g. 'environment=prod'
-			* Can be associated with 
+			* Can be associated with
 				* CW Alarms that would stop the deployment if triggered
 				* Triggers for notification
 				* Rollbacks
@@ -1238,14 +1238,20 @@ manual operations. The service scales to match your deployment needs.
       * `CodeDeployDefault.OneAtATime`, ..., `CodeDeployDefault.LambdaCanary10Percent10Minutes`
       * Can create own
         * Define _minimum healthy hosts_ by percentage or number
+        * E.g. 9 instances in total, 6 minimum healthy hosts, deploy 3 at a time. Deployment is successful after 6 hosts have been successfully deployed
 
 <a name="4_6_2_2"></a>
 #### AppSpec
-* Slightly different format for EC2/ECS/Lambda. Different hooks according to deploy phases. Many for EC2. Also
-depends which deployment type is being used
+* Slightly different format for EC2/ECS/Lambda.
 
-* Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`), allow to implement
-logic in installation process.
+* The content in the 'hooks' section of the AppSpec file varies, depending on the compute platform
+for your deployment. The 'hooks' section for an EC2/On-Premises deployment contains mappings that
+link deployment lifecycle event hooks to one or more *scripts*. The 'hooks' section for a Lambda or
+an Amazon ECS deployment specifies *Lambda validation functions* to run during a deployment
+lifecycle event. 
+
+* Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`),
+allow to implement logic in installation process.
 
 ```
 version: 0.0
@@ -1290,13 +1296,14 @@ hooks:
 	* Events can report and notify other services
 	* CloudWatch Log Agent on machine can push logs to CloudWatch
 		* *No logs* for ECS / Lambda deploys
-	* Deployments can notify SNS
+	* Deployment *triggers* can notify SNS
+    * Can trigger based on *deployment* or *instance* events
 
 <a name="4_6_3_3"></a>
 #### Rollback
 * *Manual Rollback* by simply deploying a previous version
 * *Automated Rollbacks*
-	* Options	
+	* Options
 		* When deployment fails
 			* Rollback when any deployments on any instance fails
 		* When alarm thresholds are met
@@ -1305,18 +1312,19 @@ hooks:
 
 <a name="4_6_3_4"></a>
 #### On-prem Deploys
-* Configure each on-premise instance, register it with CodeDeploy, and then tag it. 
+* Configure each on-premise instance, register it with CodeDeploy, and then tag it.
 	* Can create IAM User per instance
 		* Needs configuration file with AK/SAK
 		* Use `register` or `register-on-premises-instances` command
 		* Best for only few instances
 	* Can create IAM Role
 		* Use `register-on-premises-instances` command together with STS token service
+    * Needs credentials to call STS with
 		* Best for many instances, also more secure
-		* Setup more complicated 
+		* Setup more complicated
 * Need to install CodeDeploy agent, obviously
-
-* Deploy application revisions to the on-premises instance. 
+* Deploy application revisions to the on-premises instance.
+* On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
 <a name="4_6_3_5"></a>
 #### Lambda Deploys
@@ -1374,6 +1382,32 @@ are no upfront fees or long-term commitments.
 
 <a name="4_7_1_3"></a>
 #### Pipeline Actions
+
+```
+[
+		{
+			 "inputArtifacts": [
+						An input artifact structure, if supported for the action category
+				],
+			 "name": "ActionName",
+			 "region": "Region", 
+			 "namespace": "source_namespace", 
+			 "actionTypeId": {
+						"category": "An action category",
+						"owner": "AWS",
+						"version": "1"
+						"provider": "A provider type for the action category",
+			 },
+			 "outputArtifacts": [
+						An output artifact structure, if supported for the action category
+			 ],
+			 "configuration": {
+						Configuration details appropriate to the provider type
+			 },
+			 "runOrder": A positive integer that indicates the run order within the stage,
+		}
+]
+```
 
 * Source
   * S3
