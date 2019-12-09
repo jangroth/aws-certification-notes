@@ -1209,60 +1209,16 @@ manual operations. The service scales to match your deployment needs.
 * CodeDeploy does not provision resources
 
 <a name="4_7_2"></a>
-### Benefits
+#### Benefits
 * Automated deployments
   * EC2, on-prem, (ASG), ECS, (Fargate), Lambda
 * Minimize downtime
 * Centralized control
 * Easy to adopt
 
-
-### How it works
-
-#### Overview
-* CodeDeploy Agent continuously polls CodeDeploy
-* CodeDeploy sends `appspec.yml`
-* Application is pulled from S3 or github
-* EC2 will run deploy instructions
-  * *In-place* or *blue/green*
-  * Run in phases `ApplicationStop`, `DownloadBundle`, `BeforeInstall`, `Install`, `AfterInstall`, `ApplicationStart`, `ValidateService`
-* CodeDeploy Agent reports back success/failure
-
-#### CloudWatch integration
-	* Events can report and notify other services
-	* CloudWatch Log Agent on machine can push logs to CloudWatch
-	* Deployments can notify SNS
-
-#### Rollback
-* *Manual Rollback* by deploying a previous version
-* *Automated Rollbacks*
-	* Options	
-		* When deployment fails
-			* Rollback when any deployments on any instance fails
-		* When alarm thresholds are met
-			* Add CloudWatch Alarm to deployment group
-	* Can define `cleanup` file to help removing already installed files
-
-#### On-prem Deploys
-* Configure each on-premise instance, register it with CodeDeploy, and then tag it. 
-	* Can create IAM User per instance
-		* Needs configuration file with AK/SAK
-		* Use `register` or `register-on-premises-instances` command
-		* Best for only few instances
-	* Can create IAM Role
-		* Use `register-on-premises-instances` command together with STS token service
-		* Best for many instances, also more secure
-		* Setup more complicated 
-* Need to install CodeDeploy agent, obviously
-
-* Deploy application revisions to the on-premises instance. 
-
-#### Lambda/ECS Deploys
-* Simpler `appspec`
-* No source code uploads to S3 (?)
-
 ### Components
-* *Application*
+
+#### Application
   * *Deployment*
     * *Deployment Group*
       * Set of instances, defined by tags, e.g. 'environment=prod'
@@ -1281,7 +1237,6 @@ depends which deployment type is being used
 
 * Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`), allow to implement
 logic in installation process.
-
 
 ```
 version: 0.0
@@ -1308,8 +1263,53 @@ hooks:
       timeout: 300
       runas: root
 ```
+### How it works
 
+#### Overview
+* CodeDeploy Agent continuously polls CodeDeploy
+* CodeDeploy sends `appspec.yml`
+* Application is pulled from S3 or github
+* EC2 will run deploy instructions
+  * *In-place* or *blue/green*
+  * Run in phases `ApplicationStop`, `DownloadBundle`, `BeforeInstall`, `Install`, `AfterInstall`, `ApplicationStart`, `ValidateService`
+* CodeDeploy Agent reports back success/failure
 
+#### CloudWatch integration
+	* Events can report and notify other services
+	* CloudWatch Log Agent on machine can push logs to CloudWatch
+	* Deployments can notify SNS
+
+#### Rollback
+* *Manual Rollback* by simply deploying a previous version
+* *Automated Rollbacks*
+	* Options	
+		* When deployment fails
+			* Rollback when any deployments on any instance fails
+		* When alarm thresholds are met
+			* Add CloudWatch Alarm to deployment group
+	* Can define `cleanup` file to help removing already installed files
+
+#### On-prem Deploys
+* Configure each on-premise instance, register it with CodeDeploy, and then tag it. 
+	* Can create IAM User per instance
+		* Needs configuration file with AK/SAK
+		* Use `register` or `register-on-premises-instances` command
+		* Best for only few instances
+	* Can create IAM Role
+		* Use `register-on-premises-instances` command together with STS token service
+		* Best for many instances, also more secure
+		* Setup more complicated 
+* Need to install CodeDeploy agent, obviously
+
+* Deploy application revisions to the on-premises instance. 
+
+#### Lambda Deploys
+* Simpler `appspec`
+* No source code uploads to S3 (?)
+* Deploy Configuration options
+	* *Canary* - deploy in 2 increments
+	* *Linear* - deploy in many increments
+	* *All-at-once*
 
 --
 
