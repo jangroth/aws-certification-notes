@@ -494,6 +494,39 @@ application and making changes to your application without invoking the scaling 
 
 ---
 
+## External Tools
+
+### Jenkins
+
+* Can replace CodeBuild, CodePipeline, CodeDeploy
+	* Tight integration with those services
+
+* Master/Slave setup
+	* Master/slaves can run on the same instance, but usually run on separate instances
+	* Can have multiple masteer with respective set of slaves assigned to them
+* Must managage Multi-AZ, deploy on EC2, ...
+* `Jenkinsfile` to configure CI/CD
+* Many AWS plugins
+
+#### Integrating into CodePipeline
+
+* CodePipeline can send build jobs to Jenkins instead of CodeBuild
+* Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
+* Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
+
+#### Plugins
+
+* *EC2-Plugin*
+	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
+	* Also support spot instances
+* *CodeBuild-Plugin*
+	* Send builds to CodeBuild
+	* Official AWS plugin
+* *ECS-Plugin*
+	* Launch slaves into ECS
+
+---
+
 <a name="4"></a>
 # [↖](#top)[↑](#3_3_4_2)[↓](#4_1) Services
 
@@ -1453,6 +1486,33 @@ CodePipeline with
 * Elastic Beanstalk for Continuous Delivery of Web Applications to the Cloud
 * AWS Lambda for Continuous Delivery of Lambda-Based and Serverless Applications
 * AWS CloudFormation Templates for Continuous Delivery to the Cloud
+
+---
+
+## CodeStar
+
+### Overview
+AWS CodeStar enables you to quickly develop, build, and deploy applications on AWS. AWS CodeStar
+provides a unified user interface, enabling you to easily manage your software development
+activities in one place. With AWS CodeStar, you can set up your entire continuous delivery
+toolchain in minutes, allowing you to start releasing code faster. AWS CodeStar makes it easy for
+your whole team to work together securely, allowing you to easily manage access and add owners,
+contributors, and viewers to your projects. Each AWS CodeStar project comes with a project
+management dashboard, including an integrated issue tracking capability powered by Atlassian JIRA
+Software. With the AWS CodeStar project dashboard, you can easily track progress across your
+entire software development process, from your backlog of work items to teams’ recent code
+deployments.
+
+### Benefits
+
+* Start developing on AWS in minutes
+* Manage software delivery in one place
+* Work across your team securely
+* Choose from a variety of project templates
+
+### Under the hood
+
+Uses `cfn-transform` to generate cfn from `template.yml`
 
 ---
 
