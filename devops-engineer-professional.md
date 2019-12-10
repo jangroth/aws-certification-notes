@@ -1380,6 +1380,9 @@ are no upfront fees or long-term commitments.
 
 * Integrates with CloudWatch events
 
+* Can invoke Lambda as an almost arbitrary pipeline action
+	* `codepipeline:PutJobSuccessResult`, `codepipeline:PutJobFailureResult`
+
 <a name="4_7_1_3"></a>
 #### Pipeline Actions
 
@@ -1432,11 +1435,24 @@ are no upfront fees or long-term commitments.
   * CloudFormation
   * Beanstalk
   * ECS
+	* ServiceCatalog
   * etc
 * Invoke
   * Lambda
 * Approval
   * SNS
+
+### Scenarios
+
+CodePipeline with
+* Amazon S3, AWS CodeCommit, and AWS CodeDeploy
+* Third-party Action Providers (GitHub and Jenkins)
+* AWS CodeStar to Build a Pipeline in a Code Project
+* Compile, Build, and Test Code with CodeBuild
+* Amazon ECS for Continuous Delivery of Container-Based Applications to the Cloud
+* Elastic Beanstalk for Continuous Delivery of Web Applications to the Cloud
+* AWS Lambda for Continuous Delivery of Lambda-Based and Serverless Applications
+* AWS CloudFormation Templates for Continuous Delivery to the Cloud
 
 ---
 
