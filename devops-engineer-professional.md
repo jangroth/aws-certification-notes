@@ -529,7 +529,7 @@ communication applications.
 ---
 
 <a name="4_2"></a>
-## Cloudformation
+## CloudFormation
 
 ### Overview
 *AWS CloudFormation* provides a common language for you to describe and provision all the
@@ -542,54 +542,61 @@ AWS CloudFormation is available at no additional charge, and you pay only for th
 needed to run your applications.
 
 * Allows to create and provision **resources** in a reusable **template** fashion
-	* A *CloudFormation* template is a `JSON` or `YAML` formatted text file
-* Related resources are managed in a single unit called a **stack**
-	* All the resources in a stack are defined by the stack's *CloudFormation* template
-	* Controls lifecycle of managed resources
-	* Stack has `name` & `id`
-  * Can be updated *directly* or via *change set*
-  * Will **rollback** stack if it fails to create (can be disabled via API / console)
-  * Possible to detect **stack drift**, if supported by created rersources
-  * Can enable **termination protection**
-* A **stack policy** is an *IAM*-style policy statements that governs who can do what
+* Declarative - no need for ordering and orchestration
+* Separation of concerns - different stacks for different purposes
 
-### Templates
-* `AWSTemplateFormatVersion`
-* `Description`
-* `Metadata`
-	* Details about the template
-* `Parameters`
-	* Values to pass in right before template creation
-		* Type
-			* `String`, `Number`, `List`, `CommaDelimitedList`
-			* AWS-specific types like `AWS::EC2::KeyPair::KeyName`
-		* Description
-		* Default Value
-		* Allowed Values
-		* Allowed Pattern
-			* Validation per *regular expression*
-		* MinLength / MaxLength
-		* MinValue / MaxValue
-	* Problem:
-		* Usage of parameters *might* make it hard to instantiate stacks without human interaction
-		* *CloudFormation* is able to auto-generate many resources attributes, e.g. name
-* `Mappings`
-	* Maps keys to values (eg different values for different regions)
-* `Conditions`
-	* Check values before deciding what to do
-* `Resources`
-	* Creates resources. Only mandatory section in a template.
-	* Can have `Condition` element to toggle creation
-* `Outputs`
-	* Values to be exposed from the console or from API calls.
-	* Can be used in a different stack (*cross stack references*)
-	* Can be:
-		* Constructed value
-		* Parameter reference
-		* Pseudo parameter
-		* Output from a function like `fn::getAtt` or `Ref`
+Templates are uploaded to S3 and then referenced by CloudFormation.
 
-### Intrinsic Function
+### Components
+
+#### Template
+
+A *CloudFormation* template is a `JSON` or `YAML` formatted text file
+
+Element|Comment
+-|-
+`AWSTemplateFormatVersion`|.
+`Description`|.
+`Metadata`|Details about the template
+`Parameters`|Values to pass in right before template creation:<br/> * Type:`String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key<br/> * Description<br/> * Default Value<br/> * Allowed Values<br/> * Allowed Pattern<br/> * Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
+`Mappings`|Maps keys to values (eg different values for different regions)
+`Conditions`|Check values before deciding what to do
+`Resources`|* Creates resources. Only mandatory section in a template.<br/> * Can have `Condition` element to toggle creation
+`Outputs`|* Values to be exposed from the console or from API calls.<br/> * Can be used in a different stack (*cross stack references*)<br/> * Can be: constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
+
+##### Parameters
+* Usage of parameters *might* make it hard to instantiate stacks without human interaction
+* *CloudFormation* is able to auto-generate many resources attributes, e.g. name
+* Reference a parameter `!Ref myParam`
+* Pseudo parameters are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
+  * `AWS::AccountId`, `AWS::NotificationARNs`, `AWS::NoValue`, `AWS::Partition`, `AWS::Region`, `AWS::StackId`, `AWS::StackName`, `AWS::URLSuffix`
+
+##### Resources
+* Over 220 types of resources, `AWS::aws-product-name::data-type-name`
+* AWS figures out creation, update and delete of resources for us
+  * Update can impact a resource in 4 possible ways
+    * *No interruption*
+      * E.g. change `ProvisionedThroughput` of a DynamoDB table
+    * *Some interruption*
+      * E.g. change `InstanceType` of an EC2 instance
+    * *Replacement*
+      * E.g. change `AvailabilityZone` of an EC2 instance
+      * E.g. change `ImageId` of an EC2 instance
+      * E.g. change `Tablename` of a DynamoDB table
+
+
+##### Outputs
+
+*Pseudo Parameter* outputs:
+* Pseudo parameters are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
+```
+Outputs:
+  MyStacksRegion:
+      Value: !Ref "AWS::Region"
+```
+
+#### Intrinsic Function
+
 * Used to pass in values that are not available until runtime
 * Usable in `resource` properties, `metadata` attributes, and `update policy` attributes (auto-scaling)
 
@@ -612,9 +619,21 @@ Name|Attributes|.
 
 ### Stacks
 
-TODO: stack sets and stack drift
+* Related resources are managed in a single unit called a **stack**
+	* All the resources in a stack are defined by the stack's *CloudFormation* template
+	* Controls lifecycle of managed resources
+	* Stack has `name` & `id`
+  * Can be updated *directly* or via *change set*
+  * Will **rollback** stack if it fails to create (can be disabled via API / console)
+  * Possible to detect **stack drift**, if supported by created rersources
+  * Can enable **termination protection**
+* A **stack policy** is an *IAM*-style policy statements that governs who can do what
 
-#### Stacks Creation
+TODO: stack sets and stack drift
+TODO: stack updates and implications on interruptions
+TODO: cfn-hup
+
+#### Stack Creation
 
 ##### Process
 1. Template upload into S3 bucket
@@ -727,7 +746,7 @@ WaitCondition:
       Ref: "WebServerCapacity"
 ```
 
-##### Stacks Deletion
+#### Stack Deletion
 
 ##### Resource deletion policy
 * **Policy** / statement that is associated with every resource of a stack
@@ -769,13 +788,16 @@ resources in your stacks from being unintentionally updated or deleted during th
 Element|.
 -|-
 `Effect`|.
-`Resource`,`NotResource`|.
 `Principal`|*Must* be wildcard for stack policies
 `Action`|`Update:Modify`,`Update:Replace`,`Update:Delete`,`Update:(wildcard)`
+`Resource`,`NotResource`|.
 `Condition`|Typically evaluates based on resource type
 
+TODO: Update policies
+
+##### Interuption while updating
 * Update can impact a resource in 4 possible ways
-	* No interruption
+	* *No interruption*
 		* E.g. change `ProvisionedThroughput` of a DynamoDB table
 	* Some interruption
 		* E.g. change `EbsOptimized` of an EC2 instance (EBS-backed)
@@ -852,6 +874,9 @@ optimize your applications, and ensure they are running smoothly.
 * Improve total cost of ownership
 * Optimize applications and operational resources
 * Derive actionable insights from logs
+
+TODO: Cloudwatch Subscription.
+https://aws.amazon.com/pt/blogs/architecture/central-logging-in-multi-account-environments/
 
 ### Concepts
 
@@ -1209,7 +1234,7 @@ manual operations. The service scales to match your deployment needs.
 for your deployment. The 'hooks' section for an EC2/On-Premises deployment contains mappings that
 link deployment lifecycle event hooks to one or more *scripts*. The 'hooks' section for a Lambda or
 an Amazon ECS deployment specifies *Lambda validation functions* to run during a deployment
-lifecycle event. 
+lifecycle event.
 
 * Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`),
 allow to implement logic in installation process.
@@ -1344,8 +1369,8 @@ are no upfront fees or long-term commitments.
 						An input artifact structure, if supported for the action category
 				],
 			 "name": "ActionName",
-			 "region": "Region", 
-			 "namespace": "source_namespace", 
+			 "region": "Region",
+			 "namespace": "source_namespace",
 			 "actionTypeId": {
 						"category": "An action category",
 						"owner": "AWS",
