@@ -555,21 +555,36 @@ A *CloudFormation* template is a `JSON` or `YAML` formatted text file
 
 Element|Comment
 -|-
-`AWSTemplateFormatVersion`|.
+`AWSTemplateFormatVersion`|` 2010-09-09`
 `Description`|.
 `Metadata`|Details about the template
-`Parameters`|Values to pass in right before template creation:<br/> * Type:`String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key<br/> * Description<br/> * Default Value<br/> * Allowed Values<br/> * Allowed Pattern<br/> * Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
+`Parameters`|Values to pass in right before template creation
 `Mappings`|Maps keys to values (eg different values for different regions)
 `Conditions`|Check values before deciding what to do
-`Resources`|* Creates resources. Only mandatory section in a template.<br/> * Can have `Condition` element to toggle creation
-`Outputs`|* Values to be exposed from the console or from API calls.<br/> * Can be used in a different stack (*cross stack references*)<br/> * Can be: constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
+`Resources`|Creates resources. Only mandatory section in a template.
+`Outputs`|Values to be exposed from the console or from API calls.
 
 ##### Parameters
-* Usage of parameters *might* make it hard to instantiate stacks without human interaction
-* *CloudFormation* is able to auto-generate many resources attributes, e.g. name
-* Reference a parameter `!Ref myParam`
+
+* Type: `String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key
+* *Description*, *Default Value*, *Allowed Values*, *Allowed Pattern*
+* Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
 * Pseudo parameters are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
   * `AWS::AccountId`, `AWS::NotificationARNs`, `AWS::NoValue`, `AWS::Partition`, `AWS::Region`, `AWS::StackId`, `AWS::StackName`, `AWS::URLSuffix`
+* Reference a parameter within the template `!Ref myParam`
+* Usage of parameters *might* make it hard to instantiate stacks
+
+##### Mappings
+* Fixed (hardcoded) variables within CloudFormation template
+* Accessed via `!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]`
+
+##### Conditions
+```
+Conditions:
+  CreateProdResources: !Equals [ !Ref EnvType, prod ]
+```
+
+* Can use (and combine) `Fn::And`, `Fn::Equals`, `Fn::If`, `Fn::Not`, `Fn::Or`
 
 ##### Resources
 * Over 220 types of resources, `AWS::aws-product-name::data-type-name`
@@ -583,22 +598,25 @@ Element|Comment
       * E.g. change `AvailabilityZone` of an EC2 instance
       * E.g. change `ImageId` of an EC2 instance
       * E.g. change `Tablename` of a DynamoDB table
-
+* Can toggle creation with `Condition`:
+```
+Resources:
+  MountPoint:
+  Type: "AWS::EC2:VolumeAttachment"
+  Condition: CreateProdResources
+```
 
 ##### Outputs
+* Can be: constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
+* Can be used in a different stack (*cross stack references*)
+  * `!ImportValue NameOfTheExport`
+  * Cannot delete stack if its outputs are used in another stack
 
-*Pseudo Parameter* outputs:
-* Pseudo parameters are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
-```
-Outputs:
-  MyStacksRegion:
-      Value: !Ref "AWS::Region"
-```
-
-#### Intrinsic Function
-
+##### Intrinsic Functions
 * Used to pass in values that are not available until runtime
-* Usable in `resource` properties, `metadata` attributes, and `update policy` attributes (auto-scaling)
+* Usable in `resources`, `outputs`, `metadata` attributes and `update policy` attributes (auto
+scaling). You can also use intrinsic functions to conditionally create stack resources.
+
 
 Name|Attributes|.
 -|-|-
