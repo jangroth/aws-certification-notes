@@ -1,3 +1,4 @@
+
 [toc_start]::
 <a name="top"></a>
 ---
@@ -47,6 +48,7 @@
 
 <a name="2_1"></a>
 ## [↖](#top)[↑](#2)[↓](#2_1_1) Content
+
 [toc_start]::
 * [Domain 1: SDLC Automation](#2_1_1)
 * [Domain 2:Configuration Management and Infrastructure as Code](#2_1_2)
@@ -112,6 +114,7 @@
 
 <a name="3_1"></a>
 ## [↖](#top)[↑](#3)[↓](#3_1_1) Deployment Strategies
+
 [toc_start]::
 * [Single target deployment](#3_1_1)
 * [All-at-once deployment](#3_1_2)
@@ -305,6 +308,7 @@ Example:
 
 <a name="3_2"></a>
 ## [↖](#top)[↑](#3_1_8)[↓](#3_2_1) EC2 Deployment Concepts
+
 [toc_start]::
 * [Instance Profile](#3_2_1)
 * [ELB/ALB Logs](#3_2_2)
@@ -355,6 +359,7 @@ status of any instances that are unhealthy at the time of the health check is `O
 
 <a name="3_3"></a>
 ## [↖](#top)[↑](#3_2_4)[↓](#3_3_1) EC2 Autoscaling Concepts
+
 [toc_start]::
 * [Overview](#3_3_1)
 * [Components](#3_3_2)
@@ -541,6 +546,7 @@ application and making changes to your application without invoking the scaling 
 
 <a name="3_4"></a>
 ## [↖](#top)[↑](#3_3_4_2)[↓](#3_4_1) External Tools
+
 [toc_start]::
 * [Jenkins](#3_4_1)
   * [Integrating into CodePipeline](#3_4_1_1)
@@ -587,6 +593,7 @@ application and making changes to your application without invoking the scaling 
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) API Gateway
+
 [toc_start]::
 * [Overview](#4_1_1)
   * [Benefits](#4_1_1_1)
@@ -619,15 +626,14 @@ communication applications.
 
 <a name="4_2"></a>
 ## [↖](#top)[↑](#4_1_1_1)[↓](#4_2_1) CloudFormation
+
 [toc_start]::
 * [Overview](#4_2_1)
 * [Components](#4_2_2)
   * [Template](#4_2_2_1)
-* [Stacks](#4_2_3)
-  * [Stack Creation](#4_2_3_1)
-  * [Stack Deletion](#4_2_3_2)
-  * [Stacks Updates](#4_2_3_3)
-  * [Stacks Nesting](#4_2_3_4)
+  * [Stacks](#4_2_2_2)
+* [Concepts](#4_2_3)
+  * [Running code at instance boot](#4_2_3_1)
 * [Custom Resources](#4_2_4)
 * [Limits](#4_2_5)
 
@@ -740,8 +746,8 @@ Name|Attributes|.
 `Fn::Sub`| - *String*<br/> - { *key*: *Value*, ... } | * Substitutes variables in an input string with values that you specify string list<br/>Also: `!Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${vpc}'`
 `Fn::Transform`| Name: *String*<br/> Parameters:<br/>   { *key*: *Value*, ... } | * Specifies a macro to perform custom processing on part of a stack template
 
-<a name="4_2_3"></a>
-#### [↖](#top)[↑](#4_2_2_1_6)[↓](#4_2_3_1) Stacks
+<a name="4_2_2_2"></a>
+#### [↖](#top)[↑](#4_2_2_1_6)[↓](#4_2_2_2_1) Stacks
 
 * Related resources are managed in a single unit called a **stack**
 	* All the resources in a stack are defined by the stack's *CloudFormation* template
@@ -757,8 +763,7 @@ TODO: stack sets and stack drift
 TODO: stack updates and implications on interruptions
 TODO: cfn-hup
 
-<a name="4_2_3_1"></a>
-##### [↖](#top)[↑](#4_2_3)[↓](#4_2_3_1_1) Stack Creation
+##### Stack Creation
 
 ###### Process
 1. Template upload into S3 bucket
@@ -871,8 +876,7 @@ WaitCondition:
       Ref: "WebServerCapacity"
 ```
 
-<a name="4_2_3_2"></a>
-##### [↖](#top)[↑](#4_2_3_1_2_4)[↓](#4_2_3_2_1) Stack Deletion
+##### Stack Deletion
 
 ###### Resource deletion policy
 * **Policy** / statement that is associated with every resource of a stack
@@ -895,8 +899,7 @@ WaitCondition:
 			* `AWS::Redshift::Cluster`
 		* Allow data recovery at a later stage
 
-<a name="4_2_3_3"></a>
-##### [↖](#top)[↑](#4_2_3_2_1)[↓](#4_2_3_3_1) Stacks Updates
+##### Stacks Updates
 
 ###### Process
 A CloudFormation *stack policy* is a JSON-based document that defines which actions can be performed
@@ -935,8 +938,7 @@ TODO: Update policies
 		* E.g. change `Tablename` of a DynamoDB table
 	* Deletion
 
-<a name="4_2_3_4"></a>
-##### [↖](#top)[↑](#4_2_3_3_2)[↓](#4_2_4) Stacks Nesting
+##### Stacks Nesting
 * *Resources* in a stack can be references to other stacks
 * Output values of nested stack are returned to parent stack
 * Benefits
@@ -948,9 +950,11 @@ TODO: Update policies
 	* Point `TemplateURL` to S3 URL of nested stack
 	* Use `Parameters` to provide the nested stack with input values (defaults will be used otherwise)
 
-### Concepts
+<a name="4_2_3"></a>
+### [↖](#top)[↑](#4_2_2_2_4)[↓](#4_2_3_1) Concepts
 
-#### Running code at instance boot
+<a name="4_2_3_1"></a>
+#### [↖](#top)[↑](#4_2_3)[↓](#4_2_4) Running code at instance boot
 
 * CloudFormation User Data
   * Scripts and commands to be passed to a launching EC2 instance.
@@ -974,7 +978,7 @@ TODO: Update policies
 * By default, user data scripts and cloud-init directives run only during the boot cycle when you first launch an instance.
 
 <a name="4_2_4"></a>
-### [↖](#top)[↑](#4_2_3_4)[↓](#4_2_5) Custom Resources
+### [↖](#top)[↑](#4_2_3_1)[↓](#4_2_5) Custom Resources
 * Problems with existing *CloudFormation* resources:
 	* Sometimes lacks behind AWS services
 	* Cannot deal with non-AWS resources
@@ -1010,6 +1014,7 @@ TODO: Compare chapter against LinuxAcademy
 
 <a name="4_3"></a>
 ## [↖](#top)[↑](#4_2_5)[↓](#4_3_1) CloudWatch
+
 [toc_start]::
 * [Overview](#4_3_1)
 * [Concepts](#4_3_2)
@@ -1017,9 +1022,6 @@ TODO: Compare chapter against LinuxAcademy
   * [Metrics & Alarms](#4_3_2_2)
 * [Key metrics for EC2](#4_3_3)
 * [Key metrics for Auto Scaling Group](#4_3_4)
-* [Key metrics for ELB (classic load balancer)](#4_3_5)
-* [Key metrics for ALB (active load balancer)](#4_3_6)
-* [Key metrics for NLB (network load balancer)](#4_3_7)
 
 [toc_end]::
 
@@ -1143,7 +1145,7 @@ Metric|Effect
 * Adjust config files on instance
 
 <a name="4_3_4"></a>
-### [↖](#top)[↑](#4_3_3)[↓](#4_3_5) Key metrics for Auto Scaling Group
+### [↖](#top)[↑](#4_3_3)[↓](#4_4) Key metrics for Auto Scaling Group
 
 Metric|Effect
 -|-
@@ -1156,8 +1158,7 @@ Metric|Effect
 `GroupTerminatingInstances`|The number of instances that are in the process of terminating. This metric does not include instances that are in service or pending.
 `GroupTotalInstances`|The total number of instances in the Auto Scaling group. This metric identifies the number of instances that are in service, pending, and terminating.
 
-<a name="4_3_5"></a>
-### [↖](#top)[↑](#4_3_4)[↓](#4_3_6) Key metrics for ELB (classic load balancer)
+###
 
 Metric|Effect
 -|-
@@ -1177,8 +1178,7 @@ Metric|Effect
 * Typically this means that the backend system cannot process requests as fast as they are coming in
   * Ideally load balance into an autoscaling group.
 
-<a name="4_3_6"></a>
-### [↖](#top)[↑](#4_3_5)[↓](#4_3_7) Key metrics for ALB (active load balancer)
+###
 
 Metric|Effect
 -|-
@@ -1187,8 +1187,7 @@ Metric|Effect
 `TargetResponseTime`|The time elapsed after the request leaves the load balancer until a response from the target is received.
 `HTTPCode_ELB_3XX_Count`<br/>`HTTPCode_ELB_4XX_Count`<br/>`HTTPCode_ELB_5XX_Count`|The number of HTTP XXX server error codes that originate from the *load balancer*. This count does *not* include any response codes generated by the targets.
 
-<a name="4_3_7"></a>
-### [↖](#top)[↑](#4_3_6)[↓](#4_4) Key metrics for NLB (network load balancer)
+###
 
 Metric|Effect
 -|-
@@ -1199,7 +1198,8 @@ Metric|Effect
 ---
 
 <a name="4_4"></a>
-## [↖](#top)[↑](#4_3_7)[↓](#4_4_1) CodeBuild
+## [↖](#top)[↑](#4_3_4)[↓](#4_4_1) CodeBuild
+
 [toc_start]::
 * [Overview](#4_4_1)
 * [Benefits](#4_4_2)
@@ -1321,6 +1321,7 @@ cache:
 
 <a name="4_5"></a>
 ## [↖](#top)[↑](#4_4_3_2)[↓](#4_5_1) CodeCommit
+
 [toc_start]::
 * [Overview](#4_5_1)
 * [Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments](#4_5_2)
@@ -1396,6 +1397,7 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
 
 <a name="4_6"></a>
 ## [↖](#top)[↑](#4_5_3_3)[↓](#4_6_1) CodeDeploy
+
 [toc_start]::
 * [Overview](#4_6_1)
   * [Benefits](#4_6_1_1)
@@ -1550,6 +1552,7 @@ hooks:
 
 <a name="4_7"></a>
 ## [↖](#top)[↑](#4_6_3_5)[↓](#4_7_1) CodePipeline
+
 [toc_start]::
 * [Overview](#4_7_1)
   * [Benefits](#4_7_1_1)
@@ -1676,6 +1679,7 @@ CodePipeline with
 
 <a name="4_8"></a>
 ## [↖](#top)[↑](#4_7_2)[↓](#4_8_1) CodeStar
+
 [toc_start]::
 * [Overview](#4_8_1)
 * [Benefits](#4_8_2)
@@ -1713,6 +1717,7 @@ Uses `cfn-transform` to generate cfn from `template.yml`
 
 <a name="4_9"></a>
 ## [↖](#top)[↑](#4_8_3)[↓](#4_9_1) Config
+
 [toc_start]::
 * [Overview](#4_9_1)
 
@@ -1732,6 +1737,7 @@ auditing, security analysis, change management, and operational troubleshooting.
 
 <a name="4_10"></a>
 ## [↖](#top)[↑](#4_9_1)[↓](#4_10_1) ECS
+
 [toc_start]::
 * [Overview](#4_10_1)
   * [Benefits](#4_10_1_1)
@@ -1781,6 +1787,7 @@ TODO: Deploy container on fargate
 
 <a name="4_11"></a>
 ## [↖](#top)[↑](#4_10_2)[↓](#4_11_1) Elastic Beanstalk
+
 [toc_start]::
 * [Overview](#4_11_1)
 * [Components](#4_11_2)
@@ -1860,6 +1867,7 @@ Environments|200
 
 <a name="4_12"></a>
 ## [↖](#top)[↑](#4_11_4)[↓](#4_12_1) Lambda
+
 [toc_start]::
 * [Overview](#4_12_1)
 * [Triggering](#4_12_2)
@@ -1952,6 +1960,7 @@ so you can direct resources toward differentiating your business.
 
 <a name="4_13"></a>
 ## [↖](#top)[↑](#4_12_4)[↓](#4_13_1) OpsWorks
+
 [toc_start]::
 * [Overview](#4_13_1)
 * [OpsWorks Stacks](#4_13_2)
@@ -1982,6 +1991,7 @@ Puppet Enterprise*, and *AWS OpsWorks Stacks*.
 
 <a name="4_14"></a>
 ## [↖](#top)[↑](#4_13_2)[↓](#4_14_1) Organizations
+
 [toc_start]::
 * [Overview](#4_14_1)
   * [Benefits](#4_14_1_1)
@@ -2022,6 +2032,7 @@ Maximum linked accounts|20
 
 <a name="4_15"></a>
 ## [↖](#top)[↑](#4_14_2)[↓](#4_15_1) Step Functions
+
 [toc_start]::
 * [Overview](#4_15_1)
 
@@ -2043,6 +2054,7 @@ retries when there are errors, so your application executes in order and as expe
 
 <a name="4_16"></a>
 ## [↖](#top)[↑](#4_15_1)[↓](#4_16_1) X-Ray
+
 [toc_start]::
 * [Overview](#4_16_1)
 
