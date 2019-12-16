@@ -789,64 +789,6 @@ TODO: cfn-hup
   * `DependsOn` can be a single resource or a list of resources
   * Will error on circular dependencies
   * `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
-* *Creation Policy*
-  * Can only be used for *EC2 Instances* and *AutoscalingGroup*
-  * Creation policy definion
-    * Defines desired signal count & waiting period
-  * Signal configuration
-    * Call to `cfn-signal` from EC2 user-data
-  ```
-  AutoScalingGroup:
-    Type: AWS::AutoScaling::AutoScalingGroup
-    Properties:
-      ...
-    CreationPolicy:
-      ResourceSignal:
-        Count: '3'
-        Timeout: PT15M
-
-  LaunchConfig:
-    Type: AWS::AutoScaling::LaunchConfiguration
-    Properties:
-      ...
-      UserData:
-        "Fn::Base64":
-          !Sub |
-            #!/bin/bash -xe
-            yum update -y aws-cfn-bootstrap
-            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
-  ```
-* *Wait Conditions and Handlers*
-  * For other resources (*external* to the stack)
-  * Wait condition handler
-    * *CloudFormation* resource with no properties
-    * Generates *signed URL* to communicate success or failure
-    * URL can be used by `cfn-signal` to send data to
-      * Takes custom data as well
-  * Wait condition
-    * Links handler and resource
-      * Know which resource they depend on
-      * Hold reference to handler
-      * Have response timeout
-      * Have a desired count (defaults to 1)
-    * Allows to define complex wait order
-  ```
-  WebServerGroup:
-    Type: AWS::AutoScaling::AutoScalingGroup
-    Properties:
-      ...
-  WaitHandle:
-    Type: AWS::CloudFormation::WaitConditionHandle
-  WaitCondition:
-    Type: AWS::CloudFormation::WaitCondition
-    DependsOn: "WebServerGroup"
-    Properties:
-      Handle:
-        Ref: "WaitHandle"
-      Timeout: "300"
-      Count:
-        Ref: "WebServerCapacity"
-  ```
 
 ##### Stack Deletion
 
@@ -928,27 +870,90 @@ TODO: Update policies
 <a name="4_2_3_1"></a>
 #### [↖](#top)[↑](#4_2_3)[↓](#4_2_4) Running code at instance boot
 
-* CloudFormation User Data
-  * Scripts and commands to be passed to a launching EC2 instance.
-  * Failing user data scripts don't fail the CFN stack
-  * Logged to `/var/log/cloud-init-output.log`
-  * Needs to be base64-encoded
-  ```
-  UserData:
-    Fn::Base64: |
-          #!/bin/bash -x
-          ...
-  ```
-* `cfn-init`
-  * Use the AWS::CloudFormation::Init type to include metadata on an Amazon EC2 instance for the cfn
-    init helper script. If your template calls the `cfn-init` script, the script looks for resource
-    metadata rooted in the `AWS::CloudFormation::Init` metadata key.
-  * Different sections: `packages`, `groups`, `users`, `sources`, `files`, `commands`, `services`
-  * Need to make sure `aws-cfn-bootstrap` is in place und up to date
-  * Logged to `/var/log/cfn-init.log`
+##### Define code and scripts to run
+
+**CloudFormation User Data**
+* Scripts and commands to be passed to a launching EC2 instance.
+* Failing user data scripts don't fail the CFN stack
+* Logged to `/var/log/cloud-init-output.log`
+* Needs to be base64-encoded
+```
+UserData:
+  Fn::Base64: |
+        #!/bin/bash -x
+        ...
+```
+`cfn-init`
+* Use the AWS::CloudFormation::Init type to include metadata on an Amazon EC2 instance for the cfn
+  init helper script. If your template calls the `cfn-init` script, the script looks for resource
+  metadata rooted in the `AWS::CloudFormation::Init` metadata key.
+* Different sections: `packages`, `groups`, `users`, `sources`, `files`, `commands`, `services`
+* Need to make sure `aws-cfn-bootstrap` is in place und up to date
+* Logged to `/var/log/cfn-init.log`
+* Can use *WaitCondition*/`cfn-signal` to make CloudFormation wait for successful finish of code
 
 * By default, user data scripts and cloud-init directives run only during the boot cycle when you first launch an instance.
 
+##### Signal outcome of installation back to CFN
+
+**Creation Policy**
+* Can (only) be used for *EC2 Instances* and *AutoscalingGroup*
+* Creation policy definion
+  * Defines desired signal count & waiting period
+* Signal configuration
+  * Call to `cfn-signal` from EC2 user-data
+```
+AutoScalingGroup:
+  Type: AWS::AutoScaling::AutoScalingGroup
+  Properties:
+    ...
+  CreationPolicy:
+    ResourceSignal:
+      Count: '3'
+      Timeout: PT15M
+
+LaunchConfig:
+  Type: AWS::AutoScaling::LaunchConfiguration
+  Properties:
+    ...
+    UserData:
+      "Fn::Base64":
+        !Sub |
+          #!/bin/bash -xe
+          yum update -y aws-cfn-bootstrap
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
+```
+**Wait Conditions and Handlers**
+* For other resources (*external* to the stack)
+* Wait condition handler
+  * *CloudFormation* resource with no properties
+  * Generates *signed URL* to communicate success or failure
+  * URL can be used by `cfn-signal` to send data to
+    * Takes custom data as well
+* Wait condition
+  * Links handler and resource
+    * Know which resource they depend on
+    * Hold reference to handler
+    * Have response timeout
+    * Have a desired count (defaults to 1)
+  * Allows to define complex wait order
+```
+WebServerGroup:
+  Type: AWS::AutoScaling::AutoScalingGroup
+  Properties:
+    ...
+WaitHandle:
+  Type: AWS::CloudFormation::WaitConditionHandle
+WaitCondition:
+  Type: AWS::CloudFormation::WaitCondition
+  DependsOn: "WebServerGroup"
+  Properties:
+    Handle:
+      Ref: "WaitHandle"
+    Timeout: "300"
+    Count:
+      Ref: "WebServerCapacity"
+```
 <a name="4_2_4"></a>
 ### [↖](#top)[↑](#4_2_3_1)[↓](#4_2_5) Custom Resources
 * Problems with existing *CloudFormation* resources:
