@@ -725,7 +725,7 @@ scaling). You can also use intrinsic functions to conditionally create stack res
 
 Name|Attributes|.
 -|-|-
-`Ref`| *logicalName* | * Returns the *default* value of the specified parameter or resource, usually instance id
+`Ref`| *logicalName* | * Returns the *default* value of the specified *parameter*. For *resource* usually physical id
 `Fn::Base64`| *valueToEncode* | * Provides encoding, converts from plain text into base64
 `Fn::Cidr`| *ipBlock*, *count*, *cidrBits* | * Returns an array of CIDR address blocks. The number of CIDR blocks returned is dependent on the count parameter
 `Fn::FindInMap`| *MapName*, *TopLevelKey*, *SecondLevelKey* | * Returns the value corresponding to keys in a two-level map that is declared in the *Mappings* section
@@ -737,11 +737,11 @@ Name|Attributes|.
 `Fn::Join`| *delimiter*, [ *comma-delimited list of values* ] | * Joins a set of values into a single value separated by the specified delimiter
 `Fn::Select`| *index*, *listOfObjects*| * Returns a single object from a list of objects by index
 `Fn::Split`| *delimiter*, *source string* | * Split a string into a list of string values so that you can select an element from the resulting
-`Fn::Sub`| - *String*<br/> - { *key*: *Value*, ... } | * Substitutes variables in an input string with values that you specify string list
+`Fn::Sub`| - *String*<br/> - { *key*: *Value*, ... } | * Substitutes variables in an input string with values that you specify string list<br/>Also: `!Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/${vpc}'`
 `Fn::Transform`| Name: *String*<br/> Parameters:<br/>   { *key*: *Value*, ... } | * Specifies a macro to perform custom processing on part of a stack template
 
 <a name="4_2_3"></a>
-### [↖](#top)[↑](#4_2_2_1_6)[↓](#4_2_3_1) Stacks
+#### [↖](#top)[↑](#4_2_2_1_6)[↓](#4_2_3_1) Stacks
 
 * Related resources are managed in a single unit called a **stack**
 	* All the resources in a stack are defined by the stack's *CloudFormation* template
@@ -758,9 +758,9 @@ TODO: stack updates and implications on interruptions
 TODO: cfn-hup
 
 <a name="4_2_3_1"></a>
-#### [↖](#top)[↑](#4_2_3)[↓](#4_2_3_1_1) Stack Creation
+##### [↖](#top)[↑](#4_2_3)[↓](#4_2_3_1_1) Stack Creation
 
-##### Process
+###### Process
 1. Template upload into S3 bucket
 2. Template syntax check
 3. Stack name & parameter verification & ingestion (apply default values)
@@ -773,12 +773,12 @@ TODO: cfn-hup
 	* Output creation
 5. Stack completion (or rollback)
 
-##### Resource ordering
+###### Resource ordering
 
-###### Natural ordering
+####### Natural ordering
 CloudFormation knows about 'natural' dependencies between resources.
 
-###### DependsOn
+####### DependsOn
 Also evaluates `DependsOn` field:
 * Allows to direct *CloudFormation* on how to handle more complex dependencies
 * Applies to *creation* as well as *deletion* & *rollback*
@@ -786,7 +786,7 @@ Also evaluates `DependsOn` field:
 * Will error on circular dependencies
 * `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
 
-###### Creation Policy
+####### Creation Policy
 * Can only be used for *EC2 Instances* and *AutoscalingGroup*
 * Creation policy definion
 	* Defines desired signal count & waiting period
@@ -829,7 +829,7 @@ LaunchConfig:
           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
 ```
 
-###### Wait Conditions and Handlers
+####### Wait Conditions and Handlers
 For other resources (*external* to the stack)
 * Wait condition handler
 	* *CloudFormation* resource with no properties
@@ -872,9 +872,9 @@ WaitCondition:
 ```
 
 <a name="4_2_3_2"></a>
-#### [↖](#top)[↑](#4_2_3_1_2_4)[↓](#4_2_3_2_1) Stack Deletion
+##### [↖](#top)[↑](#4_2_3_1_2_4)[↓](#4_2_3_2_1) Stack Deletion
 
-##### Resource deletion policy
+###### Resource deletion policy
 * **Policy** / statement that is associated with every resource of a stack
 * Controls what happens if stack is deleted
 * `DeletionPolicy`
@@ -896,9 +896,9 @@ WaitCondition:
 		* Allow data recovery at a later stage
 
 <a name="4_2_3_3"></a>
-#### [↖](#top)[↑](#4_2_3_2_1)[↓](#4_2_3_3_1) Stacks Updates
+##### [↖](#top)[↑](#4_2_3_2_1)[↓](#4_2_3_3_1) Stacks Updates
 
-##### Process
+###### Process
 A CloudFormation *stack policy* is a JSON-based document that defines which actions can be performed
 on specified resources. With CloudFormation stack policies you can protect all or certain
 resources in your stacks from being unintentionally updated or deleted during the update process.
@@ -922,7 +922,7 @@ Element|.
 
 TODO: Update policies
 
-##### Interuption while updating
+###### Interuption while updating
 * Update can impact a resource in 4 possible ways
 	* *No interruption*
 		* E.g. change `ProvisionedThroughput` of a DynamoDB table
@@ -936,7 +936,7 @@ TODO: Update policies
 	* Deletion
 
 <a name="4_2_3_4"></a>
-#### [↖](#top)[↑](#4_2_3_3_2)[↓](#4_2_4) Stacks Nesting
+##### [↖](#top)[↑](#4_2_3_3_2)[↓](#4_2_4) Stacks Nesting
 * *Resources* in a stack can be references to other stacks
 * Output values of nested stack are returned to parent stack
 * Benefits
@@ -947,6 +947,31 @@ TODO: Update policies
 	* Declare resources as `AWS::CloudFormation::Stack`
 	* Point `TemplateURL` to S3 URL of nested stack
 	* Use `Parameters` to provide the nested stack with input values (defaults will be used otherwise)
+
+### Concepts
+
+#### Running code at instance boot
+
+* CloudFormation User Data
+  * Scripts and commands to be passed to a launching EC2 instance.
+  * Failing user data scripts don't fail the CFN stack
+  * Logged to `/var/log/cloud-init-output.log`
+  * Needs to be base64-encoded
+  ```
+  UserData:
+    Fn::Base64: |
+          #!/bin/bash -x
+          ...
+  ```
+* `cfn-init`
+  * Use the AWS::CloudFormation::Init type to include metadata on an Amazon EC2 instance for the cfn
+    init helper script. If your template calls the `cfn-init` script, the script looks for resource
+    metadata rooted in the `AWS::CloudFormation::Init` metadata key.
+  * Different sections: `packages`, `groups`, `users`, `sources`, `files`, `commands`, `services`
+  * Need to make sure `aws-cfn-bootstrap` is in place und up to date
+  * Logged to `/var/log/cfn-init.log`
+
+* By default, user data scripts and cloud-init directives run only during the boot cycle when you first launch an instance.
 
 <a name="4_2_4"></a>
 ### [↖](#top)[↑](#4_2_3_4)[↓](#4_2_5) Custom Resources
