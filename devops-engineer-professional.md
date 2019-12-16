@@ -778,103 +778,75 @@ TODO: cfn-hup
 	* Output creation
 5. Stack completion (or rollback)
 
-###### Resource ordering
+###### Resource ordering during creation
 
-####### Natural ordering
-CloudFormation knows about 'natural' dependencies between resources.
+* *Natural ordering*
+  * CloudFormation knows about 'natural' dependencies between resources.
+* *DependsOn*
+  * Also `DependsOn` attribute
+  * Allows to direct *CloudFormation* on how to handle more complex dependencies
+  * Applies to *creation* as well as *deletion* & *rollback*
+  * `DependsOn` can be a single resource or a list of resources
+  * Will error on circular dependencies
+  * `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
+* *Creation Policy*
+  * Can only be used for *EC2 Instances* and *AutoscalingGroup*
+  * Creation policy definion
+    * Defines desired signal count & waiting period
+  * Signal configuration
+    * Call to `cfn-signal` from EC2 user-data
+  ```
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      ...
+    CreationPolicy:
+      ResourceSignal:
+        Count: '3'
+        Timeout: PT15M
 
-####### DependsOn
-Also evaluates `DependsOn` field:
-* Allows to direct *CloudFormation* on how to handle more complex dependencies
-* Applies to *creation* as well as *deletion* & *rollback*
-* `DependsOn` can be a single resource or a list of resources
-* Will error on circular dependencies
-* `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
-
-####### Creation Policy
-* Can only be used for *EC2 Instances* and *AutoscalingGroup*
-* Creation policy definion
-	* Defines desired signal count & waiting period
-* Signal configuration
-	* Call to `cfn-signal` from EC2 user-data
-
-```
-AutoScalingGroup:
-  Type: AWS::AutoScaling::AutoScalingGroup
-  Properties:
-    AvailabilityZones:
-      Fn::GetAZs: ''
-    LaunchConfigurationName:
-      Ref: LaunchConfig
-    DesiredCapacity: '3'
-    MinSize: '1'
-    MaxSize: '4'
-  CreationPolicy:
-    ResourceSignal:
-      Count: '3'
-      Timeout: PT15M
-  UpdatePolicy:
-    AutoScalingScheduledAction:
-      IgnoreUnmodifiedGroupSizeProperties: 'true'
-    AutoScalingRollingUpdate:
-      MinInstancesInService: '1'
-      MaxBatchSize: '2'
-      PauseTime: PT1M
-      WaitOnResourceSignals: 'true'
-LaunchConfig:
-  Type: AWS::AutoScaling::LaunchConfiguration
-  Properties:
-    ImageId: ami-16d18a7e
-    InstanceType: t2.micro
-    UserData:
-      "Fn::Base64":
-        !Sub |
-          #!/bin/bash -xe
-          yum update -y aws-cfn-bootstrap
-          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
-```
-
-####### Wait Conditions and Handlers
-For other resources (*external* to the stack)
-* Wait condition handler
-	* *CloudFormation* resource with no properties
-	* Generates *signed URL* to communicate success or failure
-	* URL can be used by `cfn-signal` to send data to
-		* Takes custom data as well
-* Wait condition
-	* Links handler and resource
-		* Know which resource they depend on
-		* Hold reference to handler
-		* Have response timeout
-		* Have a desired count (defaults to 1)
-	* Allows to define complex wait order
-
-```
-WebServerGroup:
-  Type: AWS::AutoScaling::AutoScalingGroup
-  Properties:
-    AvailabilityZones:
-      Fn::GetAZs: ""
-    LaunchConfigurationName:
-      Ref: "LaunchConfig"
-    MinSize: "1"
-    MaxSize: "5"
-    DesiredCapacity:
-      Ref: "WebServerCapacity"
-    LoadBalancerNames:
-      - Ref: "ElasticLoadBalancer"
-WaitHandle:
-  Type: AWS::CloudFormation::WaitConditionHandle
-WaitCondition:
-  Type: AWS::CloudFormation::WaitCondition
-  DependsOn: "WebServerGroup"
-  Properties:
-    Handle:
-      Ref: "WaitHandle"
-    Timeout: "300"
-    Count:
-      Ref: "WebServerCapacity"
-```
+  LaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ...
+      UserData:
+        "Fn::Base64":
+          !Sub |
+            #!/bin/bash -xe
+            yum update -y aws-cfn-bootstrap
+            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource AutoScalingGroup --region ${AWS::Region}
+  ```
+* *Wait Conditions and Handlers*
+  * For other resources (*external* to the stack)
+  * Wait condition handler
+    * *CloudFormation* resource with no properties
+    * Generates *signed URL* to communicate success or failure
+    * URL can be used by `cfn-signal` to send data to
+      * Takes custom data as well
+  * Wait condition
+    * Links handler and resource
+      * Know which resource they depend on
+      * Hold reference to handler
+      * Have response timeout
+      * Have a desired count (defaults to 1)
+    * Allows to define complex wait order
+  ```
+  WebServerGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      ...
+  WaitHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+  WaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    DependsOn: "WebServerGroup"
+    Properties:
+      Handle:
+        Ref: "WaitHandle"
+      Timeout: "300"
+      Count:
+        Ref: "WebServerCapacity"
+  ```
 
 ##### Stack Deletion
 
