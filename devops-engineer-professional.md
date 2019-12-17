@@ -1,5 +1,4 @@
-
-[toc_start]::
+<!-- toc_start -->
 <a name="top"></a>
 ---
 * [DevOps Engineer Professional](#1)
@@ -28,8 +27,8 @@
   * [Step Functions](#4_15)
   * [X-Ray](#4_16)
 ---
+<!-- toc_end -->
 
-[toc_end]::
 <a name="1"></a>
 # [↖](#top)[↓](#2) DevOps Engineer Professional
 
@@ -48,16 +47,14 @@
 
 <a name="2_1"></a>
 ## [↖](#top)[↑](#2)[↓](#2_1_1) Content
-
-[toc_start]::
+<!-- toc_start -->
 * [Domain 1: SDLC Automation](#2_1_1)
 * [Domain 2:Configuration Management and Infrastructure as Code](#2_1_2)
 * [Domain 3: Monitoring and Logging](#2_1_3)
 * [Domain 4: Policies and Standards Automation](#2_1_4)
 * [Domain 5: Incident and Event Response](#2_1_5)
 * [Domain 6: High Availability, Fault Tolerance, and Disaster Recovery](#2_1_6)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="2_1_1"></a>
 ### [↖](#top)[↑](#2_1)[↓](#2_1_2) Domain 1: SDLC Automation
@@ -114,8 +111,7 @@
 
 <a name="3_1"></a>
 ## [↖](#top)[↑](#3)[↓](#3_1_1) Deployment Strategies
-
-[toc_start]::
+<!-- toc_start -->
 * [Single target deployment](#3_1_1)
 * [All-at-once deployment](#3_1_2)
 * [Minimum in-service style deployment](#3_1_3)
@@ -124,8 +120,7 @@
 * [Red/black deployment](#3_1_6)
 * [A/B testing](#3_1_7)
 * [Canary deployment](#3_1_8)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="3_1_1"></a>
 ### [↖](#top)[↑](#3_1)[↓](#3_1_2) Single target deployment
@@ -308,14 +303,12 @@ Example:
 
 <a name="3_2"></a>
 ## [↖](#top)[↑](#3_1_8)[↓](#3_2_1) EC2 Deployment Concepts
-
-[toc_start]::
+<!-- toc_start -->
 * [Instance Profile](#3_2_1)
 * [ELB/ALB Logs](#3_2_2)
 * [ELB/ALB Health Checks](#3_2_3)
 * [ELB Security](#3_2_4)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="3_2_1"></a>
 ### [↖](#top)[↑](#3_2)[↓](#3_2_2) Instance Profile
@@ -359,8 +352,7 @@ status of any instances that are unhealthy at the time of the health check is `O
 
 <a name="3_3"></a>
 ## [↖](#top)[↑](#3_2_4)[↓](#3_3_1) EC2 Autoscaling Concepts
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#3_3_1)
 * [Components](#3_3_2)
   * [Autoscaling Group](#3_3_2_1)
@@ -373,8 +365,7 @@ status of any instances that are unhealthy at the time of the health check is `O
 * [Troubleshooting](#3_3_4)
   * [Possible Problems](#3_3_4_1)
   * [Suspending ASG processes](#3_3_4_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="3_3_1"></a>
 ### [↖](#top)[↑](#3_3)[↓](#3_3_2) Overview
@@ -546,13 +537,11 @@ application and making changes to your application without invoking the scaling 
 
 <a name="3_4"></a>
 ## [↖](#top)[↑](#3_3_4_2)[↓](#3_4_1) External Tools
-
-[toc_start]::
+<!-- toc_start -->
 * [Jenkins](#3_4_1)
   * [Integrating into CodePipeline](#3_4_1_1)
   * [Plugins](#3_4_1_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="3_4_1"></a>
 ### [↖](#top)[↑](#3_4)[↓](#3_4_1_1) Jenkins
@@ -593,12 +582,10 @@ application and making changes to your application without invoking the scaling 
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) API Gateway
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_1_1)
   * [Benefits](#4_1_1_1)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_1_1"></a>
 ### [↖](#top)[↑](#4_1)[↓](#4_1_1_1) Overview
@@ -626,8 +613,7 @@ communication applications.
 
 <a name="4_2"></a>
 ## [↖](#top)[↑](#4_1_1_1)[↓](#4_2_1) CloudFormation
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_2_1)
 * [Components](#4_2_2)
   * [Template](#4_2_2_1)
@@ -636,8 +622,7 @@ communication applications.
   * [Running code at instance boot](#4_2_3_1)
 * [Custom Resources](#4_2_4)
 * [Limits](#4_2_5)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_2_1"></a>
 ### [↖](#top)[↑](#4_2)[↓](#4_2_2) Overview
@@ -868,7 +853,7 @@ TODO: Update policies
 ### [↖](#top)[↑](#4_2_2_2_4)[↓](#4_2_3_1) Concepts
 
 <a name="4_2_3_1"></a>
-#### [↖](#top)[↑](#4_2_3)[↓](#4_2_4) Running code at instance boot
+#### [↖](#top)[↑](#4_2_3)[↓](#4_2_3_1_1) Running code at instance boot
 
 ##### Define code and scripts to run
 
@@ -955,7 +940,7 @@ WaitCondition:
       Ref: "WebServerCapacity"
 ```
 <a name="4_2_4"></a>
-### [↖](#top)[↑](#4_2_3_1)[↓](#4_2_5) Custom Resources
+### [↖](#top)[↑](#4_2_3_1_2)[↓](#4_2_5) Custom Resources
 * Problems with existing *CloudFormation* resources:
 	* Sometimes lacks behind AWS services
 	* Cannot deal with non-AWS resources
@@ -991,16 +976,14 @@ TODO: Compare chapter against LinuxAcademy
 
 <a name="4_3"></a>
 ## [↖](#top)[↑](#4_2_5)[↓](#4_3_1) CloudWatch
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_3_1)
 * [Concepts](#4_3_2)
   * [Logging](#4_3_2_1)
   * [Metrics & Alarms](#4_3_2_2)
 * [Key metrics for EC2](#4_3_3)
 * [Key metrics for Auto Scaling Group](#4_3_4)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_3_1"></a>
 ### [↖](#top)[↑](#4_3)[↓](#4_3_2) Overview
@@ -1176,15 +1159,13 @@ Metric|Effect
 
 <a name="4_4"></a>
 ## [↖](#top)[↑](#4_3_4)[↓](#4_4_1) CodeBuild
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_4_1)
 * [Benefits](#4_4_2)
 * [Components](#4_4_3)
   * [How it works](#4_4_3_1)
   * [Buildspec](#4_4_3_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_4_1"></a>
 ### [↖](#top)[↑](#4_4)[↓](#4_4_2) Overview
@@ -1298,16 +1279,14 @@ cache:
 
 <a name="4_5"></a>
 ## [↖](#top)[↑](#4_4_3_2)[↓](#4_5_1) CodeCommit
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_5_1)
 * [Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments](#4_5_2)
 * [How To](#4_5_3)
   * [Protect branches](#4_5_3_1)
   * [Send Notifications](#4_5_3_2)
   * [Trigger SNS / Lambda](#4_5_3_3)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_5_1"></a>
 ### [↖](#top)[↑](#4_5)[↓](#4_5_2) Overview
@@ -1374,8 +1353,7 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
 
 <a name="4_6"></a>
 ## [↖](#top)[↑](#4_5_3_3)[↓](#4_6_1) CodeDeploy
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_6_1)
   * [Benefits](#4_6_1_1)
 * [Components](#4_6_2)
@@ -1387,8 +1365,7 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
   * [Rollback](#4_6_3_3)
   * [On-prem Deploys](#4_6_3_4)
   * [Lambda Deploys](#4_6_3_5)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_6_1"></a>
 ### [↖](#top)[↑](#4_6)[↓](#4_6_1_1) Overview
@@ -1529,15 +1506,13 @@ hooks:
 
 <a name="4_7"></a>
 ## [↖](#top)[↑](#4_6_3_5)[↓](#4_7_1) CodePipeline
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_7_1)
   * [Benefits](#4_7_1_1)
   * [Components](#4_7_1_2)
   * [Pipeline Actions](#4_7_1_3)
 * [Scenarios](#4_7_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_7_1"></a>
 ### [↖](#top)[↑](#4_7)[↓](#4_7_1_1) Overview
@@ -1656,13 +1631,11 @@ CodePipeline with
 
 <a name="4_8"></a>
 ## [↖](#top)[↑](#4_7_2)[↓](#4_8_1) CodeStar
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_8_1)
 * [Benefits](#4_8_2)
 * [Under the hood](#4_8_3)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_8_1"></a>
 ### [↖](#top)[↑](#4_8)[↓](#4_8_2) Overview
@@ -1694,11 +1667,9 @@ Uses `cfn-transform` to generate cfn from `template.yml`
 
 <a name="4_9"></a>
 ## [↖](#top)[↑](#4_8_3)[↓](#4_9_1) Config
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_9_1)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_9_1"></a>
 ### [↖](#top)[↑](#4_9)[↓](#4_10) Overview
@@ -1714,13 +1685,11 @@ auditing, security analysis, change management, and operational troubleshooting.
 
 <a name="4_10"></a>
 ## [↖](#top)[↑](#4_9_1)[↓](#4_10_1) ECS
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_10_1)
   * [Benefits](#4_10_1_1)
 * [Components](#4_10_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_10_1"></a>
 ### [↖](#top)[↑](#4_10)[↓](#4_10_1_1) Overview
@@ -1764,14 +1733,12 @@ TODO: Deploy container on fargate
 
 <a name="4_11"></a>
 ## [↖](#top)[↑](#4_10_2)[↓](#4_11_1) Elastic Beanstalk
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_11_1)
 * [Components](#4_11_2)
 * [`.ebextensions`](#4_11_3)
 * [Limits:](#4_11_4)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_11_1"></a>
 ### [↖](#top)[↑](#4_11)[↓](#4_11_2) Overview
@@ -1844,8 +1811,7 @@ Environments|200
 
 <a name="4_12"></a>
 ## [↖](#top)[↑](#4_11_4)[↓](#4_12_1) Lambda
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_12_1)
 * [Triggering](#4_12_2)
   * [Services that Lambda reads events from](#4_12_2_1)
@@ -1853,8 +1819,7 @@ Environments|200
   * [Services that invoke Lambda functions asynchronously](#4_12_2_3)
 * [Managed Services](#4_12_3)
 * [Overview](#4_12_4)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_12_1"></a>
 ### [↖](#top)[↑](#4_12)[↓](#4_12_2) Overview
@@ -1937,12 +1902,10 @@ so you can direct resources toward differentiating your business.
 
 <a name="4_13"></a>
 ## [↖](#top)[↑](#4_12_4)[↓](#4_13_1) OpsWorks
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_13_1)
 * [OpsWorks Stacks](#4_13_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_13_1"></a>
 ### [↖](#top)[↑](#4_13)[↓](#4_13_2) Overview
@@ -1968,13 +1931,11 @@ Puppet Enterprise*, and *AWS OpsWorks Stacks*.
 
 <a name="4_14"></a>
 ## [↖](#top)[↑](#4_13_2)[↓](#4_14_1) Organizations
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_14_1)
   * [Benefits](#4_14_1_1)
 * [Limits:](#4_14_2)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_14_1"></a>
 ### [↖](#top)[↑](#4_14)[↓](#4_14_1_1) Overview
@@ -2009,11 +1970,9 @@ Maximum linked accounts|20
 
 <a name="4_15"></a>
 ## [↖](#top)[↑](#4_14_2)[↓](#4_15_1) Step Functions
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_15_1)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_15_1"></a>
 ### [↖](#top)[↑](#4_15)[↓](#4_16) Overview
@@ -2031,11 +1990,9 @@ retries when there are errors, so your application executes in order and as expe
 
 <a name="4_16"></a>
 ## [↖](#top)[↑](#4_15_1)[↓](#4_16_1) X-Ray
-
-[toc_start]::
+<!-- toc_start -->
 * [Overview](#4_16_1)
-
-[toc_end]::
+<!-- toc_end -->
 
 <a name="4_16_1"></a>
 ### [↖](#top)[↑](#4_16) Overview
