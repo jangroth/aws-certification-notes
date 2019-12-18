@@ -771,6 +771,9 @@ Name|Attributes|Description
 ###### Process
 1. Template upload into S3 bucket
 2. Template syntax check
+    * CloudFormation will check for any IAM resources being created, and require `CAPABILITY_IAM`|
+    `CAPABILITY_NAMED_IAM` if so
+    * Will raise `InsufficientCapabilities` otherwise
 3. Stack name & parameter verification & ingestion (apply default values)
 4. Template processing & stack creation
 	* **Resource ordering**
@@ -904,7 +907,7 @@ UserData:
         ...
 ```
 `cfn-init`
-* Use the AWS::CloudFormation::Init type to include metadata on an Amazon EC2 instance for the cfn
+* Use the AWS::CloudFormation::Init type to include *metadata* on an Amazon EC2 instance for the cfn
   init helper script. If your template calls the `cfn-init` script, the script looks for resource
   metadata rooted in the `AWS::CloudFormation::Init` metadata key.
 * Different sections: `packages`, `groups`, `users`, `sources`, `files`, `commands`, `services`
@@ -913,6 +916,8 @@ UserData:
 * Can use *WaitCondition*/`cfn-signal` to make CloudFormation wait for successful finish of code
 
 * By default, user data scripts and cloud-init directives run only during the boot cycle when you first launch an instance.
+* Can use `cfn-hup` to detect changes in resource metadata and run user-specified actions when a change is detected
+* Use `cfn-get-metadata` to fetch a metadata block from AWS CloudFormation and print it to standard out
 
 ##### Signal outcome of installation back to CFN
 
