@@ -668,7 +668,8 @@ Element|Comment
 
 ##### Parameters
 
-* Type: `String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key
+* Type: `String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key (`AWS::SSM::Parameter`)
+  * SSM *SecureString* is not supported
 * *Description*, *Default Value*, *Allowed Values*, *Allowed Pattern*
 * Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
 * *Pseudo parameters* are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
@@ -773,30 +774,26 @@ Name|Attributes|Description
 3. Stack name & parameter verification & ingestion (apply default values)
 4. Template processing & stack creation
 	* **Resource ordering**
-		* *Wait conditions* allow further control about what happens when
+      * *Natural ordering*
+        * CloudFormation knows about 'natural' dependencies between resources.
+      * *DependsOn*
+        * Also `DependsOn` attribute
+        * Allows to direct *CloudFormation* on how to handle more complex dependencies
+        * Applies to *creation* as well as *deletion* & *rollback*
+        * `DependsOn` can be a single resource or a list of resources
+        * Will error on circular dependencies
+        * `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
+      * -> *Wait conditions* allow further control about what happens when
 	* **Resource creation**
 		* Will try to create as many resources as possible in parallel
 		* Includes pausing and waiting for other resources to be created first
 		* Associate the `CreationPolicy` attribute with a resource to prevent its status from reaching
 		create complete until AWS CloudFormation receives a specified number of success signals or the
 		timeout period is exceeded. 
-	* Output creation
+	* **Output creation**
 5. Stack completion or rollback
 	* Rollback settings can be provided while creating the stack
 		* `onFailure` - `ROLLBACK` | `DELETE` | `DO_NOTHING`
-
-###### Resource ordering during creation
-
-* *Natural ordering*
-  * CloudFormation knows about 'natural' dependencies between resources.
-* *DependsOn*
-  * Also `DependsOn` attribute
-  * Allows to direct *CloudFormation* on how to handle more complex dependencies
-  * Applies to *creation* as well as *deletion* & *rollback*
-  * `DependsOn` can be a single resource or a list of resources
-  * Will error on circular dependencies
-  * `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
-* -> *Wait conditions*
 
 ##### Stacks Updates
 
@@ -890,7 +887,7 @@ stack is deleted.
 ### [↖](#4_2)[↑](#4_2_2_2_4_2)[↓](#4_2_3_1) Concepts
 
 <a name="4_2_3_1"></a>
-#### [↖](#4_2)[↑](#4_2_3)[↓](#4_2_3_1_1) Running code at instance boot
+#### [↖](#4_2)[↑](#4_2_3)[↓](#4_2_3_1_1) Running code on instance boot
 
 ##### Define code and scripts to run
 
