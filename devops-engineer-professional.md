@@ -624,6 +624,10 @@ communication applications.
 * [Limits](#4_2_5)
 <!-- toc_end -->
 
+TODO: stack sets 
+TODO: cfn-hup
+TODO: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/best-practices.html
+
 <a name="4_2_1"></a>
 ### [↖](#top)[↑](#4_2)[↓](#4_2_2) Overview
 *AWS CloudFormation* provides a common language for you to describe and provision all the
@@ -657,29 +661,41 @@ Element|Comment
 `Parameters`|Values to pass in right before template creation
 `Mappings`|Maps keys to values (eg different values for different regions)
 `Conditions`|Check values before deciding what to do
-`Resources`|Creates resources. Only mandatory section in a template.
-`Outputs`|Values to be exposed from the console or from API calls.
+`Resources`|Creates resources - only mandatory section in a template
+`Outputs`|Values to be exposed from the console or from API calls
 
 ##### Parameters
 
 * Type: `String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key
 * *Description*, *Default Value*, *Allowed Values*, *Allowed Pattern*
 * Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
-* Pseudo parameters are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
+* *Pseudo parameters* are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
   * `AWS::AccountId`, `AWS::NotificationARNs`, `AWS::NoValue`, `AWS::Partition`, `AWS::Region`, `AWS::StackId`, `AWS::StackName`, `AWS::URLSuffix`
 * Reference a parameter within the template `!Ref myParam`
 * Usage of parameters *might* make it hard to instantiate stacks
 
 ##### Mappings
 * Fixed (hardcoded) variables within CloudFormation template
-* Accessed via `!FindInMap [ MapName, TopLevelKey, SecondLevelKey ]`
+```
+  RegionMap: 
+    us-east-1:
+      HVM64: ami-0ff8a91507f77f867
+      HVMG2: ami-0a584ac55a7631c0c
+    us-west-1:
+      HVM64: ami-0bdb828fd58c52235
+      HVMG2: ami-066ee5fd4a9ef77f1
+...
+  myEC2Instance: 
+    Type: "AWS::EC2::Instance"
+    Properties: 
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", HVM64]
+```
 
 ##### Conditions
 ```
 Conditions:
   CreateProdResources: !Equals [ !Ref EnvType, prod ]
 ```
-
 * Can use (and combine) `Fn::And`, `Fn::Equals`, `Fn::If`, `Fn::Not`, `Fn::Or`
 
 ##### Resources
@@ -695,15 +711,16 @@ Conditions:
       * E.g. change `ImageId` of an EC2 instance
       * E.g. change `Tablename` of a DynamoDB table
 * Can toggle creation with `Condition`:
-```
-Resources:
-  MountPoint:
-  Type: "AWS::EC2:VolumeAttachment"
-  Condition: CreateProdResources
-```
+	```
+	Resources:
+		MountPoint:
+		Type: "AWS::EC2:VolumeAttachment"
+		Condition: CreateProdResources
+	```
 
 ##### Outputs
-* Can be: constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
+* Can be 
+	* constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
 * Can be used in a different stack (*cross stack references*)
   * `!ImportValue NameOfTheExport`
   * Cannot delete stack if its outputs are used in another stack
@@ -712,11 +729,13 @@ Resources:
 * Used to pass in values that are not available until runtime
 * Usable in `resources`, `outputs`, `metadata` attributes and `update policy` attributes (auto
 scaling). You can also use intrinsic functions to conditionally create stack resources.
+* Most intrinsic functions have a short and a long form (not `Ref`):
+	* `Fn::GetAtt: [ logicalNameOfResource, attributeName ]`	
+	* `!GetAtt logicalNameOfResource.attributeName`
 
-
-Name|Attributes|.
+Name|Attributes|Description
 -|-|-
-`Ref`| *logicalName* | * Returns the *default* value of the specified *parameter*. For *resource* usually physical id
+`Ref`| *logicalName* | * Returns the *default* value of the specified *parameter*. For *resource* typically physical id
 `Fn::Base64`| *valueToEncode* | * Provides encoding, converts from plain text into base64
 `Fn::Cidr`| *ipBlock*, *count*, *cidrBits* | * Returns an array of CIDR address blocks. The number of CIDR blocks returned is dependent on the count parameter
 `Fn::FindInMap`| *MapName*, *TopLevelKey*, *SecondLevelKey* | * Returns the value corresponding to keys in a two-level map that is declared in the *Mappings* section
@@ -744,10 +763,6 @@ Name|Attributes|.
   * Can enable **termination protection**
 * A **stack policy** is an *IAM*-style policy statements that governs who can do what
 
-TODO: stack sets and stack drift
-TODO: stack updates and implications on interruptions
-TODO: cfn-hup
-
 ##### Stack Creation
 
 ###### Process
@@ -756,12 +771,17 @@ TODO: cfn-hup
 3. Stack name & parameter verification & ingestion (apply default values)
 4. Template processing & stack creation
 	* **Resource ordering**
-			* *WaitConditions* allow further control about what happens when
+		* *Wait conditions* allow further control about what happens when
 	* **Resource creation**
 		* Will try to create as many resources as possible in parallel
 		* Includes pausing and waiting for other resources to be created first
+		* Associate the `CreationPolicy` attribute with a resource to prevent its status from reaching
+		create complete until AWS CloudFormation receives a specified number of success signals or the
+		timeout period is exceeded. 
 	* Output creation
-5. Stack completion (or rollback)
+5. Stack completion or rollback
+	* Rollback settings can be provided while creating the stack
+		* `onFailure` - `ROLLBACK` | `DELETE` | `DO_NOTHING`
 
 ###### Resource ordering during creation
 
@@ -774,10 +794,76 @@ TODO: cfn-hup
   * `DependsOn` can be a single resource or a list of resources
   * Will error on circular dependencies
   * `DependsOn` is problematic if the target resource needs more complex setup than just stack creation
+* -> *Wait conditions*
+
+##### Stacks Updates
+
+###### Process
+
+* **Direct updates**
+	* You submit changes and AWS CloudFormation immediately deploys them
+* **Change sets**
+	* You can preview the changes AWS CloudFormation will make to your stack, and then decide whether
+	to apply those changes by executing the change set
+	* *Change sets* are JSON-formatted documents that summarize the changes AWS CloudFormation will
+	make to a stack
+* Use the `UpdatePolicy` attribute to specify how AWS CloudFormation handles updates to the `AWS:
+	AutoScaling::AutoScalingGroup`, `AWS::ElastiCache::ReplicationGroup`, `AWS::Elasticsearch::Domain`
+	or `AWS::Lambda::Alias` resources. 
+	* Values depend on resource type, e.g. ASG replacing vs rolling update
+* Use the `UpdateReplacePolicy` attribute to retain or (in some cases) backup the existing
+	physical instance of a resource when it is replaced during a stack update operation. 
+* On Failure, the stack will rollback automatically to the last known working state
+
+###### Interuption while updating
+* Update can impact a resource in 4 possible ways
+	* *No interruption*
+		* E.g. change `ProvisionedThroughput` of a DynamoDB table
+	* Some interruption
+		* E.g. change `EbsOptimized` of an EC2 instance (EBS-backed)
+		* E.g. change `InstanceType` of an EC2 instance (EBS-backed)
+	* Replacement
+		* E.g. change `AvailabilityZone` of an EC2 instance
+		* E.g. change `ImageId` of an EC2 instance
+		* E.g. change `Tablename` of a DynamoDB table
+	* Deletion
+
+##### Stack Policy
+
+Defines which actions can be performed on specified resources. With CloudFormation stack policies
+you can protect all or certain resources in your stacks from being unintentionally updated or
+deleted during the update process.
+
+* Check **stack policy** if updates are allowed
+	* No policy present: All updates are allowed -> This differs from IAM default!
+	* Once a policy is applied
+		* It cannot be deleted
+		* *All* resources that are not explicitely allowed are denied
+		* Default deny can be explicitely overwritten
+	* Policy format JSON
+		* Contains *policy documents*
+* Don't confuse with `DeletionPolicy`, `UpdatePolicy`, `UpdateRollbackPolicy` attributes
+
+Element|.
+-|-
+`Effect`|.
+`Principal`|*Must* be wildcard for stack policies
+`Action`|`Update:Modify`,`Update:Replace`,`Update:Delete`,`Update:(wildcard)`
+`Resource`,`NotResource`|.
+`Condition`|Typically evaluates based on resource type
 
 ##### Stack Deletion
 
+###### Process
+
+* Specify the stack to delete, and AWS CloudFormation deletes the stack and all the resources in that stack.
+* With the `DeletionPolicy` attribute you can preserve or (in some cases) backup a resource when its
+stack is deleted. 
+* If AWS CloudFormation cannot delete a resource, the stack will not be deleted.
+* A stack can have *termination protection* enabled, which will prevent it from being deleted accidentally
+
 ###### Resource deletion policy
+
 * **Policy** / statement that is associated with every resource of a stack
 * Controls what happens if stack is deleted
 * `DeletionPolicy`
@@ -797,57 +883,6 @@ TODO: cfn-hup
 			* `AWS::RDS::DBInstance`
 			* `AWS::Redshift::Cluster`
 		* Allow data recovery at a later stage
-
-##### Stacks Updates
-
-###### Process
-A CloudFormation *stack policy* is a JSON-based document that defines which actions can be performed
-on specified resources. With CloudFormation stack policies you can protect all or certain
-resources in your stacks from being unintentionally updated or deleted during the update process.
-
-* Check **stack policy** if updates are allowed
-	* No policy present -> all updates are allowed
-	* Once a policy is applied
-		* It cannot be deleted
-		* *All* resources that not explicitely allowed are denied
-		* Default deny can be explicitely overwritten
-	* Policy format JSON
-		* Contains *policy documents*
-
-Element|.
--|-
-`Effect`|.
-`Principal`|*Must* be wildcard for stack policies
-`Action`|`Update:Modify`,`Update:Replace`,`Update:Delete`,`Update:(wildcard)`
-`Resource`,`NotResource`|.
-`Condition`|Typically evaluates based on resource type
-
-TODO: Update policies
-
-###### Interuption while updating
-* Update can impact a resource in 4 possible ways
-	* *No interruption*
-		* E.g. change `ProvisionedThroughput` of a DynamoDB table
-	* Some interruption
-		* E.g. change `EbsOptimized` of an EC2 instance (EBS-backed)
-		* E.g. change `InstanceType` of an EC2 instance (EBS-backed)
-	* Replacement
-		* E.g. change `AvailabilityZone` of an EC2 instance
-		* E.g. change `ImageId` of an EC2 instance
-		* E.g. change `Tablename` of a DynamoDB table
-	* Deletion
-
-##### Stacks Nesting
-* *Resources* in a stack can be references to other stacks
-* Output values of nested stack are returned to parent stack
-* Benefits
-	* Allows infrastructure to be split over many templates
-	* Allows infrastructure reuse
-	* Allows to workaround limitations like max resources or max template size
-* How to nest
-	* Declare resources as `AWS::CloudFormation::Stack`
-	* Point `TemplateURL` to S3 URL of nested stack
-	* Use `Parameters` to provide the nested stack with input values (defaults will be used otherwise)
 
 <a name="4_2_3"></a>
 ### [↖](#top)[↑](#4_2_2_2_4)[↓](#4_2_3_1) Concepts
@@ -940,7 +975,7 @@ WaitCondition:
       Ref: "WebServerCapacity"
 ```
 <a name="4_2_4"></a>
-### [↖](#top)[↑](#4_2_3_1_2)[↓](#4_2_5) Custom Resources
+#### [↖](#top)[↑](#4_2_3_1_2)[↓](#4_2_5) Custom Resources
 * Problems with existing *CloudFormation* resources:
 	* Sometimes lacks behind AWS services
 	* Cannot deal with non-AWS resources
@@ -956,6 +991,27 @@ WaitCondition:
 		* Returns outcome of operation back to *CloudFormation*, typically includes custom data as well
 
 TODO: Follow AWS example or reading the latest AMI id
+
+#### Drift detection
+* Can detect drift on an entire stack or on a particular resource
+	* Not supported by all resources types
+* CloudFormation 
+	* Compares the current stack configuration to the one specified in the template that was used to create or update the stack 
+	* Reports on any differences, providing you with detailed information on each one.
+
+#### Stacks Nesting
+* *Resources* in a stack can be references by other stacks
+* How to nest
+	* Declare resources as `AWS::CloudFormation::Stack`
+	* Point `TemplateURL` to S3 URL of nested stack
+	* Use `Parameters` to provide the nested stack with input values (defaults will be used otherwise)
+	* Output values of nested stack are returned to parent (root) stack
+		* `!GetAtt nestedStack.Outputs.db_name`
+* Benefits
+	* Allows infrastructure to be split over many templates
+	* Allows infrastructure reuse
+	* Allows to workaround limitations like max resources or max template size
+	* Considered best practice by AWS
 
 <a name="4_2_5"></a>
 ### [↖](#top)[↑](#4_2_4)[↓](#4_3) Limits
