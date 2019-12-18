@@ -794,6 +794,7 @@ Name|Attributes|Description
 5. Stack completion or rollback
 	* Rollback settings can be provided while creating the stack
 		* `onFailure` - `ROLLBACK` | `DELETE` | `DO_NOTHING`
+    * Can try to manually resolve problems if in state `UPDATE_ROLLBACK_FAILED`
 
 ##### Stacks Updates
 
