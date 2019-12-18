@@ -987,9 +987,8 @@ WaitCondition:
 	* If stack is *created*, *updated* or *deleted* a payload is sent to `ServiceToken`
 		* Payload contains any custom data that's defined with the resource together with the action type
 		* This invokes a *lambda* that performs any sort of custom action
+    * Or an *SNS topic*, e.g. to communicate with on-prem resources
 		* Returns outcome of operation back to *CloudFormation*, typically includes custom data as well
-
-TODO: Follow AWS example or reading the latest AMI id
 
 <a name="4_2_3_3"></a>
 #### [↖](#4_2)[↑](#4_2_3_2)[↓](#4_2_3_4) Drift detection
