@@ -618,8 +618,9 @@ communication applications.
 * [Components](#4_2_2)
   * [Template](#4_2_2_1)
   * [Stacks](#4_2_2_2)
+  * [Stack Sets](#4_2_2_3)
 * [Concepts](#4_2_3)
-  * [Running code at instance boot](#4_2_3_1)
+  * [Running code on instance boot](#4_2_3_1)
   * [Custom Resources](#4_2_3_2)
   * [Drift detection](#4_2_3_3)
   * [Stacks Nesting](#4_2_3_4)
@@ -884,14 +885,15 @@ stack is deleted.
 			* `AWS::Redshift::Cluster`
 		* Allow data recovery at a later stage
 
-#### Stack Sets
+<a name="4_2_2_3"></a>
+#### [↖](#4_2)[↑](#4_2_2_2_4_2)[↓](#4_2_2_3_1) Stack Sets
 
 A *stack set* lets you create stacks in AWS accounts across regions by using a single AWS
 CloudFormation template. All the resources included in each stack are defined by the stack set's
 AWS CloudFormation template. As you create the stack set, you specify the template to use, as well
 as any parameters and capabilities that template requires.
 
-#### Concept
+##### Concept
 
 * Stack sets are created in a region of an administrator account
 * A *stack instance* is a reference to a stack in a target account within a region
@@ -905,7 +907,7 @@ as any parameters and capabilities that template requires.
     they have been removed from a stack set
 
 <a name="4_2_3"></a>
-### [↖](#4_2)[↑](#4_2_2_2_4_2)[↓](#4_2_3_1) Concepts
+### [↖](#4_2)[↑](#4_2_2_3_1)[↓](#4_2_3_1) Concepts
 
 <a name="4_2_3_1"></a>
 #### [↖](#4_2)[↑](#4_2_3)[↓](#4_2_3_1_1) Running code on instance boot
