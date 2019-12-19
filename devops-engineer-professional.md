@@ -626,10 +626,6 @@ communication applications.
 * [Limits](#4_2_4)
 <!-- toc_end -->
 
-TODO: stack sets 
-TODO: cfn-hup
-TODO: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/best-practices.html
-
 <a name="4_2_1"></a>
 ### [↖](#4_2)[↑](#4_2)[↓](#4_2_2) Overview
 *AWS CloudFormation* provides a common language for you to describe and provision all the
@@ -672,6 +668,7 @@ Element|Comment
   * SSM *SecureString* is not supported
 * *Description*, *Default Value*, *Allowed Values*, *Allowed Pattern*
 * Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
+* Can set `NoEcho` for secrets, will be masked with `****`
 * *Pseudo parameters* are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
   * `AWS::AccountId`, `AWS::NotificationARNs`, `AWS::NoValue`, `AWS::Partition`, `AWS::Region`, `AWS::StackId`, `AWS::StackName`, `AWS::URLSuffix`
 * Reference a parameter within the template `!Ref myParam`
@@ -680,7 +677,7 @@ Element|Comment
 ##### Mappings
 * Fixed (hardcoded) variables within CloudFormation template
 ```
-  RegionMap: 
+  RegionMap:
     us-east-1:
       HVM64: ami-0ff8a91507f77f867
       HVMG2: ami-0a584ac55a7631c0c
@@ -688,9 +685,9 @@ Element|Comment
       HVM64: ami-0bdb828fd58c52235
       HVMG2: ami-066ee5fd4a9ef77f1
 ...
-  myEC2Instance: 
+  myEC2Instance:
     Type: "AWS::EC2::Instance"
-    Properties: 
+    Properties:
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", HVM64]
 ```
 
@@ -722,7 +719,7 @@ Conditions:
 	```
 
 ##### Outputs
-* Can be 
+* Can be
 	* constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
 * Can be used in a different stack (*cross stack references*)
   * `!ImportValue NameOfTheExport`
@@ -733,7 +730,7 @@ Conditions:
 * Usable in `resources`, `outputs`, `metadata` attributes and `update policy` attributes (auto
 scaling). You can also use intrinsic functions to conditionally create stack resources.
 * Most intrinsic functions have a short and a long form (not `Ref`):
-	* `Fn::GetAtt: [ logicalNameOfResource, attributeName ]`	
+	* `Fn::GetAtt: [ logicalNameOfResource, attributeName ]`
 	* `!GetAtt logicalNameOfResource.attributeName`
 
 Name|Attributes|Description
@@ -792,7 +789,7 @@ Name|Attributes|Description
 		* Includes pausing and waiting for other resources to be created first
 		* Associate the `CreationPolicy` attribute with a resource to prevent its status from reaching
 		create complete until AWS CloudFormation receives a specified number of success signals or the
-		timeout period is exceeded. 
+		timeout period is exceeded.
 	* **Output creation**
 5. Stack completion or rollback
 	* Rollback settings can be provided while creating the stack
@@ -812,10 +809,10 @@ Name|Attributes|Description
 	make to a stack
 * Use the `UpdatePolicy` attribute to specify how AWS CloudFormation handles updates to the `AWS:
 	AutoScaling::AutoScalingGroup`, `AWS::ElastiCache::ReplicationGroup`, `AWS::Elasticsearch::Domain`
-	or `AWS::Lambda::Alias` resources. 
+	or `AWS::Lambda::Alias` resources.
 	* Values depend on resource type, e.g. ASG replacing vs rolling update
 * Use the `UpdateReplacePolicy` attribute to retain or (in some cases) backup the existing
-	physical instance of a resource when it is replaced during a stack update operation. 
+	physical instance of a resource when it is replaced during a stack update operation.
 * On Failure, the stack will rollback automatically to the last known working state
 
 ###### Interuption while updating
@@ -861,7 +858,7 @@ Element|.
 
 * Specify the stack to delete, and AWS CloudFormation deletes the stack and all the resources in that stack.
 * With the `DeletionPolicy` attribute you can preserve or (in some cases) backup a resource when its
-stack is deleted. 
+stack is deleted.
 * If AWS CloudFormation cannot delete a resource, the stack will not be deleted.
 * A stack can have *termination protection* enabled, which will prevent it from being deleted accidentally
 
@@ -887,11 +884,38 @@ stack is deleted.
 			* `AWS::Redshift::Cluster`
 		* Allow data recovery at a later stage
 
+#### Stack Sets
+
+A *stack set* lets you create stacks in AWS accounts across regions by using a single AWS
+CloudFormation template. All the resources included in each stack are defined by the stack set's
+AWS CloudFormation template. As you create the stack set, you specify the template to use, as well
+as any parameters and capabilities that template requires.
+
+#### Concept
+
+* Stack sets are created in a region of an administrator account
+* A *stack instance* is a reference to a stack in a target account within a region
+  * Can exist without a stack, e.g. if stack failed to create, than the stack instance shows the reason for that
+* Operations: *Create*, *Update*, *Delete*
+* Operation options:
+  * *Maximum concurrent accounts* - maximum number or percentage of target accounts in which an operation is performed at one time
+  * *Failure tolerance* - maximum number or percentage of stack operation failures that can occur,
+    per region, beyond which AWS CloudFormation stops an operation automatically
+  * *Retain stack* (delete operations only) - keep stacks and their resources running even after
+    they have been removed from a stack set
+
 <a name="4_2_3"></a>
 ### [↖](#4_2)[↑](#4_2_2_2_4_2)[↓](#4_2_3_1) Concepts
 
 <a name="4_2_3_1"></a>
 #### [↖](#4_2)[↑](#4_2_3)[↓](#4_2_3_1_1) Running code on instance boot
+
+.|.
+-|-
+`cfn-init`|Use to retrieve and interpret resource metadata, install packages, create files, and start services.
+`cfn-signal`|Use to signal with a CreationPolicy or WaitCondition, so you can synchronize other resources in the stack when the prerequisite resource or application is ready.
+`cfn-get-metadata`|Use to retrieve metadata for a resource or path to a specific key.
+`cfn-hup`|Use to check for updates to metadata and execute custom hooks when changes are detected.
 
 ##### Define code and scripts to run
 
@@ -1000,8 +1024,8 @@ WaitCondition:
 #### [↖](#4_2)[↑](#4_2_3_2)[↓](#4_2_3_4) Drift detection
 * Can detect drift on an entire stack or on a particular resource
 	* Not supported by all resources types
-* CloudFormation 
-	* Compares the current stack configuration to the one specified in the template that was used to create or update the stack 
+* CloudFormation
+	* Compares the current stack configuration to the one specified in the template that was used to create or update the stack
 	* Reports on any differences, providing you with detailed information on each one.
 
 <a name="4_2_3_4"></a>
@@ -1030,9 +1054,6 @@ Parameters per stack|60
 Mappings per stack|100
 Resources per stack|200
 Outputs per stack|60
-
-TODO: cloudformation init directive
-TODO: Compare chapter against LinuxAcademy
 
 ---
 
