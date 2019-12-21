@@ -116,10 +116,11 @@
 * [All-at-once deployment](#3_1_2)
 * [Minimum in-service style deployment](#3_1_3)
 * [Rolling deployment](#3_1_4)
-* [Blue/green deployment](#3_1_5)
-* [Red/black deployment](#3_1_6)
-* [A/B testing](#3_1_7)
-* [Canary deployment](#3_1_8)
+* [Rolling deployment with extra batches](#3_1_5)
+* [Blue/green deployment](#3_1_6)
+* [Red/black deployment](#3_1_7)
+* [A/B testing](#3_1_8)
+* [Canary deployment](#3_1_9)
 <!-- toc_end -->
 
 Strategy|Deploy<br/>time|Downtime|Testing|Deployment<br/>Costs|Impact of<br/>failed deployment|Rollback<br/>process|Elastic<br/>Beanstalk|CodeDeploy|OpsWorks
@@ -129,7 +130,7 @@ Strategy|Deploy<br/>time|Downtime|Testing|Deployment<br/>Costs|Impact of<br/>fai
 **Minimum In Service**|🕑🕑|none|can test new version<br/>while old is still active|no extra costs|no downtime|redeploy|*rolling*|todo|todo
 **Rolling**|🕑🕑🕑|usually none|can test new version<br/>while old is still active|no extra costs|no downtime|redeploy|*rolling*|todo|todo
 **Rolling With Extra Batches**|🕑🕑🕑|usually none|can test new version<br/>while old is still active|little extra costs|no downtime|redeploy|*rolling with<br/>extra batches*|todo|todo
-**Blue/Green**|🕑🕑🕑🕑|none|can test <br/>prior to cutover|extra costs for new stack|no downtime|revert cutover|*immutable*<br/>create new environment and use DNS|todo|todo
+**Blue/Green**|🕑🕑🕑🕑|none|can test <br/>prior to cutover|extra costs for new stack|no downtime|revert cutover|*immutable* comes close<br/>or: create new environment and use DNS|todo|todo
 
 <a name="3_1_1"></a>
 ### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Single target deployment
@@ -210,8 +211,8 @@ No downtime (if number of stage deployments is small enough)|Does not necessaril
 Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
 .|Can be least efficient deployment method in terms of time taken
 
-<a name="3_1_4"></a>
-### [↖](#3_1)[↑](#3_1_3)[↓](#3_1_5) Rolling deployment with extra batches
+<a name="3_1_5"></a>
+### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_6) Rolling deployment with extra batches
 
 System|Deploy|.
 -|-|-
@@ -231,8 +232,8 @@ System|Deploy|.
 No downtime (if number of stage deployments is small enough)|Does not necessarily maintain overall application health
 Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
 .|Can be least efficient deployment method in terms of time taken
-<a name="3_1_5"></a>
-### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_6) Blue/green deployment
+<a name="3_1_6"></a>
+### [↖](#3_1)[↑](#3_1_5)[↓](#3_1_7) Blue/green deployment
 
 System|Deploy|.
 -|-|-
@@ -260,8 +261,8 @@ Easy rollback|.
 Can be fully automated using advanced templating|.
 By far the best method in terms of risk mitigation and minimal user impact|.
 
-<a name="3_1_6"></a>
-### [↖](#3_1)[↑](#3_1_5)[↓](#3_1_7) Red/black deployment
+<a name="3_1_7"></a>
+### [↖](#3_1)[↑](#3_1_6)[↓](#3_1_8) Red/black deployment
 
 > ... are just like blue/green, but they happen at a much faster rate.
 
@@ -269,8 +270,8 @@ Example:
 1. `DNS` -> `LB` -> `ASG1`
 2. `DNS` -> `LB` -> `ASG2`
 
-<a name="3_1_7"></a>
-### [↖](#3_1)[↑](#3_1_6)[↓](#3_1_8) A/B testing
+<a name="3_1_8"></a>
+### [↖](#3_1)[↑](#3_1_7)[↓](#3_1_9) A/B testing
 * Like blue/green deployment, but only shift a percentage of the traffic over, not everything at once
 * Gradually increase percentage of traffic sent to the new environment
 * Allows for different end goal:
@@ -286,14 +287,14 @@ Example:
 .|Different versions across the environment
 .|DNS switching affected by caches and other DNS related issues
 
-<a name="3_1_8"></a>
-### [↖](#3_1)[↑](#3_1_7)[↓](#3_2) Canary deployment
+<a name="3_1_9"></a>
+### [↖](#3_1)[↑](#3_1_8)[↓](#3_2) Canary deployment
 * Like A/B testing, but gradually increases percentage of traffic to green environment
 
 ---
 
 <a name="3_2"></a>
-## [↖](#top)[↑](#3_1_8)[↓](#3_2_1) EC2 Deployment Concepts
+## [↖](#top)[↑](#3_1_9)[↓](#3_2_1) EC2 Deployment Concepts
 <!-- toc_start -->
 * [Instance Profile](#3_2_1)
 * [ELB/ALB Logs](#3_2_2)
@@ -1811,9 +1812,11 @@ TODO: Deploy container on fargate
 ## [↖](#top)[↑](#4_10_2)[↓](#4_11_1) Elastic Beanstalk
 <!-- toc_start -->
 * [Overview](#4_11_1)
-* [Components](#4_11_2)
-* [`.ebextensions`](#4_11_3)
-* [Limits:](#4_11_4)
+* [Concepts](#4_11_2)
+  * [Components](#4_11_2_1)
+  * [Configuration](#4_11_2_2)
+  * [Deployment Types](#4_11_2_3)
+* [Limits](#4_11_3)
 <!-- toc_end -->
 
 <a name="4_11_1"></a>
@@ -1832,31 +1835,6 @@ underlying resources at any time.
 * Aims to simplify or even remove infrastructure management
 * Provides different options for *low cost* and *high availability* quick starts
 
-<a name="4_11_2"></a>
-### [↖](#4_11)[↑](#4_11_1)[↓](#4_11_3) Components
-* Components
-	* **Application**
-		* Either *application* in the tradional sense
-		* Or *application component*, e.g. service, frontend, backend
-	* **Environment**
-		* Isolated, self-contained set of components of infrastructure
-			* Type *Web server* environment
-				* Represents a web application
-			* Type *Worker* environment
-				* Act upon output created by another environment
-				* Should only be loosely coupled to web server environments, eg. via *SQS*
-		* Single-instance or multi-instance scalable
-		* Application can have mulitple environments
-			* Either represent *development stages* (PROD, STAGE, ...)
-			* ...or *application component*, e.g. service, frontend, backend
-    * Can be cloned as a whole environment
-    * Can rebuild environment - complete delete and rebuild
-	* **Application Version**
-		* Unique package that represents version of the *application*
-		* Uploaded as a zipped *application source bundle*
-		* Each application can have many application versions
-		* Can be deployed to one or more *environment* within an application
-    * Limit of 1000 version -> can configure application version *lifecycle management*
 * Supported platforms
 	* Platform-specific application *source bundle* (e.g. Java `war` for Tomcat)
 		* Go
@@ -1868,6 +1846,34 @@ underlying resources at any time.
 		* Ruby Stanalone/Puma
     * Docker Single-/Multicontainer
     * Docker Preconfigured Glassfish/Python/Go
+
+<a name="4_11_2"></a>
+### [↖](#4_11)[↑](#4_11_1)[↓](#4_11_2_1) Concepts
+
+<a name="4_11_2_1"></a>
+#### [↖](#4_11)[↑](#4_11_2)[↓](#4_11_2_2) Components
+* **Application**
+  * Either *application* in the tradional sense
+  * Or *application component*, e.g. service, frontend, backend
+* **Environment**
+  * Isolated, self-contained set of components of infrastructure
+    * Type *Web server* environment
+      * Represents a web application
+    * Type *Worker* environment
+      * Act upon output created by another environment
+      * Should only be loosely coupled to web server environments, eg. via *SQS*
+  * Single-instance or multi-instance scalable
+  * Application can have mulitple environments
+    * Either represent *development stages* (PROD, STAGE, ...)
+    * ...or *application component*, e.g. service, frontend, backend
+  * Can be cloned as a whole environment
+  * Can rebuild environment - complete delete and rebuild
+* **Application Version**
+  * Unique package that represents version of the *application*
+  * Uploaded as a zipped *application source bundle*
+  * Each application can have many application versions
+  * Can be deployed to one or more *environment* within an application
+  * Limit of 1000 version -> can configure application version *lifecycle management*
 * Created resources
   * `AWS::AutoScaling::AutoScalingGroup`
   * `AWS::AutoScaling::LaunchConfiguration`
@@ -1880,13 +1886,14 @@ underlying resources at any time.
   * `AWS::ElasticLoadBalancing::LoadBalancer`
 * Underlying instances can be automatically patched
 
-### Configuration Options
-Sorted by precedence:
+<a name="4_11_2_2"></a>
+#### [↖](#4_11)[↑](#4_11_2_1)[↓](#4_11_2_2_1) Configuration
+Configuration options, sorted by precedence:
 
-#### Settings applied directly to the environment
+##### Settings applied directly to the environment
 Via console, eb-cli, ...
 
-#### Existing configuration saved into `.elasticbeanstalk`
+##### Existing configuration saved into `.elasticbeanstalk`
 * Can you `eb config ...` to save/snapshot a configuration of an application
 * Saved into `.elasticbeanstalk`
   * Only non-default values are being saved
@@ -1894,8 +1901,7 @@ Via console, eb-cli, ...
   * Good to backup existing applications
   * Can also be applied elsewhere, e.g. in a different region
 
-<a name="4_11_3"></a>
-#### [↖](#4_11)[↑](#4_11_2)[↓](#4_11_4) `.ebextensions` in project
+##### `.ebextensions` in project
 * *Folder* is part of application source bundle
 * Allows granular configuration & customisation of the EB environment and its resources
 * Contains `*.config` in *YAML* format with different sections like
@@ -1917,10 +1923,11 @@ Via console, eb-cli, ...
 	* `packages`, `sources`, `files`, `users`, `groups`, `service`
 * Applied with next `eb deploy`
 
-#### Default values
+##### Default values
 As the name says.
 
-### Deployment options
+<a name="4_11_2_3"></a>
+#### [↖](#4_11)[↑](#4_11_2_2_4)[↓](#4_11_3) Deployment Types
 * Single instance deploys
 * HA with Load Balancer
   * All at once
@@ -1928,8 +1935,8 @@ As the name says.
   * Rolling with additional batches
   * Immutable
 
-<a name="4_11_4"></a>
-### [↖](#4_11)[↑](#4_11_3)[↓](#4_12) Limits
+<a name="4_11_3"></a>
+### [↖](#4_11)[↑](#4_11_2_3)[↓](#4_12) Limits
 .|.
 -|-
 Applications|75
@@ -1940,7 +1947,7 @@ Environments|200
 ---
 
 <a name="4_12"></a>
-## [↖](#top)[↑](#4_11_4)[↓](#4_12_1) Lambda
+## [↖](#top)[↑](#4_11_3)[↓](#4_12_1) Lambda
 <!-- toc_start -->
 * [Overview](#4_12_1)
 * [Triggering](#4_12_2)
