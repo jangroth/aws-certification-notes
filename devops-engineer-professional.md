@@ -122,6 +122,15 @@
 * [Canary deployment](#3_1_8)
 <!-- toc_end -->
 
+Strategy|Deploy<br/>time|Downtime|Testing|Deployment<br/>Costs|Impact of<br/>failed deployment|Rollback<br/>process|Elastic<br/>Beanstalk|CodeDeploy|OpsWorks
+-|-|-|-|-|-|-|-|-|-
+**Single Target Deployment**|🕑|complete deploy|limited|no extra costs|downtime|redeploy|*all at once*|todo|todo
+**All At Once**|🕑|complete deploy|limited|no extra costs|downtime|redeploy|*all at once*|todo|todo
+**Minimum In Service**|🕑🕑|none|can test new version<br/>while old is still active|no extra costs|no downtime|redeploy|*rolling*|todo|todo
+**Rolling**|🕑🕑🕑|usually none|can test new version<br/>while old is still active|no extra costs|no downtime|redeploy|*rolling*|todo|todo
+**Rolling With Extra Batches**|🕑🕑🕑|usually none|can test new version<br/>while old is still active|little extra costs|no downtime|redeploy|*rolling with<br/>extra batches*|todo|todo
+**Blue/Green**|🕑🕑🕑🕑|none|can test <br/>prior to cutover|extra costs for new stack|no downtime|revert cutover|*immutable*<br/>create new environment and use DNS|todo|todo
+
 <a name="3_1_1"></a>
 ### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Single target deployment
 
@@ -133,14 +142,6 @@ System|Deploy
 
 * When initiated a new application version is installed on the (single) target server
 * Practically not in use any more
-
-.|.
--|-
-Deploy time|Fast
-Downtime|During complete deploy
-Testing|Limited, because single server
-Impact of failed Deployment|Downtime
-Rollback|Remove new version and install old again
 
 **pros**|**cons**
 -|-
@@ -157,14 +158,6 @@ System|Deploy|.
 `v2` `v2` `v2` `v2` `v2`|Final State|.
 
 * Single build stage triggers multiple target environments
-
-.|.
--|-
-Deploy time|Fast
-Downtime|During complete deploy
-Testing|Limited, because all at once
-Impact of failed Deployment|Downtime
-Rollback|Remove new version and install old again
 
 **pros**|**cons**
 -|-
@@ -189,14 +182,6 @@ System|Deploy|.
 * Happens to as many targets as possible
 * Suitable for large environments
 
-.|.
--|-
-Deploy time|Relatively fast
-Downtime|None
-Testing|Can test new version while old version is still active
-Impact of failed Deployment|No downtime
-Rollback|Remove new version and install old again
-
 **pros**|**cons**
 -|-
 No downtime|Many moving parts, requires orchestration
@@ -219,20 +204,33 @@ System|Deploy|.
 * Was considered cheapest and least risk method until hourly and consumption-based billing entered
 the market
 
-.|.
--|-
-Deploy time|Can be slow
-Downtime|Usually none
-Testing|Can test new version while old version is still active
-Impact of failed Deployment|No downtime
-Rollback|Remove new version and install old again
-
 **pros**|**cons**
 -|-
 No downtime (if number of stage deployments is small enough)|Does not necessarily maintain overall application health
 Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
 .|Can be least efficient deployment method in terms of time taken
 
+<a name="3_1_4"></a>
+### [↖](#3_1)[↑](#3_1_3)[↓](#3_1_5) Rolling deployment with extra batches
+
+System|Deploy|.
+-|-|-
+`v1` `v1` `v1` `v1`|Initial State|.
+`v1` `v1` `v1` `v1` `.` `.`|Deployment Stage 1|Deploy new batch of servers
+`v1` `v1` `v1` `v1` `v2` `v2`|Deployment Stage 2|Deploy new version to new servers
+`.` `.` `v1` `v1` `v2` `v2`|Deployment Stage 3|Undeploy first batch
+`v2` `v2` `v1` `v1` `v2` `v2`|Deployment Stage 4|Deploy new version to first batch
+`v2` `v2` `.` `.` `v2` `v2`|Deployment Stage 5|Undeploy second batch
+`v2` `v2` `v2` `v2`|Deployment Stage 6|Decommission servers from second batch
+
+* Deploy new batch of servers first
+* Very similar to *rolling deployment*
+
+**pros**|**cons**
+-|-
+No downtime (if number of stage deployments is small enough)|Does not necessarily maintain overall application health
+Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
+.|Can be least efficient deployment method in terms of time taken
 <a name="3_1_5"></a>
 ### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_6) Blue/green deployment
 
@@ -248,17 +246,10 @@ System|Deploy|.
 * Different cutover techniques
 	* DNS routing
 	* Swap auto scaling group behind load balancer
+  * Elastic Beanstalk *immutable*: Merge new ASG into old one
 	* Update auto scaling launch configuration
 	* Swap environment of an AWS Elastic Beanstalk application
 	* Clone stack in AWS OpsWorks and update DNS
-
-.|.
--|-
-Deploy time|Medium
-Downtime|None
-Testing|Can test prior to cutover
-Impact of failed Deployment|No downtime
-Rollback|Revert cutover process
 
 **pros**|**cons**
 -|-
@@ -1480,10 +1471,10 @@ manual operations. The service scales to match your deployment needs.
   * *Deployment*
     * *Deployment Group*
       * Set of instances, defined by tags, e.g. 'environment=prod'
-			* Can be associated with
-				* CW Alarms that would stop the deployment if triggered
-				* Triggers for notification
-				* Rollbacks
+      * Can be associated with
+        * CW Alarms that would stop the deployment if triggered
+        * Triggers for notification
+        * Rollbacks
     * *Deployment configuration*
       * `CodeDeployDefault.OneAtATime`, ..., `CodeDeployDefault.LambdaCanary10Percent10Minutes`
       * Can create own
@@ -1828,7 +1819,7 @@ TODO: Deploy container on fargate
 <a name="4_11_1"></a>
 ### [↖](#4_11)[↑](#4_11)[↓](#4_11_2) Overview
 AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and
-services developed with Java, .NET, PHP, Node.js, Python, Ruby, Go, and Docker on familiar servers
+services developed with `Java`, `.NET`, `PHP`, `Node.js`, `Python`, `Ruby`, `Go`, and `Docker` on familiar servers
 such as Apache, Nginx, Passenger, and IIS.
 
 You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from
@@ -1839,29 +1830,33 @@ underlying resources at any time.
 * Allows to *deploy*, *monitor* and *scale* applications quickly
 * Focusses on components and performance, *not* configuration and specification
 * Aims to simplify or even remove infrastructure management
+* Provides different options for *low cost* and *high availability* quick starts
 
 <a name="4_11_2"></a>
 ### [↖](#4_11)[↑](#4_11_1)[↓](#4_11_3) Components
 * Components
 	* **Application**
-		* Either application in the tradional sense
-		* Or application component, e.g. service, frontend, backend
+		* Either *application* in the tradional sense
+		* Or *application component*, e.g. service, frontend, backend
 	* **Environment**
 		* Isolated, self-contained set of components of infrastructure
-			* *Web server* environment
+			* Type *Web server* environment
 				* Represents a web application
-			* *Worker* environment
+			* Type *Worker* environment
 				* Act upon output created by another environment
 				* Should only be loosely coupled to web server environments, eg. via *SQS*
 		* Single-instance or multi-instance scalable
 		* Application can have mulitple environments
-			* Either represent development stages (PROD, STAGE, ...)
-			* Or application component, e.g. service, frontend, backend
+			* Either represent *development stages* (PROD, STAGE, ...)
+			* ...or *application component*, e.g. service, frontend, backend
+    * Can be cloned as a whole environment
+    * Can rebuild environment - complete delete and rebuild
 	* **Application Version**
 		* Unique package that represents version of the *application*
 		* Uploaded as a zipped *application source bundle*
 		* Each application can have many application versions
 		* Can be deployed to one or more *environment* within an application
+    * Limit of 1000 version -> can configure application version *lifecycle management*
 * Supported platforms
 	* Platform-specific application *source bundle* (e.g. Java `war` for Tomcat)
 		* Go
@@ -1873,18 +1868,70 @@ underlying resources at any time.
 		* Ruby Stanalone/Puma
     * Docker Single-/Multicontainer
     * Docker Preconfigured Glassfish/Python/Go
+* Created resources
+  * `AWS::AutoScaling::AutoScalingGroup`
+  * `AWS::AutoScaling::LaunchConfiguration`
+  * `AWS::AutoScaling::ScalingPolicy`
+  * `AWS::CloudFormation::WaitCondition`
+  * `AWS::CloudFormation::WaitConditionHandle`
+  * `AWS::CloudWatch::Alarm`
+  * `AWS::EC2::SecurityGroup`
+  * `AWS::EC2::SecurityGroupIngress`
+  * `AWS::ElasticLoadBalancing::LoadBalancer`
+* Underlying instances can be automatically patched
+
+### Configuration Options
+Sorted by precedence:
+
+#### Settings applied directly to the environment
+Via console, eb-cli, ...
+
+#### Existing configuration saved into `.elasticbeanstalk`
+* Can you `eb config ...` to save/snapshot a configuration of an application
+* Saved into `.elasticbeanstalk`
+  * Only non-default values are being saved
+* This can be modified, uploaded and applied
+  * Good to backup existing applications
+  * Can also be applied elsewhere, e.g. in a different region
 
 <a name="4_11_3"></a>
-### [↖](#4_11)[↑](#4_11_2)[↓](#4_11_4) `.ebextensions`
-* *Folder* within application source bundle
+#### [↖](#4_11)[↑](#4_11_2)[↓](#4_11_4) `.ebextensions` in project
+* *Folder* is part of application source bundle
 * Allows granular configuration & customisation of the EB environment and its resources
 * Contains `*.config` in *YAML* format with different sections like
-	* `option_settings` - global Configuration options
+	* `option_settings` - global configuration options
 	* `resources` - specify additional resources, allows granular configuration of these
-	* `packages`, `sources`, `files`, `users`, `groups`, `commands`, `container_commands`, `service`
+    * Put *CloudFormation* here, export *outputs* into beanstalk environment
+    * Good for e.g. DDB table, SNS topic, ...
+    * However, those resources are part of the *environemt* and would be deleted with it
+      * If this is not desired, then create resources independently
+      * Usually best for e.g. databases
+	* `commands`
+    * Execute on ec2 instance
+    * Run before application and web server are being set up
+	* `container_commands`
+    * Affects application source code
+    * Run after application archive has been extracted, but before application version has been
+    deployed
+    * Can use `leader_only` to only run on a single instance. E.g. migrate database
+	* `packages`, `sources`, `files`, `users`, `groups`, `service`
+* Applied with next `eb deploy`
+
+#### Default values
+As the name says.
+
+### Deployment modes
+
+* Single instance deploys
+
+* HA with Load Balancer
+  * All at once
+  * Rolling update
+  * Rolling with additional batches
+  * Immutable
 
 <a name="4_11_4"></a>
-### [↖](#4_11)[↑](#4_11_3)[↓](#4_12) Limits:
+### [↖](#4_11)[↑](#4_11_3)[↓](#4_12) Limits
 .|.
 -|-
 Applications|75
