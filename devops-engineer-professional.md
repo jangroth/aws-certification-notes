@@ -1920,10 +1920,8 @@ Via console, eb-cli, ...
 #### Default values
 As the name says.
 
-### Deployment modes
-
+### Deployment options
 * Single instance deploys
-
 * HA with Load Balancer
   * All at once
   * Rolling update
