@@ -1834,18 +1834,17 @@ underlying resources at any time.
 * Focusses on components and performance, *not* configuration and specification
 * Aims to simplify or even remove infrastructure management
 * Provides different options for *low cost* and *high availability* quick starts
-
-* Supported platforms
-	* Platform-specific application *source bundle* (e.g. Java `war` for Tomcat)
-		* Go
-		* Java SE/with Tomcat
-		* .NET on Windows Server with IIS
-		* Node.js
-		* PHP
-		* Python
-		* Ruby Stanalone/Puma
-    * Docker Single-/Multicontainer
-    * Docker Preconfigured Glassfish/Python/Go
+* Underlying *instances* can be automatically patched
+* Platform-specific application *source bundle* (e.g. Java `war` for Tomcat)
+  * Go
+  * Java SE/with Tomcat
+  * .NET on Windows Server with IIS
+  * Node.js
+  * PHP
+  * Python
+  * Ruby Stanalone/Puma
+  * Docker Single-/Multicontainer - runs on ECS
+  * Docker Preconfigured Glassfish/Python/Go
 
 <a name="4_11_2"></a>
 ### [↖](#4_11)[↑](#4_11_1)[↓](#4_11_2_1) Concepts
@@ -1857,11 +1856,13 @@ underlying resources at any time.
   * Or *application component*, e.g. service, frontend, backend
 * **Environment**
   * Isolated, self-contained set of components of infrastructure
-    * Type *Web server* environment
+    * Type **Web server** environment
       * Represents a web application
-    * Type *Worker* environment
-      * Act upon output created by another environment
+    * Type **Worker** environment
+      * Act upon output created by another environment - pulls work from SQS queue
+      * Ideal for long running workloads
       * Should only be loosely coupled to web server environments, eg. via *SQS*
+      * Can also be invoked on a schedule
   * Single-instance or multi-instance scalable
   * Application can have mulitple environments
     * Either represent *development stages* (PROD, STAGE, ...)
@@ -1874,17 +1875,18 @@ underlying resources at any time.
   * Each application can have many application versions
   * Can be deployed to one or more *environment* within an application
   * Limit of 1000 version -> can configure application version *lifecycle management*
-* Created resources
-  * `AWS::AutoScaling::AutoScalingGroup`
-  * `AWS::AutoScaling::LaunchConfiguration`
-  * `AWS::AutoScaling::ScalingPolicy`
-  * `AWS::CloudFormation::WaitCondition`
-  * `AWS::CloudFormation::WaitConditionHandle`
-  * `AWS::CloudWatch::Alarm`
-  * `AWS::EC2::SecurityGroup`
-  * `AWS::EC2::SecurityGroupIngress`
-  * `AWS::ElasticLoadBalancing::LoadBalancer`
-* Underlying instances can be automatically patched
+
+*Web Application*<br/>(non-docker)|*Web Application*<br/>(docker)|*Worker*
+-|-
+`AWS::AutoScaling::AutoScalingGroup`|`AWS::AutoScaling::AutoScalingGroup`|`AWS::CloudFormation::WaitConditionHandle`
+`AWS::AutoScaling::LaunchConfiguration`|`AWS::AutoScaling::LaunchConfiguration`|`AWS::DynamoDB::Table`
+`AWS::AutoScaling::ScalingPolicy`|`AWS::CloudFormation::WaitCondition`|`AWS::EC2::SecurityGroup`
+`AWS::CloudFormation::WaitCondition`|`AWS::CloudFormation::WaitConditionHandle`|`AWS::SQS::Queue`
+`AWS::CloudFormation::WaitConditionHandle`|`AWS::EC2::EIP`|.
+`AWS::CloudWatch::Alarm`|`AWS::EC2::SecurityGroup`|.
+`AWS::EC2::SecurityGroup`|.|.
+`AWS::EC2::SecurityGroupIngress`|.|.
+`AWS::ElasticLoadBalancing::LoadBalancer`|.|.
 
 <a name="4_11_2_2"></a>
 #### [↖](#4_11)[↑](#4_11_2_1)[↓](#4_11_2_2_1) Configuration
@@ -1934,6 +1936,9 @@ As the name says.
   * Rolling update
   * Rolling with additional batches
   * Immutable
+  * 'Blue/Green' - not really supported, however
+    * Can manually create new environment
+    * Either use *swap URL* feature or manually create DNS
 
 <a name="4_11_3"></a>
 ### [↖](#4_11)[↑](#4_11_2_3)[↓](#4_12) Limits
