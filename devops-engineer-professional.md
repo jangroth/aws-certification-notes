@@ -1981,14 +1981,41 @@ call it directly from any web or mobile app.
 * Supported languages
   * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
 
-### How it works
-* Priced by
+### Managing Functions
+
+* `triggers` -> `function & layers` -> `destinations`
+
+#### Concurrency
+Concurrency is the number of requests that your function is serving at any given time. When your
+function is invoked, Lambda allocates an instance of it to process the event. When the function
+code finishes running, it can handle another request. If the function is invoked again while a
+request is still being processed, another instance is allocated, which increases the function's
+concurrency.
+
+* Concurrency is `invocations/s * runtime` (eg. 10/s * 4s = 40)
+* Can configure *reservered concurrency*
+  * No other function can use that concurrency
+* Can configure *provisioned concurrency* before an increase in invocations
+  * Can ensure that all requests are served by initialized instances with very low latency.
+
+#### Versions
+* The system creates a new version of your Lambda function each time that you publish the function.
+  The new version is a copy of the unpublished version of the function.
+* You can change the function code and settings only on the unpublished version of a function.
+  When you publish a version, the code and most of the settings are locked to ensure a consistent
+  experience for users of that version.
+* If you haven't published a version of the selected function, the Versions panel lists only
+  the `$LATEST` version.
+
+#### Aliases
+
+### Invoking Functions
+
+**Pricing**
+Priced by
   * Number or requests, first 1 mio requests are free
   * Duration/Memory (max time 15 min)
 * Concurrency
-  * `invocations/s * runtime` (eg. 10/s * 4s = 40)
-  * Initial concurrency burst, eg. 500
-  * Max concurrency burst limit: 1000
 * Network
   * Can be assigned to a VPC/Subnet/Security Group
   * Lambda internet egress then via VPC
