@@ -1877,7 +1877,7 @@ underlying resources at any time.
   * Limit of 1000 version -> can configure application version *lifecycle management*
 
 *Web Application*<br/>(non-docker)|*Web Application*<br/>(docker)|*Worker*
--|-
+-|-|-
 `AWS::AutoScaling::AutoScalingGroup`|`AWS::AutoScaling::AutoScalingGroup`|`AWS::CloudFormation::WaitConditionHandle`
 `AWS::AutoScaling::LaunchConfiguration`|`AWS::AutoScaling::LaunchConfiguration`|`AWS::DynamoDB::Table`
 `AWS::AutoScaling::ScalingPolicy`|`AWS::CloudFormation::WaitCondition`|`AWS::EC2::SecurityGroup`
@@ -1979,49 +1979,54 @@ call it directly from any web or mobile app.
   * Very cheap
   * Can give more RAM which will proportionaly increase CPU as well
 * Supported languages
-  * nodejs
-  * Java
-  * C#
-  * Python
-  * Golang
-  * Ruby
-  * Powershell
+  * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
+
+### How it works
 * Priced by
   * Number or requests, first 1 mio requests are free
-  * Duration (max time 5 min)
+  * Duration/Memory (max time 15 min)
 * Concurrency
   * `invocations/s * runtime` (eg. 10/s * 4s = 40)
   * Initial concurrency burst, eg. 500
   * Max concurrency burst limit: 1000
+* Network
+  * Can be assigned to a VPC/Subnet/Security Group
+  * Lambda internet egress then via VPC
+* Debugging / Error handling
+  * Can configure dead letter queue
+    * Lambda retries function errors twice
+    * Event will be posted into DLQ after 3 errors
+  * Can enable *AWS X-Ray* for active tracing
+
 
 <a name="4_12_2"></a>
 ### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Triggering
 
 <a name="4_12_2_1"></a>
 #### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Services that Lambda reads events from
-  * Amazon Kinesis
-  * Amazon DynamoDB
-  * Amazon Simple Queue Service
+* Amazon Kinesis
+* Amazon DynamoDB
+* Amazon Simple Queue Service
 
 <a name="4_12_2_2"></a>
 #### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Services that invoke Lambda functions synchronously
-  * Amazon Cognito
-  * Amazon Lex
-  * Amazon Alexa
-  * Amazon API Gateway
-  * Amazon CloudFront (Lambda@Edge)
-  * Amazon Kinesis Data Firehose
+* Amazon Cognito
+* Amazon Lex
+* Amazon Alexa
+* Amazon API Gateway
+* Amazon CloudFront (Lambda@Edge)
+* Amazon Kinesis Data Firehose
 
 <a name="4_12_2_3"></a>
 #### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_3) Services that invoke Lambda functions asynchronously
-	* Amazon Simple Storage Service
-	* Amazon Simple Notification Service
-	* Amazon Simple Email Service
-	* AWS CloudFormation
-	* Amazon CloudWatch Logs
-	* Amazon CloudWatch Events
-	* AWS CodeCommit
-	* AWS Config
+* Amazon Simple Storage Service
+* Amazon Simple Notification Service
+* Amazon Simple Email Service
+* AWS CloudFormation
+* Amazon CloudWatch Logs
+* Amazon CloudWatch Events
+* AWS CodeCommit
+* AWS Config
 
 ---
 
