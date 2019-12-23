@@ -1982,8 +1982,7 @@ call it directly from any web or mobile app.
   * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
 
 ### Managing Functions
-
-* `triggers` -> `function & layers` -> `destinations`
+`triggers` -> `function & layers` -> `destinations`
 
 #### Concurrency
 Concurrency is the number of requests that your function is serving at any given time. When your
@@ -2008,52 +2007,48 @@ concurrency.
   the `$LATEST` version.
 
 #### Aliases
+* You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
+to a specific Lambda function *version*.
+* Users can access the function version using the alias ARN.
+
+#### Layers
+* You can configure your Lambda function to pull in additional code and content in the form of layers.
+* A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
+* With layers, you can use libraries in your function without needing to include them in your deployment package.
+
+#### Network
+* You can configure a function to connect to private subnets in a VPC in your account.
+* Use VPC to create a private network for resources such as databases, cache instances, or internal services.
+* Connect your function to the VPC to access private resources during execution.
+* Provisioning process for Lambda takes longer
+
+#### Database
+* You can use the Lambda console to create an RDS database proxy for your function.
+* A database proxy manages a pool of database connections and relays queries from a function.
+* This enables a function to reach high concurrency levels without exhausting database connections.
 
 ### Invoking Functions
 
-**Pricing**
-Priced by
-  * Number or requests, first 1 mio requests are free
-  * Duration/Memory (max time 15 min)
-* Concurrency
-* Network
-  * Can be assigned to a VPC/Subnet/Security Group
-  * Lambda internet egress then via VPC
-* Debugging / Error handling
-  * Can configure dead letter queue
-    * Lambda retries function errors twice
-    * Event will be posted into DLQ after 3 errors
-  * Can enable *AWS X-Ray* for active tracing
+#### Synchronous / Asynchronous / Event Source Invocation
+* When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
+  * -> Cognito, Lex, Alexa, API Gateway, CloudFront (Lambda@Edge), Kinesis Data Firehose
+* When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
+process reads events from the queue and runs your function.
+  * Lambda manages the function's asynchronous invocation queue and attempts to retry failed
+  events automatically. If the function returns an error, Lambda attempts to run it two more times
+  * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an
+  Amazon SQS queue or an Amazon SNS topic.
+  * -> SQS, SNS, SES, CloudFormation, Cloudwatch Logs & Events, CodeCommit, Config
+* An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
+  * -> Kinesis, DynamoDB, SQS
 
-
-<a name="4_12_2"></a>
-### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Triggering
-
-<a name="4_12_2_1"></a>
-#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Services that Lambda reads events from
-* Amazon Kinesis
-* Amazon DynamoDB
-* Amazon Simple Queue Service
-
-<a name="4_12_2_2"></a>
-#### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Services that invoke Lambda functions synchronously
-* Amazon Cognito
-* Amazon Lex
-* Amazon Alexa
-* Amazon API Gateway
-* Amazon CloudFront (Lambda@Edge)
-* Amazon Kinesis Data Firehose
-
-<a name="4_12_2_3"></a>
-#### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_3) Services that invoke Lambda functions asynchronously
-* Amazon Simple Storage Service
-* Amazon Simple Notification Service
-* Amazon Simple Email Service
-* AWS CloudFormation
-* Amazon CloudWatch Logs
-* Amazon CloudWatch Events
-* AWS CodeCommit
-* AWS Config
+#### Function Scaling
+* The first time you invoke your function, AWS Lambda creates an instance of the function and runs
+its handler method to process the event.
+* When the function returns a response, it sticks around to process additional events.
+* If you invoke the function again while the first event is being processed, Lambda creates another instance.
+* This continues until there are enough instances to serve all requests, or a concurrency limit is reached.
+* When the number of requests decreases, Lambda stops unused instances to free up scaling capacity for other functions.
 
 ---
 
