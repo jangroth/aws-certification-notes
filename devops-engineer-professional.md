@@ -2045,14 +2045,14 @@ to a specific Lambda function *version*.
 <a name="4_12_3_1"></a>
 #### [↖](#4_12)[↑](#4_12_3)[↓](#4_12_3_2) Synchronous / Asynchronous / Event Source Invocation
 * When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
-  * -> Cognito, Lex, Alexa, API Gateway, CloudFront (Lambda@Edge), Kinesis Data Firehose
+  * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
 process reads events from the queue and runs your function.
   * Lambda manages the function's asynchronous invocation queue and attempts to retry failed
   events automatically. If the function returns an error, Lambda attempts to run it two more times
   * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an
   Amazon SQS queue or an Amazon SNS topic.
-  * -> SQS, SNS, SES, CloudFormation, Cloudwatch Logs & Events, CodeCommit, Config
+  * -> S3, SNS, SES, CloudFormation, Cloudwatch Logs & Events, CodeCommit, Config
 * An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
   * -> Kinesis, DynamoDB, SQS
 
