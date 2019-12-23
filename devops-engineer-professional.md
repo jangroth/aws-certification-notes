@@ -22,10 +22,11 @@
   * [ECS](#4_10)
   * [Elastic Beanstalk](#4_11)
   * [Lambda](#4_12)
-  * [OpsWorks](#4_13)
-  * [Organizations](#4_14)
-  * [Step Functions](#4_15)
-  * [X-Ray](#4_16)
+  * [Managed Services](#4_13)
+  * [OpsWorks](#4_14)
+  * [Organizations](#4_15)
+  * [Step Functions](#4_16)
+  * [X-Ray](#4_17)
 ---
 <!-- toc_end -->
 
@@ -1955,12 +1956,16 @@ Environments|200
 ## [↖](#top)[↑](#4_11_3)[↓](#4_12_1) Lambda
 <!-- toc_start -->
 * [Overview](#4_12_1)
-* [Triggering](#4_12_2)
-  * [Services that Lambda reads events from](#4_12_2_1)
-  * [Services that invoke Lambda functions synchronously](#4_12_2_2)
-  * [Services that invoke Lambda functions asynchronously](#4_12_2_3)
-* [Managed Services](#4_12_3)
-* [Overview](#4_12_4)
+* [Managing Functions](#4_12_2)
+  * [Concurrency](#4_12_2_1)
+  * [Versions](#4_12_2_2)
+  * [Aliases](#4_12_2_3)
+  * [Layers](#4_12_2_4)
+  * [Network](#4_12_2_5)
+  * [Database](#4_12_2_6)
+* [Invoking Functions](#4_12_3)
+  * [Synchronous / Asynchronous / Event Source Invocation](#4_12_3_1)
+  * [Function Scaling](#4_12_3_2)
 <!-- toc_end -->
 
 <a name="4_12_1"></a>
@@ -1981,10 +1986,12 @@ call it directly from any web or mobile app.
 * Supported languages
   * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
 
-### Managing Functions
+<a name="4_12_2"></a>
+### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
 
-#### Concurrency
+<a name="4_12_2_1"></a>
+#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Concurrency
 Concurrency is the number of requests that your function is serving at any given time. When your
 function is invoked, Lambda allocates an instance of it to process the event. When the function
 code finishes running, it can handle another request. If the function is invoked again while a
@@ -1997,7 +2004,8 @@ concurrency.
 * Can configure *provisioned concurrency* before an increase in invocations
   * Can ensure that all requests are served by initialized instances with very low latency.
 
-#### Versions
+<a name="4_12_2_2"></a>
+#### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Versions
 * The system creates a new version of your Lambda function each time that you publish the function.
   The new version is a copy of the unpublished version of the function.
 * You can change the function code and settings only on the unpublished version of a function.
@@ -2006,30 +2014,36 @@ concurrency.
 * If you haven't published a version of the selected function, the Versions panel lists only
   the `$LATEST` version.
 
-#### Aliases
+<a name="4_12_2_3"></a>
+#### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_2_4) Aliases
 * You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
 to a specific Lambda function *version*.
 * Users can access the function version using the alias ARN.
 
-#### Layers
+<a name="4_12_2_4"></a>
+#### [↖](#4_12)[↑](#4_12_2_3)[↓](#4_12_2_5) Layers
 * You can configure your Lambda function to pull in additional code and content in the form of layers.
 * A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
 * With layers, you can use libraries in your function without needing to include them in your deployment package.
 
-#### Network
+<a name="4_12_2_5"></a>
+#### [↖](#4_12)[↑](#4_12_2_4)[↓](#4_12_2_6) Network
 * You can configure a function to connect to private subnets in a VPC in your account.
 * Use VPC to create a private network for resources such as databases, cache instances, or internal services.
 * Connect your function to the VPC to access private resources during execution.
 * Provisioning process for Lambda takes longer
 
-#### Database
+<a name="4_12_2_6"></a>
+#### [↖](#4_12)[↑](#4_12_2_5)[↓](#4_12_3) Database
 * You can use the Lambda console to create an RDS database proxy for your function.
 * A database proxy manages a pool of database connections and relays queries from a function.
 * This enables a function to reach high concurrency levels without exhausting database connections.
 
-### Invoking Functions
+<a name="4_12_3"></a>
+### [↖](#4_12)[↑](#4_12_2_6)[↓](#4_12_3_1) Invoking Functions
 
-#### Synchronous / Asynchronous / Event Source Invocation
+<a name="4_12_3_1"></a>
+#### [↖](#4_12)[↑](#4_12_3)[↓](#4_12_3_2) Synchronous / Asynchronous / Event Source Invocation
 * When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
   * -> Cognito, Lex, Alexa, API Gateway, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
@@ -2042,7 +2056,8 @@ process reads events from the queue and runs your function.
 * An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
   * -> Kinesis, DynamoDB, SQS
 
-#### Function Scaling
+<a name="4_12_3_2"></a>
+#### [↖](#4_12)[↑](#4_12_3_1)[↓](#4_13) Function Scaling
 * The first time you invoke your function, AWS Lambda creates an instance of the function and runs
 its handler method to process the event.
 * When the function returns a response, it sticks around to process additional events.
@@ -2052,11 +2067,14 @@ its handler method to process the event.
 
 ---
 
-<a name="4_12_3"></a>
-### [↖](#4_12)[↑](#4_12_2_3)[↓](#4_12_4) Managed Services
+<a name="4_13"></a>
+## [↖](#top)[↑](#4_12_3_2)[↓](#4_13_1) Managed Services
+<!-- toc_start -->
+* [Overview](#4_13_1)
+<!-- toc_end -->
 
-<a name="4_12_4"></a>
-### [↖](#4_12)[↑](#4_12_3)[↓](#4_13) Overview
+<a name="4_13_1"></a>
+### [↖](#4_13)[↑](#4_13)[↓](#4_14) Overview
 As enterprise customers move towards adopting the cloud at scale, some find their people need help
 and time to gain AWS skills and experience. AWS Managed Services (AMS) operates AWS on your behalf,
 providing a secure and compliant AWS Landing Zone, a proven enterprise operating model, on-going
@@ -2069,15 +2087,15 @@ so you can direct resources toward differentiating your business.
 
 ---
 
-<a name="4_13"></a>
-## [↖](#top)[↑](#4_12_4)[↓](#4_13_1) OpsWorks
+<a name="4_14"></a>
+## [↖](#top)[↑](#4_13_1)[↓](#4_14_1) OpsWorks
 <!-- toc_start -->
-* [Overview](#4_13_1)
-* [OpsWorks Stacks](#4_13_2)
+* [Overview](#4_14_1)
+* [OpsWorks Stacks](#4_14_2)
 <!-- toc_end -->
 
-<a name="4_13_1"></a>
-### [↖](#4_13)[↑](#4_13)[↓](#4_13_2) Overview
+<a name="4_14_1"></a>
+### [↖](#4_14)[↑](#4_14)[↓](#4_14_2) Overview
 *AWS OpsWorks* is a configuration management service that provides managed instances of Chef and
 Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the
 configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are
@@ -2085,8 +2103,8 @@ configured, deployed, and managed across your Amazon EC2 instances or on-premise
 environments. OpsWorks has three offerings, *AWS Opsworks for Chef Automate*, *AWS OpsWorks for
 Puppet Enterprise*, and *AWS OpsWorks Stacks*.
 
-<a name="4_13_2"></a>
-### [↖](#4_13)[↑](#4_13_1)[↓](#4_14) OpsWorks Stacks
+<a name="4_14_2"></a>
+### [↖](#4_14)[↑](#4_14_1)[↓](#4_15) OpsWorks Stacks
 
 * Orchestration services that uses Chef
 * Components
@@ -2098,16 +2116,16 @@ Puppet Enterprise*, and *AWS OpsWorks Stacks*.
 
 ---
 
-<a name="4_14"></a>
-## [↖](#top)[↑](#4_13_2)[↓](#4_14_1) Organizations
+<a name="4_15"></a>
+## [↖](#top)[↑](#4_14_2)[↓](#4_15_1) Organizations
 <!-- toc_start -->
-* [Overview](#4_14_1)
-  * [Benefits](#4_14_1_1)
-* [Limits:](#4_14_2)
+* [Overview](#4_15_1)
+  * [Benefits](#4_15_1_1)
+* [Limits:](#4_15_2)
 <!-- toc_end -->
 
-<a name="4_14_1"></a>
-### [↖](#4_14)[↑](#4_14)[↓](#4_14_1_1) Overview
+<a name="4_15_1"></a>
+### [↖](#4_15)[↑](#4_15)[↓](#4_15_1_1) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
 you can create groups of accounts, automate account creation, apply and manage policies for those
 groups. Organizations enables you to centrally manage policies across multiple accounts, without
@@ -2120,8 +2138,8 @@ accounts by enabling you to setup a single payment method for all the accounts i
 organization through consolidated billing. AWS Organizations is available to all AWS customers at
 no additional charge.
 
-<a name="4_14_1_1"></a>
-#### [↖](#4_14)[↑](#4_14_1)[↓](#4_14_2) Benefits
+<a name="4_15_1_1"></a>
+#### [↖](#4_15)[↑](#4_15_1)[↓](#4_15_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -2129,22 +2147,22 @@ no additional charge.
   * One *paying account* linked to many *linked accounts*
   * Pricing benefits (Volumes, Storage, Instances)
 
-<a name="4_14_2"></a>
-### [↖](#4_14)[↑](#4_14_1_1)[↓](#4_15) Limits:
+<a name="4_15_2"></a>
+### [↖](#4_15)[↑](#4_15_1_1)[↓](#4_16) Limits:
 .|.
 -|-
 Maximum linked accounts|20
 
 ---
 
-<a name="4_15"></a>
-## [↖](#top)[↑](#4_14_2)[↓](#4_15_1) Step Functions
+<a name="4_16"></a>
+## [↖](#top)[↑](#4_15_2)[↓](#4_16_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_15_1)
+* [Overview](#4_16_1)
 <!-- toc_end -->
 
-<a name="4_15_1"></a>
-### [↖](#4_15)[↑](#4_15)[↓](#4_16) Overview
+<a name="4_16_1"></a>
+### [↖](#4_16)[↑](#4_16)[↓](#4_17) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -2157,14 +2175,14 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_16"></a>
-## [↖](#top)[↑](#4_15_1)[↓](#4_16_1) X-Ray
+<a name="4_17"></a>
+## [↖](#top)[↑](#4_16_1)[↓](#4_17_1) X-Ray
 <!-- toc_start -->
-* [Overview](#4_16_1)
+* [Overview](#4_17_1)
 <!-- toc_end -->
 
-<a name="4_16_1"></a>
-### [↖](#4_16)[↑](#4_16) Overview
+<a name="4_17_1"></a>
+### [↖](#4_17)[↑](#4_17) Overview
 *AWS X-Ray* helps developers analyze and debug production, distributed applications, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
