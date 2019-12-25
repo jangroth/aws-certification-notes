@@ -1985,6 +1985,8 @@ call it directly from any web or mobile app.
   * Can give more RAM which will proportionaly increase CPU as well
 * Supported languages
   * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
+* Can pass in *environment variables*
+  * These can be KMS-encrypted as well (need SDK to decrypt)
 
 <a name="4_12_2"></a>
 ### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Managing Functions
@@ -2006,19 +2008,22 @@ concurrency.
 
 <a name="4_12_2_2"></a>
 #### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Versions
+* If you work on a Lambda function, you work on `$LATEST`
 * The system creates a new version of your Lambda function each time that you publish the function.
   The new version is a copy of the unpublished version of the function.
-* You can change the function code and settings only on the unpublished version of a function.
-  When you publish a version, the code and most of the settings are locked to ensure a consistent
-  experience for users of that version.
-* If you haven't published a version of the selected function, the Versions panel lists only
-  the `$LATEST` version.
+* Version is code *and* configuration
+* Versions are immutable, you can change the function code and settings only on the unpublished
+  version of a function.
+* Each version gets its own ARN
 
 <a name="4_12_2_3"></a>
 #### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_2_4) Aliases
 * You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
 to a specific Lambda function *version*.
+* Aliases are mutable
 * Users can access the function version using the alias ARN.
+* Can create e.g. `dev`, `test` and `prod`.
+  * Aliases can point to multiple versions with a *weight* - for canary-style deployments
 
 <a name="4_12_2_4"></a>
 #### [↖](#4_12)[↑](#4_12_2_3)[↓](#4_12_2_5) Layers
