@@ -1464,6 +1464,7 @@ manual operations. The service scales to match your deployment needs.
 * Minimize downtime
 * Centralized control
 * Easy to adopt
+* Integrates with AWS SAM
 
 <a name="4_6_2"></a>
 ### [↖](#4_6)[↑](#4_6_1_1)[↓](#4_6_2_1) Components
@@ -1992,20 +1993,6 @@ call it directly from any web or mobile app.
 ### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
 
-<a name="4_12_2_1"></a>
-#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Concurrency
-Concurrency is the number of requests that your function is serving at any given time. When your
-function is invoked, Lambda allocates an instance of it to process the event. When the function
-code finishes running, it can handle another request. If the function is invoked again while a
-request is still being processed, another instance is allocated, which increases the function's
-concurrency.
-
-* Concurrency is `invocations/s * runtime` (eg. 10/s * 4s = 40)
-* Can configure *reservered concurrency*
-  * No other function can use that concurrency
-* Can configure *provisioned concurrency* before an increase in invocations
-  * Can ensure that all requests are served by initialized instances with very low latency.
-
 <a name="4_12_2_2"></a>
 #### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Versions
 * If you work on a Lambda function, you work on `$LATEST`
@@ -2065,10 +2052,15 @@ process reads events from the queue and runs your function.
 #### [↖](#4_12)[↑](#4_12_3_1)[↓](#4_13) Function Scaling
 * The first time you invoke your function, AWS Lambda creates an instance of the function and runs
 its handler method to process the event.
-* When the function returns a response, it sticks around to process additional events.
-* If you invoke the function again while the first event is being processed, Lambda creates another instance.
-* This continues until there are enough instances to serve all requests, or a concurrency limit is reached.
-* When the number of requests decreases, Lambda stops unused instances to free up scaling capacity for other functions.
+  * When the function returns a response, it sticks around to process additional events.
+  * If you invoke the function again while the first event is being processed, Lambda creates another instance.
+  * This continues until there are enough instances to serve all requests, or a concurrency limit is reached.
+  * When the number of requests decreases, Lambda stops unused instances to free up scaling capacity for other functions.
+* **Concurrency** is `invocations/s * runtime` (eg. 10/s * 4s = 40)
+  * Can configure *reservered concurrency*
+    * No other function can use that concurrency
+  * Can configure *provisioned concurrency* before an increase in invocations
+    * Can ensure that all requests are served by initialized instances with very low latency.
 
 ---
 
