@@ -591,19 +591,66 @@ communication applications.
 
 <a name="4_1_1_1"></a>
 #### [↖](#4_1)[↑](#4_1_1)[↓](#4_2) Benefits
-* Efficient API development
-  * API versioning
-* Easy monitoring
-* Performance at any scale
-* Cost savings at scale
-* Flexible Security Control
-* Restful API endpoints
-* Serverless APIs
-  * Can invoke Lambda
-* Websocket APIs
+* **RESTful** or **Websocket** APIs
+* Powerful, flexible **authentication** mechanisms, such as AWS Identity and Access Management policies,
+  Lambda authorizer functions, and Amazon Cognito user pools.
+* **Developer portal** for publishing your APIs.
+* **Canary release deployments** for safely rolling out changes.
+* *CloudTrail* logging and monitoring of API usage and API changes.
+* *CloudWatch* access logging and execution logging, including the ability to set alarms.
+* Ability to use *AWS CloudFormation* templates to enable API creation
+* Support for custom domain names.
+* Integration with *AWS WAF* for protecting your APIs against common web exploits.
+* Integration with *AWS X-Ray* for understanding and triaging performance latencies.
+
+### Concepts
+
+#### Endpoint
+A hostname for an API in API Gateway that is deployed to a specific region. The hostname is of the
+form `{api-id}.execute-api.{region}.amazonaws.com`.
+
+The following types of API endpoints are supported:
+* Regional - deployed to the specified region and intended to serve clients in the same AWS region.
+* Edge Optimized - deployed to the specified region while using a *CloudFront distribution* to
+  facilitate client access typically from across AWS regions
+* Private - exposed through interface VPC endpoints
+
+#### Stage
+A logical reference to a lifecycle state of your REST or WebSocket API (for example, `dev`, `prod`,
+`beta`, `v2`).
+* API stages are identified by API ID and stage name.
+* Each stage has its own configuration parameters.
+* Can be rolled back in history.
+* Have *stage variables*, that are like environment variables for API Gateway. 
+  * Can be used to configure enpoints that the stage talks to.
+  * Accessible from Lambda context as well.
+* Can enable *canary deployments* for a stage (usually `PROD`)
+  * Canaray releases attaches a new version to an existing stage deployment and randomly shift traffic over
+  * Logs and metrics are generated separately for all canary requests
+  * This is blue/green for API Gateway/Lambda
+
+TODO: play with gateway stages, variables, lambda alias and versions
+
+#### Deployment
+After creating your API, you *must* deploy it to make it callable by your users. To deploy an API,
+you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API
+and is made available for client apps to call.
+
+#### Integration
+* *Lambda Proxy* - request is passed through straight to a lambda
+  * Can point to an *alias* to enable canary testing
+* *Lambda* - allows integration of *mapping template*
+  * Can transform request as well as repsonse
+  * Allows to evolve the API while keeping lambda function static
+
+#### Mapping Template
+A scripts in Velocity Template Language (VTL) that transforms a request body from the frontend
+data format to the backend data format.
+
+#### Model
+A data schema specifying the data structure of a request or response payload.
 
 ---
-
 <a name="4_2"></a>
 ## [↖](#top)[↑](#4_1_1_1)[↓](#4_2_1) CloudFormation
 <!-- toc_start -->
