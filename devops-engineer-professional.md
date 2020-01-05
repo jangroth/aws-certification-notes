@@ -621,7 +621,7 @@ A logical reference to a lifecycle state of your REST or WebSocket API (for exam
 * API stages are identified by API ID and stage name.
 * Each stage has its own configuration parameters.
 * Can be rolled back in history.
-* Have *stage variables*, that are like environment variables for API Gateway. 
+* Have *stage variables*, that are like environment variables for API Gateway.
   * Can be used to configure enpoints that the stage talks to.
   * Accessible from Lambda context as well.
 * Can enable *canary deployments* for a stage (usually `PROD`)
@@ -649,6 +649,16 @@ data format to the backend data format.
 
 #### Model
 A data schema specifying the data structure of a request or response payload.
+
+#### Throttling
+* Account-wide limit of 10,000 requests per second.
+  * Applies at service/account level
+* Can create *usage plan*:
+  * *Rate*, *burst*, *quota*
+  * Can assoicate with stage/method/API key (to limit certain clients)
+
+
+
 
 ---
 <a name="4_2"></a>
