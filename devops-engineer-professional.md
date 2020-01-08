@@ -642,6 +642,11 @@ and is made available for client apps to call.
 * *Lambda* - allows integration of *mapping template*
   * Can transform request as well as repsonse
   * Allows to evolve the API while keeping lambda function static
+* Any service
+  * All AWS services support dedicated APIs to expose their features. However, the application
+  protocols or programming interfaces are likely to differ from service to service. An API Gateway
+  API with the AWS integration has the advantage of providing a consistent application protocol
+  for your client to access different AWS services.
 
 #### Mapping Template
 A scripts in Velocity Template Language (VTL) that transforms a request body from the frontend
@@ -1850,20 +1855,21 @@ launch type.
   * The task definition is a text file, in JSON format, that describes one or more containers, up
     to a maximum of ten, that form your application
   * Specify various parameters, eg:
-    * Containes to use
-    * Port to be opened
+    * Container image to use
+    * Port to be opened & networking
     * Data volumes
 * **Task**
-  * A *task* is the instantiation of a task definition within a cluster
-  * ECS allows to run and maintain a specified number of instances of a task definition
+  * A *task* is the instantiation of a *task definition* within a cluster
+  * ECS allows to run and maintain a specified number containers in a task definition
+    * Group by responsility, e.g. separate task definitions for frontend and backend
   * If a task should fail or stop, the ECS scheduler launches another instance of the task
     definition to replace it and to maintain the desired count of tasks in service
 * **Service**
   * Runs and maintains a specified number of tasks simultaneously
 * **Clusters**
-  * Logical grouping of container instances that you can place tasks on
-
-TODO: Deploy container on fargate
+  * Logical grouping of EC2 instances that you can place tasks on
+  * Instances run ECS agent as a Docker container
+  * Cluster is an auto scaling group with a launch configuration using a special ECS AMI
 
 ---
 
