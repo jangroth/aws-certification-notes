@@ -1852,6 +1852,8 @@ launch type.
 <a name="4_10_2"></a>
 ### [↖](#4_10)[↑](#4_10_1_1)[↓](#4_11) Components
 * **Task Definition**
+  * ECS allows to run and maintain a specified number containers in a task definition
+    * Group by responsility, e.g. separate task definitions for frontend and backend
   * The task definition is a text file, in JSON format, that describes one or more containers, up
     to a maximum of ten, that form your application
   * Specify various parameters, eg:
@@ -1860,12 +1862,24 @@ launch type.
     * Data volumes
 * **Task**
   * A *task* is the instantiation of a *task definition* within a cluster
-  * ECS allows to run and maintain a specified number containers in a task definition
-    * Group by responsility, e.g. separate task definitions for frontend and backend
   * If a task should fail or stop, the ECS scheduler launches another instance of the task
     definition to replace it and to maintain the desired count of tasks in service
 * **Service**
   * Runs and maintains a specified number of tasks simultaneously
+  * Created on Cluster-Level, launch type EC2 or Fargate
+  * Can be linked to ALB/NLB/ELB
+  * *Service type*
+    * *Replica* - places and maintains the desired number of tasks across your cluster
+    * *Demon* - deploys exactly one task on each active container instance that meets all of the task placement constraints
+      * Good for e.g. *monitoring* that should run on every container instance
+  * *Deployment type*
+    * *Rolling*
+      * Controlled by Amazon ECS
+      * Service scheduler replacing the current running version of the container with the latest version
+    * *Blue/Green*
+      * Controlled by CodeDeploy
+      * Allows to verify a new deployment of a service before sending production traffic to it
+
 * **Clusters**
   * Logical grouping of EC2 instances that you can place tasks on
   * Instances run ECS agent as a Docker container
