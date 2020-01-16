@@ -1864,6 +1864,8 @@ launch type.
   * A *task* is the instantiation of a *task definition* within a cluster
   * If a task should fail or stop, the ECS scheduler launches another instance of the task
     definition to replace it and to maintain the desired count of tasks in service
+  * Static host port mapping: Only one task per container instance allowed, e.g. mapping host port 80 to container port
+  * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
 * **Service**
   * Runs and maintains a specified number of tasks simultaneously
   * Created on Cluster-Level, launch type EC2 or Fargate
@@ -1879,11 +1881,12 @@ launch type.
     * *Blue/Green*
       * Controlled by CodeDeploy
       * Allows to verify a new deployment of a service before sending production traffic to it
-
 * **Clusters**
   * Logical grouping of EC2 instances that you can place tasks on
   * Instances run ECS agent as a Docker container
   * Cluster is an auto scaling group with a launch configuration using a special ECS AMI
+
+TODO: Follow example from Udemy
 
 ---
 
