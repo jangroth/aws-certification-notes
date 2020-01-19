@@ -1851,6 +1851,9 @@ launch type.
 
 <a name="4_10_2"></a>
 ### [↖](#4_10)[↑](#4_10_1_1)[↓](#4_11) Components
+
+...[`Cluster`[`Service`[`Task Definition`[`Container Definition`]]]]...
+
 * **Task Definition**
   * ECS allows to run and maintain a specified number containers in a task definition
     * Group by responsility, e.g. separate task definitions for frontend and backend
@@ -1866,6 +1869,7 @@ launch type.
     definition to replace it and to maintain the desired count of tasks in service
   * Static host port mapping: Only one task per container instance allowed, e.g. mapping host port 80 to container port
   * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
+  * Tasks can have individual IAM roles
 * **Service**
   * Runs and maintains a specified number of tasks simultaneously
   * Created on Cluster-Level, launch type EC2 or Fargate
@@ -1884,7 +1888,7 @@ launch type.
 * **Clusters**
   * Logical grouping of EC2 instances that you can place tasks on
   * Instances run ECS agent as a Docker container
-  * Cluster is an auto scaling group with a launch configuration using a special ECS AMI
+  * Cluster is an *auto scaling group* with a launch configuration using a special ECS AMI
 
 TODO: Follow example from Udemy
 
