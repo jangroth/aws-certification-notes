@@ -1890,7 +1890,10 @@ launch type.
   * Instances run ECS agent as a Docker container
   * Cluster is an *auto scaling group* with a launch configuration using a special ECS AMI
 
-TODO: Follow example from Udemy
+### ECR
+
+* Needs login `aws ecr get-login --no-include-email --region ap-south-2`
+* `docker pull aws_account_id.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`
 
 ---
 
