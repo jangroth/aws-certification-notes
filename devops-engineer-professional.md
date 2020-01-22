@@ -1863,6 +1863,7 @@ launch type.
     * Container image to use
     * Port to be opened & networking
     * Data volumes
+  * Either for ECS or Fargate
 * **Task**
   * A *task* is the instantiation of a *task definition* within a cluster
   * If a task should fail or stop, the ECS scheduler launches another instance of the task
@@ -1894,6 +1895,13 @@ launch type.
 
 * Needs login `aws ecr get-login --no-include-email --region ap-south-2`
 * `docker pull aws_account_id.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`
+
+### Fargate
+
+* Don't need to provision cluster
+* Requires VPC
+
+TODO: why do load balancers interfere in udemy example?
 
 ---
 
