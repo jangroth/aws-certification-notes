@@ -578,6 +578,14 @@ application and making changes to your application without invoking the scaling 
 <!-- toc_start -->
 * [Overview](#4_1_1)
   * [Benefits](#4_1_1_1)
+* [Concepts](#4_1_2)
+  * [Endpoint](#4_1_2_1)
+  * [Stage](#4_1_2_2)
+  * [Deployment](#4_1_2_3)
+  * [Integration](#4_1_2_4)
+  * [Mapping Template](#4_1_2_5)
+  * [Model](#4_1_2_6)
+  * [Throttling](#4_1_2_7)
 <!-- toc_end -->
 
 <a name="4_1_1"></a>
@@ -590,7 +598,7 @@ Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web applicat
 communication applications.
 
 <a name="4_1_1_1"></a>
-#### [↖](#4_1)[↑](#4_1_1)[↓](#4_2) Benefits
+#### [↖](#4_1)[↑](#4_1_1)[↓](#4_1_2) Benefits
 * **RESTful** or **Websocket** APIs
 * Powerful, flexible **authentication** mechanisms, such as AWS Identity and Access Management policies,
   Lambda authorizer functions, and Amazon Cognito user pools.
@@ -603,9 +611,11 @@ communication applications.
 * Integration with *AWS WAF* for protecting your APIs against common web exploits.
 * Integration with *AWS X-Ray* for understanding and triaging performance latencies.
 
-### Concepts
+<a name="4_1_2"></a>
+### [↖](#4_1)[↑](#4_1_1_1)[↓](#4_1_2_1) Concepts
 
-#### Endpoint
+<a name="4_1_2_1"></a>
+#### [↖](#4_1)[↑](#4_1_2)[↓](#4_1_2_2) Endpoint
 A hostname for an API in API Gateway that is deployed to a specific region. The hostname is of the
 form `{api-id}.execute-api.{region}.amazonaws.com`.
 
@@ -615,7 +625,8 @@ The following types of API endpoints are supported:
   facilitate client access typically from across AWS regions
 * Private - exposed through interface VPC endpoints
 
-#### Stage
+<a name="4_1_2_2"></a>
+#### [↖](#4_1)[↑](#4_1_2_1)[↓](#4_1_2_3) Stage
 A logical reference to a lifecycle state of your REST or WebSocket API (for example, `dev`, `prod`,
 `beta`, `v2`).
 * API stages are identified by API ID and stage name.
@@ -631,12 +642,14 @@ A logical reference to a lifecycle state of your REST or WebSocket API (for exam
 
 TODO: play with gateway stages, variables, lambda alias and versions
 
-#### Deployment
+<a name="4_1_2_3"></a>
+#### [↖](#4_1)[↑](#4_1_2_2)[↓](#4_1_2_4) Deployment
 After creating your API, you *must* deploy it to make it callable by your users. To deploy an API,
 you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API
 and is made available for client apps to call.
 
-#### Integration
+<a name="4_1_2_4"></a>
+#### [↖](#4_1)[↑](#4_1_2_3)[↓](#4_1_2_5) Integration
 * *Lambda Proxy* - request is passed through straight to a lambda
   * Can point to an *alias* to enable canary testing
 * *Lambda* - allows integration of *mapping template*
@@ -648,14 +661,17 @@ and is made available for client apps to call.
   API with the AWS integration has the advantage of providing a consistent application protocol
   for your client to access different AWS services.
 
-#### Mapping Template
+<a name="4_1_2_5"></a>
+#### [↖](#4_1)[↑](#4_1_2_4)[↓](#4_1_2_6) Mapping Template
 A scripts in Velocity Template Language (VTL) that transforms a request body from the frontend
 data format to the backend data format.
 
-#### Model
+<a name="4_1_2_6"></a>
+#### [↖](#4_1)[↑](#4_1_2_5)[↓](#4_1_2_7) Model
 A data schema specifying the data structure of a request or response payload.
 
-#### Throttling
+<a name="4_1_2_7"></a>
+#### [↖](#4_1)[↑](#4_1_2_6)[↓](#4_2) Throttling
 * Account-wide limit of 10,000 requests per second.
   * Applies at service/account level
 * Can create *usage plan*:
@@ -667,7 +683,7 @@ A data schema specifying the data structure of a request or response payload.
 
 ---
 <a name="4_2"></a>
-## [↖](#top)[↑](#4_1_1_1)[↓](#4_2_1) CloudFormation
+## [↖](#top)[↑](#4_1_2_7)[↓](#4_2_1) CloudFormation
 <!-- toc_start -->
 * [Overview](#4_2_1)
 * [Components](#4_2_2)
@@ -1830,6 +1846,8 @@ auditing, security analysis, change management, and operational troubleshooting.
 * [Overview](#4_10_1)
   * [Benefits](#4_10_1_1)
 * [Components](#4_10_2)
+* [ECR](#4_10_3)
+* [Fargate](#4_10_4)
 <!-- toc_end -->
 
 <a name="4_10_1"></a>
@@ -1850,7 +1868,7 @@ launch type.
 * AWS Integration
 
 <a name="4_10_2"></a>
-### [↖](#4_10)[↑](#4_10_1_1)[↓](#4_11) Components
+### [↖](#4_10)[↑](#4_10_1_1)[↓](#4_10_3) Components
 
 ...[`Cluster`[`Service`[`Task Definition`[`Container Definition`]]]]...
 
@@ -1891,12 +1909,14 @@ launch type.
   * Instances run ECS agent as a Docker container
   * Cluster is an *auto scaling group* with a launch configuration using a special ECS AMI
 
-### ECR
+<a name="4_10_3"></a>
+### [↖](#4_10)[↑](#4_10_2)[↓](#4_10_4) ECR
 
 * Needs login `aws ecr get-login --no-include-email --region ap-south-2`
 * `docker pull aws_account_id.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`
 
-### Fargate
+<a name="4_10_4"></a>
+### [↖](#4_10)[↑](#4_10_3)[↓](#4_11) Fargate
 
 * Don't need to provision cluster
 * Requires VPC
@@ -1906,7 +1926,7 @@ TODO: why do load balancers interfere in udemy example?
 ---
 
 <a name="4_11"></a>
-## [↖](#top)[↑](#4_10_2)[↓](#4_11_1) Elastic Beanstalk
+## [↖](#top)[↑](#4_10_4)[↓](#4_11_1) Elastic Beanstalk
 <!-- toc_start -->
 * [Overview](#4_11_1)
 * [Concepts](#4_11_2)
@@ -2053,12 +2073,11 @@ Environments|200
 <!-- toc_start -->
 * [Overview](#4_12_1)
 * [Managing Functions](#4_12_2)
-  * [Concurrency](#4_12_2_1)
-  * [Versions](#4_12_2_2)
-  * [Aliases](#4_12_2_3)
-  * [Layers](#4_12_2_4)
-  * [Network](#4_12_2_5)
-  * [Database](#4_12_2_6)
+  * [Versions](#4_12_2_1)
+  * [Aliases](#4_12_2_2)
+  * [Layers](#4_12_2_3)
+  * [Network](#4_12_2_4)
+  * [Database](#4_12_2_5)
 * [Invoking Functions](#4_12_3)
   * [Synchronous / Asynchronous / Event Source Invocation](#4_12_3_1)
   * [Function Scaling](#4_12_3_2)
@@ -2088,8 +2107,8 @@ call it directly from any web or mobile app.
 ### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
 
-<a name="4_12_2_2"></a>
-#### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Versions
+<a name="4_12_2_1"></a>
+#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Versions
 * If you work on a Lambda function, you work on `$LATEST`
 * The system creates a new version of your Lambda function each time that you publish the function.
   The new version is a copy of the unpublished version of the function.
@@ -2098,8 +2117,8 @@ call it directly from any web or mobile app.
   version of a function.
 * Each version gets its own ARN
 
-<a name="4_12_2_3"></a>
-#### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_2_4) Aliases
+<a name="4_12_2_2"></a>
+#### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_2_3) Aliases
 * You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
 to a specific Lambda function *version*.
 * Aliases are mutable
@@ -2107,27 +2126,27 @@ to a specific Lambda function *version*.
 * Can create e.g. `dev`, `test` and `prod`.
   * Aliases can point to multiple versions with a *weight* - for canary-style deployments
 
-<a name="4_12_2_4"></a>
-#### [↖](#4_12)[↑](#4_12_2_3)[↓](#4_12_2_5) Layers
+<a name="4_12_2_3"></a>
+#### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_2_4) Layers
 * You can configure your Lambda function to pull in additional code and content in the form of layers.
 * A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
 * With layers, you can use libraries in your function without needing to include them in your deployment package.
 
-<a name="4_12_2_5"></a>
-#### [↖](#4_12)[↑](#4_12_2_4)[↓](#4_12_2_6) Network
+<a name="4_12_2_4"></a>
+#### [↖](#4_12)[↑](#4_12_2_3)[↓](#4_12_2_5) Network
 * You can configure a function to connect to private subnets in a VPC in your account.
 * Use VPC to create a private network for resources such as databases, cache instances, or internal services.
 * Connect your function to the VPC to access private resources during execution.
 * Provisioning process for Lambda takes longer
 
-<a name="4_12_2_6"></a>
-#### [↖](#4_12)[↑](#4_12_2_5)[↓](#4_12_3) Database
+<a name="4_12_2_5"></a>
+#### [↖](#4_12)[↑](#4_12_2_4)[↓](#4_12_3) Database
 * You can use the Lambda console to create an RDS database proxy for your function.
 * A database proxy manages a pool of database connections and relays queries from a function.
 * This enables a function to reach high concurrency levels without exhausting database connections.
 
 <a name="4_12_3"></a>
-### [↖](#4_12)[↑](#4_12_2_6)[↓](#4_12_3_1) Invoking Functions
+### [↖](#4_12)[↑](#4_12_2_5)[↓](#4_12_3_1) Invoking Functions
 
 <a name="4_12_3_1"></a>
 #### [↖](#4_12)[↑](#4_12_3)[↓](#4_12_3_2) Synchronous / Asynchronous / Event Source Invocation
