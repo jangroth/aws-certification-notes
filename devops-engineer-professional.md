@@ -1870,7 +1870,15 @@ launch type.
 <a name="4_10_2"></a>
 ### [↖](#4_10)[↑](#4_10_1_1)[↓](#4_10_3) Components
 
-...[`Cluster`[`Service`[`Task Definition`[`Container Definition`]]]]...
+```
+[Cluster
+  [Service
+    [Task Definition
+      [Container Definition]
+    ]
+  ]
+]
+```
 
 * **Task Definition**
   * ECS allows to run and maintain a specified number containers in a task definition
@@ -1987,13 +1995,13 @@ underlying resources at any time.
   * Can be cloned as a whole environment
   * Can rebuild environment - complete delete and rebuild
 * **Application Version**
-  * Unique package that represents version of the *application*
+  * Unique package that represents a version of the *application*
   * Uploaded as a zipped *application source bundle*
   * Each application can have many application versions
-  * Can be deployed to one or more *environment* within an application
+  * Can be deployed to one or more *environments* within an application
   * Limit of 1000 version -> can configure application version *lifecycle management*
 
-*Web Application*<br/>(non-docker)|*Web Application*<br/>(docker)|*Worker*
+*Web Application*<br/>(non-docker)|*Web Application*<br/>(docker, runs on ECS)|*Worker*
 -|-|-
 `AWS::AutoScaling::AutoScalingGroup`|`AWS::AutoScaling::AutoScalingGroup`|`AWS::CloudFormation::WaitConditionHandle`
 `AWS::AutoScaling::LaunchConfiguration`|`AWS::AutoScaling::LaunchConfiguration`|`AWS::DynamoDB::Table`
