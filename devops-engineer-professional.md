@@ -1917,6 +1917,20 @@ launch type.
   * Instances run ECS agent as a Docker container
   * Cluster is an *auto scaling group* with a launch configuration using a special ECS AMI
 
+### Autoscaling
+
+* Use *Service Auto Scaling* for
+  * Target Tracking Scaling Poilicy
+  * Step Scaling Policy
+  * Sdcheduled Scaling
+
+* For ECS, we also need to scale the cluster
+  * This is really tricky, but in essence there's an ASG around the EC2 instances that form the cluster
+  * Could use Fargate, obviously
+  * Or even Elastic Beanstalk
+
+#### Scaling the service
+
 <a name="4_10_3"></a>
 ### [↖](#4_10)[↑](#4_10_2)[↓](#4_10_4) ECR
 
@@ -1927,6 +1941,7 @@ launch type.
 ### [↖](#4_10)[↑](#4_10_3)[↓](#4_11) Fargate
 
 * Don't need to provision cluster
+  * Does not need EC2 instance roles to create cluster
 * Requires VPC
 
 TODO: why do load balancers interfere in udemy example?
