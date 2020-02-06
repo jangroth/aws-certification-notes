@@ -1929,7 +1929,15 @@ launch type.
   * Could use Fargate, obviously
   * Or even Elastic Beanstalk
 
-#### Scaling the service
+### Logging
+
+* For tasks, configure logging agent with task definition
+  * Typically CloudWatch, also supports Splunk
+* For cluster instances, install CloudWatch Agent
+* Various ECS-specific CloudWatch metrics available
+* Various ECS-specific CloudWatch events available
+* Can enable CloudWatch Container Insights
+  * Sends per-container metrics into CloudWatch metrics
 
 <a name="4_10_3"></a>
 ### [↖](#4_10)[↑](#4_10_2)[↓](#4_10_4) ECR
