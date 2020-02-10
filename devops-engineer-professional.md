@@ -1553,7 +1553,7 @@ manual operations. The service scales to match your deployment needs.
     * *Deployment Group*
       * Set of instances, defined by tags, e.g. 'environment=prod'
       * Can be associated with
-        * CW Alarms that would stop the deployment if triggered
+        * CloudWatch Alarms that would stop the deployment if triggered
         * Triggers for notification
         * Rollbacks
     * *Deployment configuration*
@@ -1953,6 +1953,7 @@ launch type.
 * Requires VPC
 
 TODO: why do load balancers interfere in udemy example?
+TODO: https://aws.amazon.com/blogs/devops/build-a-continuous-delivery-pipeline-for-your-container-images-with-amazon-ecr-as-source/
 
 ---
 
@@ -2242,11 +2243,22 @@ so you can direct resources toward differentiating your business.
 Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the
 configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are
 configured, deployed, and managed across your Amazon EC2 instances or on-premises compute
-environments. OpsWorks has three offerings, *AWS Opsworks for Chef Automate*, *AWS OpsWorks for
-Puppet Enterprise*, and *AWS OpsWorks Stacks*.
+environments.
+
+* Declarative desired state engine
+  * Automate, monitor and maintain deployments
+* **Cookbooks** define **recipes**
+* AWS' implementation of *Chef*
+	* Original Chef
+	* AWS-bespoke orchestration components
+
+OpsWorks has three offerings:
+* *AWS OpsWorks Stacks* (`<- exam relevant`)
+* *AWS Opsworks for Chef Automate*
+* *AWS OpsWorks for Puppet Enterprise*
 
 <a name="4_14_2"></a>
-### [↖](#4_14)[↑](#4_14_1)[↓](#4_15) OpsWorks Stacks
+#### [↖](#4_14)[↑](#4_14_1)[↓](#4_15) OpsWorks Stacks
 
 * Orchestration services that uses Chef
 * Components
@@ -2256,6 +2268,37 @@ Puppet Enterprise*, and *AWS OpsWorks Stacks*.
   * *Application*
 * Runs *recipes* to maintain a consitent state
 
+### Components
+
+* **Stack**
+  * Set of resources that is managed as a group
+  * Whole service stack
+* **Layer**
+  * Represent and configure components of a stack
+  * E.g. loadbalancer layer, app layer, db layer
+  * Share common configuration elements
+* **Instance**
+  * Units of compute within the platform
+  * Must be associated with at least one layer
+  * Can run
+    * 24/7
+    * Load-based
+    * Time-based
+* **Application**
+  * Applications that are deployed on one or more instances
+  * Deployed through source code repo or S3
+
+### Under the hood
+* Under the hood
+	* *OpsWorks* **agent**
+		* Configuration of machines
+	* *OpsWorks* **automation engine**
+		* *Create*, *update* & *delete* of various AWS components
+		* Handles *loadbalancing*, *autoscaling* and *autohealing*
+		* Supports *lifecycle* events
+* BerkShelf
+  * Addresses an *OpsWorks* shortcoming from old versions - only one repository for recipes
+  * Was added in *OpsWorks* 11.10 and allows to install cookbooks from many repositories
 ---
 
 <a name="4_15"></a>
