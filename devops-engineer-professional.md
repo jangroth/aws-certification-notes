@@ -2247,15 +2247,14 @@ environments.
 
 * Declarative desired state engine
   * Automate, monitor and maintain deployments
-* **Cookbooks** define **recipes**
 * AWS' implementation of *Chef*
 	* Original Chef
 	* AWS-bespoke orchestration components
-
-OpsWorks has three offerings:
-* *AWS OpsWorks Stacks* (`<- exam relevant`)
-* *AWS Opsworks for Chef Automate*
-* *AWS OpsWorks for Puppet Enterprise*
+  * **Cookbooks** define **recipes**
+* OpsWorks has three offerings:
+  * *AWS OpsWorks Stacks* (`<- exam relevant`)
+  * *AWS Opsworks for Chef Automate*
+  * *AWS OpsWorks for Puppet Enterprise*
 
 <a name="4_14_2"></a>
 #### [↖](#4_14)[↑](#4_14_1)[↓](#4_15) OpsWorks Stacks
@@ -2271,12 +2270,12 @@ OpsWorks has three offerings:
 ### Components
 
 * **Stack**
-  * Set of resources that is managed as a group
-  * Whole service stack
+  * Set of resources that are managed as a group
 * **Layer**
   * Represent and configure components of a stack
-  * E.g. loadbalancer layer, app layer, db layer
   * Share common configuration elements
+  * E.g. loadbalancer layer, app layer, db layer
+  * Type: *OpsWorks*, *ECS* or *RDS*
 * **Instance**
   * Units of compute within the platform
   * Must be associated with at least one layer
@@ -2284,6 +2283,7 @@ OpsWorks has three offerings:
     * 24/7
     * Load-based
     * Time-based
+  * Servers have to exist and to be pre-assigned to be e.g. load-based. So they are *not* created on demand.
 * **Application**
   * Applications that are deployed on one or more instances
   * Deployed through source code repo or S3
@@ -2299,6 +2299,7 @@ OpsWorks has three offerings:
 * BerkShelf
   * Addresses an *OpsWorks* shortcoming from old versions - only one repository for recipes
   * Was added in *OpsWorks* 11.10 and allows to install cookbooks from many repositories
+
 ---
 
 <a name="4_15"></a>
