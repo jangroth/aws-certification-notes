@@ -2268,7 +2268,6 @@ environments.
 * Runs *recipes* to maintain a consitent state
 
 ### Components
-
 * **Stack**
   * Set of resources that are managed as a group
 * **Layer**
@@ -2287,6 +2286,31 @@ environments.
 * **Application**
   * Applications that are deployed on one or more instances
   * Deployed through source code repo or S3
+* **Deployments**
+  * Deploy application code and related files to application server instances
+  * Deployment operation is handled by each instance's Deploy recipes, which are determined by the instance's layer
+
+### Lifecycle Events
+* **Each layer** has a set of five lifecycle events, each of which has an associated set of recipes that are specific to the layer
+* When an event occurs on a layer's instance, AWS OpsWorks Stacks automatically runs the appropriate set of recipes
+
+#### Setuo
+* Occurs after a started instance has finished booting
+
+#### Configure
+* Occurs on *all* of the stack's instances when one of the following occurs:
+    * An instance enters or leaves the online state.
+    * You associate an Elastic IP address with an instance or disassociate one from an instance.
+    * You attach an Elastic Load Balancing load balancer to a layer, or detach one from a layer.
+
+#### Deploy
+* Occurs when you run a Deploy command.
+
+#### Undeploy
+* Occurs when you run a Undeploy command,
+
+#### Shutdown
+* Occurs after you direct AWS OpsWorks Stacks to shut an instance down but before the associated Amazon EC2 instance is actually terminated.
 
 ### Under the hood
 * Under the hood
