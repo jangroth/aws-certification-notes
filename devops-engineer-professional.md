@@ -2231,7 +2231,7 @@ so you can direct resources toward differentiating your business.
 ---
 
 <a name="4_14"></a>
-## [↖](#top)[↑](#4_13_1)[↓](#4_14_1) OpsWorks
+## [↖](#top)[↑](#4_13_1)[↓](#4_14_1) OpsWorks Stacks
 <!-- toc_start -->
 * [Overview](#4_14_1)
 * [OpsWorks Stacks](#4_14_2)
@@ -2255,17 +2255,6 @@ environments.
   * *AWS OpsWorks Stacks* (`<- exam relevant`)
   * *AWS Opsworks for Chef Automate*
   * *AWS OpsWorks for Puppet Enterprise*
-
-<a name="4_14_2"></a>
-#### [↖](#4_14)[↑](#4_14_1)[↓](#4_15) OpsWorks Stacks
-
-* Orchestration services that uses Chef
-* Components
-  * *Stack*
-  * *Layer*
-  * *Instance*
-  * *Application*
-* Runs *recipes* to maintain a consitent state
 
 ### Components
 * **Stack**
@@ -2294,7 +2283,7 @@ environments.
 * **Each layer** has a set of five lifecycle events, each of which has an associated set of recipes that are specific to the layer
 * When an event occurs on a layer's instance, AWS OpsWorks Stacks automatically runs the appropriate set of recipes
 
-#### Setuo
+#### Setup
 * Occurs after a started instance has finished booting
 
 #### Configure
@@ -2304,15 +2293,17 @@ environments.
     * You attach an Elastic Load Balancing load balancer to a layer, or detach one from a layer.
 
 #### Deploy
-* Occurs when you run a Deploy command.
+* Occurs when you run a *Deploy* command.
 
 #### Undeploy
-* Occurs when you run a Undeploy command,
+* Occurs when you run a *Undeploy* command,
 
 #### Shutdown
 * Occurs after you direct AWS OpsWorks Stacks to shut an instance down but before the associated Amazon EC2 instance is actually terminated.
 
 ### Under the hood
+* CloudWatch event integration
+  * Can configure event rules to trigger alarms
 * Under the hood
 	* *OpsWorks* **agent**
 		* Configuration of machines
