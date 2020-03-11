@@ -2125,6 +2125,48 @@ Environments|200
 
 ---
 
+## Kinesis
+
+Amazon Kinesis makes it easy to collect, process, and analyze real-time, streaming data so you can
+get timely insights and react quickly to new information. Amazon Kinesis offers key capabilities
+to cost-effectively process streaming data at any scale, along with the flexibility to choose the
+tools that best suit the requirements of your application. With Amazon Kinesis, you can ingest real-time
+data such as video, audio, application logs, website clickstreams, and IoT telemetry data
+for machine learning, analytics, and other applications. Amazon Kinesis enables you to process and
+analyze data as it arrives and respond instantly instead of having to wait until all your data is
+collected before the processing can begin.
+
+[`various data sources`]->`Kinesis Streams`->`Kinesis Analytics`->`Kinesis Firehose`->[`S3`]
+
+### Overview
+
+#### Kinesis Stream
+
+* Streams are devided into ordered *shards*/*partitions*
+  * Shards can evolve over time (reshard/merge)
+  * Records are ordered per shard
+* Data retention is 1 day (default), up to 7 days
+* Ability to process/replay data
+* Multiple applications can consume the same stream
+* Once date is inserted into Kinesis, it can't be deleted (immutability)
+* *Records*
+  * Data blob, up to 1MB
+  * Record key - helps grouping into shards, should be highly distributed
+  * Sequence number - unique identifier for each record put into shards
+* Limits
+  * Producer
+    * 1MB/s or 1000 messages/s write per shard (->`ProvisionedThroughputException`)
+  * Consumer
+    * 2MB/s write per shard
+    * 5 API calls per second per shard
+
+
+
+
+
+
+---
+
 <a name="4_13"></a>
 ## [↖](#top)[↑](#4_12_3)[↓](#4_13_1) Lambda
 <!-- toc_start -->
@@ -2150,7 +2192,8 @@ high availability. You can set up your code to automatically trigger from other 
 call it directly from any web or mobile app.
 
 * Features
-  * No servers
+  * No
+  servers
   * Continuous scaling
     * Cold Start - if no idle container is available to run the lambda
   * Very cheap
