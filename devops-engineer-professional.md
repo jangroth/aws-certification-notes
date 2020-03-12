@@ -2178,26 +2178,30 @@ collected before the processing can begin.
 
 * Streams are devided into ordered *shards*/*partitions*
   * Shards can evolve over time (reshard/merge)
-  * Records are ordered per shard
+  * Records are ordered per shard (but not across shards)
 * Data retention is 1 day (default), up to 7 days
 * Ability to process/replay data
+  * Real-time processing
 * Multiple applications can consume the same stream
 * Once date is inserted into Kinesis, it can't be deleted (immutability)
 * *Records*
-  * Data blob, up to 1MB
-  * Record key - helps grouping into shards, should be highly distributed
-  * Sequence number - unique identifier for each record put into shards
-* Limits
-  * Producer
-    * 1MB/s or 1000 messages/s write per shard (->`ProvisionedThroughputException`)
-  * Consumer
-    * 2MB/s write per shard
-    * 5 API calls per second per shard
+  * `Data Blob`, up to 1MB
+  * `Record Key` - helps grouping into shards, should be highly distributed
+  * `Sequence Number` - unique identifier for each record put into shards
+* Producers
+  * Kinesis SDK, Kinesis Producer Library (KPL), Kinesis Agent, Cloudwatch Logs
+  * 3rd party libraries: Spark, Log4j Appenders, ...
+* Consumers
+  * Kinesis SDK, Kinesis Client Library (KCL), Kinesis Connector Library, AWS Lambda
+  * 3rd party libraries: Spark, Log4j Appenders, ...
 
-
-
-
-
+### Limits
+.|.
+-|-
+Producer|1MB/s or 1000 messages/s write per shard (->`ProvisionedThroughputException`)
+Consumer Classic|2MB/s write per shard
+.|5 API calls per second per shard
+Data Retentions|7 days
 
 ---
 
