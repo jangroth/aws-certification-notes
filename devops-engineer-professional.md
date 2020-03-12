@@ -1143,6 +1143,28 @@ analysis, resource change tracking, and troubleshooting. In addition, you can us
 detect unusual activity in your AWS accounts. These capabilities help simplify operational
 analysis and troubleshooting.
 
+### Overview
+
+CloudTrail is enabled by default in every account. All activities in an AWS account are being
+recorded as CloudTrail events.
+
+### Concepts
+
+#### Event
+
+* JSON format, who did what (API calls).
+* ~15min delay
+* Stored for 90 days
+
+### Trail
+
+* One region / all regions / organizatio-wide
+* Store data in nominated S3 bucket, this can be encrypted as well
+* Can also deliver and analyse events in a trail with CloudWatch Logs and CloudWatch Events
+* Can validate integrity of log files using digest files
+* Can deliver trails from multiple accounts into the same bucket
+  * Change bucket policy to allow that
+
 ---
 
 <a name="4_4"></a>
