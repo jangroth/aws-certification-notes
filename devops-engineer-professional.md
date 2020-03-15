@@ -2174,8 +2174,8 @@ collected before the processing can begin.
 ### [↖](#4_13)[↑](#4_13)[↓](#4_13_1_1) Overview
 
 <a name="4_13_1_1"></a>
-#### [↖](#4_13)[↑](#4_13_1)[↓](#4_14) Kinesis Stream
-
+#### [↖](#4_13)[↑](#4_13_1)[↓](#4_14) Kinesis Data Stream
+* Real-time data delivery
 * Streams are devided into ordered *shards*/*partitions*
   * Shards can evolve over time (reshard/merge)
   * Records are ordered per shard (but not across shards)
@@ -2195,13 +2195,40 @@ collected before the processing can begin.
   * Kinesis SDK, Kinesis Client Library (KCL), Kinesis Connector Library, AWS Lambda
   * 3rd party libraries: Spark, Log4j Appenders, ...
 
-### Limits
-.|.
+#### Kinesis Data Firehose
+* Near Real-time data delivery (~60 seconds)
+* Automatic Scaling
+* Can do data transformation through Lambda
+* Supports compression for S3
+* Pay for the amount of data going through Firehose
+* Producers
+  * Kinesise Data Streams, Cloudwatch Logs & Events, ...
+* Consumers (data receivers)
+  * Redshift, S3, ElasticSearch, Splunk
+
+Kinesis Data Streams|Kinesis Firehose
 -|-
-Producer|1MB/s or 1000 messages/s write per shard (->`ProvisionedThroughputException`)
-Consumer Classic|2MB/s write per shard
-.|5 API calls per second per shard
-Data Retentions|7 days
+Must manage scaling|Fully managed
+Real time | Near real time
+Data storage| No data storage
+Can write custom code for consumers/producers| Serverless lambda
+
+For _real time delivery_ Kinesis data streams are the only option.
+
+#### Kinesis Data Analytics
+
+* Performing real time analytics on Kinesis Streams using SQL
+* Managed, auto-scaling
+* Can create Kinesis Streams in real-time
+
+### Limits
+.|.|..
+-|-|-
+**Kinesis Streams**|.|.
+.|Producer|1MB/s or 1000 messages/s write per shard (->`ProvisionedThroughputException`)
+.|Consumer Classic|2MB/s write per shard
+.|.|5 API calls per second per shard
+.|Data Retentions|7 days
 
 ---
 
