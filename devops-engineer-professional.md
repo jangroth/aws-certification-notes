@@ -1184,7 +1184,9 @@ recorded as CloudTrail events.
 * [Overview](#4_4_1)
 * [Concepts](#4_4_2)
   * [Logging](#4_4_2_1)
-  * [Metrics & Alarms](#4_4_2_2)
+  * [Metrics](#4_4_2_2)
+  * [Alarms](#4_4_2_3)
+  * [Events](#4_4_2_4)
 * [Key metrics for EC2](#4_4_3)
 * [Key metrics for Auto Scaling Group](#4_4_4)
 * [Key metrics for ELB](#4_4_5)
@@ -1231,7 +1233,7 @@ https://aws.amazon.com/pt/blogs/architecture/central-logging-in-multi-account-en
 Logs can be exported to S3 for durable storage
 
 <a name="4_4_2_2"></a>
-#### [↖](#4_4)[↑](#4_4_2_1)[↓](#4_4_3) Metrics & Alarms
+#### [↖](#4_4)[↑](#4_4_2_1)[↓](#4_4_2_3) Metrics
 
 **Namespaces**
 * Container for CloudWatch metrics
@@ -1251,6 +1253,8 @@ Logs can be exported to S3 for durable storage
   * Exist only in the region where they were created
   * Expire after 15 months if no data is published
   * `aws cloudwatch put-metric-data --metric-name PageViewCount --namespace MyService --value 2 --timestamp 2016-10-20T12:00:00.000Z`
+* Can also *export* metrics
+  * `get-metric-statistics --namespace <value> --metric-name <value> --start-time <value> --end-time <value>...`
 
 **Time Stamps**
 * Each metric data point must be associated with a time stamp.
@@ -1273,14 +1277,25 @@ Logs can be exported to S3 for durable storage
 **Aggregation**
 * CloudWatch aggregates statistics according to the period length that you specify when retrieving statistics
 
+<a name="4_4_2_3"></a>
+#### [↖](#4_4)[↑](#4_4_2_2)[↓](#4_4_2_4) Alarms
 **Alarms**
-* Based on thresholds defined on metrics
+* Based on thresholds defined on metrics, including custom metrics
+  * Can only be based on a *single* metric
 * Can trigger *Lambda*, *SNS*, email, ...
-* Can be added to dashboard
+  * Also *auto scaling* or *ec2* action
+  * Alarms do *not* raise CloudWatch events themselves
 * *High resolution alarms* down to 10 seconds
 * Takes place once, at a specific point in time
   * Disable with `mon-disable-alarm-actions` via CLI
+* Can be added to dashboard
 
+**Billing Alarms**
+* Notfications on billing metrics
+* Only available in *us-east-1*
+
+<a name="4_4_2_4"></a>
+#### [↖](#4_4)[↑](#4_4_2_3)[↓](#4_4_3) Events
 **Events**
 * Define actions on things that happened
 * Define `cron`-based events
@@ -1290,7 +1305,7 @@ Logs can be exported to S3 for durable storage
   * E.g. CodeCommit automatically triggers CodePipeline on new commits
 
 <a name="4_4_3"></a>
-### [↖](#4_4)[↑](#4_4_2_2)[↓](#4_4_4) Key metrics for EC2
+### [↖](#4_4)[↑](#4_4_2_4)[↓](#4_4_4) Key metrics for EC2
 
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
@@ -1316,13 +1331,9 @@ Metric|Effect
 
 Metric|Effect
 -|-
-`GroupMinSize`|The minimum size of the Auto Scaling group.
-`GroupMaxSize`|The maximum size of the Auto Scaling group.
+`GroupMinSize`<br/>`GroupMinSize`|The minimum/maximum size of the Auto Scaling group.
 `GroupDesiredCapacity`|The number of instances that the Auto Scaling group attempts to maintain.
-`GroupInServiceInstances`|The number of instances that are running as part of the Auto Scaling group. This metric does not include instances that are pending or terminating.
-`GroupPendingInstances`|The number of instances that are pending. A pending instance is not yet in service. This metric does not include instances that are in service or terminating.
-`GroupStandbyInstances`|The number of instances that are in a Standby state. Instances in this state are still running but are not actively in service.
-`GroupTerminatingInstances`|The number of instances that are in the process of terminating. This metric does not include instances that are in service or pending.
+`GroupInServiceInstances`<br/>`GroupPendingInstances`<br/>`GroupStandbyInstances`<br/>`GroupTerminatingInstances`|The number of instances that are running / pending (not yet in service) / standby (still running) / terminating as part of the Auto Scaling group.
 `GroupTotalInstances`|The total number of instances in the Auto Scaling group. This metric identifies the number of instances that are in service, pending, and terminating.
 
 <a name="4_4_5"></a>
