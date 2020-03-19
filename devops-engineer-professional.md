@@ -1187,12 +1187,16 @@ recorded as CloudTrail events.
   * [Metrics](#4_4_2_2)
   * [Alarms](#4_4_2_3)
   * [Events](#4_4_2_4)
-* [Key metrics](#4_4_3)
-  * [EC2](#4_4_3_1)
-  * [Auto Scaling Group](#4_4_3_2)
-  * [ELB](#4_4_3_3)
-  * [ALB](#4_4_3_4)
-  * [NLB](#4_4_3_5)
+  * [Dashboards](#4_4_2_5)
+  * [Subscriptions](#4_4_2_6)
+* [Unified CloudWatch Agent](#4_4_3)
+* [Key metrics](#4_4_4)
+  * [EC2](#4_4_4_1)
+  * [Auto Scaling Group](#4_4_4_2)
+  * [ELB](#4_4_4_3)
+  * [ALB](#4_4_4_4)
+  * [NLB](#4_4_4_5)
+* [AWS-Managed Logs](#4_4_5)
 <!-- toc_end -->
 
 <a name="4_4_1"></a>
@@ -1215,9 +1219,6 @@ optimize your applications, and ensure they are running smoothly.
 * Optimize applications and operational resources
 * Derive actionable insights from logs
 
-TODO: Cloudwatch Subscription.
-https://aws.amazon.com/pt/blogs/architecture/central-logging-in-multi-account-environments/
-
 <a name="4_4_2"></a>
 ### [↖](#4_4)[↑](#4_4_1)[↓](#4_4_2_1) Concepts
 
@@ -1229,9 +1230,12 @@ https://aws.amazon.com/pt/blogs/architecture/central-logging-in-multi-account-en
 * *Log streams* are sequences of log events from the same source
 * *Log groups* are groups of log streams that share the same retention, monitoring, and access control settings
 * *Metric filters* allow to extract metric observations from ingested events and transform them to data points in a CloudWatch metric
+  * Search for and match terms, phrases, or values in log events
+  * Can increment the value of a CloudWatch metric
 * *Retention settings* can be used to specify how long log events are kept in CloudWatch Logs
 
-Logs can be exported to S3 for durable storage
+Logs can be exported to S3 for durable storage.
+  * This can be automated with `EventsFilter` -> `Lambda`
 
 <a name="4_4_2_2"></a>
 #### [↖](#4_4)[↑](#4_4_2_1)[↓](#4_4_2_3) Metrics
@@ -1279,8 +1283,7 @@ Logs can be exported to S3 for durable storage
 * CloudWatch aggregates statistics according to the period length that you specify when retrieving statistics
 
 <a name="4_4_2_3"></a>
-#### [↖](#4_4)[↑](#4_4_2_2)[↓](#4_4_2_4) Alarms
-**Alarms**
+#### [↖](#4_4)[↑](#4_4_2_2)[↓](#4_4_2_3_1) Alarms
 * Based on thresholds defined on metrics, including custom metrics
   * Can only be based on a *single* metric
 * Can trigger *Lambda*, *SNS*, email, ...
@@ -1291,25 +1294,58 @@ Logs can be exported to S3 for durable storage
   * Disable with `mon-disable-alarm-actions` via CLI
 * Can be added to dashboard
 
-**Billing Alarms**
+##### Billing Alarms
 * Notfications on billing metrics
 * Only available in *us-east-1*
 
 <a name="4_4_2_4"></a>
-#### [↖](#4_4)[↑](#4_4_2_3)[↓](#4_4_3) Events
-**Events**
+#### [↖](#4_4)[↑](#4_4_2_3_1)[↓](#4_4_2_4_1) Events
 * Define actions on things that happened
-* Define `cron`-based events
+* Or schedule `cron`-based events
 * Events are recorded constantly over time
-  * *Targets* process events (Lambda, SNS, SQS, ...)
+  * *Targets* process events (Lambda, SNS, SQS, CodeBuild, CodePipeline, ...)
   * *Rules* match incoming events and route them to targets
+    * CloudTrail integration allows to trigger events on API calls
+      * ReadOnly calls (`List*`, `Get*`, `Describe*`) are not supported
   * E.g. CodeCommit automatically triggers CodePipeline on new commits
 
-<a name="4_4_3"></a>
-### [↖](#4_4)[↑](#4_4_2_4)[↓](#4_4_3_1) Key metrics
+##### EventBridge
+* CloudWatch events in its core
+* Adding other (3rd party service partners) event sources into the mix
 
-<a name="4_4_3_1"></a>
-#### [↖](#4_4)[↑](#4_4_3)[↓](#4_4_3_2) EC2
+##### S3 Events
+* On bucket events send to SNS, SQS or Lambda
+  * Not everything is covered by S3 notifications
+  * Only object-level operations, not bucket-level
+* Can also integrate with CloudTrail, but need a trail configured for that bucket
+
+<a name="4_4_2_5"></a>
+#### [↖](#4_4)[↑](#4_4_2_4_2)[↓](#4_4_2_6) Dashboards
+
+* Customizable home pages in the CloudWatch console that you can use to monitor your resources in a single correlated view
+* Even those resources that are spread across different Regions. 
+* You can use CloudWatch dashboards to create customized views of the metrics and alarms for your AWS resources.
+
+<a name="4_4_2_6"></a>
+#### [↖](#4_4)[↑](#4_4_2_5)[↓](#4_4_3) Subscriptions
+* Allow real-time delivery of log events
+* Can get delivered to Kinesis Stream, Kinesis Firehose (near real-time only) or Lambda (Kinesis not supported from console)
+
+<a name="4_4_3"></a>
+### [↖](#4_4)[↑](#4_4_2_6)[↓](#4_4_4) Unified CloudWatch Agent
+* Collects metrics and logs from
+  * EC2 instances (Linux/Windows)
+  * On-Prem instances (Linux/Windows)
+* Stores configuration in SSM parameters
+  * Easy to share
+  * Can configure CloudWatch Agent to boot *directly* from SSM parameter store
+* Offers a variety of metrics on top of the EC2 standard metrics
+
+<a name="4_4_4"></a>
+### [↖](#4_4)[↑](#4_4_3)[↓](#4_4_4_1) Key metrics
+
+<a name="4_4_4_1"></a>
+#### [↖](#4_4)[↑](#4_4_4)[↓](#4_4_4_2) EC2
 
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
@@ -1324,14 +1360,10 @@ Metric|Effect
 `StatusCheckFailed`,<br/>`StatusCheckFailed_Instance`,<br/>`StatusCheckFailed_System`|Reports whether the instance has passed both/instance/system status check in the last minute.
 
 * Can **not** monitor **memory usage**, **available disk space**, **swap usage**
+  * This can be achieved with the Unified CloudWatch Agent
 
-**Setup**
-* Install CloudWatch agent on EC2 instance
-  * Old way: Cloudwatch monitoring scripts (perl-based)
-* Adjust config files on instance
-
-<a name="4_4_3_2"></a>
-#### [↖](#4_4)[↑](#4_4_3_1)[↓](#4_4_3_3) Auto Scaling Group
+<a name="4_4_4_2"></a>
+#### [↖](#4_4)[↑](#4_4_4_1)[↓](#4_4_4_3) Auto Scaling Group
 
 Metric|Effect
 -|-
@@ -1340,8 +1372,8 @@ Metric|Effect
 `GroupInServiceInstances`<br/>`GroupPendingInstances`<br/>`GroupStandbyInstances`<br/>`GroupTerminatingInstances`|The number of instances that are running / pending (not yet in service) / standby (still running) / terminating as part of the Auto Scaling group.
 `GroupTotalInstances`|The total number of instances in the Auto Scaling group. This metric identifies the number of instances that are in service, pending, and terminating.
 
-<a name="4_4_3_3"></a>
-#### [↖](#4_4)[↑](#4_4_3_2)[↓](#4_4_3_4) ELB
+<a name="4_4_4_3"></a>
+#### [↖](#4_4)[↑](#4_4_4_2)[↓](#4_4_4_4) ELB
 
 Metric|Effect
 -|-
@@ -1361,8 +1393,8 @@ Metric|Effect
 * Typically this means that the backend system cannot process requests as fast as they are coming in
   * Ideally load balance into an autoscaling group.
 
-<a name="4_4_3_4"></a>
-#### [↖](#4_4)[↑](#4_4_3_3)[↓](#4_4_3_5) ALB
+<a name="4_4_4_4"></a>
+#### [↖](#4_4)[↑](#4_4_4_3)[↓](#4_4_4_5) ALB
 
 Metric|Effect
 -|-
@@ -1371,8 +1403,8 @@ Metric|Effect
 `TargetResponseTime`|The time elapsed after the request leaves the load balancer until a response from the target is received.
 `HTTPCode_ELB_3XX_Count`<br/>`HTTPCode_ELB_4XX_Count`<br/>`HTTPCode_ELB_5XX_Count`|The number of HTTP XXX server error codes that originate from the *load balancer*. This count does *not* include any response codes generated by the targets.
 
-<a name="4_4_3_5"></a>
-#### [↖](#4_4)[↑](#4_4_3_4)[↓](#4_5) NLB
+<a name="4_4_4_5"></a>
+#### [↖](#4_4)[↑](#4_4_4_4)[↓](#4_4_5) NLB
 
 Metric|Effect
 -|-
@@ -1380,10 +1412,24 @@ Metric|Effect
 `tcp_client_reset_count`|the total number of reset (rst) packets sent from a client to a target.
 `tcp_elb_reset_count`|the total number of reset (rst) packets generated by the load balancer.
 `tcp_target_reset_coun`|the total number of reset (rst) packets sent from a target to a client.
+
+
+<a name="4_4_5"></a>
+### [↖](#4_4)[↑](#4_4_4_5)[↓](#4_5) AWS-Managed Logs
+
+Service|Target(s)
+-|-
+Load Balancer Access Logs<br/>(ELB, ALB, NLB)|S3
+CloudTrail Logs|S3, CloudWatch
+VPC Flow Logs|S3, CloudWatch
+Route 53 Access Logs|CloudWatch
+S3 Access Logs|S3
+CloudFront Access Logs|S3
+
 ---
 
 <a name="4_5"></a>
-## [↖](#top)[↑](#4_4_3_5)[↓](#4_5_1) CodeBuild
+## [↖](#top)[↑](#4_4_5)[↓](#4_5_1) CodeBuild
 <!-- toc_start -->
 * [Overview](#4_5_1)
 * [Benefits](#4_5_2)
