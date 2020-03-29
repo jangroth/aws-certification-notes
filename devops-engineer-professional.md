@@ -36,6 +36,7 @@
 # [↖](#top)[↓](#2) DevOps Engineer Professional
 
 > 10/2019 - *current*
+**TODO**: look at drawings from [awsgeek](https://www.awsgeek.com/)
 
 ---
 
@@ -2605,7 +2606,7 @@ retries when there are errors, so your application executes in order and as expe
 
 <a name="4_19_1"></a>
 ### [↖](#4_19)[↑](#4_19) Overview
-*AWS X-Ray* helps developers analyze and debug production, distributed applications, such as those
+*AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
 issues and errors. X-Ray provides an end-to-end view of requests as they travel through your
@@ -2613,6 +2614,11 @@ application, and shows a map of your application’s underlying components. You 
 analyze both applications in development and in production, from simple three-tier applications to
 complex microservices applications consisting of thousands of services.
 
+* X-Ray demon would run on EC2-instances
+* X-Ray SDK to send signals
+* X-Ray API collects information
+  * Automation could base on regular polling of `GetServiceGraph`
+* X-Ray Console displays information in *service map*
+
 ---
 
-TODO: look at drawings from [awsgeek](https://www.awsgeek.com/)
