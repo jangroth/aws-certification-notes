@@ -22,13 +22,14 @@
   * [Config](#4_10)
   * [ECS](#4_11)
   * [Elastic Beanstalk](#4_12)
-  * [Kinesis](#4_13)
-  * [Lambda](#4_14)
-  * [Managed Services](#4_15)
-  * [OpsWorks Stacks](#4_16)
-  * [Organizations](#4_17)
-  * [Step Functions](#4_18)
-  * [X-Ray](#4_19)
+  * [Elasticsearch](#4_13)
+  * [Kinesis](#4_14)
+  * [Lambda](#4_15)
+  * [Managed Services](#4_16)
+  * [OpsWorks Stacks](#4_17)
+  * [Organizations](#4_18)
+  * [Step Functions](#4_19)
+  * [X-Ray](#4_20)
 ---
 <!-- toc_end -->
 
@@ -1324,7 +1325,7 @@ Logs can be exported to S3 for durable storage.
 #### [↖](#4_4)[↑](#4_4_2_4_2)[↓](#4_4_2_6) Dashboards
 
 * Customizable home pages in the CloudWatch console that you can use to monitor your resources in a single correlated view
-* Even those resources that are spread across different Regions. 
+* Even those resources that are spread across different Regions.
 * You can use CloudWatch dashboards to create customized views of the metrics and alarms for your AWS resources.
 
 <a name="4_4_2_6"></a>
@@ -2221,13 +2222,51 @@ Environments|200
 ---
 
 <a name="4_13"></a>
-## [↖](#top)[↑](#4_12_3)[↓](#4_13_1) Kinesis
+## [↖](#top)[↑](#4_12_3)[↓](#4_14) Elasticsearch Service
+
+Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy,
+secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot
+your applications using the tools you love, at the scale you need. The service provides support
+for open source Elasticsearch APIs, managed Kibana, integration with Logstash and other AWS
+services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only
+for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch
+Service, you get the ELK stack you need, without the operational overhead.
+
+### Overview
+* Managed version of Elasticsearch
+* Runs on servers
+* Use cases:
+  * Log Analytics
+  * Real-time application monitoring
+  * Security analysis
+  * Full text search
+  * Clickstream analytics
+  * Indexing
+
+### Elk
+* Elasticsearch
+  * Provides search and indexing capabilities
+* Logstash
+  * Log ingestion mechanism
+  * Agent-based
+* Kibana
+  * Provides real-time dashboards on top of data in ES
+
+`DynamoDB` -> `DynamoDB Stream` -> `Lambda` -> `AWS ES`
+`CloudWatch Logs` -> `Subscription Filter` -> `Lambda` -> `AWS ES` (real time)
+`CloudWatch Logs` -> `Subscription Filter` -> `Kinesis Firehose` -> `AWS ES` (near real time)
+
+
+---
+
+<a name="4_14"></a>
+## [↖](#top)[↑](#4_13)[↓](#4_14_1) Kinesis
 <!-- toc_start -->
-* [Overview](#4_13_1)
-  * [Kinesis Data Stream](#4_13_1_1)
-  * [Kinesis Data Firehose](#4_13_1_2)
-  * [Kinesis Data Analytics](#4_13_1_3)
-* [Limits](#4_13_2)
+* [Overview](#4_14_1)
+  * [Kinesis Data Stream](#4_14_1_1)
+  * [Kinesis Data Firehose](#4_14_1_2)
+  * [Kinesis Data Analytics](#4_14_1_3)
+* [Limits](#4_14_2)
 <!-- toc_end -->
 
 Amazon Kinesis makes it easy to collect, process, and analyze real-time, streaming data so you can
@@ -2241,11 +2280,11 @@ collected before the processing can begin.
 
 [`various data sources`]->`Kinesis Streams`->`Kinesis Analytics`->`Kinesis Firehose`->[`S3`]
 
-<a name="4_13_1"></a>
-### [↖](#4_13)[↑](#4_13)[↓](#4_13_1_1) Overview
+<a name="4_14_1"></a>
+### [↖](#4_14)[↑](#4_14)[↓](#4_14_1_1) Overview
 
-<a name="4_13_1_1"></a>
-#### [↖](#4_13)[↑](#4_13_1)[↓](#4_13_1_2) Kinesis Data Stream
+<a name="4_14_1_1"></a>
+#### [↖](#4_14)[↑](#4_14_1)[↓](#4_14_1_2) Kinesis Data Stream
 * Real-time data delivery
 * Streams are devided into ordered *shards*/*partitions*
   * Shards can evolve over time (reshard/merge)
@@ -2266,8 +2305,8 @@ collected before the processing can begin.
   * Kinesis SDK, Kinesis Client Library (KCL), Kinesis Connector Library, AWS Lambda
   * 3rd party libraries: Spark, Log4j Appenders, ...
 
-<a name="4_13_1_2"></a>
-#### [↖](#4_13)[↑](#4_13_1_1)[↓](#4_13_1_3) Kinesis Data Firehose
+<a name="4_14_1_2"></a>
+#### [↖](#4_14)[↑](#4_14_1_1)[↓](#4_14_1_3) Kinesis Data Firehose
 * Near Real-time data delivery (~60 seconds)
 * Automatic Scaling
 * Can do data transformation through Lambda
@@ -2287,15 +2326,15 @@ Can write custom code for consumers/producers| Serverless lambda
 
 For _real time delivery_ Kinesis data streams are the only option.
 
-<a name="4_13_1_3"></a>
-#### [↖](#4_13)[↑](#4_13_1_2)[↓](#4_13_2) Kinesis Data Analytics
+<a name="4_14_1_3"></a>
+#### [↖](#4_14)[↑](#4_14_1_2)[↓](#4_14_2) Kinesis Data Analytics
 
 * Performing real time analytics on Kinesis Streams using SQL
 * Managed, auto-scaling
 * Can create Kinesis Streams in real-time
 
-<a name="4_13_2"></a>
-### [↖](#4_13)[↑](#4_13_1_3)[↓](#4_14) Limits
+<a name="4_14_2"></a>
+### [↖](#4_14)[↑](#4_14_1_3)[↓](#4_15) Limits
 .|.|..
 -|-|-
 **Kinesis Streams**|.|.
@@ -2306,23 +2345,23 @@ For _real time delivery_ Kinesis data streams are the only option.
 
 ---
 
-<a name="4_14"></a>
-## [↖](#top)[↑](#4_13_2)[↓](#4_14_1) Lambda
+<a name="4_15"></a>
+## [↖](#top)[↑](#4_14_2)[↓](#4_15_1) Lambda
 <!-- toc_start -->
-* [Overview](#4_14_1)
-* [Managing Functions](#4_14_2)
-  * [Versions](#4_14_2_1)
-  * [Aliases](#4_14_2_2)
-  * [Layers](#4_14_2_3)
-  * [Network](#4_14_2_4)
-  * [Database](#4_14_2_5)
-* [Invoking Functions](#4_14_3)
-  * [Synchronous / Asynchronous / Event Source Invocation](#4_14_3_1)
-  * [Function Scaling](#4_14_3_2)
+* [Overview](#4_15_1)
+* [Managing Functions](#4_15_2)
+  * [Versions](#4_15_2_1)
+  * [Aliases](#4_15_2_2)
+  * [Layers](#4_15_2_3)
+  * [Network](#4_15_2_4)
+  * [Database](#4_15_2_5)
+* [Invoking Functions](#4_15_3)
+  * [Synchronous / Asynchronous / Event Source Invocation](#4_15_3_1)
+  * [Function Scaling](#4_15_3_2)
 <!-- toc_end -->
 
-<a name="4_14_1"></a>
-### [↖](#4_14)[↑](#4_14)[↓](#4_14_2) Overview
+<a name="4_15_1"></a>
+### [↖](#4_15)[↑](#4_15)[↓](#4_15_2) Overview
 *AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the
 compute time you consume - there is no charge when your code is not running. With Lambda, you can
 run code for virtually any type of application or backend service - all with zero administration.
@@ -2342,12 +2381,12 @@ call it directly from any web or mobile app.
 * Can pass in *environment variables*
   * These can be KMS-encrypted as well (need SDK to decrypt)
 
-<a name="4_14_2"></a>
-### [↖](#4_14)[↑](#4_14_1)[↓](#4_14_2_1) Managing Functions
+<a name="4_15_2"></a>
+### [↖](#4_15)[↑](#4_15_1)[↓](#4_15_2_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
 
-<a name="4_14_2_1"></a>
-#### [↖](#4_14)[↑](#4_14_2)[↓](#4_14_2_2) Versions
+<a name="4_15_2_1"></a>
+#### [↖](#4_15)[↑](#4_15_2)[↓](#4_15_2_2) Versions
 * If you work on a Lambda function, you work on `$LATEST`
 * The system creates a new version of your Lambda function each time that you publish the function.
   The new version is a copy of the unpublished version of the function.
@@ -2356,8 +2395,8 @@ call it directly from any web or mobile app.
   version of a function.
 * Each version gets its own ARN
 
-<a name="4_14_2_2"></a>
-#### [↖](#4_14)[↑](#4_14_2_1)[↓](#4_14_2_3) Aliases
+<a name="4_15_2_2"></a>
+#### [↖](#4_15)[↑](#4_15_2_1)[↓](#4_15_2_3) Aliases
 * You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
 to a specific Lambda function *version*.
 * Aliases are mutable
@@ -2365,30 +2404,30 @@ to a specific Lambda function *version*.
 * Can create e.g. `dev`, `test` and `prod`.
   * Aliases can point to multiple versions with a *weight* - for canary-style deployments
 
-<a name="4_14_2_3"></a>
-#### [↖](#4_14)[↑](#4_14_2_2)[↓](#4_14_2_4) Layers
+<a name="4_15_2_3"></a>
+#### [↖](#4_15)[↑](#4_15_2_2)[↓](#4_15_2_4) Layers
 * You can configure your Lambda function to pull in additional code and content in the form of layers.
 * A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
 * With layers, you can use libraries in your function without needing to include them in your deployment package.
 
-<a name="4_14_2_4"></a>
-#### [↖](#4_14)[↑](#4_14_2_3)[↓](#4_14_2_5) Network
+<a name="4_15_2_4"></a>
+#### [↖](#4_15)[↑](#4_15_2_3)[↓](#4_15_2_5) Network
 * You can configure a function to connect to private subnets in a VPC in your account.
 * Use VPC to create a private network for resources such as databases, cache instances, or internal services.
 * Connect your function to the VPC to access private resources during execution.
 * Provisioning process for Lambda takes longer
 
-<a name="4_14_2_5"></a>
-#### [↖](#4_14)[↑](#4_14_2_4)[↓](#4_14_3) Database
+<a name="4_15_2_5"></a>
+#### [↖](#4_15)[↑](#4_15_2_4)[↓](#4_15_3) Database
 * You can use the Lambda console to create an RDS database proxy for your function.
 * A database proxy manages a pool of database connections and relays queries from a function.
 * This enables a function to reach high concurrency levels without exhausting database connections.
 
-<a name="4_14_3"></a>
-### [↖](#4_14)[↑](#4_14_2_5)[↓](#4_14_3_1) Invoking Functions
+<a name="4_15_3"></a>
+### [↖](#4_15)[↑](#4_15_2_5)[↓](#4_15_3_1) Invoking Functions
 
-<a name="4_14_3_1"></a>
-#### [↖](#4_14)[↑](#4_14_3)[↓](#4_14_3_2) Synchronous / Asynchronous / Event Source Invocation
+<a name="4_15_3_1"></a>
+#### [↖](#4_15)[↑](#4_15_3)[↓](#4_15_3_2) Synchronous / Asynchronous / Event Source Invocation
 * When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
   * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
@@ -2401,8 +2440,8 @@ process reads events from the queue and runs your function.
 * An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
   * -> Kinesis, DynamoDB, SQS
 
-<a name="4_14_3_2"></a>
-#### [↖](#4_14)[↑](#4_14_3_1)[↓](#4_15) Function Scaling
+<a name="4_15_3_2"></a>
+#### [↖](#4_15)[↑](#4_15_3_1)[↓](#4_16) Function Scaling
 * The first time you invoke your function, AWS Lambda creates an instance of the function and runs
 its handler method to process the event.
   * When the function returns a response, it sticks around to process additional events.
@@ -2417,14 +2456,14 @@ its handler method to process the event.
 
 ---
 
-<a name="4_15"></a>
-## [↖](#top)[↑](#4_14_3_2)[↓](#4_15_1) Managed Services
+<a name="4_16"></a>
+## [↖](#top)[↑](#4_15_3_2)[↓](#4_16_1) Managed Services
 <!-- toc_start -->
-* [Overview](#4_15_1)
+* [Overview](#4_16_1)
 <!-- toc_end -->
 
-<a name="4_15_1"></a>
-### [↖](#4_15)[↑](#4_15)[↓](#4_16) Overview
+<a name="4_16_1"></a>
+### [↖](#4_16)[↑](#4_16)[↓](#4_17) Overview
 As enterprise customers move towards adopting the cloud at scale, some find their people need help
 and time to gain AWS skills and experience. AWS Managed Services (AMS) operates AWS on your behalf,
 providing a secure and compliant AWS Landing Zone, a proven enterprise operating model, on-going
@@ -2437,22 +2476,22 @@ so you can direct resources toward differentiating your business.
 
 ---
 
-<a name="4_16"></a>
-## [↖](#top)[↑](#4_15_1)[↓](#4_16_1) OpsWorks Stacks
+<a name="4_17"></a>
+## [↖](#top)[↑](#4_16_1)[↓](#4_17_1) OpsWorks Stacks
 <!-- toc_start -->
-* [Overview](#4_16_1)
-* [Components](#4_16_2)
-* [Lifecycle Events](#4_16_3)
-  * [Setup](#4_16_3_1)
-  * [Configure](#4_16_3_2)
-  * [Deploy](#4_16_3_3)
-  * [Undeploy](#4_16_3_4)
-  * [Shutdown](#4_16_3_5)
-* [Under the hood](#4_16_4)
+* [Overview](#4_17_1)
+* [Components](#4_17_2)
+* [Lifecycle Events](#4_17_3)
+  * [Setup](#4_17_3_1)
+  * [Configure](#4_17_3_2)
+  * [Deploy](#4_17_3_3)
+  * [Undeploy](#4_17_3_4)
+  * [Shutdown](#4_17_3_5)
+* [Under the hood](#4_17_4)
 <!-- toc_end -->
 
-<a name="4_16_1"></a>
-### [↖](#4_16)[↑](#4_16)[↓](#4_16_2) Overview
+<a name="4_17_1"></a>
+### [↖](#4_17)[↑](#4_17)[↓](#4_17_2) Overview
 *AWS OpsWorks* is a configuration management service that provides managed instances of Chef and
 Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the
 configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are
@@ -2470,8 +2509,8 @@ environments.
   * *AWS Opsworks for Chef Automate*
   * *AWS OpsWorks for Puppet Enterprise*
 
-<a name="4_16_2"></a>
-### [↖](#4_16)[↑](#4_16_1)[↓](#4_16_3) Components
+<a name="4_17_2"></a>
+### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_3) Components
 * **Stack**
   * Set of resources that are managed as a group
 * **Layer**
@@ -2494,36 +2533,36 @@ environments.
   * Deploy application code and related files to application server instances
   * Deployment operation is handled by each instance's Deploy recipes, which are determined by the instance's layer
 
-<a name="4_16_3"></a>
-### [↖](#4_16)[↑](#4_16_2)[↓](#4_16_3_1) Lifecycle Events
+<a name="4_17_3"></a>
+### [↖](#4_17)[↑](#4_17_2)[↓](#4_17_3_1) Lifecycle Events
 * **Each layer** has a set of five lifecycle events, each of which has an associated set of recipes that are specific to the layer
 * When an event occurs on a layer's instance, AWS OpsWorks Stacks automatically runs the appropriate set of recipes
 
-<a name="4_16_3_1"></a>
-#### [↖](#4_16)[↑](#4_16_3)[↓](#4_16_3_2) Setup
+<a name="4_17_3_1"></a>
+#### [↖](#4_17)[↑](#4_17_3)[↓](#4_17_3_2) Setup
 * Occurs after a started instance has finished booting
 
-<a name="4_16_3_2"></a>
-#### [↖](#4_16)[↑](#4_16_3_1)[↓](#4_16_3_3) Configure
+<a name="4_17_3_2"></a>
+#### [↖](#4_17)[↑](#4_17_3_1)[↓](#4_17_3_3) Configure
 * Occurs on *all* of the stack's instances when one of the following occurs:
     * An instance enters or leaves the online state.
     * You associate an Elastic IP address with an instance or disassociate one from an instance.
     * You attach an Elastic Load Balancing load balancer to a layer, or detach one from a layer.
 
-<a name="4_16_3_3"></a>
-#### [↖](#4_16)[↑](#4_16_3_2)[↓](#4_16_3_4) Deploy
+<a name="4_17_3_3"></a>
+#### [↖](#4_17)[↑](#4_17_3_2)[↓](#4_17_3_4) Deploy
 * Occurs when you run a *Deploy* command.
 
-<a name="4_16_3_4"></a>
-#### [↖](#4_16)[↑](#4_16_3_3)[↓](#4_16_3_5) Undeploy
+<a name="4_17_3_4"></a>
+#### [↖](#4_17)[↑](#4_17_3_3)[↓](#4_17_3_5) Undeploy
 * Occurs when you run a *Undeploy* command,
 
-<a name="4_16_3_5"></a>
-#### [↖](#4_16)[↑](#4_16_3_4)[↓](#4_16_4) Shutdown
+<a name="4_17_3_5"></a>
+#### [↖](#4_17)[↑](#4_17_3_4)[↓](#4_17_4) Shutdown
 * Occurs after you direct AWS OpsWorks Stacks to shut an instance down but before the associated Amazon EC2 instance is actually terminated.
 
-<a name="4_16_4"></a>
-### [↖](#4_16)[↑](#4_16_3_5)[↓](#4_17) Under the hood
+<a name="4_17_4"></a>
+### [↖](#4_17)[↑](#4_17_3_5)[↓](#4_18) Under the hood
 * CloudWatch event integration
   * Can configure event rules to trigger alarms
 * Under the hood
@@ -2539,16 +2578,16 @@ environments.
 
 ---
 
-<a name="4_17"></a>
-## [↖](#top)[↑](#4_16_4)[↓](#4_17_1) Organizations
+<a name="4_18"></a>
+## [↖](#top)[↑](#4_17_4)[↓](#4_18_1) Organizations
 <!-- toc_start -->
-* [Overview](#4_17_1)
-  * [Benefits](#4_17_1_1)
-* [Limits:](#4_17_2)
+* [Overview](#4_18_1)
+  * [Benefits](#4_18_1_1)
+* [Limits:](#4_18_2)
 <!-- toc_end -->
 
-<a name="4_17_1"></a>
-### [↖](#4_17)[↑](#4_17)[↓](#4_17_1_1) Overview
+<a name="4_18_1"></a>
+### [↖](#4_18)[↑](#4_18)[↓](#4_18_1_1) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
 you can create groups of accounts, automate account creation, apply and manage policies for those
 groups. Organizations enables you to centrally manage policies across multiple accounts, without
@@ -2561,8 +2600,8 @@ accounts by enabling you to setup a single payment method for all the accounts i
 organization through consolidated billing. AWS Organizations is available to all AWS customers at
 no additional charge.
 
-<a name="4_17_1_1"></a>
-#### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_2) Benefits
+<a name="4_18_1_1"></a>
+#### [↖](#4_18)[↑](#4_18_1)[↓](#4_18_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -2570,22 +2609,62 @@ no additional charge.
   * One *paying account* linked to many *linked accounts*
   * Pricing benefits (Volumes, Storage, Instances)
 
-<a name="4_17_2"></a>
-### [↖](#4_17)[↑](#4_17_1_1)[↓](#4_18) Limits:
+<a name="4_18_2"></a>
+### [↖](#4_18)[↑](#4_18_1_1)[↓](#4_19) Limits:
 .|.
 -|-
 Maximum linked accounts|20
 
 ---
 
-<a name="4_18"></a>
-## [↖](#top)[↑](#4_17_2)[↓](#4_18_1) Step Functions
+## Systems Manager
+
+### Overview
+AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
+Manager provides a unified user interface so you can view operational data from multiple AWS
+services and allows you to automate operational tasks across your AWS resources. With Systems
+Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS
+instances, by application, view operational data for monitoring and troubleshooting, and take
+action on your groups of resources. Systems Manager simplifies resource and application management,
+shortens the time to detect and resolve operational problems, and makes it easy to operate and
+manage your infrastructure securely at scale.
+
+* Manage EC2 and on-prem instances at scale
+* Get operational insights of infrastructure
+* Easily detect problems
+* Patching automation for enhanced compliance
+* Both Linux and Windows
+* Tightly integrated with CloudWatch, AWS Config
+* Free service
+
+### Components
+* Resources groups
+* Insights
+  * Insights dashboards
+  * Inventory - discover and audit the software installed
+  * Compliance
+* Parameter store
+* Action
+  * Automation
+  * Run command
+  * Session manager
+  * Patch manager
+  * Maintenance windows
+  * State manager: define and maintain configuration of OS and applications
+* SSM Agent
+  * Installed on instances
+  * Need correct IAM permissions
+
+---
+
+<a name="4_19"></a>
+## [↖](#top)[↑](#4_18_2)[↓](#4_19_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_18_1)
+* [Overview](#4_19_1)
 <!-- toc_end -->
 
-<a name="4_18_1"></a>
-### [↖](#4_18)[↑](#4_18)[↓](#4_19) Overview
+<a name="4_19_1"></a>
+### [↖](#4_19)[↑](#4_19)[↓](#4_20) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -2598,14 +2677,14 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_19"></a>
-## [↖](#top)[↑](#4_18_1)[↓](#4_19_1) X-Ray
+<a name="4_20"></a>
+## [↖](#top)[↑](#4_19_1)[↓](#4_20_1) X-Ray
 <!-- toc_start -->
-* [Overview](#4_19_1)
+* [Overview](#4_20_1)
 <!-- toc_end -->
 
-<a name="4_19_1"></a>
-### [↖](#4_19)[↑](#4_19) Overview
+<a name="4_20_1"></a>
+### [↖](#4_20)[↑](#4_20) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
