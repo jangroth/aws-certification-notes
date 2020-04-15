@@ -22,14 +22,15 @@
   * [Config](#4_10)
   * [ECS](#4_11)
   * [Elastic Beanstalk](#4_12)
-  * [Elasticsearch](#4_13)
+  * [Elasticsearch Service](#4_13)
   * [Kinesis](#4_14)
   * [Lambda](#4_15)
   * [Managed Services](#4_16)
   * [OpsWorks Stacks](#4_17)
   * [Organizations](#4_18)
   * [Step Functions](#4_19)
-  * [X-Ray](#4_20)
+  * [Systems Manager](#4_20)
+  * [X-Ray](#4_21)
 ---
 <!-- toc_end -->
 
@@ -2222,7 +2223,11 @@ Environments|200
 ---
 
 <a name="4_13"></a>
-## [↖](#top)[↑](#4_12_3)[↓](#4_14) Elasticsearch Service
+## [↖](#top)[↑](#4_12_3)[↓](#4_13_1) Elasticsearch Service
+<!-- toc_start -->
+* [Overview](#4_13_1)
+* [Elk](#4_13_2)
+<!-- toc_end -->
 
 Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy,
 secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot
@@ -2232,7 +2237,8 @@ services, and built-in alerting and SQL querying. Amazon Elasticsearch Service l
 for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch
 Service, you get the ELK stack you need, without the operational overhead.
 
-### Overview
+<a name="4_13_1"></a>
+### [↖](#4_13)[↑](#4_13)[↓](#4_13_2) Overview
 * Managed version of Elasticsearch
 * Runs on servers
 * Use cases:
@@ -2243,7 +2249,8 @@ Service, you get the ELK stack you need, without the operational overhead.
   * Clickstream analytics
   * Indexing
 
-### Elk
+<a name="4_13_2"></a>
+### [↖](#4_13)[↑](#4_13_1)[↓](#4_14) Elk
 * Elasticsearch
   * Provides search and indexing capabilities
 * Logstash
@@ -2260,7 +2267,7 @@ Service, you get the ELK stack you need, without the operational overhead.
 ---
 
 <a name="4_14"></a>
-## [↖](#top)[↑](#4_13)[↓](#4_14_1) Kinesis
+## [↖](#top)[↑](#4_13_2)[↓](#4_14_1) Kinesis
 <!-- toc_start -->
 * [Overview](#4_14_1)
   * [Kinesis Data Stream](#4_14_1_1)
@@ -2617,46 +2624,6 @@ Maximum linked accounts|20
 
 ---
 
-## Systems Manager
-
-### Overview
-AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
-Manager provides a unified user interface so you can view operational data from multiple AWS
-services and allows you to automate operational tasks across your AWS resources. With Systems
-Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS
-instances, by application, view operational data for monitoring and troubleshooting, and take
-action on your groups of resources. Systems Manager simplifies resource and application management,
-shortens the time to detect and resolve operational problems, and makes it easy to operate and
-manage your infrastructure securely at scale.
-
-* Manage EC2 and on-prem instances at scale
-* Get operational insights of infrastructure
-* Easily detect problems
-* Patching automation for enhanced compliance
-* Both Linux and Windows
-* Tightly integrated with CloudWatch, AWS Config
-* Free service
-
-### Components
-* Resources groups
-* Insights
-  * Insights dashboards
-  * Inventory - discover and audit the software installed
-  * Compliance
-* Parameter store
-* Action
-  * Automation
-  * Run command
-  * Session manager
-  * Patch manager
-  * Maintenance windows
-  * State manager: define and maintain configuration of OS and applications
-* SSM Agent
-  * Installed on instances
-  * Need correct IAM permissions
-
----
-
 <a name="4_19"></a>
 ## [↖](#top)[↑](#4_18_2)[↓](#4_19_1) Step Functions
 <!-- toc_start -->
@@ -2678,13 +2645,60 @@ retries when there are errors, so your application executes in order and as expe
 ---
 
 <a name="4_20"></a>
-## [↖](#top)[↑](#4_19_1)[↓](#4_20_1) X-Ray
+## [↖](#top)[↑](#4_19_1)[↓](#4_20_1) Systems Manager
 <!-- toc_start -->
 * [Overview](#4_20_1)
+* [Components](#4_20_2)
 <!-- toc_end -->
 
 <a name="4_20_1"></a>
-### [↖](#4_20)[↑](#4_20) Overview
+### [↖](#4_20)[↑](#4_20)[↓](#4_20_2) Overview
+AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
+Manager provides a unified user interface so you can view operational data from multiple AWS
+services and allows you to automate operational tasks across your AWS resources. With Systems
+Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS
+instances, by application, view operational data for monitoring and troubleshooting, and take
+action on your groups of resources. Systems Manager simplifies resource and application management,
+shortens the time to detect and resolve operational problems, and makes it easy to operate and
+manage your infrastructure securely at scale.
+
+* Manage EC2 and on-prem instances at scale
+* Get operational insights of infrastructure
+* Easily detect problems
+* Patching automation for enhanced compliance
+* Both Linux and Windows
+* Tightly integrated with CloudWatch, AWS Config
+* Free service
+
+<a name="4_20_2"></a>
+### [↖](#4_20)[↑](#4_20_1)[↓](#4_21) Components
+* Resources groups
+* Insights
+  * Insights dashboards
+  * Inventory - discover and audit the software installed
+  * Compliance
+* Parameter store
+* Action
+  * Automation
+  * Run command
+  * Session manager
+  * Patch manager
+  * Maintenance windows
+  * State manager: define and maintain configuration of OS and applications
+* SSM Agent
+  * Installed on instances
+  * Need correct IAM permissions
+
+---
+
+<a name="4_21"></a>
+## [↖](#top)[↑](#4_20_2)[↓](#4_21_1) X-Ray
+<!-- toc_start -->
+* [Overview](#4_21_1)
+<!-- toc_end -->
+
+<a name="4_21_1"></a>
+### [↖](#4_21)[↑](#4_21) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
@@ -2700,4 +2714,3 @@ complex microservices applications consisting of thousands of services.
 * X-Ray Console displays information in *service map*
 
 ---
-
