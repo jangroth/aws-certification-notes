@@ -2663,31 +2663,79 @@ shortens the time to detect and resolve operational problems, and makes it easy 
 manage your infrastructure securely at scale.
 
 * Manage EC2 and on-prem instances at scale
+  * On-prem requires generation of secret *activation code* / *activation id*
 * Get operational insights of infrastructure
 * Easily detect problems
 * Patching automation for enhanced compliance
 * Both Linux and Windows
 * Tightly integrated with CloudWatch, AWS Config
 * Free service
+* SSM Agent
+  * Installed on instances
+  * Need correct IAM permissions, then shows up on SSM dashboard
 
 <a name="4_20_2"></a>
 ### [↖](#4_20)[↑](#4_20_1)[↓](#4_21) Components
-* Resources groups
-* Insights
-  * Insights dashboards
-  * Inventory - discover and audit the software installed
-  * Compliance
-* Parameter store
-* Action
-  * Automation
-  * Run command
-  * Session manager
-  * Patch manager
-  * Maintenance windows
-  * State manager: define and maintain configuration of OS and applications
-* SSM Agent
-  * Installed on instances
-  * Need correct IAM permissions
+#### Resources groups
+* Organize your AWS resources.
+* Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
+  * Define groups based on tags or on CloudFormation stacks
+
+#### Insights
+* **Insights dashboards**
+  * Automatically aggregates and displays operational data for each resource group
+* **Inventory**
+  * Discover and audit the software installed
+* **Configuration Compliance**
+  * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
+
+#### Parameter store
+* Centralized store to manage your configuration data, whether plain-text data such as database
+  strings or secrets such as passwords
+
+#### Action & Change
+* **Automation**
+  * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
+  * Build Automation workflows to configure and manage instances and AWS resources.
+  * Create custom workflows or use pre-defined workflows maintained by AWS.
+  * Receive notifications about Automation tasks and workflows by using Amazon CloudWatch Events.
+  * Monitor Automation progress and execution details by using the Amazon EC2 or the AWS Systems Manager console.
+  * Complete *list* of tasks, unlike run command which is a one-off
+  * E.g. create *Golden AMi*
+* **Maintenance windows**
+  * Define a schedule for when to perform potentially disruptive actions on your instances
+* **Change Calendar**
+  * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
+
+#### Instances & Nodes
+* **Run command**
+  * Lets you remotely and securely manage the configuration of your managed instances
+  * Commands are in *document* format
+  * Can run on resource group, individually or tag-based
+* **Session manager**
+  * Fully managed AWS Systems Manager capability that lets you manage your EC2 instances, on
+  premises instances, and virtual machines (VMs) through an interactive one-click browser-based shell or through the AWS CLI.
+  * Session Manager provides secure and auditable instance management without the need to open
+  inbound ports, maintain bastion hosts, or manage SSH keys
+* **Patch manager**
+  * Automates the process of patching managed instances with both security related and other types of updates
+  * AWS predefined *patch baselines* per operating system
+    * Can also define own patch baselines
+      * Patch items in approved or rejected list, e.g. 'CVE-2020-1234567'
+      * Can define own patch source
+  * Define *Maintenance Window* when patches are possibly executed
+  * Use `AWS-RunPatchBaseline` run command
+  * Can also evaluate compliance without applying patches
+* **State manager**
+  * Secure and scalable configuration management service that automates the process of keeping
+  your Amazon EC2 and hybrid infrastructure in a state that you define
+* **SSM Documents**
+  * JSON format
+  * Different types:
+    * *Command*
+    * *Automation*
+    * *Policy*
+    * *Session*
 
 ---
 
