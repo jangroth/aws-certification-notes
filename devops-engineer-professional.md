@@ -1956,6 +1956,33 @@ dive into detailed resource configuration histories, and determine your overall 
 the configurations specified in your internal guidelines. This enables you to simplify compliance
 auditing, security analysis, change management, and operational troubleshooting.
 
+* Evaluate your AWS resource configurations for desired settings.
+* Get a snapshot of the current configurations of the supported resources that are associated with your AWS account.
+* Retrieve configurations of one or more resources that exist in your account.
+* Retrieve historical configurations of one or more resources.
+* Receive a notification whenever a resource is created, modified, or deleted.
+* View relationships between resources. For example, you might want to find all resources that use a particular security group.
+
+### Config Rules
+* Evaluate the configuration settings of AWS resources
+* A AWS Config rule represents your ideal configuration settings
+* Predefined rules called *managed rules* to help you get started
+* Can also create *custom rules*
+* AWS Config continuously tracks the configuration changes that occur among your resources
+	* Checks whether these changes violate any of the conditions in your rules.
+	* If a resource violates a rule, AWS Config flags the resource and the rule as *noncompliant*.
+* Can remediate using AWS Systems Manager Automation Documents
+
+### Automation
+* SNS notification on Config events (cannot configure which events)
+* CloudWatch events to observe specific events/rules
+
+### Aggregation
+An aggregator is an AWS Config resource type that collects AWS Config configuration and compliance data from the following:
+* Multiple accounts and multiple regions.
+* Single account and multiple regions.
+* An organization in AWS Organizations and all the accounts in that organization.
+
 ---
 
 <a name="4_11"></a>
@@ -2621,6 +2648,33 @@ no additional charge.
 .|.
 -|-
 Maximum linked accounts|20
+
+---
+## Service Catalog
+
+### Overview
+AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
+approved for use on AWS. These IT services can include everything from virtual machine images,
+servers, software, and databases to complete multi-tier application architectures. AWS Service
+Catalog allows you to centrally manage commonly deployed IT services, and helps you achieve
+consistent governance and meet your compliance requirements, while enabling users to quickly
+deploy only the approved IT services they need.
+* Ensure compliance with corporate standards
+* Help employees quickly find and deploy approved IT services
+* Centrally manage IT service lifecycle
+* Connect with ITSM/ITOM software
+
+### Components
+* **Admins** define
+* **Product**
+	* Defined in CloudFormation
+	* Can be versioned
+*	**Portfolio**
+	* Collection of products
+	* IAM permissions to govern access
+
+
+
 
 ---
 
