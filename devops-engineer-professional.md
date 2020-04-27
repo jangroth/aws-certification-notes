@@ -28,9 +28,10 @@
   * [Managed Services](#4_16)
   * [OpsWorks Stacks](#4_17)
   * [Organizations](#4_18)
-  * [Step Functions](#4_19)
-  * [Systems Manager](#4_20)
-  * [X-Ray](#4_21)
+  * [Service Catalog](#4_19)
+  * [Step Functions](#4_20)
+  * [Systems Manager](#4_21)
+  * [X-Ray](#4_22)
 ---
 <!-- toc_end -->
 
@@ -577,6 +578,32 @@ application and making changes to your application without invoking the scaling 
 
 <a name="4"></a>
 # [↖](#top)[↑](#3_4_1_2)[↓](#4_1) Services
+
+---
+
+## Amazon Inspector
+
+### Overview
+Amazon Inspector is an automated security assessment service that helps improve the security and
+compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications
+for exposure, vulnerabilities, and deviations from best practices. After performing an assessment,
+Amazon Inspector produces a detailed list of security findings prioritized by level of severity.
+These findings can be reviewed directly or as part of detailed assessment reports which are
+available via the Amazon Inspector console or API.
+
+Amazon Inspector security assessments help you check for unintended network accessibility of your
+Amazon EC2 instances and for vulnerabilities on those EC2 instances. Amazon Inspector assessments
+are offered to you as pre-defined rules packages mapped to common security best practices and
+vulnerability definitions. Examples of built-in rules include checking for access to your EC2
+instances from the internet, remote root login being enabled, or vulnerable software versions
+installed. These rules are regularly updated by AWS security researchers.
+
+* **Network Assessments**
+  * Does not require agent
+* **Host Assessments**
+  * Requires agent
+
+
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) API Gateway
@@ -1944,10 +1971,13 @@ Uses `cfn-transform` to generate cfn from `template.yml`
 ## [↖](#top)[↑](#4_9_3)[↓](#4_10_1) Config
 <!-- toc_start -->
 * [Overview](#4_10_1)
+* [Config Rules](#4_10_2)
+* [Automation](#4_10_3)
+* [Aggregation](#4_10_4)
 <!-- toc_end -->
 
 <a name="4_10_1"></a>
-### [↖](#4_10)[↑](#4_10)[↓](#4_11) Overview
+### [↖](#4_10)[↑](#4_10)[↓](#4_10_2) Overview
 *AWS Config* is a service that enables you to assess, audit, and evaluate the configurations of your
 AWS resources. Config continuously monitors and records your AWS resource configurations and
 allows you to automate the evaluation of recorded configurations against desired configurations.
@@ -1963,7 +1993,8 @@ auditing, security analysis, change management, and operational troubleshooting.
 * Receive a notification whenever a resource is created, modified, or deleted.
 * View relationships between resources. For example, you might want to find all resources that use a particular security group.
 
-### Config Rules
+<a name="4_10_2"></a>
+### [↖](#4_10)[↑](#4_10_1)[↓](#4_10_3) Config Rules
 * Evaluate the configuration settings of AWS resources
 * A AWS Config rule represents your ideal configuration settings
 * Predefined rules called *managed rules* to help you get started
@@ -1973,11 +2004,13 @@ auditing, security analysis, change management, and operational troubleshooting.
 	* If a resource violates a rule, AWS Config flags the resource and the rule as *noncompliant*.
 * Can remediate using AWS Systems Manager Automation Documents
 
-### Automation
+<a name="4_10_3"></a>
+### [↖](#4_10)[↑](#4_10_2)[↓](#4_10_4) Automation
 * SNS notification on Config events (cannot configure which events)
 * CloudWatch events to observe specific events/rules
 
-### Aggregation
+<a name="4_10_4"></a>
+### [↖](#4_10)[↑](#4_10_3)[↓](#4_11) Aggregation
 An aggregator is an AWS Config resource type that collects AWS Config configuration and compliance data from the following:
 * Multiple accounts and multiple regions.
 * Single account and multiple regions.
@@ -1986,7 +2019,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 ---
 
 <a name="4_11"></a>
-## [↖](#top)[↑](#4_10_1)[↓](#4_11_1) ECS
+## [↖](#top)[↑](#4_10_4)[↓](#4_11_1) ECS
 <!-- toc_start -->
 * [Overview](#4_11_1)
   * [Benefits](#4_11_1_1)
@@ -2650,9 +2683,15 @@ no additional charge.
 Maximum linked accounts|20
 
 ---
-## Service Catalog
+<a name="4_19"></a>
+## [↖](#top)[↑](#4_18_2)[↓](#4_19_1) Service Catalog
+<!-- toc_start -->
+* [Overview](#4_19_1)
+* [Components](#4_19_2)
+<!-- toc_end -->
 
-### Overview
+<a name="4_19_1"></a>
+### [↖](#4_19)[↑](#4_19)[↓](#4_19_2) Overview
 AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
 approved for use on AWS. These IT services can include everything from virtual machine images,
 servers, software, and databases to complete multi-tier application architectures. AWS Service
@@ -2663,29 +2702,32 @@ deploy only the approved IT services they need.
 * Help employees quickly find and deploy approved IT services
 * Centrally manage IT service lifecycle
 * Connect with ITSM/ITOM software
+* Self-service for user
+  * Integrates with self-service portals like ServiceNow
 
-### Components
+<a name="4_19_2"></a>
+### [↖](#4_19)[↑](#4_19_1)[↓](#4_20) Components
 * **Admins** define
-* **Product**
-	* Defined in CloudFormation
-	* Can be versioned
-*	**Portfolio**
-	* Collection of products
-	* IAM permissions to govern access
-
-
-
+  * **Product**
+    * Defined in CloudFormation
+    * Can be versioned
+  *	**Portfolio**
+    * Collection of products
+    * IAM permissions to govern access
+* **Users** choose
+  * from product list
+  * launches automatically
 
 ---
 
-<a name="4_19"></a>
-## [↖](#top)[↑](#4_18_2)[↓](#4_19_1) Step Functions
+<a name="4_20"></a>
+## [↖](#top)[↑](#4_19_2)[↓](#4_20_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_19_1)
+* [Overview](#4_20_1)
 <!-- toc_end -->
 
-<a name="4_19_1"></a>
-### [↖](#4_19)[↑](#4_19)[↓](#4_20) Overview
+<a name="4_20_1"></a>
+### [↖](#4_20)[↑](#4_20)[↓](#4_21) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -2698,15 +2740,20 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_20"></a>
-## [↖](#top)[↑](#4_19_1)[↓](#4_20_1) Systems Manager
+<a name="4_21"></a>
+## [↖](#top)[↑](#4_20_1)[↓](#4_21_1) Systems Manager
 <!-- toc_start -->
-* [Overview](#4_20_1)
-* [Components](#4_20_2)
+* [Overview](#4_21_1)
+* [Components](#4_21_2)
+  * [Resources groups](#4_21_2_1)
+  * [Insights](#4_21_2_2)
+  * [Parameter store](#4_21_2_3)
+  * [Action & Change](#4_21_2_4)
+  * [Instances & Nodes](#4_21_2_5)
 <!-- toc_end -->
 
-<a name="4_20_1"></a>
-### [↖](#4_20)[↑](#4_20)[↓](#4_20_2) Overview
+<a name="4_21_1"></a>
+### [↖](#4_21)[↑](#4_21)[↓](#4_21_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
 Manager provides a unified user interface so you can view operational data from multiple AWS
 services and allows you to automate operational tasks across your AWS resources. With Systems
@@ -2728,14 +2775,16 @@ manage your infrastructure securely at scale.
   * Installed on instances
   * Need correct IAM permissions, then shows up on SSM dashboard
 
-<a name="4_20_2"></a>
-### [↖](#4_20)[↑](#4_20_1)[↓](#4_21) Components
-#### Resources groups
+<a name="4_21_2"></a>
+### [↖](#4_21)[↑](#4_21_1)[↓](#4_21_2_1) Components
+<a name="4_21_2_1"></a>
+#### [↖](#4_21)[↑](#4_21_2)[↓](#4_21_2_2) Resources groups
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
 
-#### Insights
+<a name="4_21_2_2"></a>
+#### [↖](#4_21)[↑](#4_21_2_1)[↓](#4_21_2_3) Insights
 * **Insights dashboards**
   * Automatically aggregates and displays operational data for each resource group
 * **Inventory**
@@ -2743,11 +2792,13 @@ manage your infrastructure securely at scale.
 * **Configuration Compliance**
   * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
 
-#### Parameter store
+<a name="4_21_2_3"></a>
+#### [↖](#4_21)[↑](#4_21_2_2)[↓](#4_21_2_4) Parameter store
 * Centralized store to manage your configuration data, whether plain-text data such as database
   strings or secrets such as passwords
 
-#### Action & Change
+<a name="4_21_2_4"></a>
+#### [↖](#4_21)[↑](#4_21_2_3)[↓](#4_21_2_5) Action & Change
 * **Automation**
   * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
   * Build Automation workflows to configure and manage instances and AWS resources.
@@ -2761,7 +2812,8 @@ manage your infrastructure securely at scale.
 * **Change Calendar**
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
-#### Instances & Nodes
+<a name="4_21_2_5"></a>
+#### [↖](#4_21)[↑](#4_21_2_4)[↓](#4_22) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -2793,14 +2845,14 @@ manage your infrastructure securely at scale.
 
 ---
 
-<a name="4_21"></a>
-## [↖](#top)[↑](#4_20_2)[↓](#4_21_1) X-Ray
+<a name="4_22"></a>
+## [↖](#top)[↑](#4_21_2_5)[↓](#4_22_1) X-Ray
 <!-- toc_start -->
-* [Overview](#4_21_1)
+* [Overview](#4_22_1)
 <!-- toc_end -->
 
-<a name="4_21_1"></a>
-### [↖](#4_21)[↑](#4_21) Overview
+<a name="4_22_1"></a>
+### [↖](#4_22)[↑](#4_22) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
