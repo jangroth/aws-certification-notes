@@ -53,7 +53,6 @@
 
 <a name="2"></a>
 # [↖](#top)[↑](#1)[↓](#2_1) Exam Objectives
-
 * Implement and manage continuous delivery systems and methodologies on AWS
 * Implement and automate security controls, governance processes, and compliance validation
 * Define and deploy monitoring, metrics, and logging systems on AWS
@@ -73,7 +72,6 @@
 
 <a name="2_1_1"></a>
 ### [↖](#2_1)[↑](#2_1)[↓](#2_1_2) Domain 1: SDLC Automation
-
 * Apply concepts required to automate a CI/CD pipeline
 * Determine source control strategies and how to implement them
 * Apply concepts required to automate and integrate testing
@@ -82,7 +80,6 @@
 
 <a name="2_1_2"></a>
 ### [↖](#2_1)[↑](#2_1_1)[↓](#2_1_3) Domain 2:Configuration Management and Infrastructure as Code
-
 * Determine deployment services based on deployment needs
 * Determine application and infrastructure deployment models based on business needs
 * Apply security concepts in the automation of resource provisioning
@@ -91,7 +88,6 @@
 
 <a name="2_1_3"></a>
 ### [↖](#2_1)[↑](#2_1_2)[↓](#2_1_4) Domain 3: Monitoring and Logging
-
 * Determine how to set up the aggregation, storage, and analysis of logs and metrics
 * Apply concepts required to automate monitoring and event management of an environment
 * Apply concepts required to audit, log, and monitoroperating systems, infrastructures, and applications
@@ -99,14 +95,12 @@
 
 <a name="2_1_4"></a>
 ### [↖](#2_1)[↑](#2_1_3)[↓](#2_1_5) Domain 4: Policies and Standards Automation
-
 * Apply concepts required to enforce standards for logging, metrics, monitoring, testing, and security
 * Determine how to optimize cost through automation
 * Apply concepts required to implement governance strategies
 
 <a name="2_1_5"></a>
 ### [↖](#2_1)[↑](#2_1_4)[↓](#2_1_6) Domain 5: Incident and Event Response
-
 * Troubleshoot issues and determine how to restore operations
 * Determine how to automate event managementand alerting
 * Apply concepts required to implement automated healing
@@ -114,7 +108,6 @@
 
 <a name="2_1_6"></a>
 ### [↖](#2_1)[↑](#2_1_5)[↓](#3) Domain 6: High Availability, Fault Tolerance, and Disaster Recovery
-
 * Determine appropriate use of multi-AZ versus multi-region architectures
 * Determine how to implement high availability, scalability, and fault tolerance
 * Determine the right services based on business needs (e.g., RTO/RPO, cost)
@@ -149,7 +142,6 @@ Strategy|Deploy<br/>time|Downtime|Testing|Deployment<br/>Costs|Impact of<br/>fai
 
 <a name="3_1_1"></a>
 ### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Single target deployment
-
 System|Deploy
 -|-
 `v1`|Initial State
@@ -166,7 +158,6 @@ Deployment is faster than other methods|Limited testing
 
 <a name="3_1_2"></a>
 ### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_3) All-at-once deployment
-
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1` `v1`|Initial State|.
@@ -184,7 +175,6 @@ Deployment is relatively fast|Downtime (like STD)
 
 <a name="3_1_3"></a>
 ### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_4) Minimum in-service style deployment
-
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1` `v1`|Initial State|.
@@ -206,7 +196,6 @@ Generally quicker & with less stages than rolling deployments|.
 
 <a name="3_1_4"></a>
 ### [↖](#3_1)[↑](#3_1_3)[↓](#3_1_5) Rolling deployment
-
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1` `v1`|Initial State|.
@@ -228,7 +217,6 @@ Can be paused to allow for multi-version testing|Many moving parts, requires orc
 
 <a name="3_1_5"></a>
 ### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_6) Rolling deployment with extra batches
-
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1`|Initial State|.
@@ -247,9 +235,9 @@ System|Deploy|.
 No downtime (if number of stage deployments is small enough)|Does not necessarily maintain overall application health
 Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
 .|Can be least efficient deployment method in terms of time taken
+
 <a name="3_1_6"></a>
 ### [↖](#3_1)[↑](#3_1_5)[↓](#3_1_7) Blue/green deployment
-
 System|Deploy|.
 -|-|-
 (`v1` `v1` `v1`)()|Initial State|Blue environment, all traffic goes here
@@ -278,7 +266,6 @@ By far the best method in terms of risk mitigation and minimal user impact|.
 
 <a name="3_1_7"></a>
 ### [↖](#3_1)[↑](#3_1_6)[↓](#3_1_8) Red/black deployment
-
 > ... are just like blue/green, but they happen at a much faster rate.
 
 Example:
@@ -319,7 +306,6 @@ Example:
 
 <a name="3_2_1"></a>
 ### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Instance Profile
-
 * A *container* for an IAM *role* that you can use to pass role information to an EC2 instance when the instance starts.
 * An EC2 Instance cannot be assigned a role directly, but it can be assigned an Instance Profile which contains a role.
 * If you use the AWS Management Console to create a role for Amazon EC2, the console automatically creates an instance profile and gives it the same name as the role.
@@ -327,7 +313,6 @@ Example:
 
 <a name="3_2_2"></a>
 ### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) ELB/ALB Logs
-
 * Access logging is an optional feature of Elastic Load Balancing that is disabled by default.
 * After you enable access logging for your load balancer, Elastic Load Balancing captures the logs and stores them in the Amazon S3 bucket as compressed files.
 * Can log every 5 or 60 minutes
@@ -336,7 +321,6 @@ Example:
 
 <a name="3_2_3"></a>
 ### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_4) ELB/ALB Health Checks
-
 If you have associated your Auto Scaling Group with a Classic Load Balancer, you can use the load
 balancer health check to determine the health state of instances in your Auto Scaling Group. By
 default an Auto Scaling Group periodically determines the health state of each instance.
@@ -349,7 +333,6 @@ status of any instances that are unhealthy at the time of the health check is `O
 
 <a name="3_2_4"></a>
 ### [↖](#3_2)[↑](#3_2_3)[↓](#3_3) ELB Security
-
 * Need end-to-end security
 * Encrypt all communication
 * Use HTTPS (layer 7) or SSL (layer 4)
@@ -368,15 +351,18 @@ status of any instances that are unhealthy at the time of the health check is `O
   * [Termination Policy](#3_3_2_4)
   * [Auto Scaling Lifecycle Hooks](#3_3_2_5)
   * [Scaling](#3_3_2_6)
+  * [Notifications](#3_3_2_7)
 * [ALB Integration](#3_3_3)
-* [Troubleshooting](#3_3_4)
-  * [Possible Problems](#3_3_4_1)
-  * [Suspending ASG processes](#3_3_4_2)
+* [SQS Integration](#3_3_4)
+* [CloudFormation Integration](#3_3_5)
+* [CodeDeploy Integration](#3_3_6)
+* [Troubleshooting](#3_3_7)
+  * [Possible Problems](#3_3_7_1)
+  * [Suspending ASG processes](#3_3_7_2)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
 ### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
-
 *Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances
 available to handle the load for your application. You create collections of EC2 instances, called
 *Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group,
@@ -402,20 +388,17 @@ terminate instances as demand on your application increases or decreases.
 
 <a name="3_3_2_1"></a>
 #### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_2_2) Auto Scaling Group
-
 * Contains a collection of Amazon EC2 instances that are treated as a logical grouping for the purposes of automatic scaling and management
 * To use Amazon EC2 Auto Scaling features such as health check replacements and scaling policies
 
 <a name="3_3_2_2"></a>
 #### [↖](#3_3)[↑](#3_3_2_1)[↓](#3_3_2_3) Launch Configuration
-
 * Instance configuration template that an Auto Scaling Group uses to launch EC2 instances
 * One Launch Configuration per ASG, can be used in many ASGs though
 * Can't be modified, needs to be recreated
 
 <a name="3_3_2_3"></a>
 #### [↖](#3_3)[↑](#3_3_2_2)[↓](#3_3_2_4) Launch Template
-
 * Similar to Launch Configuration
 * Launch Templates can be used to launch regular instances as well as Spot Fleets.
 * Allows to have multiple versions of the same template
@@ -425,7 +408,6 @@ terminate instances as demand on your application increases or decreases.
 
 <a name="3_3_2_4"></a>
 #### [↖](#3_3)[↑](#3_3_2_3)[↓](#3_3_2_5) Termination Policy
-
 * To specify which instances to terminate first during scale in, configure a Termination Policy for the Auto Scaling Group.
 * Policies will be applied to the AZ with the most instances
 * Can be combined with *instance proctection* to prevent termination of specific instances, this starts as soon as the instance is *in service*.
@@ -454,7 +436,6 @@ terminate instances as demand on your application increases or decreases.
 
 <a name="3_3_2_5"></a>
 #### [↖](#3_3)[↑](#3_3_2_4)[↓](#3_3_2_6) Auto Scaling Lifecycle Hooks
-
 The EC2 instances in an Auto Scaling Group have a path, or lifecycle, that differs from that of
 other EC2 instances. The lifecycle *starts* when the Auto Scaling Group launches an instance and
 puts it into service. The lifecycle *ends* when you terminate the instance, or the Auto Scaling
@@ -475,8 +456,7 @@ After Lifecycle Hooks are added to the instance:
   continues the launch or terminate process
 
 <a name="3_3_2_6"></a>
-#### [↖](#3_3)[↑](#3_3_2_5)[↓](#3_3_3) Scaling
-
+#### [↖](#3_3)[↑](#3_3_2_5)[↓](#3_3_2_7) Scaling
 Scaling is the ability to increase or decrease the compute capacity of your application. Scaling
 starts with an event, or scaling action, which instructs an Auto Scaling Group to either launch or
 terminate Amazon EC2 instances.
@@ -510,8 +490,15 @@ terminate Amazon EC2 instances.
   * Long running workers
   * 'Special' instances, e.g. master of a cluster
 
+<a name="3_3_2_7"></a>
+#### [↖](#3_3)[↑](#3_3_2_6)[↓](#3_3_3) Notifications
+* Can send SNS notifications
+* Better to integrate with CloudWatch events
+* No direct integration with CloudWatch logs
+  * However if the CloudWatch agent is installed on the instances they will send logs
+
 <a name="3_3_3"></a>
-### [↖](#3_3)[↑](#3_3_2_6)[↓](#3_3_4) ALB Integration
+### [↖](#3_3)[↑](#3_3_2_7)[↓](#3_3_4) ALB Integration
 `ALB` -> `Target Group` <- `ASG`
 * Configure ASG
   * *Target Group* from ALB
@@ -521,17 +508,38 @@ terminate Amazon EC2 instances.
 * Can put instances into *Standby* so that they don't receive traffic.
 * Can put instances into *Scale In Protection* so that they don't get terminated on Scale In.
 
-### SQS Integration
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_5) SQS Integration
 * It's common pattern to have instances from within an ASG consuming messages from SQS
 * Can implement Custom Metric in CloudWatch to control Auto Scaling behaviour
   * E.g. size of individual backlog on instances
 
-<a name="3_3_4"></a>
-### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_4_1) Troubleshooting
+<a name="3_3_5"></a>
+### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_6) CloudFormation Integration
+* *CreationPolicy*
+  * Wait for notification from instances that they created successfully
+  * Instances use `cfn-signal` in UserData section
+* *UpdatePolicy*
+  * If LaunchConfiguration or LaunchTemplate are changing, deployed instances will *not* update
+  unless defined in UpdatePolicy
+  * Can configure policy for *rolling*, *replacing* and *scheduled* updated
 
-<a name="3_3_4_1"></a>
-#### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_4_2) Possible Problems
+<a name="3_3_6"></a>
+### [↖](#3_3)[↑](#3_3_5)[↓](#3_3_7) CodeDeploy Integration
+* Install CodeDeploy agent on instances as per UserData
+* Create CodeDeploy *Application* and *Deployment* and tie it to the Auto Scaling Group
+  * CodeDeploy will create Deployments for existing and new instances
+* Can choose between *in-place* and *blue-green* deployments
+  * Blue-green will provision new Auto Scaling Group
+    * Must have a load balancer configured so that traffic can be switched over
+* When deploying a *new* application version this will not be considered 'latest' until it has succeeded
+  * So for Auto Scaling events, the *old* version is still getting deployed
 
+<a name="3_3_7"></a>
+### [↖](#3_3)[↑](#3_3_6)[↓](#3_3_7_1) Troubleshooting
+
+<a name="3_3_7_1"></a>
+#### [↖](#3_3)[↑](#3_3_7)[↓](#3_3_7_2) Possible Problems
 * Attempting to use wrong subnet
 * AZ no longer available or supported (outage)
 * Security group does not exist
@@ -547,9 +555,8 @@ terminate Amazon EC2 instances.
 * If an instance is stopped, e.g. for updating it, auto scaling will consider it unhealthy and
   terminate - restart it. Need to suspend auto scaling first.
 
-<a name="3_3_4_2"></a>
-#### [↖](#3_3)[↑](#3_3_4_1)[↓](#3_4) Suspending ASG processes
-
+<a name="3_3_7_2"></a>
+#### [↖](#3_3)[↑](#3_3_7_1)[↓](#3_4) Suspending ASG processes
 You can suspend and then resume one or more of the scaling processes for your Auto Scaling Group.
 This can be useful for investigating a configuration problem or other issues with your web
 application and making changes to your application without invoking the scaling processes.
@@ -568,7 +575,7 @@ application and making changes to your application without invoking the scaling 
 ---
 
 <a name="3_4"></a>
-## [↖](#top)[↑](#3_3_4_2)[↓](#3_4_1) EC2 Instance Compliance
+## [↖](#top)[↑](#3_3_7_2)[↓](#3_4_1) EC2 Instance Compliance
 <!-- toc_start -->
 * [AWS Config](#3_4_1)
 * [Inspector](#3_4_2)
@@ -684,7 +691,6 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 <a name="3_7_1"></a>
 ### [↖](#3_7)[↑](#3_7)[↓](#3_7_1_1) Jenkins
-
 * Can replace CodeBuild, CodePipeline, CodeDeploy
 	* Tight integration with those services
 
@@ -697,14 +703,12 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 <a name="3_7_1_1"></a>
 #### [↖](#3_7)[↑](#3_7_1)[↓](#3_7_1_2) Integrating into CodePipeline
-
 * CodePipeline can send build jobs to Jenkins instead of CodeBuild
 * Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
 * Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
 
 <a name="3_7_1_2"></a>
 #### [↖](#3_7)[↑](#3_7_1_1)[↓](#4) Plugins
-
 * *EC2-Plugin*
 	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
 	* Also support spot instances
@@ -718,8 +722,6 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 <a name="4"></a>
 # [↖](#top)[↑](#3_7_1_2)[↓](#4_1) Services
-
----
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector
@@ -856,9 +858,6 @@ A data schema specifying the data structure of a request or response payload.
   * *Rate*, *burst*, *quota*
   * Can assoicate with stage/method/API key (to limit certain clients)
 
-
-
-
 ---
 <a name="4_3"></a>
 ## [↖](#top)[↑](#4_2_2_7)[↓](#4_3_1) CloudFormation
@@ -898,7 +897,6 @@ Templates are uploaded to S3 and then referenced by CloudFormation.
 
 <a name="4_3_2_1"></a>
 #### [↖](#4_3)[↑](#4_3_2)[↓](#4_3_2_1_1) Template
-
 A *CloudFormation* template is a `JSON` or `YAML` formatted text file
 
 Element|Comment
@@ -913,7 +911,6 @@ Element|Comment
 `Outputs`|Values to be exposed from the console or from API calls
 
 ##### Parameters
-
 * Type: `String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key (`AWS::SSM::Parameter`)
   * SSM *SecureString* is not supported
 * *Description*, *Default Value*, *Allowed Values*, *Allowed Pattern*
@@ -1002,7 +999,6 @@ Name|Attributes|Description
 
 <a name="4_3_2_2"></a>
 #### [↖](#4_3)[↑](#4_3_2_1_6)[↓](#4_3_2_2_1) Stacks
-
 * Related resources are managed in a single unit called a **stack**
 	* All the resources in a stack are defined by the stack's *CloudFormation* template
 	* Controls lifecycle of managed resources
@@ -1049,7 +1045,6 @@ Name|Attributes|Description
 ##### Stacks Updates
 
 ###### Process
-
 * **Direct updates**
 	* You submit changes and AWS CloudFormation immediately deploys them
 * **Change sets**
@@ -1079,7 +1074,6 @@ Name|Attributes|Description
 	* Deletion
 
 ##### Stack Policy
-
 Defines which actions can be performed on specified resources. With CloudFormation stack policies
 you can protect all or certain resources in your stacks from being unintentionally updated or
 deleted during the update process.
@@ -1105,7 +1099,6 @@ Element|.
 ##### Stack Deletion
 
 ###### Process
-
 * Specify the stack to delete, and AWS CloudFormation deletes the stack and all the resources in that stack.
 * With the `DeletionPolicy` attribute you can preserve or (in some cases) backup a resource when its
 stack is deleted.
@@ -1113,7 +1106,6 @@ stack is deleted.
 * A stack can have *termination protection* enabled, which will prevent it from being deleted accidentally
 
 ###### Resource deletion policy
-
 * **Policy** / statement that is associated with every resource of a stack
 * Controls what happens if stack is deleted
 * `DeletionPolicy`
@@ -1136,14 +1128,12 @@ stack is deleted.
 
 <a name="4_3_2_3"></a>
 #### [↖](#4_3)[↑](#4_3_2_2_4_2)[↓](#4_3_2_3_1) Stack Sets
-
 A *stack set* lets you create stacks in AWS accounts across regions by using a single AWS
 CloudFormation template. All the resources included in each stack are defined by the stack set's
 AWS CloudFormation template. As you create the stack set, you specify the template to use, as well
 as any parameters and capabilities that template requires.
 
 ##### Concept
-
 * Stack sets are created in a region of an administrator account
 * A *stack instance* is a reference to a stack in a target account within a region
   * Can exist without a stack, e.g. if stack failed to create, than the stack instance shows the reason for that
@@ -1169,7 +1159,6 @@ as any parameters and capabilities that template requires.
 `cfn-hup`|Use to check for updates to metadata and execute custom hooks when changes are detected.
 
 ##### Define code and scripts to run
-
 **CloudFormation User Data**
 * Scripts and commands to be passed to a launching EC2 instance.
 * Failing user data scripts don't fail the CFN stack
@@ -1195,7 +1184,6 @@ UserData:
 * Use `cfn-get-metadata` to fetch a metadata block from AWS CloudFormation and print it to standard out
 
 ##### Signal outcome of installation back to CFN
-
 **Creation Policy**
 * Can (only) be used for *EC2 Instances* and *Auto Scaling Groups*
 * Creation policy definion
@@ -1328,7 +1316,6 @@ analysis and troubleshooting.
 
 <a name="4_4_1"></a>
 ### [↖](#4_4)[↑](#4_4)[↓](#4_4_2) Overview
-
 CloudTrail is enabled by default in every account. All activities in an AWS account are being
 recorded as CloudTrail events.
 
@@ -1337,14 +1324,12 @@ recorded as CloudTrail events.
 
 <a name="4_4_2_1"></a>
 #### [↖](#4_4)[↑](#4_4_2)[↓](#4_4_3) Event
-
 * JSON format, who did what (API calls).
 * ~15min delay
 * Stored for 90 days
 
 <a name="4_4_3"></a>
 ### [↖](#4_4)[↑](#4_4_2_1)[↓](#4_5) Trail
-
 * One region / all regions / organizatio-wide
 * Store data in nominated S3 bucket, this can be encrypted as well
 * Can also deliver and analyse events in a trail with CloudWatch Logs and CloudWatch Events
@@ -1377,7 +1362,6 @@ recorded as CloudTrail events.
 
 <a name="4_5_1"></a>
 ### [↖](#4_5)[↑](#4_5)[↓](#4_5_2) Overview
-
 *Amazon CloudWatch* is a monitoring and management service built for developers, system operators,
 site reliability engineers (SRE), and IT managers. CloudWatch provides you with data and
 actionable insights to monitor your applications, understand and respond to system-wide
@@ -1400,7 +1384,6 @@ optimize your applications, and ensure they are running smoothly.
 
 <a name="4_5_2_1"></a>
 #### [↖](#4_5)[↑](#4_5_2)[↓](#4_5_2_2) Logging
-
 **Logs**
 * *Log events* are records of some activity recorded by the application or resource being monitored
 * *Log streams* are sequences of log events from the same source
@@ -1415,7 +1398,6 @@ Logs can be exported to S3 for durable storage.
 
 <a name="4_5_2_2"></a>
 #### [↖](#4_5)[↑](#4_5_2_1)[↓](#4_5_2_3) Metrics
-
 **Namespaces**
 * Container for CloudWatch metrics
 * Metrics in different namespaces are isolated from each other
@@ -1497,7 +1479,6 @@ Logs can be exported to S3 for durable storage.
 
 <a name="4_5_2_5"></a>
 #### [↖](#4_5)[↑](#4_5_2_4_2)[↓](#4_5_2_6) Dashboards
-
 * Customizable home pages in the CloudWatch console that you can use to monitor your resources in a single correlated view
 * Even those resources that are spread across different Regions.
 * You can use CloudWatch dashboards to create customized views of the metrics and alarms for your AWS resources.
@@ -1522,7 +1503,6 @@ Logs can be exported to S3 for durable storage.
 
 <a name="4_5_4_1"></a>
 #### [↖](#4_5)[↑](#4_5_4)[↓](#4_5_4_2) EC2
-
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
 
@@ -1540,7 +1520,6 @@ Metric|Effect
 
 <a name="4_5_4_2"></a>
 #### [↖](#4_5)[↑](#4_5_4_1)[↓](#4_5_4_3) Auto Scaling Group
-
 Metric|Effect
 -|-
 `GroupMinSize`<br/>`GroupMinSize`|The minimum/maximum size of the Auto Scaling Group.
@@ -1550,7 +1529,6 @@ Metric|Effect
 
 <a name="4_5_4_3"></a>
 #### [↖](#4_5)[↑](#4_5_4_2)[↓](#4_5_4_4) ELB
-
 Metric|Effect
 -|-
 `Latency`|Time it takes to receive an response. Measure `max` and `average`
@@ -1571,7 +1549,6 @@ Metric|Effect
 
 <a name="4_5_4_4"></a>
 #### [↖](#4_5)[↑](#4_5_4_3)[↓](#4_5_4_5) ALB
-
 Metric|Effect
 -|-
 `RequestCount`|Number of completed requests
@@ -1581,7 +1558,6 @@ Metric|Effect
 
 <a name="4_5_4_5"></a>
 #### [↖](#4_5)[↑](#4_5_4_4)[↓](#4_5_5) NLB
-
 Metric|Effect
 -|-
 `processedbyte `|The total number of bytes processed by the load balancer, including TCP/IP headers.
@@ -1592,7 +1568,6 @@ Metric|Effect
 
 <a name="4_5_5"></a>
 ### [↖](#4_5)[↑](#4_5_4_5)[↓](#4_6) AWS-Managed Logs
-
 Service|Target(s)
 -|-
 Load Balancer Access Logs<br/>(ELB, ALB, NLB)|S3
@@ -1652,7 +1627,6 @@ you use.
 
 <a name="4_6_3_1"></a>
 #### [↖](#4_6)[↑](#4_6_3)[↓](#4_6_3_2) How it works
-
 * CodeBuild is provided with a *build project*.
 	* Defines how Codebuild runs
 		* Source code location, build environment to use, build commands
@@ -1666,7 +1640,6 @@ you use.
 
 <a name="4_6_3_2"></a>
 #### [↖](#4_6)[↑](#4_6_3_1)[↓](#4_7) Buildspec
-
 ```
 version: 0.2
 
@@ -1758,7 +1731,6 @@ and it works seamlessly with your existing Git tools.
 
 <a name="4_7_3_1"></a>
 #### [↖](#4_7)[↑](#4_7_3)[↓](#4_7_3_2) Protect branches
-
 Use IAM policy:
 
 ```
@@ -1776,7 +1748,6 @@ Use IAM policy:
 
 <a name="4_7_3_2"></a>
 #### [↖](#4_7)[↑](#4_7_3_1)[↓](#4_7_3_3) Send Notifications
-
 Use CloudWatch Event Rules under the hood
 
 * Set up notification / notification rules:
@@ -1791,7 +1762,6 @@ Use CloudWatch Event Rules under the hood
 
 <a name="4_7_3_3"></a>
 #### [↖](#4_7)[↑](#4_7_3_2)[↓](#4_8) Trigger SNS / Lambda
-
 More limited in scope than Notifications. Do not us CloudWatch Events under the hood.
 
 * Configure CodeCommit as Lambda trigger
@@ -1983,7 +1953,6 @@ are no upfront fees or long-term commitments.
 
 <a name="4_9_1_2"></a>
 #### [↖](#4_9)[↑](#4_9_1_1)[↓](#4_9_1_3) Components
-
 * **stage**
   * **action group** (run in sequence)
     * **action** (run in sequnece _or_ parallel)
@@ -2005,7 +1974,6 @@ are no upfront fees or long-term commitments.
 
 <a name="4_9_1_3"></a>
 #### [↖](#4_9)[↑](#4_9_1_2)[↓](#4_9_2) Pipeline Actions
-
 ```
 [
 		{
@@ -2064,7 +2032,6 @@ are no upfront fees or long-term commitments.
 
 <a name="4_9_2"></a>
 ### [↖](#4_9)[↑](#4_9_1_3)[↓](#4_10) Scenarios
-
 CodePipeline with
 * Amazon S3, AWS CodeCommit, and AWS CodeDeploy
 * Third-party Action Providers (GitHub and Jenkins)
@@ -2100,7 +2067,6 @@ deployments.
 
 <a name="4_10_2"></a>
 ### [↖](#4_10)[↑](#4_10_1)[↓](#4_10_3) Benefits
-
 * Start developing on AWS in minutes
 * Manage software delivery in one place
 * Work across your team securely
@@ -2108,7 +2074,6 @@ deployments.
 
 <a name="4_10_3"></a>
 ### [↖](#4_10)[↑](#4_10_2)[↓](#4_11) Under the hood
-
 Uses `cfn-transform` to generate cfn from `template.yml`
 
 ---
@@ -2195,7 +2160,6 @@ launch type.
 
 <a name="4_12_2"></a>
 ### [↖](#4_12)[↑](#4_12_1_1)[↓](#4_12_3) Components
-
 ```
 [Cluster
   [Service
@@ -2245,7 +2209,6 @@ launch type.
 
 <a name="4_12_3"></a>
 ### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_4) Auto Scaling
-
 * Use *Service Auto Scaling* for
   * Target Tracking Scaling Poilicy
   * Step Scaling Policy
@@ -2258,7 +2221,6 @@ launch type.
 
 <a name="4_12_4"></a>
 ### [↖](#4_12)[↑](#4_12_3)[↓](#4_12_5) Logging
-
 * For tasks, configure logging agent with task definition
   * Typically CloudWatch, also supports Splunk
 * For cluster instances, install CloudWatch Agent
@@ -2269,13 +2231,11 @@ launch type.
 
 <a name="4_12_5"></a>
 ### [↖](#4_12)[↑](#4_12_4)[↓](#4_12_6) ECR
-
 * Needs login `aws ecr get-login --no-include-email --region ap-south-2`
 * `docker pull aws_account_id.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`
 
 <a name="4_12_6"></a>
 ### [↖](#4_12)[↑](#4_12_5)[↓](#4_13) Fargate
-
 * Don't need to provision cluster
   * Does not need EC2 instance roles to create cluster
 * Requires VPC
@@ -2565,7 +2525,6 @@ For _real time delivery_ Kinesis data streams are the only option.
 
 <a name="4_16_1_3"></a>
 #### [↖](#4_16)[↑](#4_16_1_2)[↓](#4_16_2) Kinesis Data Analytics
-
 * Performing real time analytics on Kinesis Streams using SQL
 * Managed, auto-scaling
 * Can create Kinesis Streams in real-time
