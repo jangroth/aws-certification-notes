@@ -24,23 +24,24 @@
   * [CodePipeline](#4_9)
   * [CodeStar](#4_10)
   * [Config](#4_11)
-  * [ECS](#4_12)
-  * [Elastic Beanstalk](#4_13)
-  * [Elasticsearch Service](#4_14)
-  * [GuardDuty](#4_15)
-  * [Kinesis](#4_16)
-  * [Lambda](#4_17)
-  * [License Manager](#4_18)
-  * [Macie](#4_19)
-  * [Managed Services](#4_20)
-  * [OpsWorks Stacks](#4_21)
-  * [Organizations](#4_22)
-  * [Secrets Manager](#4_23)
-  * [Service Catalog](#4_24)
-  * [Step Functions](#4_25)
-  * [Systems Manager](#4_26)
-  * [Trusted Advisor](#4_27)
-  * [X-Ray](#4_28)
+  * [DynamoDB](#4_12)
+  * [ECS](#4_13)
+  * [Elastic Beanstalk](#4_14)
+  * [Elasticsearch Service](#4_15)
+  * [GuardDuty](#4_16)
+  * [Kinesis](#4_17)
+  * [Lambda](#4_18)
+  * [License Manager](#4_19)
+  * [Macie](#4_20)
+  * [Managed Services](#4_21)
+  * [OpsWorks Stacks](#4_22)
+  * [Organizations](#4_23)
+  * [Secrets Manager](#4_24)
+  * [Service Catalog](#4_25)
+  * [Step Functions](#4_26)
+  * [Systems Manager](#4_27)
+  * [Trusted Advisor](#4_28)
+  * [X-Ray](#4_29)
 ---
 <!-- toc_end -->
 
@@ -352,13 +353,15 @@ status of any instances that are unhealthy at the time of the health check is `O
   * [Auto Scaling Lifecycle Hooks](#3_3_2_5)
   * [Scaling](#3_3_2_6)
   * [Notifications](#3_3_2_7)
-* [ALB Integration](#3_3_3)
-* [SQS Integration](#3_3_4)
-* [CloudFormation Integration](#3_3_5)
-* [CodeDeploy Integration](#3_3_6)
-* [Troubleshooting](#3_3_7)
-  * [Possible Problems](#3_3_7_1)
-  * [Suspending ASG processes](#3_3_7_2)
+* [Integration with other services](#3_3_3)
+  * [ALB](#3_3_3_1)
+  * [CodeDeploy](#3_3_3_2)
+  * [CloudFormation](#3_3_3_3)
+  * [SQS](#3_3_3_4)
+* [Deployment Concepts](#3_3_4)
+* [Troubleshooting](#3_3_5)
+  * [Possible Problems](#3_3_5_1)
+  * [Suspending ASG processes](#3_3_5_2)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
@@ -498,7 +501,10 @@ terminate Amazon EC2 instances.
   * However if the CloudWatch agent is installed on the instances they will send logs
 
 <a name="3_3_3"></a>
-### [↖](#3_3)[↑](#3_3_2_7)[↓](#3_3_4) ALB Integration
+### [↖](#3_3)[↑](#3_3_2_7)[↓](#3_3_3_1) Integration with other services
+
+<a name="3_3_3_1"></a>
+#### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_3_2) ALB
 `ALB` -> `Target Group` <- `ASG`
 * Configure ASG
   * *Target Group* from ALB
@@ -508,24 +514,8 @@ terminate Amazon EC2 instances.
 * Can put instances into *Standby* so that they don't receive traffic.
 * Can put instances into *Scale In Protection* so that they don't get terminated on Scale In.
 
-<a name="3_3_4"></a>
-### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_5) SQS Integration
-* It's common pattern to have instances from within an ASG consuming messages from SQS
-* Can implement Custom Metric in CloudWatch to control Auto Scaling behaviour
-  * E.g. size of individual backlog on instances
-
-<a name="3_3_5"></a>
-### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_6) CloudFormation Integration
-* *CreationPolicy*
-  * Wait for notification from instances that they created successfully
-  * Instances use `cfn-signal` in UserData section
-* *UpdatePolicy*
-  * If LaunchConfiguration or LaunchTemplate are changing, deployed instances will *not* update
-  unless defined in UpdatePolicy
-  * Can configure policy for *rolling*, *replacing* and *scheduled* updated
-
-<a name="3_3_6"></a>
-### [↖](#3_3)[↑](#3_3_5)[↓](#3_3_7) CodeDeploy Integration
+<a name="3_3_3_2"></a>
+#### [↖](#3_3)[↑](#3_3_3_1)[↓](#3_3_3_3) CodeDeploy
 * Install CodeDeploy agent on instances as per UserData
 * Create CodeDeploy *Application* and *Deployment* and tie it to the Auto Scaling Group
   * CodeDeploy will create Deployments for existing and new instances
@@ -535,11 +525,37 @@ terminate Amazon EC2 instances.
 * When deploying a *new* application version this will not be considered 'latest' until it has succeeded
   * So for Auto Scaling events, the *old* version is still getting deployed
 
-<a name="3_3_7"></a>
-### [↖](#3_3)[↑](#3_3_6)[↓](#3_3_7_1) Troubleshooting
+<a name="3_3_3_3"></a>
+#### [↖](#3_3)[↑](#3_3_3_2)[↓](#3_3_3_4) CloudFormation
+* *CreationPolicy*
+  * Wait for notification from instances that they created successfully
+  * Instances use `cfn-signal` in UserData section
+* *UpdatePolicy*
+  * If LaunchConfiguration or LaunchTemplate are changing, deployed instances will *not* update
+  unless defined in UpdatePolicy
+  * Can configure policy for *rolling*, *replacing* and *scheduled* updated
 
-<a name="3_3_7_1"></a>
-#### [↖](#3_3)[↑](#3_3_7)[↓](#3_3_7_2) Possible Problems
+<a name="3_3_3_4"></a>
+#### [↖](#3_3)[↑](#3_3_3_3)[↓](#3_3_4) SQS
+* It's common pattern to have instances from within an ASG consuming messages from SQS
+* Can implement Custom Metric in CloudWatch to control Auto Scaling behaviour
+  * E.g. size of individual backlog on instances
+
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3_4)[↓](#3_3_5) Deployment Concepts
+
+Name|Before|Intermediate|After
+-|-|-|-
+In Place|`[ASG [Instance 1]]`|-|`[ASG [Instance 2]`
+Rolling|`[ASG [Instance 1]]`|`[ASG [Instance 1,2]]`|`[ASG [Instance 2]`
+Replace|`[ALB [ASG1 [...]]]`|`[ALB [ASG1 [...]][ASG2 [...]]`|`[ALB [ASG2 [...]]]`
+Blue/Green|`[R53 [ALB1 [ASG1 [...]]]]`|`[R53 [ALB1 [ASG1 [...]]]][ALB2 [...]]`|`[R53 [ALB2 [ASG2 [...]]]]`
+
+<a name="3_3_5"></a>
+### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_5_1) Troubleshooting
+
+<a name="3_3_5_1"></a>
+#### [↖](#3_3)[↑](#3_3_5)[↓](#3_3_5_2) Possible Problems
 * Attempting to use wrong subnet
 * AZ no longer available or supported (outage)
 * Security group does not exist
@@ -555,8 +571,8 @@ terminate Amazon EC2 instances.
 * If an instance is stopped, e.g. for updating it, auto scaling will consider it unhealthy and
   terminate - restart it. Need to suspend auto scaling first.
 
-<a name="3_3_7_2"></a>
-#### [↖](#3_3)[↑](#3_3_7_1)[↓](#3_4) Suspending ASG processes
+<a name="3_3_5_2"></a>
+#### [↖](#3_3)[↑](#3_3_5_1)[↓](#3_4) Suspending ASG processes
 You can suspend and then resume one or more of the scaling processes for your Auto Scaling Group.
 This can be useful for investigating a configuration problem or other issues with your web
 application and making changes to your application without invoking the scaling processes.
@@ -575,7 +591,7 @@ application and making changes to your application without invoking the scaling 
 ---
 
 <a name="3_4"></a>
-## [↖](#top)[↑](#3_3_7_2)[↓](#3_4_1) EC2 Instance Compliance
+## [↖](#top)[↑](#3_3_5_2)[↓](#3_4_1) EC2 Instance Compliance
 <!-- toc_start -->
 * [AWS Config](#3_4_1)
 * [Inspector](#3_4_2)
@@ -2130,19 +2146,133 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 ---
 
 <a name="4_12"></a>
-## [↖](#top)[↑](#4_11_4)[↓](#4_12_1) ECS
+## [↖](#top)[↑](#4_11_4)[↓](#4_12_1) DynamoDB
 <!-- toc_start -->
 * [Overview](#4_12_1)
-  * [Benefits](#4_12_1_1)
-* [Components](#4_12_2)
-* [Auto Scaling](#4_12_3)
-* [Logging](#4_12_4)
-* [ECR](#4_12_5)
-* [Fargate](#4_12_6)
+* [Keys and indexes](#4_12_2)
+  * [Partion key (PK)](#4_12_2_1)
+  * [PK & Sort key](#4_12_2_2)
+* [Secondary indexes](#4_12_3)
+  * [Projected attributes](#4_12_3_1)
+  * [Local secondary index](#4_12_3_2)
+  * [Global secondary index](#4_12_3_3)
 <!-- toc_end -->
 
 <a name="4_12_1"></a>
-### [↖](#4_12)[↑](#4_12)[↓](#4_12_1_1) Overview
+### [↖](#4_12)[↑](#4_12)[↓](#4_12_2) Overview
+* Fully managed **NoSQL** database
+* *HA* through different AZs, automatically spreads data and traffic accross servers
+	* 3 geographically distributed regions per table
+* Can scale up and down depending on demand (no downtime, no performance degradation)
+* Automatic or user-controlled read/write capacity provisioning
+* No joins - create references to other tables manually (`table1#something`)
+* Conditional updates and concurrency control (**atomic counters**)
+* Option between **eventual consistency** or **strongly consistency**
+* Built-in monitoring
+* Big Data: Integrates with *AWS Elastic MapReduce* and *Redshift*
+* Can configure TTL to expire table entries
+
+<a name="4_12_2"></a>
+### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Keys and indexes
+
+<a name="4_12_2_1"></a>
+#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Partion key (PK)
+* **Partition key** is also called **hash attribute** or **primary key**
+* Must be unique, used for internal hash function (*unordered*)
+* Used to retrieve data
+* You should design your application for uniform activity across all logical partition keys in the
+  Table and its secondary indexes.
+
+<a name="4_12_2_2"></a>
+#### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_3) PK & Sort key
+* **Composite PK**: *index* composed of hashed PK (*unordered*) and SK (*ordered*)
+* **Sort key** is also called **range attribute** or **range key**
+* Different items can have the same *PK*, must have different *SK*
+
+<a name="4_12_3"></a>
+### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_3_1) Secondary indexes
+* Associated with exactly one table, from which it obtains its data
+* Allows to query or scan data by an *alternate key* (other than PK/SK)
+* Only for `read` operations, `write` is not supported.
+
+<a name="4_12_3_1"></a>
+#### [↖](#4_12)[↑](#4_12_3)[↓](#4_12_3_2) Projected attributes
+* Attributes copied from the base table into an *index*
+* Makes them queryable
+* Different projection types
+	* `KEYS_ONLY` - Only the index and primary keys are projected into the index
+	* `ALL` - All of the table attributes are projected into the index
+	* `INCLUDE` - Only the specified table attributes are projected into the index
+
+<a name="4_12_3_2"></a>
+#### [↖](#4_12)[↑](#4_12_3_1)[↓](#4_12_3_3) Local secondary index
+* Uses the *same PK*, but offers different *SK*
+* Every partition of a local secondary index is scoped to a base table partition that has the same
+  partition key value
+* Local secondary indexes are extra tables that DynamoDB keeps in the background
+* Can only by created *together* with the base table 
+* Can choose *eventual consistency* or *strong consistency* at *creation* time
+* *Local* as in "co-located on the same partition"
+* Can request *not-projected* attributes for query or scan operation
+* Consumes read/write throughput from the original table.
+
+<a name="4_12_3_3"></a>
+#### [↖](#4_12)[↑](#4_12_3_2)[↓](#4_13) Global secondary index
+* Uses *different PK* and offers additional *SK* (or none).
+* *PK* does not have to be unique (unlike base table)
+* Queries on the global index can span all of the data in the base table, across all partitions
+* Can be created *after* the base table has already been created.
+* Only support *eventual consistency*
+* Have their own provisioned read/write throughput
+* Global secondary keys are distributed transactions across multiple partitions
+* *Global* as in "over many partitions"
+* Cannot request not-projected attributes for query or scan operation
+
+### DynamoDB Accelerator (DAX)
+
+Amazon DynamoDB Accelerator (DAX) is a fully managed, highly available, in-memory cache for
+DynamoDB that delivers up to a 10x performance improvement – from milliseconds to microseconds –
+even at millions of requests per second. DAX does all the heavy lifting required to add in-memory
+acceleration to your DynamoDB tables, without requiring developers to manage cache invalidation,
+data population, or cluster management. Now you can focus on building great applications for your
+customers without worrying about performance at scale. You do not need to modify application logi
+, since DAX is compatible with existing DynamoDB API calls. You can enable DAX with just a few
+clicks in the AWS Management Console or using the AWS SDK. Just as with DynamoDB, you only pay for
+the capacity you provision.
+
+### DynamoDB Streams
+
+*DynamoDB Streams* captures a time-ordered sequence of item-level modifications in any DynamoDB
+table and stores this information in a log for up to 24 hours. Applications can access this log
+and view the data items as they appeared before and after they were modified, in near-real time.
+
+A DynamoDB stream is an ordered flow of information about changes to items in a DynamoDB table.
+When you enable a stream on a table, DynamoDB captures information about every modification to
+data items in the table.
+
+* Typically targets Lambda function
+  * Only up to 2 Lambda functions on the same stream, throttling issues otherwise
+* Underlying implementation is a Kinesis Stream
+* Can enable *Global Table*
+  * Require DynamoDB streams and empty table
+  * Replicate table in different region (*read* and *write*)
+
+---
+
+<a name="4_13"></a>
+## [↖](#top)[↑](#4_12_3_3)[↓](#4_13_1) ECS
+<!-- toc_start -->
+* [Overview](#4_13_1)
+  * [Benefits](#4_13_1_1)
+* [Components](#4_13_2)
+* [Auto Scaling](#4_13_3)
+* [Logging](#4_13_4)
+* [ECR](#4_13_5)
+* [Fargate](#4_13_6)
+<!-- toc_end -->
+
+<a name="4_13_1"></a>
+### [↖](#4_13)[↑](#4_13)[↓](#4_13_1_1) Overview
 *Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management
 service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host
 your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your
@@ -2150,16 +2280,16 @@ services or tasks using the Fargate launch type. For more control you can host y
 cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2
 launch type.
 
-<a name="4_12_1_1"></a>
-#### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2) Benefits
+<a name="4_13_1_1"></a>
+#### [↖](#4_13)[↑](#4_13_1)[↓](#4_13_2) Benefits
 * Containers without servers
 * Containerize Everything
 * Secure
 * Performance at Scale
 * AWS Integration
 
-<a name="4_12_2"></a>
-### [↖](#4_12)[↑](#4_12_1_1)[↓](#4_12_3) Components
+<a name="4_13_2"></a>
+### [↖](#4_13)[↑](#4_13_1_1)[↓](#4_13_3) Components
 ```
 [Cluster
   [Service
@@ -2207,8 +2337,8 @@ launch type.
   * Instances run ECS agent as a Docker container
   * Cluster is an *Auto Scaling Group* with a launch configuration using a special ECS AMI
 
-<a name="4_12_3"></a>
-### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_4) Auto Scaling
+<a name="4_13_3"></a>
+### [↖](#4_13)[↑](#4_13_2)[↓](#4_13_4) Auto Scaling
 * Use *Service Auto Scaling* for
   * Target Tracking Scaling Poilicy
   * Step Scaling Policy
@@ -2219,8 +2349,8 @@ launch type.
   * Could use Fargate, obviously
   * Or even Elastic Beanstalk
 
-<a name="4_12_4"></a>
-### [↖](#4_12)[↑](#4_12_3)[↓](#4_12_5) Logging
+<a name="4_13_4"></a>
+### [↖](#4_13)[↑](#4_13_3)[↓](#4_13_5) Logging
 * For tasks, configure logging agent with task definition
   * Typically CloudWatch, also supports Splunk
 * For cluster instances, install CloudWatch Agent
@@ -2229,13 +2359,13 @@ launch type.
 * Can enable CloudWatch Container Insights
   * Sends per-container metrics into CloudWatch metrics
 
-<a name="4_12_5"></a>
-### [↖](#4_12)[↑](#4_12_4)[↓](#4_12_6) ECR
+<a name="4_13_5"></a>
+### [↖](#4_13)[↑](#4_13_4)[↓](#4_13_6) ECR
 * Needs login `aws ecr get-login --no-include-email --region ap-south-2`
 * `docker pull aws_account_id.dkr.ecr.us-west-2.amazonaws.com/amazonlinux:latest`
 
-<a name="4_12_6"></a>
-### [↖](#4_12)[↑](#4_12_5)[↓](#4_13) Fargate
+<a name="4_13_6"></a>
+### [↖](#4_13)[↑](#4_13_5)[↓](#4_14) Fargate
 * Don't need to provision cluster
   * Does not need EC2 instance roles to create cluster
 * Requires VPC
@@ -2245,19 +2375,19 @@ TODO: https://aws.amazon.com/blogs/devops/build-a-continuous-delivery-pipeline-f
 
 ---
 
-<a name="4_13"></a>
-## [↖](#top)[↑](#4_12_6)[↓](#4_13_1) Elastic Beanstalk
+<a name="4_14"></a>
+## [↖](#top)[↑](#4_13_6)[↓](#4_14_1) Elastic Beanstalk
 <!-- toc_start -->
-* [Overview](#4_13_1)
-* [Concepts](#4_13_2)
-  * [Components](#4_13_2_1)
-  * [Configuration](#4_13_2_2)
-  * [Deployment Types](#4_13_2_3)
-* [Limits](#4_13_3)
+* [Overview](#4_14_1)
+* [Concepts](#4_14_2)
+  * [Components](#4_14_2_1)
+  * [Configuration](#4_14_2_2)
+  * [Deployment Types](#4_14_2_3)
+* [Limits](#4_14_3)
 <!-- toc_end -->
 
-<a name="4_13_1"></a>
-### [↖](#4_13)[↑](#4_13)[↓](#4_13_2) Overview
+<a name="4_14_1"></a>
+### [↖](#4_14)[↑](#4_14)[↓](#4_14_2) Overview
 AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and
 services developed with `Java`, `.NET`, `PHP`, `Node.js`, `Python`, `Ruby`, `Go`, and `Docker` on familiar servers
 such as Apache, Nginx, Passenger, and IIS.
@@ -2283,11 +2413,11 @@ underlying resources at any time.
   * Docker Single-/Multicontainer - runs on ECS
   * Docker Preconfigured Glassfish/Python/Go
 
-<a name="4_13_2"></a>
-### [↖](#4_13)[↑](#4_13_1)[↓](#4_13_2_1) Concepts
+<a name="4_14_2"></a>
+### [↖](#4_14)[↑](#4_14_1)[↓](#4_14_2_1) Concepts
 
-<a name="4_13_2_1"></a>
-#### [↖](#4_13)[↑](#4_13_2)[↓](#4_13_2_2) Components
+<a name="4_14_2_1"></a>
+#### [↖](#4_14)[↑](#4_14_2)[↓](#4_14_2_2) Components
 * **Application**
   * Either *application* in the tradional sense
   * Or *application component*, e.g. service, frontend, backend
@@ -2325,8 +2455,8 @@ underlying resources at any time.
 `AWS::EC2::SecurityGroupIngress`|.|.
 `AWS::ElasticLoadBalancing::LoadBalancer`|.|.
 
-<a name="4_13_2_2"></a>
-#### [↖](#4_13)[↑](#4_13_2_1)[↓](#4_13_2_2_1) Configuration
+<a name="4_14_2_2"></a>
+#### [↖](#4_14)[↑](#4_14_2_1)[↓](#4_14_2_2_1) Configuration
 Configuration options, sorted by precedence:
 
 ##### Settings applied directly to the environment
@@ -2365,8 +2495,8 @@ Via console, eb-cli, ...
 ##### Default values
 As the name says.
 
-<a name="4_13_2_3"></a>
-#### [↖](#4_13)[↑](#4_13_2_2_4)[↓](#4_13_3) Deployment Types
+<a name="4_14_2_3"></a>
+#### [↖](#4_14)[↑](#4_14_2_2_4)[↓](#4_14_3) Deployment Types
 * Single instance deploys
 * HA with Load Balancer
   * All at once
@@ -2377,8 +2507,8 @@ As the name says.
     * Can manually create new environment
     * Either use *swap URL* feature or manually create DNS
 
-<a name="4_13_3"></a>
-### [↖](#4_13)[↑](#4_13_2_3)[↓](#4_14) Limits
+<a name="4_14_3"></a>
+### [↖](#4_14)[↑](#4_14_2_3)[↓](#4_15) Limits
 .|.
 -|-
 Applications|75
@@ -2388,11 +2518,11 @@ Environments|200
 
 ---
 
-<a name="4_14"></a>
-## [↖](#top)[↑](#4_13_3)[↓](#4_14_1) Elasticsearch Service
+<a name="4_15"></a>
+## [↖](#top)[↑](#4_14_3)[↓](#4_15_1) Elasticsearch Service
 <!-- toc_start -->
-* [Overview](#4_14_1)
-* [Elk](#4_14_2)
+* [Overview](#4_15_1)
+* [Elk](#4_15_2)
 <!-- toc_end -->
 
 Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy,
@@ -2403,8 +2533,8 @@ services, and built-in alerting and SQL querying. Amazon Elasticsearch Service l
 for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch
 Service, you get the ELK stack you need, without the operational overhead.
 
-<a name="4_14_1"></a>
-### [↖](#4_14)[↑](#4_14)[↓](#4_14_2) Overview
+<a name="4_15_1"></a>
+### [↖](#4_15)[↑](#4_15)[↓](#4_15_2) Overview
 * Managed version of Elasticsearch
 * Runs on servers
 * Use cases:
@@ -2415,8 +2545,8 @@ Service, you get the ELK stack you need, without the operational overhead.
   * Clickstream analytics
   * Indexing
 
-<a name="4_14_2"></a>
-### [↖](#4_14)[↑](#4_14_1)[↓](#4_15) Elk
+<a name="4_15_2"></a>
+### [↖](#4_15)[↑](#4_15_1)[↓](#4_16) Elk
 * Elasticsearch
   * Provides search and indexing capabilities
 * Logstash
@@ -2431,14 +2561,14 @@ Service, you get the ELK stack you need, without the operational overhead.
 
 ---
 
-<a name="4_15"></a>
-## [↖](#top)[↑](#4_14_2)[↓](#4_15_1) GuardDuty
+<a name="4_16"></a>
+## [↖](#top)[↑](#4_15_2)[↓](#4_16_1) GuardDuty
 <!-- toc_start -->
-* [Overview](#4_15_1)
+* [Overview](#4_16_1)
 <!-- toc_end -->
 
-<a name="4_15_1"></a>
-### [↖](#4_15)[↑](#4_15)[↓](#4_16) Overview
+<a name="4_16_1"></a>
+### [↖](#4_16)[↑](#4_16)[↓](#4_17) Overview
 Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity
 and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the
 collection and aggregation of account and network activities is simplified, but it can be time
@@ -2456,14 +2586,14 @@ event management and workflow systems.
 
 ---
 
-<a name="4_16"></a>
-## [↖](#top)[↑](#4_15_1)[↓](#4_16_1) Kinesis
+<a name="4_17"></a>
+## [↖](#top)[↑](#4_16_1)[↓](#4_17_1) Kinesis
 <!-- toc_start -->
-* [Overview](#4_16_1)
-  * [Kinesis Data Stream](#4_16_1_1)
-  * [Kinesis Data Firehose](#4_16_1_2)
-  * [Kinesis Data Analytics](#4_16_1_3)
-* [Limits](#4_16_2)
+* [Overview](#4_17_1)
+  * [Kinesis Data Stream](#4_17_1_1)
+  * [Kinesis Data Firehose](#4_17_1_2)
+  * [Kinesis Data Analytics](#4_17_1_3)
+* [Limits](#4_17_2)
 <!-- toc_end -->
 
 Amazon Kinesis makes it easy to collect, process, and analyze real-time, streaming data so you can
@@ -2477,11 +2607,11 @@ collected before the processing can begin.
 
 [`various data sources`]->`Kinesis Streams`->`Kinesis Analytics`->`Kinesis Firehose`->[`S3`]
 
-<a name="4_16_1"></a>
-### [↖](#4_16)[↑](#4_16)[↓](#4_16_1_1) Overview
+<a name="4_17_1"></a>
+### [↖](#4_17)[↑](#4_17)[↓](#4_17_1_1) Overview
 
-<a name="4_16_1_1"></a>
-#### [↖](#4_16)[↑](#4_16_1)[↓](#4_16_1_2) Kinesis Data Stream
+<a name="4_17_1_1"></a>
+#### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_1_2) Kinesis Data Stream
 * Real-time data delivery
 * Streams are devided into ordered *shards*/*partitions*
   * Shards can evolve over time (reshard/merge)
@@ -2502,8 +2632,8 @@ collected before the processing can begin.
   * Kinesis SDK, Kinesis Client Library (KCL), Kinesis Connector Library, AWS Lambda
   * 3rd party libraries: Spark, Log4j Appenders, ...
 
-<a name="4_16_1_2"></a>
-#### [↖](#4_16)[↑](#4_16_1_1)[↓](#4_16_1_3) Kinesis Data Firehose
+<a name="4_17_1_2"></a>
+#### [↖](#4_17)[↑](#4_17_1_1)[↓](#4_17_1_3) Kinesis Data Firehose
 * Near Real-time data delivery (~60 seconds)
 * Automatic Scaling
 * Can do data transformation through Lambda
@@ -2523,14 +2653,14 @@ Can write custom code for consumers/producers| Serverless lambda
 
 For _real time delivery_ Kinesis data streams are the only option.
 
-<a name="4_16_1_3"></a>
-#### [↖](#4_16)[↑](#4_16_1_2)[↓](#4_16_2) Kinesis Data Analytics
+<a name="4_17_1_3"></a>
+#### [↖](#4_17)[↑](#4_17_1_2)[↓](#4_17_2) Kinesis Data Analytics
 * Performing real time analytics on Kinesis Streams using SQL
 * Managed, auto-scaling
 * Can create Kinesis Streams in real-time
 
-<a name="4_16_2"></a>
-### [↖](#4_16)[↑](#4_16_1_3)[↓](#4_17) Limits
+<a name="4_17_2"></a>
+### [↖](#4_17)[↑](#4_17_1_3)[↓](#4_18) Limits
 .|.|..
 -|-|-
 **Kinesis Streams**|.|.
@@ -2541,23 +2671,23 @@ For _real time delivery_ Kinesis data streams are the only option.
 
 ---
 
-<a name="4_17"></a>
-## [↖](#top)[↑](#4_16_2)[↓](#4_17_1) Lambda
+<a name="4_18"></a>
+## [↖](#top)[↑](#4_17_2)[↓](#4_18_1) Lambda
 <!-- toc_start -->
-* [Overview](#4_17_1)
-* [Managing Functions](#4_17_2)
-  * [Versions](#4_17_2_1)
-  * [Aliases](#4_17_2_2)
-  * [Layers](#4_17_2_3)
-  * [Network](#4_17_2_4)
-  * [Database](#4_17_2_5)
-* [Invoking Functions](#4_17_3)
-  * [Synchronous / Asynchronous / Event Source Invocation](#4_17_3_1)
-  * [Function Scaling](#4_17_3_2)
+* [Overview](#4_18_1)
+* [Managing Functions](#4_18_2)
+  * [Versions](#4_18_2_1)
+  * [Aliases](#4_18_2_2)
+  * [Layers](#4_18_2_3)
+  * [Network](#4_18_2_4)
+  * [Database](#4_18_2_5)
+* [Invoking Functions](#4_18_3)
+  * [Synchronous / Asynchronous / Event Source Invocation](#4_18_3_1)
+  * [Function Scaling](#4_18_3_2)
 <!-- toc_end -->
 
-<a name="4_17_1"></a>
-### [↖](#4_17)[↑](#4_17)[↓](#4_17_2) Overview
+<a name="4_18_1"></a>
+### [↖](#4_18)[↑](#4_18)[↓](#4_18_2) Overview
 *AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the
 compute time you consume - there is no charge when your code is not running. With Lambda, you can
 run code for virtually any type of application or backend service - all with zero administration.
@@ -2577,12 +2707,12 @@ call it directly from any web or mobile app.
 * Can pass in *environment variables*
   * These can be KMS-encrypted as well (need SDK to decrypt)
 
-<a name="4_17_2"></a>
-### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_2_1) Managing Functions
+<a name="4_18_2"></a>
+### [↖](#4_18)[↑](#4_18_1)[↓](#4_18_2_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
 
-<a name="4_17_2_1"></a>
-#### [↖](#4_17)[↑](#4_17_2)[↓](#4_17_2_2) Versions
+<a name="4_18_2_1"></a>
+#### [↖](#4_18)[↑](#4_18_2)[↓](#4_18_2_2) Versions
 * If you work on a Lambda function, you work on `$LATEST`
 * The system creates a new version of your Lambda function each time that you publish the function.
   The new version is a copy of the unpublished version of the function.
@@ -2591,8 +2721,8 @@ call it directly from any web or mobile app.
   version of a function.
 * Each version gets its own ARN
 
-<a name="4_17_2_2"></a>
-#### [↖](#4_17)[↑](#4_17_2_1)[↓](#4_17_2_3) Aliases
+<a name="4_18_2_2"></a>
+#### [↖](#4_18)[↑](#4_18_2_1)[↓](#4_18_2_3) Aliases
 * You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
 to a specific Lambda function *version*.
 * Aliases are mutable
@@ -2600,30 +2730,30 @@ to a specific Lambda function *version*.
 * Can create e.g. `dev`, `test` and `prod`.
   * Aliases can point to multiple versions with a *weight* - for canary-style deployments
 
-<a name="4_17_2_3"></a>
-#### [↖](#4_17)[↑](#4_17_2_2)[↓](#4_17_2_4) Layers
+<a name="4_18_2_3"></a>
+#### [↖](#4_18)[↑](#4_18_2_2)[↓](#4_18_2_4) Layers
 * You can configure your Lambda function to pull in additional code and content in the form of layers.
 * A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
 * With layers, you can use libraries in your function without needing to include them in your deployment package.
 
-<a name="4_17_2_4"></a>
-#### [↖](#4_17)[↑](#4_17_2_3)[↓](#4_17_2_5) Network
+<a name="4_18_2_4"></a>
+#### [↖](#4_18)[↑](#4_18_2_3)[↓](#4_18_2_5) Network
 * You can configure a function to connect to private subnets in a VPC in your account.
 * Use VPC to create a private network for resources such as databases, cache instances, or internal services.
 * Connect your function to the VPC to access private resources during execution.
 * Provisioning process for Lambda takes longer
 
-<a name="4_17_2_5"></a>
-#### [↖](#4_17)[↑](#4_17_2_4)[↓](#4_17_3) Database
+<a name="4_18_2_5"></a>
+#### [↖](#4_18)[↑](#4_18_2_4)[↓](#4_18_3) Database
 * You can use the Lambda console to create an RDS database proxy for your function.
 * A database proxy manages a pool of database connections and relays queries from a function.
 * This enables a function to reach high concurrency levels without exhausting database connections.
 
-<a name="4_17_3"></a>
-### [↖](#4_17)[↑](#4_17_2_5)[↓](#4_17_3_1) Invoking Functions
+<a name="4_18_3"></a>
+### [↖](#4_18)[↑](#4_18_2_5)[↓](#4_18_3_1) Invoking Functions
 
-<a name="4_17_3_1"></a>
-#### [↖](#4_17)[↑](#4_17_3)[↓](#4_17_3_2) Synchronous / Asynchronous / Event Source Invocation
+<a name="4_18_3_1"></a>
+#### [↖](#4_18)[↑](#4_18_3)[↓](#4_18_3_2) Synchronous / Asynchronous / Event Source Invocation
 * When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
   * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
@@ -2636,8 +2766,8 @@ process reads events from the queue and runs your function.
 * An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
   * -> Kinesis, DynamoDB, SQS
 
-<a name="4_17_3_2"></a>
-#### [↖](#4_17)[↑](#4_17_3_1)[↓](#4_18) Function Scaling
+<a name="4_18_3_2"></a>
+#### [↖](#4_18)[↑](#4_18_3_1)[↓](#4_19) Function Scaling
 * The first time you invoke your function, AWS Lambda creates an instance of the function and runs
 its handler method to process the event.
   * When the function returns a response, it sticks around to process additional events.
@@ -2652,14 +2782,14 @@ its handler method to process the event.
 
 ---
 
-<a name="4_18"></a>
-## [↖](#top)[↑](#4_17_3_2)[↓](#4_18_1) License Manager
+<a name="4_19"></a>
+## [↖](#top)[↑](#4_18_3_2)[↓](#4_19_1) License Manager
 <!-- toc_start -->
-* [Overview](#4_18_1)
+* [Overview](#4_19_1)
 <!-- toc_end -->
 
-<a name="4_18_1"></a>
-### [↖](#4_18)[↑](#4_18)[↓](#4_19) Overview
+<a name="4_19_1"></a>
+### [↖](#4_19)[↑](#4_19)[↓](#4_20) Overview
 AWS License Manager makes it easier to manage your software licenses from software vendors such as
 Microsoft, SAP, Oracle, and IBM across AWS and on-premises environments. AWS License Manager lets
 administrators create customized licensing rules that emulate the terms of their licensing
@@ -2673,14 +2803,14 @@ costs due to licensing overages.
 
 ---
 
-<a name="4_19"></a>
-## [↖](#top)[↑](#4_18_1)[↓](#4_19_1) Macie
+<a name="4_20"></a>
+## [↖](#top)[↑](#4_19_1)[↓](#4_20_1) Macie
 <!-- toc_start -->
-* [Overview](#4_19_1)
+* [Overview](#4_20_1)
 <!-- toc_end -->
 
-<a name="4_19_1"></a>
-### [↖](#4_19)[↑](#4_19)[↓](#4_20) Overview
+<a name="4_20_1"></a>
+### [↖](#4_20)[↑](#4_20)[↓](#4_21) Overview
 Amazon Macie is a security service that uses machine learning to automatically discover, classify,
 and protect sensitive data in AWS. Amazon Macie recognizes sensitive data such as personally
 identifiable information (PII) or intellectual property, and provides you with dashboards and
@@ -2691,14 +2821,14 @@ to protect data stored in Amazon S3.
 
 ---
 
-<a name="4_20"></a>
-## [↖](#top)[↑](#4_19_1)[↓](#4_20_1) Managed Services
+<a name="4_21"></a>
+## [↖](#top)[↑](#4_20_1)[↓](#4_21_1) Managed Services
 <!-- toc_start -->
-* [Overview](#4_20_1)
+* [Overview](#4_21_1)
 <!-- toc_end -->
 
-<a name="4_20_1"></a>
-### [↖](#4_20)[↑](#4_20)[↓](#4_21) Overview
+<a name="4_21_1"></a>
+### [↖](#4_21)[↑](#4_21)[↓](#4_22) Overview
 As enterprise customers move towards adopting the cloud at scale, some find their people need help
 and time to gain AWS skills and experience. AWS Managed Services (AMS) operates AWS on your behalf,
 providing a secure and compliant AWS Landing Zone, a proven enterprise operating model, on-going
@@ -2711,22 +2841,22 @@ so you can direct resources toward differentiating your business.
 
 ---
 
-<a name="4_21"></a>
-## [↖](#top)[↑](#4_20_1)[↓](#4_21_1) OpsWorks Stacks
+<a name="4_22"></a>
+## [↖](#top)[↑](#4_21_1)[↓](#4_22_1) OpsWorks Stacks
 <!-- toc_start -->
-* [Overview](#4_21_1)
-* [Components](#4_21_2)
-* [Lifecycle Events](#4_21_3)
-  * [Setup](#4_21_3_1)
-  * [Configure](#4_21_3_2)
-  * [Deploy](#4_21_3_3)
-  * [Undeploy](#4_21_3_4)
-  * [Shutdown](#4_21_3_5)
-* [Under the hood](#4_21_4)
+* [Overview](#4_22_1)
+* [Components](#4_22_2)
+* [Lifecycle Events](#4_22_3)
+  * [Setup](#4_22_3_1)
+  * [Configure](#4_22_3_2)
+  * [Deploy](#4_22_3_3)
+  * [Undeploy](#4_22_3_4)
+  * [Shutdown](#4_22_3_5)
+* [Under the hood](#4_22_4)
 <!-- toc_end -->
 
-<a name="4_21_1"></a>
-### [↖](#4_21)[↑](#4_21)[↓](#4_21_2) Overview
+<a name="4_22_1"></a>
+### [↖](#4_22)[↑](#4_22)[↓](#4_22_2) Overview
 *AWS OpsWorks* is a configuration management service that provides managed instances of Chef and
 Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the
 configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are
@@ -2744,8 +2874,8 @@ environments.
   * *AWS Opsworks for Chef Automate*
   * *AWS OpsWorks for Puppet Enterprise*
 
-<a name="4_21_2"></a>
-### [↖](#4_21)[↑](#4_21_1)[↓](#4_21_3) Components
+<a name="4_22_2"></a>
+### [↖](#4_22)[↑](#4_22_1)[↓](#4_22_3) Components
 * **Stack**
   * Set of resources that are managed as a group
 * **Layer**
@@ -2768,36 +2898,36 @@ environments.
   * Deploy application code and related files to application server instances
   * Deployment operation is handled by each instance's Deploy recipes, which are determined by the instance's layer
 
-<a name="4_21_3"></a>
-### [↖](#4_21)[↑](#4_21_2)[↓](#4_21_3_1) Lifecycle Events
+<a name="4_22_3"></a>
+### [↖](#4_22)[↑](#4_22_2)[↓](#4_22_3_1) Lifecycle Events
 * **Each layer** has a set of five lifecycle events, each of which has an associated set of recipes that are specific to the layer
 * When an event occurs on a layer's instance, AWS OpsWorks Stacks automatically runs the appropriate set of recipes
 
-<a name="4_21_3_1"></a>
-#### [↖](#4_21)[↑](#4_21_3)[↓](#4_21_3_2) Setup
+<a name="4_22_3_1"></a>
+#### [↖](#4_22)[↑](#4_22_3)[↓](#4_22_3_2) Setup
 * Occurs after a started instance has finished booting
 
-<a name="4_21_3_2"></a>
-#### [↖](#4_21)[↑](#4_21_3_1)[↓](#4_21_3_3) Configure
+<a name="4_22_3_2"></a>
+#### [↖](#4_22)[↑](#4_22_3_1)[↓](#4_22_3_3) Configure
 * Occurs on *all* of the stack's instances when one of the following occurs:
     * An instance enters or leaves the online state.
     * You associate an Elastic IP address with an instance or disassociate one from an instance.
     * You attach an Elastic Load Balancing load balancer to a layer, or detach one from a layer.
 
-<a name="4_21_3_3"></a>
-#### [↖](#4_21)[↑](#4_21_3_2)[↓](#4_21_3_4) Deploy
+<a name="4_22_3_3"></a>
+#### [↖](#4_22)[↑](#4_22_3_2)[↓](#4_22_3_4) Deploy
 * Occurs when you run a *Deploy* command.
 
-<a name="4_21_3_4"></a>
-#### [↖](#4_21)[↑](#4_21_3_3)[↓](#4_21_3_5) Undeploy
+<a name="4_22_3_4"></a>
+#### [↖](#4_22)[↑](#4_22_3_3)[↓](#4_22_3_5) Undeploy
 * Occurs when you run a *Undeploy* command,
 
-<a name="4_21_3_5"></a>
-#### [↖](#4_21)[↑](#4_21_3_4)[↓](#4_21_4) Shutdown
+<a name="4_22_3_5"></a>
+#### [↖](#4_22)[↑](#4_22_3_4)[↓](#4_22_4) Shutdown
 * Occurs after you direct AWS OpsWorks Stacks to shut an instance down but before the associated Amazon EC2 instance is actually terminated.
 
-<a name="4_21_4"></a>
-### [↖](#4_21)[↑](#4_21_3_5)[↓](#4_22) Under the hood
+<a name="4_22_4"></a>
+### [↖](#4_22)[↑](#4_22_3_5)[↓](#4_23) Under the hood
 * CloudWatch event integration
   * Can configure event rules to trigger alarms
 * Under the hood
@@ -2813,16 +2943,16 @@ environments.
 
 ---
 
-<a name="4_22"></a>
-## [↖](#top)[↑](#4_21_4)[↓](#4_22_1) Organizations
+<a name="4_23"></a>
+## [↖](#top)[↑](#4_22_4)[↓](#4_23_1) Organizations
 <!-- toc_start -->
-* [Overview](#4_22_1)
-  * [Benefits](#4_22_1_1)
-* [Limits:](#4_22_2)
+* [Overview](#4_23_1)
+  * [Benefits](#4_23_1_1)
+* [Limits:](#4_23_2)
 <!-- toc_end -->
 
-<a name="4_22_1"></a>
-### [↖](#4_22)[↑](#4_22)[↓](#4_22_1_1) Overview
+<a name="4_23_1"></a>
+### [↖](#4_23)[↑](#4_23)[↓](#4_23_1_1) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
 you can create groups of accounts, automate account creation, apply and manage policies for those
 groups. Organizations enables you to centrally manage policies across multiple accounts, without
@@ -2835,8 +2965,8 @@ accounts by enabling you to setup a single payment method for all the accounts i
 organization through consolidated billing. AWS Organizations is available to all AWS customers at
 no additional charge.
 
-<a name="4_22_1_1"></a>
-#### [↖](#4_22)[↑](#4_22_1)[↓](#4_22_2) Benefits
+<a name="4_23_1_1"></a>
+#### [↖](#4_23)[↑](#4_23_1)[↓](#4_23_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -2844,22 +2974,114 @@ no additional charge.
   * One *paying account* linked to many *linked accounts*
   * Pricing benefits (Volumes, Storage, Instances)
 
-<a name="4_22_2"></a>
-### [↖](#4_22)[↑](#4_22_1_1)[↓](#4_23) Limits:
+<a name="4_23_2"></a>
+### [↖](#4_23)[↑](#4_23_1_1)[↓](#4_24) Limits:
 .|.
 -|-
 Maximum linked accounts|20
 
 ---
 
-<a name="4_23"></a>
-## [↖](#top)[↑](#4_22_2)[↓](#4_23_1) Secrets Manager
+## S3
+
+### Overview
+Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
+retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
+scale past trillions of objects worldwide.
+
+* **Key**-**value** storage (folder-like structure is only a UI representation)
+* **Bucket** size is unlimited. Objects from 0B to 5TB.
+* HA and scalable, transparent data partitioning
+  * Data is automatically replicated to at least 3 separate data centers in the same region
+* Bucket lifecycle events can trigger *SNS*, *SQS* or *AWS Lambda*
+	* New *object created* events
+	* *Object removal* events
+	* Reduced Redundancy Storage (RRS) *object lost* event
+* Buckets are *per region*, but AWS console is *global* (displaying all bucket for that account)
+* Bucket names have to be *globally* unique, should comply with DNS naming conventions.
+
+### Versioning
+* Works on bucket level (for *all* objects)
+* Versioning can either be *unversioned* (default), *enabled* or *suspended*
+* **Version ids** are automatically assigned to objects
+
+### Logging
+* *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
+  stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
+  specific events.
+* *S3 Server Access Logs* log on object level.
+  * Provide detailed records for the requests that are made to a bucket
+  * Needs to be enabled on bucket level
+
+### Cross-Region Replication
+* Buckets *must* be in different regions
+  * Can replicate cross-account
+* *Must* have versioning enabled
+* Only new / changed objects will be replicated
+
+### Storage classes
+.|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
+-|-|-|-|-|-|-
+S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
+S3 Intelligent Tiering|**11x9**|3x9|**>=3**|$0.023|**No**|Automatically moves objects between two access tiers based on changing access patterns
+S3 IA (infrequent access)|**11x9**|3x9|**>=3**|$0.0125|Yes|For data that is accessed less frequently, but requires rapid access when needed
+S3 One Zone IA (infrequent access)|**11x9**|99.5|1|**$0.01**|Yes|For data that is accessed less frequently, but requires rapid access when needed
+Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *standard* or *bulk*
+Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
+~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
+
+### Access Control
+* **Effect** – This can be either allow or deny
+* **Principal** – Account or user who is allowed access to the actions and resources in the statement
+* **Actions** – For each resource, S3 supports a set of operations
+* **Resources** – Buckets and objects are the resources
+* Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
+
+#### Defaults
+* Bucket is *owned* by the AWS account that created it
+  * Ownership refers to the identity and email address used to create the account
+	* Bucket ownership is not transferable
+* Bucket owner gets full permission (ACL)
+* The person paying the bills always has full control.
+* A person uploading an object into a bucket owns it by default.
+
+#### IAM
+* IAM policies (in general) specify what actions are allowed or denied on what AWS resources
+* Defined as JSON
+* Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
+* Use if you’re more interested in *“What can this user do in AWS?”*
+
+#### Bucket policies
+* Specify what actions are allowed or denied for which principals on the bucket that the policy is
+attached to
+* Defined as JSON
+* Attached *only* to S3 buckets. Can however effect object in buckets.
+* Contain *principal* element (unnecessary for IAM)
+* Use if you’re more interested in *“Who can access this S3 bucket?”*
+* Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
+
+#### ACLs
+* Defined as XML. Legacy, not recomended any more.
+* Can
+	* be attached to individual objects (bucket policies only bucket level)
+	* control access to object uploaded into a bucket from a *different* account.
+* Cannot..
+	* have conditions
+	* cannot explicitely deny actions
+	* grant permission to bucket sub-resources (eg. lifecycle or static website configurations)
+* Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a
+bucket.
+
+---
+
+<a name="4_24"></a>
+## [↖](#top)[↑](#4_23_2)[↓](#4_24_1) Secrets Manager
 <!-- toc_start -->
-* [Overview](#4_23_1)
+* [Overview](#4_24_1)
 <!-- toc_end -->
 
-<a name="4_23_1"></a>
-### [↖](#4_23)[↑](#4_23)[↓](#4_24) Overview
+<a name="4_24_1"></a>
+### [↖](#4_24)[↑](#4_24)[↓](#4_25) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
 resources. The service enables you to easily rotate, manage, and retrieve database credentials,
 API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
@@ -2875,15 +3097,15 @@ AWS Cloud, third-party services, and on-premises.0
 
 ---
 
-<a name="4_24"></a>
-## [↖](#top)[↑](#4_23_1)[↓](#4_24_1) Service Catalog
+<a name="4_25"></a>
+## [↖](#top)[↑](#4_24_1)[↓](#4_25_1) Service Catalog
 <!-- toc_start -->
-* [Overview](#4_24_1)
-* [Components](#4_24_2)
+* [Overview](#4_25_1)
+* [Components](#4_25_2)
 <!-- toc_end -->
 
-<a name="4_24_1"></a>
-### [↖](#4_24)[↑](#4_24)[↓](#4_24_2) Overview
+<a name="4_25_1"></a>
+### [↖](#4_25)[↑](#4_25)[↓](#4_25_2) Overview
 AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
 approved for use on AWS. These IT services can include everything from virtual machine images,
 servers, software, and databases to complete multi-tier application architectures. AWS Service
@@ -2897,8 +3119,8 @@ deploy only the approved IT services they need.
 * Self-service for user
   * Integrates with self-service portals like ServiceNow
 
-<a name="4_24_2"></a>
-### [↖](#4_24)[↑](#4_24_1)[↓](#4_25) Components
+<a name="4_25_2"></a>
+### [↖](#4_25)[↑](#4_25_1)[↓](#4_26) Components
 * **Admins** define
   * **Product**
     * Defined in CloudFormation
@@ -2912,14 +3134,14 @@ deploy only the approved IT services they need.
 
 ---
 
-<a name="4_25"></a>
-## [↖](#top)[↑](#4_24_2)[↓](#4_25_1) Step Functions
+<a name="4_26"></a>
+## [↖](#top)[↑](#4_25_2)[↓](#4_26_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_25_1)
+* [Overview](#4_26_1)
 <!-- toc_end -->
 
-<a name="4_25_1"></a>
-### [↖](#4_25)[↑](#4_25)[↓](#4_26) Overview
+<a name="4_26_1"></a>
+### [↖](#4_26)[↑](#4_26)[↓](#4_27) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -2932,20 +3154,20 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_26"></a>
-## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) Systems Manager
+<a name="4_27"></a>
+## [↖](#top)[↑](#4_26_1)[↓](#4_27_1) Systems Manager
 <!-- toc_start -->
-* [Overview](#4_26_1)
-* [Components](#4_26_2)
-  * [Resources groups](#4_26_2_1)
-  * [Insights](#4_26_2_2)
-  * [Parameter store](#4_26_2_3)
-  * [Action & Change](#4_26_2_4)
-  * [Instances & Nodes](#4_26_2_5)
+* [Overview](#4_27_1)
+* [Components](#4_27_2)
+  * [Resources groups](#4_27_2_1)
+  * [Insights](#4_27_2_2)
+  * [Parameter store](#4_27_2_3)
+  * [Action & Change](#4_27_2_4)
+  * [Instances & Nodes](#4_27_2_5)
 <!-- toc_end -->
 
-<a name="4_26_1"></a>
-### [↖](#4_26)[↑](#4_26)[↓](#4_26_2) Overview
+<a name="4_27_1"></a>
+### [↖](#4_27)[↑](#4_27)[↓](#4_27_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
 Manager provides a unified user interface so you can view operational data from multiple AWS
 services and allows you to automate operational tasks across your AWS resources. With Systems
@@ -2967,16 +3189,16 @@ manage your infrastructure securely at scale.
   * Installed on instances
   * Need correct IAM permissions, then shows up on SSM dashboard
 
-<a name="4_26_2"></a>
-### [↖](#4_26)[↑](#4_26_1)[↓](#4_26_2_1) Components
-<a name="4_26_2_1"></a>
-#### [↖](#4_26)[↑](#4_26_2)[↓](#4_26_2_2) Resources groups
+<a name="4_27_2"></a>
+### [↖](#4_27)[↑](#4_27_1)[↓](#4_27_2_1) Components
+<a name="4_27_2_1"></a>
+#### [↖](#4_27)[↑](#4_27_2)[↓](#4_27_2_2) Resources groups
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
 
-<a name="4_26_2_2"></a>
-#### [↖](#4_26)[↑](#4_26_2_1)[↓](#4_26_2_3) Insights
+<a name="4_27_2_2"></a>
+#### [↖](#4_27)[↑](#4_27_2_1)[↓](#4_27_2_3) Insights
 * **Insights dashboards**
   * Automatically aggregates and displays operational data for each resource group
 * **Inventory**
@@ -2984,13 +3206,13 @@ manage your infrastructure securely at scale.
 * **Configuration Compliance**
   * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
 
-<a name="4_26_2_3"></a>
-#### [↖](#4_26)[↑](#4_26_2_2)[↓](#4_26_2_4) Parameter store
+<a name="4_27_2_3"></a>
+#### [↖](#4_27)[↑](#4_27_2_2)[↓](#4_27_2_4) Parameter store
 * Centralized store to manage your configuration data, whether plain-text data such as database
   strings or secrets such as passwords
 
-<a name="4_26_2_4"></a>
-#### [↖](#4_26)[↑](#4_26_2_3)[↓](#4_26_2_5) Action & Change
+<a name="4_27_2_4"></a>
+#### [↖](#4_27)[↑](#4_27_2_3)[↓](#4_27_2_5) Action & Change
 * **Automation**
   * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
   * Build Automation workflows to configure and manage instances and AWS resources.
@@ -3004,8 +3226,8 @@ manage your infrastructure securely at scale.
 * **Change Calendar**
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
-<a name="4_26_2_5"></a>
-#### [↖](#4_26)[↑](#4_26_2_4)[↓](#4_27) Instances & Nodes
+<a name="4_27_2_5"></a>
+#### [↖](#4_27)[↑](#4_27_2_4)[↓](#4_28) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -3037,14 +3259,14 @@ manage your infrastructure securely at scale.
 
 ---
 
-<a name="4_27"></a>
-## [↖](#top)[↑](#4_26_2_5)[↓](#4_27_1) Trusted Advisor
+<a name="4_28"></a>
+## [↖](#top)[↑](#4_27_2_5)[↓](#4_28_1) Trusted Advisor
 <!-- toc_start -->
-* [Overview](#4_27_1)
+* [Overview](#4_28_1)
 <!-- toc_end -->
 
-<a name="4_27_1"></a>
-### [↖](#4_27)[↑](#4_27)[↓](#4_28) Overview
+<a name="4_28_1"></a>
+### [↖](#4_28)[↑](#4_28)[↓](#4_29) Overview
 * AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision
 your resources following AWS best practices. Whether establishing new workflows, developing
 applications, or as part of ongoing improvement, take advantage of the recommendations provided by
@@ -3063,14 +3285,14 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
 
 ---
 
-<a name="4_28"></a>
-## [↖](#top)[↑](#4_27_1)[↓](#4_28_1) X-Ray
+<a name="4_29"></a>
+## [↖](#top)[↑](#4_28_1)[↓](#4_29_1) X-Ray
 <!-- toc_start -->
-* [Overview](#4_28_1)
+* [Overview](#4_29_1)
 <!-- toc_end -->
 
-<a name="4_28_1"></a>
-### [↖](#4_28)[↑](#4_28) Overview
+<a name="4_29_1"></a>
+### [↖](#4_29)[↑](#4_29) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance

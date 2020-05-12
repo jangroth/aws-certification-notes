@@ -380,10 +380,6 @@ help meet your regulatory and compliance needs.
 
 <a name="6"></a>
 # [↖](#top)[↑](#5_2)[↓](#6_1) S3 
-* 
-* 
-* 
-* 
 
 <a name="6_1"></a>
 ## [↖](#top)[↑](#6)[↓](#6_2) Overview
