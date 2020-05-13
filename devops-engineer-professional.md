@@ -11,7 +11,10 @@
   * [EC2 Instance Compliance](#3_4)
   * [Cost Allocation Tags](#3_5)
   * [Data/Network Protection](#3_6)
-  * [External Tools](#3_7)
+  * [Multi AZ](#3_7)
+  * [Multi Region](#3_8)
+  * [Disaster Recovery](#3_9)
+  * [External Tools](#3_10)
 * [Services](#4)
   * [Amazon Inspector](#4_1)
   * [API Gateway](#4_2)
@@ -36,12 +39,13 @@
   * [Managed Services](#4_21)
   * [OpsWorks Stacks](#4_22)
   * [Organizations](#4_23)
-  * [Secrets Manager](#4_24)
-  * [Service Catalog](#4_25)
-  * [Step Functions](#4_26)
-  * [Systems Manager](#4_27)
-  * [Trusted Advisor](#4_28)
-  * [X-Ray](#4_29)
+  * [S3](#4_24)
+  * [Secrets Manager](#4_25)
+  * [Service Catalog](#4_26)
+  * [Step Functions](#4_27)
+  * [Systems Manager](#4_28)
+  * [Trusted Advisor](#4_29)
+  * [X-Ray](#4_30)
 ---
 <!-- toc_end -->
 
@@ -698,15 +702,92 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 * System Firewalls running on EC2 instances
 
 <a name="3_7"></a>
-## [↖](#top)[↑](#3_6_2)[↓](#3_7_1) External Tools
+## [↖](#top)[↑](#3_6_2)[↓](#3_7_1) Multi AZ
 <!-- toc_start -->
-* [Jenkins](#3_7_1)
-  * [Integrating into CodePipeline](#3_7_1_1)
-  * [Plugins](#3_7_1_2)
+* [Services where multi AZ needs to enabled manually](#3_7_1)
+* [Services that are implicitely multi AZ](#3_7_2)
 <!-- toc_end -->
 
 <a name="3_7_1"></a>
-### [↖](#3_7)[↑](#3_7)[↓](#3_7_1_1) Jenkins
+### [↖](#3_7)[↑](#3_7)[↓](#3_7_2) Services where multi AZ needs to enabled manually
+* Assign AZ
+  * ELB, EFS, ASG, Elastic Beanstalk 
+* Synchronous database for failover in different AZ
+  * RDS, ElastiCache, Aurora (for DB itself, data is already multi AZ)
+  * ElasticSearch
+
+<a name="3_7_2"></a>
+### [↖](#3_7)[↑](#3_7_1)[↓](#3_8) Services that are implicitely multi AZ
+* S3 (with the exception of One Zone Infrequent Access)
+* DynamoDB
+* All of AWS' propriertrary services
+
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_2)[↓](#3_8_1) Multi Region
+<!-- toc_start -->
+* [Services that have a concept of multi region](#3_8_1)
+* [Mulit Region with Route 53](#3_8_2)
+<!-- toc_end -->
+
+<a name="3_8_1"></a>
+### [↖](#3_8)[↑](#3_8)[↓](#3_8_2) Services that have a concept of multi region
+
+.|.
+-|-
+DynamoDB Global Tables|multi-way replication, implemented by Streams
+AWS Config Aggregators|multi region as well as multi account
+RDS|Cross-region read replicas
+Aurora Global Database|One region is master, other for read & DR
+EBS / AMi / RDS|Snapshots
+VPC Peering|Private traffic between VPCs between regions
+Route 53|Uses global network of DNS servers
+S3 |Cross-region replication
+CloudFront|Global CDN at Edge Locations
+Lambda@Edge|For Global Lambda Functions at Edge Locations
+CloudFormation|StackSets
+CodePipeline|*action* can be region specific -> multi-region deploys
+
+<a name="3_8_2"></a>
+### [↖](#3_8)[↑](#3_8_1)[↓](#3_9) Mulit Region with Route 53
+* Deploy stacks behind ALB in different regions
+* Use Route 53 routing
+  * Latency
+  * Geo-proximity
+* Configure health checks
+  * Trigger automated DNS failover
+  * E.g. base health checks on CloudWatch Alarms
+
+<a name="3_9"></a>
+## [↖](#top)[↑](#3_8_2)[↓](#3_10) Disaster Recovery
+* DR is about preparing for and recovering from a disaster
+* *Recovery Point Objective* - RPO
+  * How often do you run backups? How much data will be lost (since last backup)
+* *Recovery Time Objective* - RTO
+  * How much downtime is acceptable?
+
+.|.|.
+-|-|-
+On-prem|On-prem|Traditional DR, very expensive
+On-prem|Cloud|Hybrid recovery
+Cloud Region A|Cloud Region B|.
+
+.|RPO|RTO|Costs|Comment|What to do for DR
+-|-|-|-|-|-
+Backup & Restore|High|High|Low|Regular backups|Restore
+Pilot Light|Medium|Medium|Medium|Core system is always running|Add non-critical systems
+Warm Standby|Low|Low|High|Full system at minimum size always running|Add resources
+Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always running|Only switch traffic
+
+<a name="3_10"></a>
+## [↖](#top)[↑](#3_9)[↓](#3_10_1) External Tools
+<!-- toc_start -->
+* [Jenkins](#3_10_1)
+  * [Integrating into CodePipeline](#3_10_1_1)
+  * [Plugins](#3_10_1_2)
+<!-- toc_end -->
+
+<a name="3_10_1"></a>
+### [↖](#3_10)[↑](#3_10)[↓](#3_10_1_1) Jenkins
 * Can replace CodeBuild, CodePipeline, CodeDeploy
 	* Tight integration with those services
 
@@ -717,14 +798,14 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 * `Jenkinsfile` to configure CI/CD
 * Many AWS plugins
 
-<a name="3_7_1_1"></a>
-#### [↖](#3_7)[↑](#3_7_1)[↓](#3_7_1_2) Integrating into CodePipeline
+<a name="3_10_1_1"></a>
+#### [↖](#3_10)[↑](#3_10_1)[↓](#3_10_1_2) Integrating into CodePipeline
 * CodePipeline can send build jobs to Jenkins instead of CodeBuild
 * Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
 * Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
 
-<a name="3_7_1_2"></a>
-#### [↖](#3_7)[↑](#3_7_1_1)[↓](#4) Plugins
+<a name="3_10_1_2"></a>
+#### [↖](#3_10)[↑](#3_10_1_1)[↓](#4) Plugins
 * *EC2-Plugin*
 	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
 	* Also support spot instances
@@ -737,7 +818,7 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_7_1_2)[↓](#4_1) Services
+# [↖](#top)[↑](#3_10_1_2)[↓](#4_1) Services
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector
@@ -882,7 +963,7 @@ A data schema specifying the data structure of a request or response payload.
 * [Components](#4_3_2)
   * [Template](#4_3_2_1)
   * [Stacks](#4_3_2_2)
-  * [Stack Sets](#4_3_2_3)
+  * [StackSets](#4_3_2_3)
 * [Concepts](#4_3_3)
   * [Running code on instance boot](#4_3_3_1)
   * [Custom Resources](#4_3_3_2)
@@ -1143,16 +1224,16 @@ stack is deleted.
 		* Allow data recovery at a later stage
 
 <a name="4_3_2_3"></a>
-#### [↖](#4_3)[↑](#4_3_2_2_4_2)[↓](#4_3_2_3_1) Stack Sets
-A *stack set* lets you create stacks in AWS accounts across regions by using a single AWS
-CloudFormation template. All the resources included in each stack are defined by the stack set's
+#### [↖](#4_3)[↑](#4_3_2_2_4_2)[↓](#4_3_2_3_1) StackSets
+*StackSets* lets you create stacks in multiple AWS *accounts* across multiple *regions* by using a single CloudFormation
+template. All the resources included in each stack are defined by the stack set's
 AWS CloudFormation template. As you create the stack set, you specify the template to use, as well
 as any parameters and capabilities that template requires.
 
 ##### Concept
 * Stack sets are created in a region of an administrator account
 * A *stack instance* is a reference to a stack in a target account within a region
-  * Can exist without a stack, e.g. if stack failed to create, than the stack instance shows the reason for that
+  * Can exist without a stack, e.g. if stack failed to create, then the stack instance shows the reason for that
 * Operations: *Create*, *Update*, *Delete*
 * Operation options:
   * *Maximum concurrent accounts* - maximum number or percentage of target accounts in which an operation is performed at one time
@@ -1974,6 +2055,7 @@ are no upfront fees or long-term commitments.
     * **action** (run in sequnece _or_ parallel)
       * Various *action providers* provide functionality
       * `runOrder` allows to decide about sequential and parallel
+      * `region` replicates source bucket into target region. This enables multi-region deploys
 
 * Stages create *Artifacts*
   * Stored in S3, passed on to the next stage
@@ -2150,12 +2232,12 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 <!-- toc_start -->
 * [Overview](#4_12_1)
 * [Keys and indexes](#4_12_2)
-  * [Partion key (PK)](#4_12_2_1)
-  * [PK & Sort key](#4_12_2_2)
+  * [PK & Sort key](#4_12_2_1)
 * [Secondary indexes](#4_12_3)
   * [Projected attributes](#4_12_3_1)
   * [Local secondary index](#4_12_3_2)
   * [Global secondary index](#4_12_3_3)
+* [DynamoDB Streams](#4_12_4)
 <!-- toc_end -->
 
 <a name="4_12_1"></a>
@@ -2175,22 +2257,21 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 <a name="4_12_2"></a>
 ### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Keys and indexes
 
-<a name="4_12_2_1"></a>
-#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_2_2) Partion key (PK)
+####
 * **Partition key** is also called **hash attribute** or **primary key**
 * Must be unique, used for internal hash function (*unordered*)
 * Used to retrieve data
 * You should design your application for uniform activity across all logical partition keys in the
   Table and its secondary indexes.
 
-<a name="4_12_2_2"></a>
-#### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_3) PK & Sort key
+<a name="4_12_2_1"></a>
+#### [↖](#4_12)[↑](#4_12_2)[↓](#4_12_3) PK & Sort key
 * **Composite PK**: *index* composed of hashed PK (*unordered*) and SK (*ordered*)
 * **Sort key** is also called **range attribute** or **range key**
 * Different items can have the same *PK*, must have different *SK*
 
 <a name="4_12_3"></a>
-### [↖](#4_12)[↑](#4_12_2_2)[↓](#4_12_3_1) Secondary indexes
+### [↖](#4_12)[↑](#4_12_2_1)[↓](#4_12_3_1) Secondary indexes
 * Associated with exactly one table, from which it obtains its data
 * Allows to query or scan data by an *alternate key* (other than PK/SK)
 * Only for `read` operations, `write` is not supported.
@@ -2217,7 +2298,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * Consumes read/write throughput from the original table.
 
 <a name="4_12_3_3"></a>
-#### [↖](#4_12)[↑](#4_12_3_2)[↓](#4_13) Global secondary index
+#### [↖](#4_12)[↑](#4_12_3_2)[↓](#4_12_4) Global secondary index
 * Uses *different PK* and offers additional *SK* (or none).
 * *PK* does not have to be unique (unlike base table)
 * Queries on the global index can span all of the data in the base table, across all partitions
@@ -2228,7 +2309,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * *Global* as in "over many partitions"
 * Cannot request not-projected attributes for query or scan operation
 
-### DynamoDB Accelerator (DAX)
+###
 
 Amazon DynamoDB Accelerator (DAX) is a fully managed, highly available, in-memory cache for
 DynamoDB that delivers up to a 10x performance improvement – from milliseconds to microseconds –
@@ -2240,7 +2321,8 @@ customers without worrying about performance at scale. You do not need to modify
 clicks in the AWS Management Console or using the AWS SDK. Just as with DynamoDB, you only pay for
 the capacity you provision.
 
-### DynamoDB Streams
+<a name="4_12_4"></a>
+### [↖](#4_12)[↑](#4_12_3_3)[↓](#4_13) DynamoDB Streams
 
 *DynamoDB Streams* captures a time-ordered sequence of item-level modifications in any DynamoDB
 table and stores this information in a log for up to 24 hours. Applications can access this log
@@ -2260,7 +2342,7 @@ data items in the table.
 ---
 
 <a name="4_13"></a>
-## [↖](#top)[↑](#4_12_3_3)[↓](#4_13_1) ECS
+## [↖](#top)[↑](#4_12_4)[↓](#4_13_1) ECS
 <!-- toc_start -->
 * [Overview](#4_13_1)
   * [Benefits](#4_13_1_1)
@@ -2982,9 +3064,23 @@ Maximum linked accounts|20
 
 ---
 
-## S3
+<a name="4_24"></a>
+## [↖](#top)[↑](#4_23_2)[↓](#4_24_1) S3
+<!-- toc_start -->
+* [Overview](#4_24_1)
+* [Versioning](#4_24_2)
+* [Logging](#4_24_3)
+* [Cross-Region Replication](#4_24_4)
+* [Storage classes](#4_24_5)
+* [Access Control](#4_24_6)
+  * [Defaults](#4_24_6_1)
+  * [IAM](#4_24_6_2)
+  * [Bucket policies](#4_24_6_3)
+  * [ACLs](#4_24_6_4)
+<!-- toc_end -->
 
-### Overview
+<a name="4_24_1"></a>
+### [↖](#4_24)[↑](#4_24)[↓](#4_24_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
 scale past trillions of objects worldwide.
@@ -3000,12 +3096,14 @@ scale past trillions of objects worldwide.
 * Buckets are *per region*, but AWS console is *global* (displaying all bucket for that account)
 * Bucket names have to be *globally* unique, should comply with DNS naming conventions.
 
-### Versioning
+<a name="4_24_2"></a>
+### [↖](#4_24)[↑](#4_24_1)[↓](#4_24_3) Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
 * **Version ids** are automatically assigned to objects
 
-### Logging
+<a name="4_24_3"></a>
+### [↖](#4_24)[↑](#4_24_2)[↓](#4_24_4) Logging
 * *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
   stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
   specific events.
@@ -3013,13 +3111,15 @@ scale past trillions of objects worldwide.
   * Provide detailed records for the requests that are made to a bucket
   * Needs to be enabled on bucket level
 
-### Cross-Region Replication
+<a name="4_24_4"></a>
+### [↖](#4_24)[↑](#4_24_3)[↓](#4_24_5) Cross-Region Replication
 * Buckets *must* be in different regions
   * Can replicate cross-account
 * *Must* have versioning enabled
 * Only new / changed objects will be replicated
 
-### Storage classes
+<a name="4_24_5"></a>
+### [↖](#4_24)[↑](#4_24_4)[↓](#4_24_6) Storage classes
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
 S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
@@ -3030,14 +3130,16 @@ Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *stand
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-### Access Control
+<a name="4_24_6"></a>
+### [↖](#4_24)[↑](#4_24_5)[↓](#4_24_6_1) Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
 
-#### Defaults
+<a name="4_24_6_1"></a>
+#### [↖](#4_24)[↑](#4_24_6)[↓](#4_24_6_2) Defaults
 * Bucket is *owned* by the AWS account that created it
   * Ownership refers to the identity and email address used to create the account
 	* Bucket ownership is not transferable
@@ -3045,13 +3147,15 @@ Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
 
-#### IAM
+<a name="4_24_6_2"></a>
+#### [↖](#4_24)[↑](#4_24_6_1)[↓](#4_24_6_3) IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
 
-#### Bucket policies
+<a name="4_24_6_3"></a>
+#### [↖](#4_24)[↑](#4_24_6_2)[↓](#4_24_6_4) Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
 * Defined as JSON
@@ -3060,7 +3164,8 @@ attached to
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
 
-#### ACLs
+<a name="4_24_6_4"></a>
+#### [↖](#4_24)[↑](#4_24_6_3)[↓](#4_25) ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -3074,14 +3179,14 @@ bucket.
 
 ---
 
-<a name="4_24"></a>
-## [↖](#top)[↑](#4_23_2)[↓](#4_24_1) Secrets Manager
+<a name="4_25"></a>
+## [↖](#top)[↑](#4_24_6_4)[↓](#4_25_1) Secrets Manager
 <!-- toc_start -->
-* [Overview](#4_24_1)
+* [Overview](#4_25_1)
 <!-- toc_end -->
 
-<a name="4_24_1"></a>
-### [↖](#4_24)[↑](#4_24)[↓](#4_25) Overview
+<a name="4_25_1"></a>
+### [↖](#4_25)[↑](#4_25)[↓](#4_26) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
 resources. The service enables you to easily rotate, manage, and retrieve database credentials,
 API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
@@ -3097,15 +3202,15 @@ AWS Cloud, third-party services, and on-premises.0
 
 ---
 
-<a name="4_25"></a>
-## [↖](#top)[↑](#4_24_1)[↓](#4_25_1) Service Catalog
+<a name="4_26"></a>
+## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) Service Catalog
 <!-- toc_start -->
-* [Overview](#4_25_1)
-* [Components](#4_25_2)
+* [Overview](#4_26_1)
+* [Components](#4_26_2)
 <!-- toc_end -->
 
-<a name="4_25_1"></a>
-### [↖](#4_25)[↑](#4_25)[↓](#4_25_2) Overview
+<a name="4_26_1"></a>
+### [↖](#4_26)[↑](#4_26)[↓](#4_26_2) Overview
 AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
 approved for use on AWS. These IT services can include everything from virtual machine images,
 servers, software, and databases to complete multi-tier application architectures. AWS Service
@@ -3119,8 +3224,8 @@ deploy only the approved IT services they need.
 * Self-service for user
   * Integrates with self-service portals like ServiceNow
 
-<a name="4_25_2"></a>
-### [↖](#4_25)[↑](#4_25_1)[↓](#4_26) Components
+<a name="4_26_2"></a>
+### [↖](#4_26)[↑](#4_26_1)[↓](#4_27) Components
 * **Admins** define
   * **Product**
     * Defined in CloudFormation
@@ -3134,14 +3239,14 @@ deploy only the approved IT services they need.
 
 ---
 
-<a name="4_26"></a>
-## [↖](#top)[↑](#4_25_2)[↓](#4_26_1) Step Functions
+<a name="4_27"></a>
+## [↖](#top)[↑](#4_26_2)[↓](#4_27_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_26_1)
+* [Overview](#4_27_1)
 <!-- toc_end -->
 
-<a name="4_26_1"></a>
-### [↖](#4_26)[↑](#4_26)[↓](#4_27) Overview
+<a name="4_27_1"></a>
+### [↖](#4_27)[↑](#4_27)[↓](#4_28) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -3154,20 +3259,20 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_27"></a>
-## [↖](#top)[↑](#4_26_1)[↓](#4_27_1) Systems Manager
+<a name="4_28"></a>
+## [↖](#top)[↑](#4_27_1)[↓](#4_28_1) Systems Manager
 <!-- toc_start -->
-* [Overview](#4_27_1)
-* [Components](#4_27_2)
-  * [Resources groups](#4_27_2_1)
-  * [Insights](#4_27_2_2)
-  * [Parameter store](#4_27_2_3)
-  * [Action & Change](#4_27_2_4)
-  * [Instances & Nodes](#4_27_2_5)
+* [Overview](#4_28_1)
+* [Components](#4_28_2)
+  * [Resources groups](#4_28_2_1)
+  * [Insights](#4_28_2_2)
+  * [Parameter store](#4_28_2_3)
+  * [Action & Change](#4_28_2_4)
+  * [Instances & Nodes](#4_28_2_5)
 <!-- toc_end -->
 
-<a name="4_27_1"></a>
-### [↖](#4_27)[↑](#4_27)[↓](#4_27_2) Overview
+<a name="4_28_1"></a>
+### [↖](#4_28)[↑](#4_28)[↓](#4_28_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
 Manager provides a unified user interface so you can view operational data from multiple AWS
 services and allows you to automate operational tasks across your AWS resources. With Systems
@@ -3189,16 +3294,16 @@ manage your infrastructure securely at scale.
   * Installed on instances
   * Need correct IAM permissions, then shows up on SSM dashboard
 
-<a name="4_27_2"></a>
-### [↖](#4_27)[↑](#4_27_1)[↓](#4_27_2_1) Components
-<a name="4_27_2_1"></a>
-#### [↖](#4_27)[↑](#4_27_2)[↓](#4_27_2_2) Resources groups
+<a name="4_28_2"></a>
+### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_2_1) Components
+<a name="4_28_2_1"></a>
+#### [↖](#4_28)[↑](#4_28_2)[↓](#4_28_2_2) Resources groups
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
 
-<a name="4_27_2_2"></a>
-#### [↖](#4_27)[↑](#4_27_2_1)[↓](#4_27_2_3) Insights
+<a name="4_28_2_2"></a>
+#### [↖](#4_28)[↑](#4_28_2_1)[↓](#4_28_2_3) Insights
 * **Insights dashboards**
   * Automatically aggregates and displays operational data for each resource group
 * **Inventory**
@@ -3206,13 +3311,13 @@ manage your infrastructure securely at scale.
 * **Configuration Compliance**
   * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
 
-<a name="4_27_2_3"></a>
-#### [↖](#4_27)[↑](#4_27_2_2)[↓](#4_27_2_4) Parameter store
+<a name="4_28_2_3"></a>
+#### [↖](#4_28)[↑](#4_28_2_2)[↓](#4_28_2_4) Parameter store
 * Centralized store to manage your configuration data, whether plain-text data such as database
   strings or secrets such as passwords
 
-<a name="4_27_2_4"></a>
-#### [↖](#4_27)[↑](#4_27_2_3)[↓](#4_27_2_5) Action & Change
+<a name="4_28_2_4"></a>
+#### [↖](#4_28)[↑](#4_28_2_3)[↓](#4_28_2_5) Action & Change
 * **Automation**
   * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
   * Build Automation workflows to configure and manage instances and AWS resources.
@@ -3226,8 +3331,8 @@ manage your infrastructure securely at scale.
 * **Change Calendar**
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
-<a name="4_27_2_5"></a>
-#### [↖](#4_27)[↑](#4_27_2_4)[↓](#4_28) Instances & Nodes
+<a name="4_28_2_5"></a>
+#### [↖](#4_28)[↑](#4_28_2_4)[↓](#4_29) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -3259,14 +3364,14 @@ manage your infrastructure securely at scale.
 
 ---
 
-<a name="4_28"></a>
-## [↖](#top)[↑](#4_27_2_5)[↓](#4_28_1) Trusted Advisor
+<a name="4_29"></a>
+## [↖](#top)[↑](#4_28_2_5)[↓](#4_29_1) Trusted Advisor
 <!-- toc_start -->
-* [Overview](#4_28_1)
+* [Overview](#4_29_1)
 <!-- toc_end -->
 
-<a name="4_28_1"></a>
-### [↖](#4_28)[↑](#4_28)[↓](#4_29) Overview
+<a name="4_29_1"></a>
+### [↖](#4_29)[↑](#4_29)[↓](#4_30) Overview
 * AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision
 your resources following AWS best practices. Whether establishing new workflows, developing
 applications, or as part of ongoing improvement, take advantage of the recommendations provided by
@@ -3285,14 +3390,14 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
 
 ---
 
-<a name="4_29"></a>
-## [↖](#top)[↑](#4_28_1)[↓](#4_29_1) X-Ray
+<a name="4_30"></a>
+## [↖](#top)[↑](#4_29_1)[↓](#4_30_1) X-Ray
 <!-- toc_start -->
-* [Overview](#4_29_1)
+* [Overview](#4_30_1)
 <!-- toc_end -->
 
-<a name="4_29_1"></a>
-### [↖](#4_29)[↑](#4_29) Overview
+<a name="4_30_1"></a>
+### [↖](#4_30)[↑](#4_30) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
