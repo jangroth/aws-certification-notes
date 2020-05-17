@@ -119,6 +119,8 @@
 * Determine how to design and automate disaster recovery strategies
 * Evaluate a deployment for points of failure
 
+---
+
 <a name="3"></a>
 # [↖](#top)[↑](#2_1_6)[↓](#3_1) Concepts
 
@@ -344,6 +346,8 @@ status of any instances that are unhealthy at the time of the health check is `O
 * Need to deploy an X.509 certificate on ELB
 * Can configure back-end authentication
   * Once configured ELB only communicates with an instance if it has a matching public key
+
+---
 
 <a name="3_3"></a>
 ## [↖](#top)[↑](#3_2_4)[↓](#3_3_1) EC2 Auto Scaling Concepts
@@ -629,6 +633,28 @@ application and making changes to your application without invoking the scaling 
 
 ---
 
+## On-premise strategies
+
+### EC2 and On-premise VMs
+* Can download Amazon Linux 2 AMI in VM format to run on-premise
+* Can import existing VMs into EC2
+
+### AWS Application Discovery Service
+* Gather information about On-premises instances to plan a migration
+* Server utilization and dependency mappings
+* Track with AWS Migration Hub
+
+### AWS Database Migration Service
+* Replicate 
+  * On-prem -> AWS
+  * AWS -> On-prem
+  * AWS -> AWS
+
+### AWS Server Migration Service
+* Incremental replication of on-prem instances into AWS
+
+---
+
 <a name="3_5"></a>
 ## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) Cost Allocation Tags
 <!-- toc_start -->
@@ -701,6 +727,8 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 * Security Groups
 * System Firewalls running on EC2 instances
 
+---
+
 <a name="3_7"></a>
 ## [↖](#top)[↑](#3_6_2)[↓](#3_7_1) Multi AZ
 <!-- toc_start -->
@@ -721,6 +749,8 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 * S3 (with the exception of One Zone Infrequent Access)
 * DynamoDB
 * All of AWS' propriertrary services
+
+---
 
 <a name="3_8"></a>
 ## [↖](#top)[↑](#3_7_2)[↓](#3_8_1) Multi Region
@@ -748,7 +778,7 @@ CloudFormation|StackSets
 CodePipeline|*action* can be region specific -> multi-region deploys
 
 <a name="3_8_2"></a>
-### [↖](#3_8)[↑](#3_8_1)[↓](#3_9) Mulit Region with Route 53
+### [↖](#3_8)[↑](#3_8_1)[↓](#3_9) Multi Region with Route 53
 * Deploy stacks behind ALB in different regions
 * Use Route 53 routing
   * Latency
@@ -756,6 +786,21 @@ CodePipeline|*action* can be region specific -> multi-region deploys
 * Configure health checks
   * Trigger automated DNS failover
   * E.g. base health checks on CloudWatch Alarms
+
+## Multi Account
+
+### Services that have a concept of multi account
+
+.|.
+-|-
+IAM|Define *IAM Trust* to enable cross account actions<br/>Use STS to assume into roles in different accounts
+CodePipeline|Trigger CodeDeploy across accounts
+AWS Config|Agregate across accounts
+CloudWatch Events|Use *EventBus* to share events across accounts
+CloudWatch Logs|Use *Logs Destination* to send events into logging account
+CloudFormation|*StackSets* can be deployed across accounts
+
+---
 
 <a name="3_9"></a>
 ## [↖](#top)[↑](#3_8_2)[↓](#3_10) Disaster Recovery
@@ -777,6 +822,8 @@ Backup & Restore|High|High|Low|Regular backups|Restore
 Pilot Light|Medium|Medium|Medium|Core system is always running|Add non-critical systems
 Warm Standby|Low|Low|High|Full system at minimum size always running|Add resources
 Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always running|Only switch traffic
+
+---
 
 <a name="3_10"></a>
 ## [↖](#top)[↑](#3_9)[↓](#3_10_1) External Tools
@@ -849,6 +896,8 @@ installed. These rules are regularly updated by AWS security researchers.
 * Can automate assessments via schedules CloudWatch events
 * Assessment templates can notify SNS
   * Could trigger lambda to remediate EC2 findings via SSM documents
+
+---
 
 <a name="4_2"></a>
 ## [↖](#top)[↑](#4_1_1)[↓](#4_2_1) API Gateway
@@ -956,6 +1005,7 @@ A data schema specifying the data structure of a request or response payload.
   * Can assoicate with stage/method/API key (to limit certain clients)
 
 ---
+
 <a name="4_3"></a>
 ## [↖](#top)[↑](#4_2_2_7)[↓](#4_3_1) CloudFormation
 <!-- toc_start -->
@@ -2017,7 +2067,7 @@ hooks:
 * Lambda deploys a new *version* under an *alias*, and traffic is shifted between old and new version
 	* (Versions and Aliases are native Lambda features)
 
---
+---
 
 <a name="4_9"></a>
 ## [↖](#top)[↑](#4_8_3_5)[↓](#4_9_1) CodePipeline
@@ -3055,6 +3105,20 @@ no additional charge.
 * *Consolidated billing*
   * One *paying account* linked to many *linked accounts*
   * Pricing benefits (Volumes, Storage, Instances)
+* Create account hierachy with *Organizational Units* (OUs)
+* Apply SCPs across the hierachy
+* Apply Tag Policies across the hierachy
+
+### Service Control Policies (SCP)
+Service control policies (SCPs) are one type of policy that you can use to manage your organization.
+SCPs offer central control over the maximum available permissions for all accounts in your
+organization, allowing you to ensure your accounts stay within your organization’s access control
+guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't
+available if your organization has enabled only the consolidated billing features. 
+
+### Tag Policies
+Tag policies are a type of policy that can help you standardize tags across resources in your
+organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
 <a name="4_23_2"></a>
 ### [↖](#4_23)[↑](#4_23_1_1)[↓](#4_24) Limits:
@@ -3411,5 +3475,3 @@ complex microservices applications consisting of thousands of services.
 * X-Ray API collects information
   * Automation could base on regular polling of `GetServiceGraph`
 * X-Ray Console displays information in *service map*
-
----
