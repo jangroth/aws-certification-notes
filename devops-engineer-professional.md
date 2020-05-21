@@ -868,7 +868,7 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 # [↖](#top)[↑](#3_10_1_2)[↓](#4_1) Services
 
 <a name="4_1"></a>
-## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector
+## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector (Core Service)
 <!-- toc_start -->
 * [Overview](#4_1_1)
 <!-- toc_end -->
@@ -900,7 +900,7 @@ installed. These rules are regularly updated by AWS security researchers.
 ---
 
 <a name="4_2"></a>
-## [↖](#top)[↑](#4_1_1)[↓](#4_2_1) API Gateway
+## [↖](#top)[↑](#4_1_1)[↓](#4_2_1) API Gateway (Core Service)
 <!-- toc_start -->
 * [Overview](#4_2_1)
   * [Benefits](#4_2_1_1)
@@ -1007,7 +1007,7 @@ A data schema specifying the data structure of a request or response payload.
 ---
 
 <a name="4_3"></a>
-## [↖](#top)[↑](#4_2_2_7)[↓](#4_3_1) CloudFormation
+## [↖](#top)[↑](#4_2_2_7)[↓](#4_3_1) CloudFormation (Core Service)
 <!-- toc_start -->
 * [Overview](#4_3_1)
 * [Components](#4_3_2)
@@ -1444,7 +1444,7 @@ Outputs per stack|60
 ---
 
 <a name="4_4"></a>
-## [↖](#top)[↑](#4_3_4)[↓](#4_4_1) CloudTrail
+## [↖](#top)[↑](#4_3_4)[↓](#4_4_1) CloudTrail (Core Service)
 <!-- toc_start -->
 * [Overview](#4_4_1)
 * [Concepts](#4_4_2)
@@ -1487,7 +1487,7 @@ recorded as CloudTrail events.
 ---
 
 <a name="4_5"></a>
-## [↖](#top)[↑](#4_4_3)[↓](#4_5_1) CloudWatch
+## [↖](#top)[↑](#4_4_3)[↓](#4_5_1) CloudWatch (Core Service)
 <!-- toc_start -->
 * [Overview](#4_5_1)
 * [Concepts](#4_5_2)
@@ -1727,7 +1727,7 @@ CloudFront Access Logs|S3
 ---
 
 <a name="4_6"></a>
-## [↖](#top)[↑](#4_5_5)[↓](#4_6_1) CodeBuild
+## [↖](#top)[↑](#4_5_5)[↓](#4_6_1) CodeBuild (Core Service)
 <!-- toc_start -->
 * [Overview](#4_6_1)
 * [Benefits](#4_6_2)
@@ -1845,7 +1845,7 @@ cache:
 ---
 
 <a name="4_7"></a>
-## [↖](#top)[↑](#4_6_3_2)[↓](#4_7_1) CodeCommit
+## [↖](#top)[↑](#4_6_3_2)[↓](#4_7_1) CodeCommit (Core Service)
 <!-- toc_start -->
 * [Overview](#4_7_1)
 * [Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments](#4_7_2)
@@ -1916,7 +1916,7 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
 ---
 
 <a name="4_8"></a>
-## [↖](#top)[↑](#4_7_3_3)[↓](#4_8_1) CodeDeploy
+## [↖](#top)[↑](#4_7_3_3)[↓](#4_8_1) CodeDeploy (Core Service)
 <!-- toc_start -->
 * [Overview](#4_8_1)
   * [Benefits](#4_8_1_1)
@@ -2070,7 +2070,7 @@ hooks:
 ---
 
 <a name="4_9"></a>
-## [↖](#top)[↑](#4_8_3_5)[↓](#4_9_1) CodePipeline
+## [↖](#top)[↑](#4_8_3_5)[↓](#4_9_1) CodePipeline (Core Service)
 <!-- toc_start -->
 * [Overview](#4_9_1)
   * [Benefits](#4_9_1_1)
@@ -2227,7 +2227,7 @@ Uses `cfn-transform` to generate cfn from `template.yml`
 ---
 
 <a name="4_11"></a>
-## [↖](#top)[↑](#4_10_3)[↓](#4_11_1) Config
+## [↖](#top)[↑](#4_10_3)[↓](#4_11_1) Config (Core Service)
 <!-- toc_start -->
 * [Overview](#4_11_1)
 * [Config Rules](#4_11_2)
@@ -2508,7 +2508,7 @@ TODO: https://aws.amazon.com/blogs/devops/build-a-continuous-delivery-pipeline-f
 ---
 
 <a name="4_14"></a>
-## [↖](#top)[↑](#4_13_6)[↓](#4_14_1) Elastic Beanstalk
+## [↖](#top)[↑](#4_13_6)[↓](#4_14_1) Elastic Beanstalk (Core Service)
 <!-- toc_start -->
 * [Overview](#4_14_1)
 * [Concepts](#4_14_2)
@@ -2694,7 +2694,7 @@ Service, you get the ELK stack you need, without the operational overhead.
 ---
 
 <a name="4_16"></a>
-## [↖](#top)[↑](#4_15_2)[↓](#4_16_1) GuardDuty
+## [↖](#top)[↑](#4_15_2)[↓](#4_16_1) GuardDuty (Core Service)
 <!-- toc_start -->
 * [Overview](#4_16_1)
 <!-- toc_end -->
@@ -2719,7 +2719,7 @@ event management and workflow systems.
 ---
 
 <a name="4_17"></a>
-## [↖](#top)[↑](#4_16_1)[↓](#4_17_1) Kinesis
+## [↖](#top)[↑](#4_16_1)[↓](#4_17_1) Kinesis (Core Service)
 <!-- toc_start -->
 * [Overview](#4_17_1)
   * [Kinesis Data Stream](#4_17_1_1)
@@ -2804,7 +2804,7 @@ For _real time delivery_ Kinesis data streams are the only option.
 ---
 
 <a name="4_18"></a>
-## [↖](#top)[↑](#4_17_2)[↓](#4_18_1) Lambda
+## [↖](#top)[↑](#4_17_2)[↓](#4_18_1) Lambda (Core Service)
 <!-- toc_start -->
 * [Overview](#4_18_1)
 * [Managing Functions](#4_18_2)
@@ -2974,7 +2974,7 @@ so you can direct resources toward differentiating your business.
 ---
 
 <a name="4_22"></a>
-## [↖](#top)[↑](#4_21_1)[↓](#4_22_1) OpsWorks Stacks
+## [↖](#top)[↑](#4_21_1)[↓](#4_22_1) OpsWorks Stacks (Core Service)
 <!-- toc_start -->
 * [Overview](#4_22_1)
 * [Components](#4_22_2)
@@ -3267,7 +3267,7 @@ AWS Cloud, third-party services, and on-premises.0
 ---
 
 <a name="4_26"></a>
-## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) Service Catalog
+## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) Service Catalog (Core Service)
 <!-- toc_start -->
 * [Overview](#4_26_1)
 * [Components](#4_26_2)
@@ -3324,7 +3324,7 @@ retries when there are errors, so your application executes in order and as expe
 ---
 
 <a name="4_28"></a>
-## [↖](#top)[↑](#4_27_1)[↓](#4_28_1) Systems Manager
+## [↖](#top)[↑](#4_27_1)[↓](#4_28_1) Systems Manager (Core Service)
 <!-- toc_start -->
 * [Overview](#4_28_1)
 * [Components](#4_28_2)
@@ -3429,7 +3429,7 @@ manage your infrastructure securely at scale.
 ---
 
 <a name="4_29"></a>
-## [↖](#top)[↑](#4_28_2_5)[↓](#4_29_1) Trusted Advisor
+## [↖](#top)[↑](#4_28_2_5)[↓](#4_29_1) Trusted Advisor (Core Service)
 <!-- toc_start -->
 * [Overview](#4_29_1)
 <!-- toc_end -->
@@ -3455,7 +3455,7 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
 ---
 
 <a name="4_30"></a>
-## [↖](#top)[↑](#4_29_1)[↓](#4_30_1) X-Ray
+## [↖](#top)[↑](#4_29_1)[↓](#4_30_1) X-Ray (Core Service)
 <!-- toc_start -->
 * [Overview](#4_30_1)
 <!-- toc_end -->
