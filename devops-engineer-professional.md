@@ -9,43 +9,45 @@
   * [EC2 Deployment Concepts](#3_2)
   * [EC2 Auto Scaling Concepts](#3_3)
   * [EC2 Instance Compliance](#3_4)
-  * [Cost Allocation Tags](#3_5)
-  * [Data/Network Protection](#3_6)
-  * [Multi AZ](#3_7)
-  * [Multi Region](#3_8)
-  * [Disaster Recovery](#3_9)
-  * [External Tools](#3_10)
+  * [On-premise strategies](#3_5)
+  * [Cost Allocation Tags](#3_6)
+  * [Data/Network Protection](#3_7)
+  * [Multi AZ](#3_8)
+  * [Multi Region](#3_9)
+  * [Multi Account](#3_10)
+  * [Disaster Recovery](#3_11)
+  * [External Tools](#3_12)
 * [Services](#4)
-  * [Amazon Inspector](#4_1)
-  * [API Gateway](#4_2)
-  * [CloudFormation](#4_3)
-  * [CloudTrail](#4_4)
-  * [CloudWatch](#4_5)
-  * [CodeBuild](#4_6)
-  * [CodeCommit](#4_7)
-  * [CodeDeploy](#4_8)
-  * [CodePipeline](#4_9)
+  * [Amazon Inspector (Core Service)](#4_1)
+  * [API Gateway (Core Service)](#4_2)
+  * [CloudFormation (Core Service)](#4_3)
+  * [CloudTrail (Core Service)](#4_4)
+  * [CloudWatch (Core Service)](#4_5)
+  * [CodeBuild (Core Service)](#4_6)
+  * [CodeCommit (Core Service)](#4_7)
+  * [CodeDeploy (Core Service)](#4_8)
+  * [CodePipeline (Core Service)](#4_9)
   * [CodeStar](#4_10)
-  * [Config](#4_11)
+  * [Config (Core Service)](#4_11)
   * [DynamoDB](#4_12)
   * [ECS](#4_13)
-  * [Elastic Beanstalk](#4_14)
+  * [Elastic Beanstalk (Core Service)](#4_14)
   * [Elasticsearch Service](#4_15)
-  * [GuardDuty](#4_16)
-  * [Kinesis](#4_17)
-  * [Lambda](#4_18)
+  * [GuardDuty (Core Service)](#4_16)
+  * [Kinesis (Core Service)](#4_17)
+  * [Lambda (Core Service)](#4_18)
   * [License Manager](#4_19)
   * [Macie](#4_20)
   * [Managed Services](#4_21)
-  * [OpsWorks Stacks](#4_22)
+  * [OpsWorks Stacks (Core Service)](#4_22)
   * [Organizations](#4_23)
   * [S3](#4_24)
   * [Secrets Manager](#4_25)
-  * [Service Catalog](#4_26)
+  * [Service Catalog (Core Service)](#4_26)
   * [Step Functions](#4_27)
-  * [Systems Manager](#4_28)
-  * [Trusted Advisor](#4_29)
-  * [X-Ray](#4_30)
+  * [Systems Manager (Core Service)](#4_28)
+  * [Trusted Advisor (Core Service)](#4_29)
+  * [X-Ray (Core Service)](#4_30)
 ---
 <!-- toc_end -->
 
@@ -633,36 +635,47 @@ application and making changes to your application without invoking the scaling 
 
 ---
 
-## On-premise strategies
+<a name="3_5"></a>
+## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) On-premise strategies
+<!-- toc_start -->
+* [EC2 and On-premise VMs](#3_5_1)
+* [AWS Application Discovery Service](#3_5_2)
+* [AWS Database Migration Service](#3_5_3)
+* [AWS Server Migration Service](#3_5_4)
+<!-- toc_end -->
 
-### EC2 and On-premise VMs
+<a name="3_5_1"></a>
+### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) EC2 and On-premise VMs
 * Can download Amazon Linux 2 AMI in VM format to run on-premise
 * Can import existing VMs into EC2
 
-### AWS Application Discovery Service
+<a name="3_5_2"></a>
+### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_3) AWS Application Discovery Service
 * Gather information about On-premises instances to plan a migration
 * Server utilization and dependency mappings
 * Track with AWS Migration Hub
 
-### AWS Database Migration Service
+<a name="3_5_3"></a>
+### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_4) AWS Database Migration Service
 * Replicate 
   * On-prem -> AWS
   * AWS -> On-prem
   * AWS -> AWS
 
-### AWS Server Migration Service
+<a name="3_5_4"></a>
+### [↖](#3_5)[↑](#3_5_3)[↓](#3_6) AWS Server Migration Service
 * Incremental replication of on-prem instances into AWS
 
 ---
 
-<a name="3_5"></a>
-## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) Cost Allocation Tags
+<a name="3_6"></a>
+## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) Cost Allocation Tags
 <!-- toc_start -->
-* [Overview](#3_5_1)
+* [Overview](#3_6_1)
 <!-- toc_end -->
 
-<a name="3_5_1"></a>
-### [↖](#3_5)[↑](#3_5)[↓](#3_6) Overview
+<a name="3_6_1"></a>
+### [↖](#3_6)[↑](#3_6)[↓](#3_7) Overview
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value.
 For each resource, each tag key must be unique, and each tag key can have only one value. You can
 use tags to organize your resources, and cost allocation tags to track your AWS costs on a
@@ -675,20 +688,20 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 ---
 
-<a name="3_6"></a>
-## [↖](#top)[↑](#3_5_1)[↓](#3_6_1) Data/Network Protection
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_1)[↓](#3_7_1) Data/Network Protection
 <!-- toc_start -->
-* [Data Protection](#3_6_1)
-  * [In Transit](#3_6_1_1)
-  * [At Rest](#3_6_1_2)
-* [Network Protection](#3_6_2)
+* [Data Protection](#3_7_1)
+  * [In Transit](#3_7_1_1)
+  * [At Rest](#3_7_1_2)
+* [Network Protection](#3_7_2)
 <!-- toc_end -->
 
-<a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6)[↓](#3_6_1_1) Data Protection
+<a name="3_7_1"></a>
+### [↖](#3_7)[↑](#3_7)[↓](#3_7_1_1) Data Protection
 
-<a name="3_6_1_1"></a>
-#### [↖](#3_6)[↑](#3_6_1)[↓](#3_6_1_2) In Transit
+<a name="3_7_1_1"></a>
+#### [↖](#3_7)[↑](#3_7_1)[↓](#3_7_1_2) In Transit
 * TLS for transit encryption
 * ACM to manage SSL/TLS certificates
 * Load Balancers
@@ -699,8 +712,8 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 * All AWS services expose https endpoint
   * S3 also has http (shouldn't use it)
 
-<a name="3_6_1_2"></a>
-#### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_2) At Rest
+<a name="3_7_1_2"></a>
+#### [↖](#3_7)[↑](#3_7_1_1)[↓](#3_7_2) At Rest
 * S3
   * SSE-S3: Server-side encryption using AWS' key
   * SSE-KMS: Server-side encryption using own KMS key
@@ -716,8 +729,8 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
   * PHI - protected health information
   * PII - personally-identifying information
 
-<a name="3_6_2"></a>
-### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_7) Network Protection
+<a name="3_7_2"></a>
+### [↖](#3_7)[↑](#3_7_1_2)[↓](#3_8) Network Protection
 * Direct Connect
   * Private direct connection between on-site and AWS
 * Public Internet: Use VPN
@@ -729,38 +742,38 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 ---
 
-<a name="3_7"></a>
-## [↖](#top)[↑](#3_6_2)[↓](#3_7_1) Multi AZ
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_2)[↓](#3_8_1) Multi AZ
 <!-- toc_start -->
-* [Services where multi AZ needs to enabled manually](#3_7_1)
-* [Services that are implicitely multi AZ](#3_7_2)
+* [Services where multi AZ needs to enabled manually](#3_8_1)
+* [Services that are implicitely multi AZ](#3_8_2)
 <!-- toc_end -->
 
-<a name="3_7_1"></a>
-### [↖](#3_7)[↑](#3_7)[↓](#3_7_2) Services where multi AZ needs to enabled manually
+<a name="3_8_1"></a>
+### [↖](#3_8)[↑](#3_8)[↓](#3_8_2) Services where multi AZ needs to enabled manually
 * Assign AZ
   * ELB, EFS, ASG, Elastic Beanstalk 
 * Synchronous database for failover in different AZ
   * RDS, ElastiCache, Aurora (for DB itself, data is already multi AZ)
   * ElasticSearch
 
-<a name="3_7_2"></a>
-### [↖](#3_7)[↑](#3_7_1)[↓](#3_8) Services that are implicitely multi AZ
+<a name="3_8_2"></a>
+### [↖](#3_8)[↑](#3_8_1)[↓](#3_9) Services that are implicitely multi AZ
 * S3 (with the exception of One Zone Infrequent Access)
 * DynamoDB
 * All of AWS' propriertrary services
 
 ---
 
-<a name="3_8"></a>
-## [↖](#top)[↑](#3_7_2)[↓](#3_8_1) Multi Region
+<a name="3_9"></a>
+## [↖](#top)[↑](#3_8_2)[↓](#3_9_1) Multi Region
 <!-- toc_start -->
-* [Services that have a concept of multi region](#3_8_1)
-* [Mulit Region with Route 53](#3_8_2)
+* [Services that have a concept of multi region](#3_9_1)
+* [Multi Region with Route 53](#3_9_2)
 <!-- toc_end -->
 
-<a name="3_8_1"></a>
-### [↖](#3_8)[↑](#3_8)[↓](#3_8_2) Services that have a concept of multi region
+<a name="3_9_1"></a>
+### [↖](#3_9)[↑](#3_9)[↓](#3_9_2) Services that have a concept of multi region
 
 .|.
 -|-
@@ -777,8 +790,8 @@ Lambda@Edge|For Global Lambda Functions at Edge Locations
 CloudFormation|StackSets
 CodePipeline|*action* can be region specific -> multi-region deploys
 
-<a name="3_8_2"></a>
-### [↖](#3_8)[↑](#3_8_1)[↓](#3_9) Multi Region with Route 53
+<a name="3_9_2"></a>
+### [↖](#3_9)[↑](#3_9_1)[↓](#3_10) Multi Region with Route 53
 * Deploy stacks behind ALB in different regions
 * Use Route 53 routing
   * Latency
@@ -787,9 +800,14 @@ CodePipeline|*action* can be region specific -> multi-region deploys
   * Trigger automated DNS failover
   * E.g. base health checks on CloudWatch Alarms
 
-## Multi Account
+<a name="3_10"></a>
+## [↖](#top)[↑](#3_9_2)[↓](#3_10_1) Multi Account
+<!-- toc_start -->
+* [Services that have a concept of multi account](#3_10_1)
+<!-- toc_end -->
 
-### Services that have a concept of multi account
+<a name="3_10_1"></a>
+### [↖](#3_10)[↑](#3_10)[↓](#3_11) Services that have a concept of multi account
 
 .|.
 -|-
@@ -802,8 +820,8 @@ CloudFormation|*StackSets* can be deployed across accounts
 
 ---
 
-<a name="3_9"></a>
-## [↖](#top)[↑](#3_8_2)[↓](#3_10) Disaster Recovery
+<a name="3_11"></a>
+## [↖](#top)[↑](#3_10_1)[↓](#3_12) Disaster Recovery
 * DR is about preparing for and recovering from a disaster
 * *Recovery Point Objective* - RPO
   * How often do you run backups? How much data will be lost (since last backup)
@@ -825,16 +843,16 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 
 ---
 
-<a name="3_10"></a>
-## [↖](#top)[↑](#3_9)[↓](#3_10_1) External Tools
+<a name="3_12"></a>
+## [↖](#top)[↑](#3_11)[↓](#3_12_1) External Tools
 <!-- toc_start -->
-* [Jenkins](#3_10_1)
-  * [Integrating into CodePipeline](#3_10_1_1)
-  * [Plugins](#3_10_1_2)
+* [Jenkins](#3_12_1)
+  * [Integrating into CodePipeline](#3_12_1_1)
+  * [Plugins](#3_12_1_2)
 <!-- toc_end -->
 
-<a name="3_10_1"></a>
-### [↖](#3_10)[↑](#3_10)[↓](#3_10_1_1) Jenkins
+<a name="3_12_1"></a>
+### [↖](#3_12)[↑](#3_12)[↓](#3_12_1_1) Jenkins
 * Can replace CodeBuild, CodePipeline, CodeDeploy
 	* Tight integration with those services
 
@@ -845,14 +863,14 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 * `Jenkinsfile` to configure CI/CD
 * Many AWS plugins
 
-<a name="3_10_1_1"></a>
-#### [↖](#3_10)[↑](#3_10_1)[↓](#3_10_1_2) Integrating into CodePipeline
+<a name="3_12_1_1"></a>
+#### [↖](#3_12)[↑](#3_12_1)[↓](#3_12_1_2) Integrating into CodePipeline
 * CodePipeline can send build jobs to Jenkins instead of CodeBuild
 * Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
 * Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
 
-<a name="3_10_1_2"></a>
-#### [↖](#3_10)[↑](#3_10_1_1)[↓](#4) Plugins
+<a name="3_12_1_2"></a>
+#### [↖](#3_12)[↑](#3_12_1_1)[↓](#4) Plugins
 * *EC2-Plugin*
 	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
 	* Also support spot instances
@@ -865,7 +883,7 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_10_1_2)[↓](#4_1) Services
+# [↖](#top)[↑](#3_12_1_2)[↓](#4_1) Services
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector (Core Service)
@@ -922,6 +940,9 @@ you can create REST and WebSocket APIs that act as a “front door” for applic
 business logic, or functionality from your backend services, such as workloads running on Amazon
 Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time
 communication applications.
+
+* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2018</a>
 
 <a name="4_2_1_1"></a>
 #### [↖](#4_2)[↑](#4_2_1)[↓](#4_2_2) Benefits
@@ -1525,6 +1546,7 @@ optimize your applications, and ensure they are running smoothly.
 * Improve total cost of ownership
 * Optimize applications and operational resources
 * Derive actionable insights from logs
+* See also: <a href="https://www.awsgeek.com/Amazon-EventBridge/Amazon-EventBridge.jpg" target="_blank">AWS Geek 2019</a>
 
 <a name="4_5_2"></a>
 ### [↖](#4_5)[↑](#4_5_1)[↓](#4_5_2_1) Concepts
@@ -2304,6 +2326,9 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * Big Data: Integrates with *AWS Elastic MapReduce* and *Redshift*
 * Can configure TTL to expire table entries
 
+* See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2018/Amazon-DynamoDB-Under-the-Hood/Amazon-DynamoDB-Under-the-Hood.jpg" target="_blank">AWS Geek 2018</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-DynamoDB/Amazon-DynamoDB.jpg" target="_blank">AWS Geek 2018</a>
+
 <a name="4_12_2"></a>
 ### [↖](#4_12)[↑](#4_12_1)[↓](#4_12_2_1) Keys and indexes
 
@@ -2411,6 +2436,10 @@ your cluster on a serverless infrastructure that is managed by Amazon ECS by lau
 services or tasks using the Fargate launch type. For more control you can host your tasks on a
 cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2
 launch type.
+
+* See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2019/CI-CD-with-Fargate-ECS/CI-CD-with-Fargate-ECS.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2017/Container-Networking-Deep-Dive-with-Amazon-ECS/Container-Networking-Deep-Dive-with-Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-ECS/Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
 
 <a name="4_13_1_1"></a>
 #### [↖](#4_13)[↑](#4_13_1)[↓](#4_13_2) Benefits
@@ -2544,6 +2573,7 @@ underlying resources at any time.
   * Ruby Stanalone/Puma
   * Docker Single-/Multicontainer - runs on ECS
   * Docker Preconfigured Glassfish/Python/Go
+* See also: <a href="https://www.awsgeek.com/AWS-Elastic-Beanstalk/AWS-Elastic-Beanstalk.jpg" target-"_blank">AWS Geek 2019</a>
 
 <a name="4_14_2"></a>
 ### [↖](#4_14)[↑](#4_14_1)[↓](#4_14_2_1) Concepts
@@ -2715,6 +2745,7 @@ actionable, easy to aggregate across multiple accounts, and straightforward to p
 event management and workflow systems.
 
 * Integrates with CloudWatch events
+* See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target-"_blank">AWS Geek 2020</a>
 
 ---
 
@@ -2838,6 +2869,8 @@ call it directly from any web or mobile app.
   * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
 * Can pass in *environment variables*
   * These can be KMS-encrypted as well (need SDK to decrypt)
+* See also: <a href="https://www.awsgeek.com/AWS-Lambda/AWS-Lambda.jpg" target-"_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/AWS-Lambda/AWS-Lambda.jpg" target-"_blank">AWS Geek 2020</a>
 
 <a name="4_18_2"></a>
 ### [↖](#4_18)[↑](#4_18_1)[↓](#4_18_2_1) Managing Functions
@@ -2950,6 +2983,8 @@ alerts that give visibility into how this data is being accessed or moved. The f
 service continuously monitors data access activity for anomalies, and generates detailed alerts
 when it detects risk of unauthorized access or inadvertent data leaks. Amazon Macie is available
 to protect data stored in Amazon S3.
+
+* See also: <a href="https://www.awsgeek.com/Amazon-Macie/Amazon-Macie.jpg" target-"_blank">AWS Geek 2019</a>
 
 ---
 
@@ -3080,7 +3115,9 @@ environments.
 <!-- toc_start -->
 * [Overview](#4_23_1)
   * [Benefits](#4_23_1_1)
-* [Limits:](#4_23_2)
+* [Service Control Policies (SCP)](#4_23_2)
+* [Tag Policies](#4_23_3)
+* [Limits:](#4_23_4)
 <!-- toc_end -->
 
 <a name="4_23_1"></a>
@@ -3109,19 +3146,21 @@ no additional charge.
 * Apply SCPs across the hierachy
 * Apply Tag Policies across the hierachy
 
-### Service Control Policies (SCP)
+<a name="4_23_2"></a>
+### [↖](#4_23)[↑](#4_23_1_1)[↓](#4_23_3) Service Control Policies (SCP)
 Service control policies (SCPs) are one type of policy that you can use to manage your organization.
 SCPs offer central control over the maximum available permissions for all accounts in your
 organization, allowing you to ensure your accounts stay within your organization’s access control
 guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't
 available if your organization has enabled only the consolidated billing features. 
 
-### Tag Policies
+<a name="4_23_3"></a>
+### [↖](#4_23)[↑](#4_23_2)[↓](#4_23_4) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your
 organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
-<a name="4_23_2"></a>
-### [↖](#4_23)[↑](#4_23_1_1)[↓](#4_24) Limits:
+<a name="4_23_4"></a>
+### [↖](#4_23)[↑](#4_23_3)[↓](#4_24) Limits:
 .|.
 -|-
 Maximum linked accounts|20
@@ -3129,7 +3168,7 @@ Maximum linked accounts|20
 ---
 
 <a name="4_24"></a>
-## [↖](#top)[↑](#4_23_2)[↓](#4_24_1) S3
+## [↖](#top)[↑](#4_23_4)[↓](#4_24_1) S3
 <!-- toc_start -->
 * [Overview](#4_24_1)
 * [Versioning](#4_24_2)
@@ -3159,6 +3198,7 @@ scale past trillions of objects worldwide.
 	* Reduced Redundancy Storage (RRS) *object lost* event
 * Buckets are *per region*, but AWS console is *global* (displaying all bucket for that account)
 * Bucket names have to be *globally* unique, should comply with DNS naming conventions.
+* See also: <a href="https://www.awsgeek.com/Amazon-S3/Amazon-S3.jpg" target-"_blank">AWS Geek 2018</a>
 
 <a name="4_24_2"></a>
 ### [↖](#4_24)[↑](#4_24_1)[↓](#4_24_3) Versioning
