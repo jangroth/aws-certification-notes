@@ -914,6 +914,7 @@ installed. These rules are regularly updated by AWS security researchers.
 * Can automate assessments via schedules CloudWatch events
 * Assessment templates can notify SNS
   * Could trigger lambda to remediate EC2 findings via SSM documents
+* On AWS: <a href="https://aws.amazon.com/inspector/" target="_blank">Service</a> - <a href="https://aws.amazon.com/inspector/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/inspector/latest/userguide/" target="_blank">User Guide</a>
 
 ---
 
@@ -941,6 +942,7 @@ business logic, or functionality from your backend services, such as workloads r
 Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time
 communication applications.
 
+* On AWS: <a href="https://aws.amazon.com/api-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/api-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/api-gateway/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2020</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2018</a>
 
@@ -1057,8 +1059,7 @@ needed to run your applications.
 * Allows to create and provision **resources** in a reusable **template** fashion
 * Declarative - no need for ordering and orchestration
 * Separation of concerns - different stacks for different purposes
-
-Templates are uploaded to S3 and then referenced by CloudFormation.
+* On AWS: <a href="https://aws.amazon.com/cloudformation/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudformation/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudformation/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_3_2"></a>
 ### [↖](#4_3)[↑](#4_3_1)[↓](#4_3_2_1) Components
@@ -1482,6 +1483,8 @@ analysis, resource change tracking, and troubleshooting. In addition, you can us
 detect unusual activity in your AWS accounts. These capabilities help simplify operational
 analysis and troubleshooting.
 
+* On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudtrail/latest/userguide/" target="_blank">User Guide</a>
+
 <a name="4_4_1"></a>
 ### [↖](#4_4)[↑](#4_4)[↓](#4_4_2) Overview
 CloudTrail is enabled by default in every account. All activities in an AWS account are being
@@ -1546,6 +1549,7 @@ optimize your applications, and ensure they are running smoothly.
 * Improve total cost of ownership
 * Optimize applications and operational resources
 * Derive actionable insights from logs
+* On AWS: <a href="https://aws.amazon.com/cloudwatch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudwatch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudwatch/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-EventBridge/Amazon-EventBridge.jpg" target="_blank">AWS Geek 2019</a>
 
 <a name="4_5_2"></a>
@@ -1767,6 +1771,7 @@ multiple builds concurrently, so your builds are not left waiting in a queue. Yo
 quickly by using prepackaged build environments, or you can create custom build environments that
 use your own build tools. With CodeBuild, you are charged by the minute for the compute resources
 you use.
+* On AWS: <a href="https://aws.amazon.com/codebuild/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codebuild/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codebuild/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_6_2"></a>
 ### [↖](#4_6)[↑](#4_6_1)[↓](#4_6_3) Benefits
@@ -1884,6 +1889,7 @@ It makes it easy for teams to collaborate on code in a secure and highly scalabl
 CodeCommit eliminates the need to operate your own source control system or worry about scaling
 its infrastructure. You can use CodeCommit to securely store anything from source code to binaries,
 and it works seamlessly with your existing Git tools.
+* On AWS: <a href="https://aws.amazon.com/codecommit/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codecommit/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codecommit/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_7_2"></a>
 ### [↖](#4_7)[↑](#4_7_1)[↓](#4_7_3) Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments
@@ -1964,6 +1970,7 @@ manual operations. The service scales to match your deployment needs.
 
 * CodeDeploy can be chained into CodePipeline and can use artifacts from there
 * CodeDeploy does not provision resources
+* On AWS: <a href="https://aws.amazon.com/codedeploy/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codedeploy/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_8_1_1"></a>
 #### [↖](#4_8)[↑](#4_8_1)[↓](#4_8_2) Benefits
@@ -2111,6 +2118,8 @@ features and updates. You can easily integrate AWS CodePipeline with third-party
 GitHub or with your own custom plugin. With AWS CodePipeline, you only pay for what you use. There
 are no upfront fees or long-term commitments.
 
+* On AWS: <a href="https://aws.amazon.com/codepipeline/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codepipeline/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codepipeline/latest/userguide/" target="_blank">User Guide</a>
+
 <a name="4_9_1_1"></a>
 #### [↖](#4_9)[↑](#4_9_1)[↓](#4_9_1_2) Benefits
 * Rapid delivery
@@ -2235,6 +2244,8 @@ Software. With the AWS CodeStar project dashboard, you can easily track progress
 entire software development process, from your backlog of work items to teams’ recent code
 deployments.
 
+* On AWS: <a href="https://aws.amazon.com/codestar/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codestar/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codestar/latest/userguide/" target="_blank">User Guide</a>
+
 <a name="4_10_2"></a>
 ### [↖](#4_10)[↑](#4_10_1)[↓](#4_10_3) Benefits
 * Start developing on AWS in minutes
@@ -2273,6 +2284,7 @@ auditing, security analysis, change management, and operational troubleshooting.
 * Retrieve historical configurations of one or more resources.
 * Receive a notification whenever a resource is created, modified, or deleted.
 * View relationships between resources. For example, you might want to find all resources that use a particular security group.
+* On AWS: <a href="https://aws.amazon.com/config/" target="_blank">Service</a> - <a href="https://aws.amazon.com/config/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/config/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_11_2"></a>
 ### [↖](#4_11)[↑](#4_11_1)[↓](#4_11_3) Config Rules
@@ -2314,6 +2326,12 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 
 <a name="4_12_1"></a>
 ### [↖](#4_12)[↑](#4_12)[↓](#4_12_2) Overview
+Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond
+performance at any scale. It's a fully managed, multiregion, multimaster, durable database with
+built-in security, backup and restore, and in-memory caching for internet-scale applications.
+DynamoDB can handle more than 10 trillion requests per day and can support peaks of more than 20
+million requests per second.
+
 * Fully managed **NoSQL** database
 * *HA* through different AZs, automatically spreads data and traffic accross servers
 	* 3 geographically distributed regions per table
@@ -2325,7 +2343,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * Built-in monitoring
 * Big Data: Integrates with *AWS Elastic MapReduce* and *Redshift*
 * Can configure TTL to expire table entries
-
+* On AWS: <a href="https://aws.amazon.com/dynamodb/" target="_blank">Service</a> - <a href="https://aws.amazon.com/dynamodb/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/dynamodb/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2018/Amazon-DynamoDB-Under-the-Hood/Amazon-DynamoDB-Under-the-Hood.jpg" target="_blank">AWS Geek 2018</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-DynamoDB/Amazon-DynamoDB.jpg" target="_blank">AWS Geek 2018</a>
 
@@ -2437,6 +2455,7 @@ services or tasks using the Fargate launch type. For more control you can host y
 cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2
 launch type.
 
+* On AWS: <a href="https://aws.amazon.com/ecs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ecs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ecs/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2019/CI-CD-with-Fargate-ECS/CI-CD-with-Fargate-ECS.jpg" target="_blank">AWS Geek 2020</a>
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2017/Container-Networking-Deep-Dive-with-Amazon-ECS/Container-Networking-Deep-Dive-with-Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-ECS/Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
@@ -2573,7 +2592,8 @@ underlying resources at any time.
   * Ruby Stanalone/Puma
   * Docker Single-/Multicontainer - runs on ECS
   * Docker Preconfigured Glassfish/Python/Go
-* See also: <a href="https://www.awsgeek.com/AWS-Elastic-Beanstalk/AWS-Elastic-Beanstalk.jpg" target-"_blank">AWS Geek 2019</a>
+* On AWS: <a href="https://aws.amazon.com/elasticbeanstalk/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticbeanstalk/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticbeanstalk/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Elastic-Beanstalk/AWS-Elastic-Beanstalk.jpg" target="_blank">AWS Geek 2019</a>
 
 <a name="4_14_2"></a>
 ### [↖](#4_14)[↑](#4_14_1)[↓](#4_14_2_1) Concepts
@@ -2706,6 +2726,7 @@ Service, you get the ELK stack you need, without the operational overhead.
   * Full text search
   * Clickstream analytics
   * Indexing
+* On AWS: <a href="https://aws.amazon.com/elasticsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticsearch/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_15_2"></a>
 ### [↖](#4_15)[↑](#4_15_1)[↓](#4_16) Elk
@@ -2745,7 +2766,8 @@ actionable, easy to aggregate across multiple accounts, and straightforward to p
 event management and workflow systems.
 
 * Integrates with CloudWatch events
-* See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target-"_blank">AWS Geek 2020</a>
+* On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target="_blank">AWS Geek 2020</a>
 
 ---
 
@@ -2769,6 +2791,8 @@ analyze data as it arrives and respond instantly instead of having to wait until
 collected before the processing can begin.
 
 [`various data sources`]->`Kinesis Streams`->`Kinesis Analytics`->`Kinesis Firehose`->[`S3`]
+
+* On AWS: <a href="https://aws.amazon.com/kinesis/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_17_1"></a>
 ### [↖](#4_17)[↑](#4_17)[↓](#4_17_1_1) Overview
@@ -2869,8 +2893,9 @@ call it directly from any web or mobile app.
   * `nodejs`, `Java`, `C#/PowerShell`, `Python`, `Golang`, `Ruby`
 * Can pass in *environment variables*
   * These can be KMS-encrypted as well (need SDK to decrypt)
-* See also: <a href="https://www.awsgeek.com/AWS-Lambda/AWS-Lambda.jpg" target-"_blank">AWS Geek 2020</a>
-* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/AWS-Lambda/AWS-Lambda.jpg" target-"_blank">AWS Geek 2020</a>
+* On AWS: <a href="https://aws.amazon.com/lambda/" target="_blank">Service</a> - <a href="https://aws.amazon.com/lambda/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/lambda/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
 
 <a name="4_18_2"></a>
 ### [↖](#4_18)[↑](#4_18_1)[↓](#4_18_2_1) Managing Functions
@@ -2966,6 +2991,8 @@ infringement. Administrators gain control and visibility of all their licenses w
 License Manager dashboard and reduce the risk of non-compliance, misreporting, and additional
 costs due to licensing overages.
 
+* On AWS: <a href="https://aws.amazon.com/license-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/license-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/license-manager/latest/userguide/" target="_blank">User Guide</a>
+
 ---
 
 <a name="4_20"></a>
@@ -2984,7 +3011,8 @@ service continuously monitors data access activity for anomalies, and generates 
 when it detects risk of unauthorized access or inadvertent data leaks. Amazon Macie is available
 to protect data stored in Amazon S3.
 
-* See also: <a href="https://www.awsgeek.com/Amazon-Macie/Amazon-Macie.jpg" target-"_blank">AWS Geek 2019</a>
+* On AWS: <a href="https://aws.amazon.com/macie/" target="_blank">Service</a> - <a href="https://aws.amazon.com/macie/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/macie/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-Macie/Amazon-Macie.jpg" target="_blank">AWS Geek 2019</a>
 
 ---
 
@@ -3005,6 +3033,8 @@ risk. AWS Managed Services automates common activities, such as change requests,
 management, security, and backup services, and provides full-lifecycle services to provision, run,
 and support your infrastructure. AWS Managed Services unburdens you from infrastructure operations
 so you can direct resources toward differentiating your business.
+
+* On AWS: <a href="https://aws.amazon.com/managed-services/" target="_blank">Service</a> - <a href="https://aws.amazon.com/managed-services/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/managed-services/latest/userguide/" target="_blank">User Guide</a>
 
 ---
 
@@ -3040,6 +3070,7 @@ environments.
   * *AWS OpsWorks Stacks* (`<- exam relevant`)
   * *AWS Opsworks for Chef Automate*
   * *AWS OpsWorks for Puppet Enterprise*
+* On AWS: <a href="https://aws.amazon.com/opsworks/stacks/" target="_blank">Service</a> - <a href="https://aws.amazon.com/opsworks/stacks/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/opsworks/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_22_2"></a>
 ### [↖](#4_22)[↑](#4_22_1)[↓](#4_22_3) Components
@@ -3134,6 +3165,8 @@ accounts by enabling you to setup a single payment method for all the accounts i
 organization through consolidated billing. AWS Organizations is available to all AWS customers at
 no additional charge.
 
+* On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
+
 <a name="4_23_1_1"></a>
 #### [↖](#4_23)[↑](#4_23_1)[↓](#4_23_2) Benefits
 * Centrally manage policies across multiple accounts
@@ -3198,7 +3231,8 @@ scale past trillions of objects worldwide.
 	* Reduced Redundancy Storage (RRS) *object lost* event
 * Buckets are *per region*, but AWS console is *global* (displaying all bucket for that account)
 * Bucket names have to be *globally* unique, should comply with DNS naming conventions.
-* See also: <a href="https://www.awsgeek.com/Amazon-S3/Amazon-S3.jpg" target-"_blank">AWS Geek 2018</a>
+* On AWS: <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/s3/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-S3/Amazon-S3.jpg" target="_blank">AWS Geek 2018</a>
 
 <a name="4_24_2"></a>
 ### [↖](#4_24)[↑](#4_24_1)[↓](#4_24_3) Versioning
@@ -3303,6 +3337,7 @@ AWS Cloud, third-party services, and on-premises.0
 * Allows for easier rotation than SSM Parameter Store
 * Can trigger Lambda
 * Deeply integrates into RDS
+* On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secrets-manager/latest/userguide/" target="_blank">User Guide</a>
 
 ---
 
@@ -3327,6 +3362,7 @@ deploy only the approved IT services they need.
 * Connect with ITSM/ITOM software
 * Self-service for user
   * Integrates with self-service portals like ServiceNow
+* On AWS: <a href="https://aws.amazon.com/servicecatalog/" target="_blank">Service</a> - <a href="https://aws.amazon.com/servicecatalog/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/servicecatalog/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_26_2"></a>
 ### [↖](#4_26)[↑](#4_26_1)[↓](#4_27) Components
@@ -3360,6 +3396,8 @@ your workflow into a state machine diagram that is easy to understand, easy to e
 and easy to change. You can monitor each step of execution as it happens, which means you can
 identify and fix problems quickly. Step Functions automatically triggers and tracks each step, and
 retries when there are errors, so your application executes in order and as expected.
+
+* On AWS: <a href="https://aws.amazon.com/step-functions/" target="_blank">Service</a> - <a href="https://aws.amazon.com/step-functions/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/step-functions/latest/userguide/" target="_blank">User Guide</a>
 
 ---
 
@@ -3397,6 +3435,7 @@ manage your infrastructure securely at scale.
 * SSM Agent
   * Installed on instances
   * Need correct IAM permissions, then shows up on SSM dashboard
+* On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_28_2"></a>
 ### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_2_1) Components
@@ -3491,6 +3530,7 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
   * Automate by triggering lambdas
 * Checks are usually refreshed every 5min
   * Can trigger refresh via API
+* On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/trustedadvisor/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/trustedadvisor/latest/userguide/" target="_blank">User Guide</a>
 
 ---
 
@@ -3515,3 +3555,4 @@ complex microservices applications consisting of thousands of services.
 * X-Ray API collects information
   * Automation could base on regular polling of `GetServiceGraph`
 * X-Ray Console displays information in *service map*
+* On AWS: <a href="https://aws.amazon.com/xray/" target="_blank">Service</a> - <a href="https://aws.amazon.com/xray/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/xray/latest/userguide/" target="_blank">User Guide</a>
