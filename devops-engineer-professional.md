@@ -843,6 +843,16 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 
 ---
 
+## Security Automation
+
+Service|What it does |Will warn about (example)
+-|-|-
+Amazon Inspector|Application security, scans EC2 instances for CVEs|Root login via ssh not disabled
+GuardDuty|Scans accounts and workloads|Instance has bitcoin activiy, unusual console logins (e.g. new location)
+Macie|Protects data|SSH private key uploaded to S3
+Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
+TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, performance, service limits, security|Open security groups, EBS snapshot permissions
+
 <a name="3_12"></a>
 ## [↖](#top)[↑](#3_11)[↓](#3_12_1) External Tools
 <!-- toc_start -->
