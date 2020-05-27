@@ -16,7 +16,8 @@
   * [Multi Region](#3_9)
   * [Multi Account](#3_10)
   * [Disaster Recovery](#3_11)
-  * [External Tools](#3_12)
+  * [Security Automation](#3_12)
+  * [External Tools](#3_13)
 * [Services](#4)
   * [Amazon Inspector (Core Service)](#4_1)
   * [API Gateway (Core Service)](#4_2)
@@ -843,7 +844,8 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 
 ---
 
-## Security Automation
+<a name="3_12"></a>
+## [↖](#top)[↑](#3_11)[↓](#3_13) Security Automation
 
 Service|What it does |Will warn about (example)
 -|-|-
@@ -853,16 +855,16 @@ Macie|Protects data|SSH private key uploaded to S3
 Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
 TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, performance, service limits, security|Open security groups, EBS snapshot permissions
 
-<a name="3_12"></a>
-## [↖](#top)[↑](#3_11)[↓](#3_12_1) External Tools
+<a name="3_13"></a>
+## [↖](#top)[↑](#3_12)[↓](#3_13_1) External Tools
 <!-- toc_start -->
-* [Jenkins](#3_12_1)
-  * [Integrating into CodePipeline](#3_12_1_1)
-  * [Plugins](#3_12_1_2)
+* [Jenkins](#3_13_1)
+  * [Integrating into CodePipeline](#3_13_1_1)
+  * [Plugins](#3_13_1_2)
 <!-- toc_end -->
 
-<a name="3_12_1"></a>
-### [↖](#3_12)[↑](#3_12)[↓](#3_12_1_1) Jenkins
+<a name="3_13_1"></a>
+### [↖](#3_13)[↑](#3_13)[↓](#3_13_1_1) Jenkins
 * Can replace CodeBuild, CodePipeline, CodeDeploy
 	* Tight integration with those services
 
@@ -873,14 +875,14 @@ TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, p
 * `Jenkinsfile` to configure CI/CD
 * Many AWS plugins
 
-<a name="3_12_1_1"></a>
-#### [↖](#3_12)[↑](#3_12_1)[↓](#3_12_1_2) Integrating into CodePipeline
+<a name="3_13_1_1"></a>
+#### [↖](#3_13)[↑](#3_13_1)[↓](#3_13_1_2) Integrating into CodePipeline
 * CodePipeline can send build jobs to Jenkins instead of CodeBuild
 * Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
 * Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
 
-<a name="3_12_1_2"></a>
-#### [↖](#3_12)[↑](#3_12_1_1)[↓](#4) Plugins
+<a name="3_13_1_2"></a>
+#### [↖](#3_13)[↑](#3_13_1_1)[↓](#4) Plugins
 * *EC2-Plugin*
 	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
 	* Also support spot instances
@@ -893,7 +895,7 @@ TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, p
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_12_1_2)[↓](#4_1) Services
+# [↖](#top)[↑](#3_13_1_2)[↓](#4_1) Services
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector (Core Service)
