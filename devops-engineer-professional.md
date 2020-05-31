@@ -162,7 +162,7 @@ Strategy|Auto Scaling<br/>Group|CodeDeploy<br/>EC2/On-Premises|CodeDeploy ECS|Co
 **Minimum In Service**|.|.|.|.|*rolling*|.
 **Rolling**|`AutoScalingRollingUpdate`|*One-at-at-time*|.|.|*rolling*|.
 **Rolling With Extra Batches**|.|.|.|.|*rolling with<br/>extra batches*|.
-**Blue/Green**|.|Traffic is shifted to a replacement set of instances<br/>* *All-at-once*<br/>* *Half-at-a-time*<br/>* *One-at-a-time*|Traffic is shifted to a replacement task set<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|Traffic is shifted to a new Lambda version<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|*immutable* comes close<br/>or: create new environment and use DNS|.
+**Blue/Green**|.|Traffic is shifted to a replacement set of instances<br/>* *All-at-once*<br/>* *Half-at-a-time*<br/>* *One-at-a-time*|Traffic is shifted to a replacement task set<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|Traffic is shifted to a new Lambda version<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|*immutable* comes close<br/>or: create new environment and use DNS|create new environment and use DNS
 
 <a name="3_2_1"></a>
 ### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Single target deployment
@@ -467,7 +467,7 @@ After Lifecycle Hooks are added to the instance:
 * ASG responds to scale-out/scale-in events
 * Lifecycle Hook puts instance into `pending:wait`/`terminating:wait` state, instance is paused until we continue or timeout
 * Custom actions are performed through one or more of these options:
-  * CloudWatch Event Target to invoke Lambda function
+  * CloudWatch Events target to invoke Lambda function
   * Notification target for Lifecycle Hook is defined
   * Script on instance runs as instance starts, script can control lifecycle actions
 * Can also notify SQS or SNS, but Lambda is the preferred option
@@ -511,8 +511,8 @@ terminate Amazon EC2 instances.
 
 ##### Notifications
 * Can send SNS notifications
-* Better to integrate with CloudWatch events
-* No direct integration with CloudWatch logs
+* Better to integrate with CloudWatch Events
+* No direct integration with CloudWatch Logs
   * However if the CloudWatch agent is installed on the instances they will send logs
 
 <a name="3_3_3_3"></a>
@@ -904,7 +904,7 @@ installed. These rules are regularly updated by AWS security researchers.
   * Does not require agent
 * **Host Assessments**
   * Requires agent
-* Can automate assessments via schedules CloudWatch events
+* Can automate assessments via schedules CloudWatch Events
 * Assessment templates can notify SNS
   * Could trigger lambda to remediate EC2 findings via SSM documents
 * On AWS: <a href="https://aws.amazon.com/inspector/" target="_blank">Service</a> - <a href="https://aws.amazon.com/inspector/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/inspector/latest/userguide/" target="_blank">User Guide</a>
@@ -1612,7 +1612,7 @@ Logs can be exported to S3 for durable storage.
   * Can only be based on a *single* metric
 * Can trigger *Lambda*, *SNS*, email, ...
   * Also *auto scaling* or *ec2* action
-  * Alarms do *not* raise CloudWatch events themselves
+  * Alarms do *not* raise CloudWatch Events themselves
 * *High resolution alarms* down to 10 seconds
 * Takes place once, at a specific point in time
   * Disable with `mon-disable-alarm-actions` via CLI
@@ -1634,7 +1634,7 @@ Logs can be exported to S3 for durable storage.
   * E.g. CodeCommit automatically triggers CodePipeline on new commits
 
 ##### EventBridge
-* CloudWatch events in its core
+* CloudWatch Events in its core
 * Adding other (3rd party service partners) event sources into the mix
 
 ##### S3 Events
@@ -1786,7 +1786,7 @@ you use.
 * Build defined in `buildspec.yml`
   * Build timeouts up to 8h
   * Uses queue to process build jobs
-* Cloudwatch integration
+* CloudWatch integration
   * Logs (can also go to S3)
   * *Metrics* to monitor CodeBuild statistics
 	* Can set up *Alarms* on top of those
@@ -1916,14 +1916,14 @@ Use IAM policy:
 
 <a name="4_7_3_2"></a>
 #### [↖](#4_7)[↑](#4_7_3_1)[↓](#4_7_3_3) Send Notifications
-Use CloudWatch Event Rules under the hood
+Use CloudWatch Events Rules under the hood
 
 * Set up notification / notification rules:
 	* Pick triggering event (`on commit`, ..., `brunch updated`)
 	* Pick SNS topic as target
 	* Add subscriber to target
 
-* Set up Cloudwatch Events directly:
+* Set up CloudWatch Events directly:
 	* Pick event *source* (AWS service)
 	* Pick event *type* (different types, also includes CloudTrail)
 	* Pick target (many different types, e.g. Lambda, SNS, SSM, Code*)
@@ -2139,7 +2139,7 @@ are no upfront fees or long-term commitments.
   * Artifacts are the way different pipeline stages 'communicate' with each other
   * CodePipelin artifacts are sightly different to CodeBuild artifacts
 
-* Integrates with CloudWatch events
+* Integrates with CloudWatch Events
 
 * Can invoke Lambda as an almost arbitrary pipeline action
 	* `codepipeline:PutJobSuccessResult`, `codepipeline:PutJobFailureResult`
@@ -2176,8 +2176,8 @@ are no upfront fees or long-term commitments.
   * S3
   * CodeCommit
     * -> Must have *one* pipeline *per* branch!
-    * Change detection Cloudwatch (recommended), or CodePipeline (poll periodically)
-    * Creates CloudWatch event rule in the background
+    * Change detection CloudWatch (recommended), or CodePipeline (poll periodically)
+    * Creates CloudWatch Events rule in the background
   * Github
   * ECR
 * Build
@@ -2293,7 +2293,7 @@ auditing, security analysis, change management, and operational troubleshooting.
 <a name="4_11_3"></a>
 ### [↖](#4_11)[↑](#4_11_2)[↓](#4_11_4) Automation
 * SNS notification on Config events (cannot configure which events)
-* CloudWatch events to observe specific events/rules
+* CloudWatch Events to observe specific events/rules
 
 <a name="4_11_4"></a>
 ### [↖](#4_11)[↑](#4_11_3)[↓](#4_12) Aggregation
@@ -2528,7 +2528,7 @@ launch type.
   * Typically CloudWatch, also supports Splunk
 * For cluster instances, install CloudWatch Agent
 * Various ECS-specific CloudWatch metrics available
-* Various ECS-specific CloudWatch events available
+* Various ECS-specific CloudWatch Events available
 * Can enable CloudWatch Container Insights
   * Sends per-container metrics into CloudWatch metrics
 
@@ -2758,7 +2758,7 @@ hardware to deploy or maintain. By integrating with Amazon CloudWatch Events, Gu
 actionable, easy to aggregate across multiple accounts, and straightforward to push into existing
 event management and workflow systems.
 
-* Integrates with CloudWatch events
+* Integrates with CloudWatch Events
 * On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target="_blank">AWS Geek 2020</a>
 
@@ -2806,7 +2806,7 @@ collected before the processing can begin.
   * `Record Key` - helps grouping into shards, should be highly distributed
   * `Sequence Number` - unique identifier for each record put into shards
 * Producers
-  * Kinesis SDK, Kinesis Producer Library (KPL), Kinesis Agent, Cloudwatch Logs
+  * Kinesis SDK, Kinesis Producer Library (KPL), Kinesis Agent, CloudWatch Logs
   * 3rd party libraries: Spark, Log4j Appenders, ...
 * Consumers
   * Kinesis SDK, Kinesis Client Library (KCL), Kinesis Connector Library, AWS Lambda
@@ -2820,7 +2820,7 @@ collected before the processing can begin.
 * Supports compression for S3
 * Pay for the amount of data going through Firehose
 * Producers
-  * Kinesise Data Streams, Cloudwatch Logs & Events, ...
+  * Kinesise Data Streams, CloudWatch Logs & Events, ...
 * Consumers (data receivers)
   * Redshift, S3, ElasticSearch, Splunk
 
@@ -2945,7 +2945,7 @@ process reads events from the queue and runs your function.
   events automatically. If the function returns an error, Lambda attempts to run it two more times
   * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an
   Amazon SQS queue or an Amazon SNS topic.
-  * -> S3, SNS, SES, CloudFormation, Cloudwatch Logs & Events, CodeCommit, Config
+  * -> S3, SNS, SES, CloudFormation, CloudWatch Logs & Events, CodeCommit, Config
 * An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
   * -> Kinesis, DynamoDB, SQS
 
@@ -3099,7 +3099,7 @@ environments.
 
 <a name="4_22_4"></a>
 ### [↖](#4_22)[↑](#4_22_3)[↓](#4_23) Under the hood
-* CloudWatch event integration
+* CloudWatch Events integration
   * Can configure event rules to trigger alarms
 * Under the hood
 	* *OpsWorks* **agent**
@@ -3499,7 +3499,7 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
   * Security
   * Fault tolerance
   * Service limits
-* Trusted Advisor *check results* are raised as CloudWatch events
+* Trusted Advisor *check results* are raised as CloudWatch Events
   * Automate by triggering lambdas
 * Checks are usually refreshed every 5min
   * Can trigger refresh via API
