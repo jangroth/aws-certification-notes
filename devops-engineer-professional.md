@@ -163,6 +163,7 @@ Strategy|Auto Scaling<br/>Group|CodeDeploy<br/>EC2/On-Premises|CodeDeploy ECS|Co
 **Rolling**|`AutoScalingRollingUpdate`|*One-at-at-time*|.|.|*rolling*|.
 **Rolling With Extra Batches**|.|.|.|.|*rolling with<br/>extra batches*|.
 **Blue/Green**|.|Traffic is shifted to a replacement set of instances<br/>* *All-at-once*<br/>* *Half-at-a-time*<br/>* *One-at-a-time*|Traffic is shifted to a replacement task set<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|Traffic is shifted to a new Lambda version<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|*immutable* comes close<br/>or: create new environment and use DNS|create new environment and use DNS
+**Canary**|.|.|See above<br/>* *Canary*|See above<br/>* *Canary*|*Traffic Splitting*|.
 
 <a name="3_2_1"></a>
 ### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Single target deployment
@@ -1755,6 +1756,8 @@ CloudFront Access Logs|S3
   * [Buildspec](#4_6_3_2)
 <!-- toc_end -->
 
+TODO: trigger, supported environments
+
 <a name="4_6_1"></a>
 ### [↖](#4_6)[↑](#4_6)[↓](#4_6_2) Overview
 *AWS CodeBuild* is a fully managed continuous integration service that compiles source code, Runs
@@ -1807,60 +1810,19 @@ you use.
 
 <a name="4_6_3_2"></a>
 #### [↖](#4_6)[↑](#4_6_3_1)[↓](#4_7) Buildspec
-```
-version: 0.2
 
-run-as: Linux-user-name
-
-env:
-  variables:
-    key: "value"
-  parameter-store:
-    key: "value"
-  exported-variables:
-    - variable
-  secrets-manager:
-    key: secret-id:json-key:version-stage:version-id
-  git-credential-helper: yes
-
-proxy:
-    upload-artifacts: yes
-    logs: yes
-
-phases:
-  install:
-    run-as: Linux-user-name
-    runtime-versions:
-      runtime: version
-    commands:
-      - command
-    finally:
-      - command
-  pre_build:
-    run-as: Linux-user-name
-    commands:
-      - command
-    finally:
-      - command
-  build:
-		as_above
-  post_build:
-		as_above
-  reports:
-	...
-  artifacts:
-	...
-  secondary-artifacts:
-	...
-cache:
-  paths:
-    - path
-```
+.|.
+-|-
+`version`|`0.3`
+`run-as`|.
+`env`|`variables`, `parameter-store`, `exported-variables`, `secrets-manager`, `git-credentials-helper`
+`phases`|`install`, `pre_build`, `build`, `post_build`, `reports`, `artifacts`, `secondary-artifacts`
+`cache`|`paths`
 
 * *Artifacts* are what is kept after the build has finished.
   * Uploaded to S3, encrypted by default
   * With default configuration, artifacts are overwritten each time
-* Envrironment variables can come from SSM / Secrets-manager.
+* Environment variables can come from SSM / Secrets Manager.
 
 ---
 
@@ -1868,7 +1830,7 @@ cache:
 ## [↖](#top)[↑](#4_6_3_2)[↓](#4_7_1) CodeCommit (Core Service)
 <!-- toc_start -->
 * [Overview](#4_7_1)
-* [Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments](#4_7_2)
+* [Benefits](#4_7_2)
 * [How To](#4_7_3)
   * [Protect branches](#4_7_3_1)
   * [Send Notifications](#4_7_3_2)
@@ -1885,7 +1847,11 @@ and it works seamlessly with your existing Git tools.
 * On AWS: <a href="https://aws.amazon.com/codecommit/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codecommit/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codecommit/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_7_2"></a>
-### [↖](#4_7)[↑](#4_7_1)[↓](#4_7_3) Benefits * Fully managed * Highly available * Faster development cycle * Code lives close to actual environments
+### [↖](#4_7)[↑](#4_7_1)[↓](#4_7_3) Benefits
+* Fully managed
+* Highly available
+* Faster development cycle
+* Code lives close to actual environments
 * Secure
   * Encryption, IAM integration
 * Collaborate on code
@@ -2571,7 +2537,7 @@ time, you retain full control over the AWS resources powering your application a
 underlying resources at any time.
 
 * Allows to *deploy*, *monitor* and *scale* applications quickly
-* Focusses on components and performance, *not* configuration and specification
+* Focuses on components and performance, not configuration and specification
 * Aims to simplify or even remove infrastructure management
 * Provides different options for *low cost* and *high availability* quick starts
 * Underlying *instances* can be automatically patched
@@ -2585,7 +2551,7 @@ underlying resources at any time.
   * Ruby Stanalone/Puma
   * Docker Single-/Multicontainer - runs on ECS
   * Docker Preconfigured Glassfish/Python/Go
-* On AWS: <a href="https://aws.amazon.com/elasticbeanstalk/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticbeanstalk/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticbeanstalk/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/elasticbeanstalk/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticbeanstalk/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elastic-beanstalk/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-Elastic-Beanstalk/AWS-Elastic-Beanstalk.jpg" target="_blank">AWS Geek 2019</a>
 
 <a name="4_14_2"></a>
@@ -2607,7 +2573,7 @@ underlying resources at any time.
       * Can also be invoked on a schedule
   * Single-instance or multi-instance scalable
   * Application can have mulitple environments
-    * Either represent *development stages* (PROD, STAGE, ...)
+    * Either represent *development stages* (PROD, STAGING, ...)
     * ...or *application component*, e.g. service, frontend, backend
   * Can be cloned as a whole environment
   * Can rebuild environment - complete delete and rebuild
@@ -2631,14 +2597,14 @@ underlying resources at any time.
 `AWS::ElasticLoadBalancing::LoadBalancer`|.|.
 
 <a name="4_14_2_2"></a>
-#### [↖](#4_14)[↑](#4_14_2_1)[↓](#4_14_2_2_1) Configuration
+#### [↖](#4_14)[↑](#4_14_2_1)[↓](#4_14_2_2_1) Configuration precedence
 Configuration options, sorted by precedence:
 
 ##### Settings applied directly to the environment
 Via console, eb-cli, ...
 
 ##### Existing configuration saved into `.elasticbeanstalk`
-* Can you `eb config ...` to save/snapshot a configuration of an application
+* Can use `eb config ...` to save/snapshot a configuration of an application
 * Saved into `.elasticbeanstalk`
   * Only non-default values are being saved
 * This can be modified, uploaded and applied
@@ -2674,13 +2640,14 @@ As the name says.
 #### [↖](#4_14)[↑](#4_14_2_2_4)[↓](#4_14_3) Deployment Types
 * Single instance deploys
 * HA with Load Balancer
-  * All at once
-  * Rolling update
-  * Rolling with additional batches
-  * Immutable
-  * 'Blue/Green' - not really supported, however
+  * *All at once*
+  * *Rolling update*
+  * *Rolling with additional batches*
+  * *Immutable*
+  * *Blue/Green* - not really supported, however
     * Can manually create new environment
     * Either use *swap URL* feature or manually create DNS
+  * *Traffic Splitting* via Application Load Balancer
 
 <a name="4_14_3"></a>
 ### [↖](#4_14)[↑](#4_14_2_3)[↓](#4_15) Limits
