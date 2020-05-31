@@ -6,15 +6,16 @@
   * [Content](#2_1)
 * [Concepts](#3)
   * [Deployment Strategies](#3_1)
-  * [EC2 Concepts](#3_2)
-  * [Cost Allocation Tags](#3_3)
-  * [Data/Network Protection](#3_4)
-  * [Multi AZ](#3_5)
-  * [Multi Region](#3_6)
-  * [Multi Account](#3_7)
-  * [Disaster Recovery](#3_8)
-  * [Security Automation](#3_9)
-  * [External Tools](#3_10)
+  * [Overview](#3_2)
+  * [EC2 Concepts](#3_3)
+  * [Cost Allocation Tags](#3_4)
+  * [Data/Network Protection](#3_5)
+  * [Multi AZ](#3_6)
+  * [Multi Region](#3_7)
+  * [Multi Account](#3_8)
+  * [Disaster Recovery](#3_9)
+  * [Security Automation](#3_10)
+  * [External Tools](#3_11)
 * [Services](#4)
   * [Amazon Inspector (Core Service)](#4_1)
   * [API Gateway (Core Service)](#4_2)
@@ -125,20 +126,21 @@
 # [↖](#top)[↑](#2_1_6)[↓](#3_1) Concepts
 
 <a name="3_1"></a>
-## [↖](#top)[↑](#3)[↓](#3_1_1) Deployment Strategies
-<!-- toc_start -->
-* [Single target deployment](#3_1_1)
-* [All-at-once deployment](#3_1_2)
-* [Minimum in-service style deployment](#3_1_3)
-* [Rolling deployment](#3_1_4)
-* [Rolling deployment with extra batches](#3_1_5)
-* [Blue/green deployment](#3_1_6)
-* [Red/black deployment](#3_1_7)
-* [A/B testing](#3_1_8)
-* [Canary deployment](#3_1_9)
-<!-- toc_end -->
+## [↖](#top)[↑](#3)[↓](#3_2) Deployment Strategies
 
-## Overview
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1)[↓](#3_2_1) Overview
+<!-- toc_start -->
+* [Single target deployment](#3_2_1)
+* [All-at-once deployment](#3_2_2)
+* [Minimum in-service style deployment](#3_2_3)
+* [Rolling deployment](#3_2_4)
+* [Rolling deployment with extra batches](#3_2_5)
+* [Blue/green deployment](#3_2_6)
+* [Red/black deployment](#3_2_7)
+* [A/B testing](#3_2_8)
+* [Canary deployment](#3_2_9)
+<!-- toc_end -->
 
 **General Strategies**
 
@@ -162,8 +164,8 @@ Strategy|Auto Scaling<br/>Group|CodeDeploy<br/>EC2/On-Premises|CodeDeploy ECS|Co
 **Rolling With Extra Batches**|.|.|.|.|*rolling with<br/>extra batches*|.
 **Blue/Green**|.|Traffic is shifted to a replacement set of instances<br/>* *All-at-once*<br/>* *Half-at-a-time*<br/>* *One-at-a-time*|Traffic is shifted to a replacement task set<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|Traffic is shifted to a new Lambda version<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|*immutable* comes close<br/>or: create new environment and use DNS|.
 
-<a name="3_1_1"></a>
-### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Single target deployment
+<a name="3_2_1"></a>
+### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Single target deployment
 System|Deploy
 -|-
 `v1`|Initial State
@@ -178,8 +180,8 @@ System|Deploy
 Simple & very few moving parts|Downtime
 Deployment is faster than other methods|Limited testing
 
-<a name="3_1_2"></a>
-### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_3) All-at-once deployment
+<a name="3_2_2"></a>
+### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) All-at-once deployment
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1` `v1`|Initial State|.
@@ -195,8 +197,8 @@ Deployment is relatively fast|Downtime (like STD)
 .|Everything in-flight - can't stop deployment/rollback if targets fail
 .|More complicated than STD, often requires orchestration
 
-<a name="3_1_3"></a>
-### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_4) Minimum in-service style deployment
+<a name="3_2_3"></a>
+### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_4) Minimum in-service style deployment
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1` `v1`|Initial State|.
@@ -216,8 +218,8 @@ No downtime|Many moving parts, requires orchestration
 Deployment happens in (two) stages|.
 Generally quicker & with less stages than rolling deployments|.
 
-<a name="3_1_4"></a>
-### [↖](#3_1)[↑](#3_1_3)[↓](#3_1_5) Rolling deployment
+<a name="3_2_4"></a>
+### [↖](#3_2)[↑](#3_2_3)[↓](#3_2_5) Rolling deployment
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1` `v1`|Initial State|.
@@ -237,8 +239,8 @@ No downtime (if number of stage deployments is small enough)|Does not necessaril
 Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
 .|Can be least efficient deployment method in terms of time taken
 
-<a name="3_1_5"></a>
-### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_6) Rolling deployment with extra batches
+<a name="3_2_5"></a>
+### [↖](#3_2)[↑](#3_2_4)[↓](#3_2_6) Rolling deployment with extra batches
 System|Deploy|.
 -|-|-
 `v1` `v1` `v1` `v1`|Initial State|.
@@ -258,8 +260,8 @@ No downtime (if number of stage deployments is small enough)|Does not necessaril
 Can be paused to allow for multi-version testing|Many moving parts, requires orchestration
 .|Can be least efficient deployment method in terms of time taken
 
-<a name="3_1_6"></a>
-### [↖](#3_1)[↑](#3_1_5)[↓](#3_1_7) Blue/green deployment
+<a name="3_2_6"></a>
+### [↖](#3_2)[↑](#3_2_5)[↓](#3_2_7) Blue/green deployment
 System|Deploy|.
 -|-|-
 (`v1` `v1` `v1`)()|Initial State|Blue environment, all traffic goes here
@@ -286,16 +288,16 @@ Easy rollback|.
 Can be fully automated using advanced templating|.
 By far the best method in terms of risk mitigation and minimal user impact|.
 
-<a name="3_1_7"></a>
-### [↖](#3_1)[↑](#3_1_6)[↓](#3_1_8) Red/black deployment
+<a name="3_2_7"></a>
+### [↖](#3_2)[↑](#3_2_6)[↓](#3_2_8) Red/black deployment
 > ... are just like blue/green, but they happen at a much faster rate.
 
 Example:
 1. `DNS` -> `LB` -> `ASG1`
 2. `DNS` -> `LB` -> `ASG2`
 
-<a name="3_1_8"></a>
-### [↖](#3_1)[↑](#3_1_7)[↓](#3_1_9) A/B testing
+<a name="3_2_8"></a>
+### [↖](#3_2)[↑](#3_2_7)[↓](#3_2_9) A/B testing
 * Like blue/green deployment, but only shift a percentage of the traffic over, not everything at once
 * Gradually increase percentage of traffic sent to the new environment
 * Allows for different end goal:
@@ -311,59 +313,59 @@ Example:
 .|Different versions across the environment
 .|DNS switching affected by caches and other DNS related issues
 
-<a name="3_1_9"></a>
-### [↖](#3_1)[↑](#3_1_8)[↓](#3_2) Canary deployment
+<a name="3_2_9"></a>
+### [↖](#3_2)[↑](#3_2_8)[↓](#3_3) Canary deployment
 * Like A/B testing, but gradually increases percentage of traffic to green environment
 
 ---
 
-<a name="3_2"></a>
-## [↖](#top)[↑](#3_1_9)[↓](#3_2_1) EC2 Concepts
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2_9)[↓](#3_3_1) EC2 Concepts
 <!-- toc_start -->
-* [Instance Profile](#3_2_1)
-* [Load Balancing with ELB/ALB](#3_2_2)
-  * [ELB/ALB Logs](#3_2_2_1)
-  * [ELB/ALB Health Checks](#3_2_2_2)
-  * [ELB Security](#3_2_2_3)
-* [Auto Scaling](#3_2_3)
-  * [Overview](#3_2_3_1)
-  * [Components](#3_2_3_2)
-  * [Integration with other services](#3_2_3_3)
-  * [Deployment Concepts](#3_2_3_4)
-  * [Troubleshooting](#3_2_3_5)
-* [EC2 Instance Compliance](#3_2_4)
-  * [AWS Config](#3_2_4_1)
-  * [Inspector](#3_2_4_2)
-  * [Systems Manager](#3_2_4_3)
-  * [Service Catalog](#3_2_4_4)
-  * [Configuration Mangement](#3_2_4_5)
-* [On-premise strategies](#3_2_5)
-  * [EC2 and On-premise VMs](#3_2_5_1)
-  * [AWS Application Discovery Service](#3_2_5_2)
-  * [AWS Database Migration Service](#3_2_5_3)
-  * [AWS Server Migration Service](#3_2_5_4)
+* [Instance Profile](#3_3_1)
+* [Load Balancing with ELB/ALB](#3_3_2)
+  * [ELB/ALB Logs](#3_3_2_1)
+  * [ELB/ALB Health Checks](#3_3_2_2)
+  * [ELB Security](#3_3_2_3)
+* [Auto Scaling](#3_3_3)
+  * [Overview](#3_3_3_1)
+  * [Components](#3_3_3_2)
+  * [Integration with other services](#3_3_3_3)
+  * [Deployment Concepts](#3_3_3_4)
+  * [Troubleshooting](#3_3_3_5)
+* [EC2 Instance Compliance](#3_3_4)
+  * [AWS Config](#3_3_4_1)
+  * [Inspector](#3_3_4_2)
+  * [Systems Manager](#3_3_4_3)
+  * [Service Catalog](#3_3_4_4)
+  * [Configuration Mangement](#3_3_4_5)
+* [On-Premises strategies](#3_3_5)
+  * [EC2 and On-Premises VMs](#3_3_5_1)
+  * [AWS Application Discovery Service](#3_3_5_2)
+  * [AWS Database Migration Service](#3_3_5_3)
+  * [AWS Server Migration Service](#3_3_5_4)
 <!-- toc_end -->
 
-<a name="3_2_1"></a>
-### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Instance Profile
+<a name="3_3_1"></a>
+### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Instance Profile
 * A *container* for an IAM *role* that you can use to pass role information to an EC2 instance when the instance starts.
 * An EC2 Instance cannot be assigned a role directly, but it can be assigned an Instance Profile which contains a role.
 * If you use the AWS Management Console to create a role for Amazon EC2, the console automatically creates an instance profile and gives it the same name as the role.
 * If you manage your roles from the AWS CLI or the AWS API, you create roles and instance profiles as separate actions.
 
-<a name="3_2_2"></a>
-### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_2_1) Load Balancing with ELB/ALB
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_2_1) Load Balancing with ELB/ALB
 
-<a name="3_2_2_1"></a>
-#### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_2_2) ELB/ALB Logs
+<a name="3_3_2_1"></a>
+#### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_2_2) ELB/ALB Logs
 * *Access Logging* is an optional feature of Elastic Load Balancing that is disabled by default.
 * After you enable access logging for your load balancer, Elastic Load Balancing captures the logs and stores them in the Amazon S3 bucket as compressed files.
 * You can disable access logging at any time.
 * Can log every 5 or 60 minutes
 * There's no additional charge
 
-<a name="3_2_2_2"></a>
-#### [↖](#3_2)[↑](#3_2_2_1)[↓](#3_2_2_3) ELB/ALB Health Checks
+<a name="3_3_2_2"></a>
+#### [↖](#3_3)[↑](#3_3_2_1)[↓](#3_3_2_3) ELB/ALB Health Checks
 * If you have associated your Auto Scaling Group with a *Classic Load Balancer*, you can use the load
   balancer health check to determine the health state of instances in your Auto Scaling Group. By
   default, an Auto Scaling Group periodically checks the health state of each instance.
@@ -372,8 +374,8 @@ Example:
 * The status of the instances that are healthy at the time of the health check is `InService`. The
   status of any instances that are unhealthy at the time of the health check is `OutOfService`.
 
-<a name="3_2_2_3"></a>
-#### [↖](#3_2)[↑](#3_2_2_2)[↓](#3_2_3) ELB Security
+<a name="3_3_2_3"></a>
+#### [↖](#3_3)[↑](#3_3_2_2)[↓](#3_3_3) ELB Security
 * Need end-to-end security
 * Encrypt all communication
 * Use HTTPS (layer 7) or SSL (layer 4)
@@ -381,11 +383,11 @@ Example:
 * Can configure back-end authentication
   * Once configured, ELB only communicates with an instance if it has a matching public key
 
-<a name="3_2_3"></a>
-### [↖](#3_2)[↑](#3_2_2_3)[↓](#3_2_3_1) Auto Scaling
+<a name="3_3_3"></a>
+### [↖](#3_3)[↑](#3_3_2_3)[↓](#3_3_3_1) Auto Scaling
 
-<a name="3_2_3_1"></a>
-#### [↖](#3_2)[↑](#3_2_3)[↓](#3_2_3_2) Overview
+<a name="3_3_3_1"></a>
+#### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_3_2) Overview
 *Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances
 available to handle the load for your application. You create collections of EC2 instances, called
 *Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group,
@@ -406,8 +408,8 @@ terminate instances as demand on your application increases or decreases.
 * Cloud init scripts
 * Scale out/scale in
 
-<a name="3_2_3_2"></a>
-#### [↖](#3_2)[↑](#3_2_3_1)[↓](#3_2_3_2_1) Components
+<a name="3_3_3_2"></a>
+#### [↖](#3_3)[↑](#3_3_3_1)[↓](#3_3_3_2_1) Components
 
 ##### Auto Scaling Group
 * Contains a collection of Amazon EC2 instances that are treated as a logical grouping for the purposes of automatic scaling and management
@@ -513,8 +515,8 @@ terminate Amazon EC2 instances.
 * No direct integration with CloudWatch logs
   * However if the CloudWatch agent is installed on the instances they will send logs
 
-<a name="3_2_3_3"></a>
-#### [↖](#3_2)[↑](#3_2_3_2_7)[↓](#3_2_3_3_1) Integration with other services
+<a name="3_3_3_3"></a>
+#### [↖](#3_3)[↑](#3_3_3_2_7)[↓](#3_3_3_3_1) Integration with other services
 
 ##### ALB
 `ALB` -> `Target Group` <- `ASG`
@@ -550,8 +552,8 @@ terminate Amazon EC2 instances.
 * Can implement Custom Metric in CloudWatch to control Auto Scaling behaviour
   * E.g. size of individual backlog on instances
 
-<a name="3_2_3_4"></a>
-#### [↖](#3_2)[↑](#3_2_3_3_4)[↓](#3_2_3_5) Deployment Concepts
+<a name="3_3_3_4"></a>
+#### [↖](#3_3)[↑](#3_3_3_3_4)[↓](#3_3_3_5) Deployment Concepts
 
 Name|Before|Intermediate|After
 -|-|-|-
@@ -560,8 +562,8 @@ Rolling|`[ASG [Instance 1]]`|`[ASG [Instance 1,2]]`|`[ASG [Instance 2]`
 Replace|`[ALB [ASG1 [...]]]`|`[ALB [ASG1 [...]][ASG2 [...]]`|`[ALB [ASG2 [...]]]`
 Blue/Green|`[R53 [ALB1 [ASG1 [...]]]]`|`[R53 [ALB1 [ASG1 [...]]]][ALB2 [...]]`|`[R53 [ALB2 [ASG2 [...]]]]`
 
-<a name="3_2_3_5"></a>
-#### [↖](#3_2)[↑](#3_2_3_4)[↓](#3_2_3_5_1) Troubleshooting
+<a name="3_3_3_5"></a>
+#### [↖](#3_3)[↑](#3_3_3_4)[↓](#3_3_3_5_1) Troubleshooting
 
 ##### Possible Problems
 * Attempting to use wrong subnet
@@ -595,67 +597,67 @@ application and making changes to your application without invoking the scaling 
 `ScheduledAction`|.
 `AddToLoadBalancer`|.
 
-<a name="3_2_4"></a>
-### [↖](#3_2)[↑](#3_2_3_5_2)[↓](#3_2_4_1) EC2 Instance Compliance
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3_5_2)[↓](#3_3_4_1) EC2 Instance Compliance
 
-<a name="3_2_4_1"></a>
-#### [↖](#3_2)[↑](#3_2_4)[↓](#3_2_4_2) AWS Config
+<a name="3_3_4_1"></a>
+#### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_4_2) AWS Config
 * Ensure instance has proper AWS configuration, e.g. no open SSH port
 * Track audit and compliance over time
 
-<a name="3_2_4_2"></a>
-#### [↖](#3_2)[↑](#3_2_4_1)[↓](#3_2_4_3) Inspector
+<a name="3_3_4_2"></a>
+#### [↖](#3_3)[↑](#3_3_4_1)[↓](#3_3_4_3) Inspector
 * Security & vulnerability scans from within OS (with agent)
 * Network scans
 
-<a name="3_2_4_3"></a>
-#### [↖](#3_2)[↑](#3_2_4_2)[↓](#3_2_4_4) Systems Manager
+<a name="3_3_4_3"></a>
+#### [↖](#3_3)[↑](#3_3_4_2)[↓](#3_3_4_4) Systems Manager
 * Run automations, patches, commands, inventory at scale
 
-<a name="3_2_4_4"></a>
-#### [↖](#3_2)[↑](#3_2_4_3)[↓](#3_2_4_5) Service Catalog
+<a name="3_3_4_4"></a>
+#### [↖](#3_3)[↑](#3_3_4_3)[↓](#3_3_4_5) Service Catalog
 * Restrict how instances are launched by minimizing configuration
 
-<a name="3_2_4_5"></a>
-#### [↖](#3_2)[↑](#3_2_4_4)[↓](#3_2_5) Configuration Mangement
+<a name="3_3_4_5"></a>
+#### [↖](#3_3)[↑](#3_3_4_4)[↓](#3_3_5) Configuration Mangement
 * SSM, User data, OpsWorks, Ansible, ...
 * Ensure EC2 instances have proper configuration files
 
-<a name="3_2_5"></a>
-### [↖](#3_2)[↑](#3_2_4_5)[↓](#3_2_5_1) On-Premises strategies
+<a name="3_3_5"></a>
+### [↖](#3_3)[↑](#3_3_4_5)[↓](#3_3_5_1) On-Premises strategies
 
-<a name="3_2_5_1"></a>
-#### [↖](#3_2)[↑](#3_2_5)[↓](#3_2_5_2) EC2 and On-Premises VMs
+<a name="3_3_5_1"></a>
+#### [↖](#3_3)[↑](#3_3_5)[↓](#3_3_5_2) EC2 and On-Premises VMs
 * Can download Amazon Linux 2 AMI in VM format to run on-premises
 * Can import existing VMs into EC2
 
-<a name="3_2_5_2"></a>
-#### [↖](#3_2)[↑](#3_2_5_1)[↓](#3_2_5_3) AWS Application Discovery Service
+<a name="3_3_5_2"></a>
+#### [↖](#3_3)[↑](#3_3_5_1)[↓](#3_3_5_3) AWS Application Discovery Service
 * Gather information about On-premises instances to plan a migration
 * Server utilization and dependency mappings
 * Track with AWS Migration Hub
 
-<a name="3_2_5_3"></a>
-#### [↖](#3_2)[↑](#3_2_5_2)[↓](#3_2_5_4) AWS Database Migration Service
+<a name="3_3_5_3"></a>
+#### [↖](#3_3)[↑](#3_3_5_2)[↓](#3_3_5_4) AWS Database Migration Service
 * Replicate
   * On-prem -> AWS
   * AWS -> On-prem
   * AWS -> AWS
 
-<a name="3_2_5_4"></a>
-#### [↖](#3_2)[↑](#3_2_5_3)[↓](#3_3) AWS Server Migration Service
+<a name="3_3_5_4"></a>
+#### [↖](#3_3)[↑](#3_3_5_3)[↓](#3_4) AWS Server Migration Service
 * Incremental replication of on-prem instances into AWS
 
 ---
 
-<a name="3_3"></a>
-## [↖](#top)[↑](#3_2_5_4)[↓](#3_3_1) Cost Allocation Tags
+<a name="3_4"></a>
+## [↖](#top)[↑](#3_3_5_4)[↓](#3_4_1) Cost Allocation Tags
 <!-- toc_start -->
-* [Overview](#3_3_1)
+* [Overview](#3_4_1)
 <!-- toc_end -->
 
-<a name="3_3_1"></a>
-### [↖](#3_3)[↑](#3_3)[↓](#3_4) Overview
+<a name="3_4_1"></a>
+### [↖](#3_4)[↑](#3_4)[↓](#3_5) Overview
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value.
 For each resource, each tag key must be unique, and each tag key can have only one value. You can
 use tags to organize your resources, and cost allocation tags to track your AWS costs on a
@@ -668,20 +670,20 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 ---
 
-<a name="3_4"></a>
-## [↖](#top)[↑](#3_3_1)[↓](#3_4_1) Data/Network Protection
+<a name="3_5"></a>
+## [↖](#top)[↑](#3_4_1)[↓](#3_5_1) Data/Network Protection
 <!-- toc_start -->
-* [Data Protection](#3_4_1)
-  * [In Transit](#3_4_1_1)
-  * [At Rest](#3_4_1_2)
-* [Network Protection](#3_4_2)
+* [Data Protection](#3_5_1)
+  * [In Transit](#3_5_1_1)
+  * [At Rest](#3_5_1_2)
+* [Network Protection](#3_5_2)
 <!-- toc_end -->
 
-<a name="3_4_1"></a>
-### [↖](#3_4)[↑](#3_4)[↓](#3_4_1_1) Data Protection
+<a name="3_5_1"></a>
+### [↖](#3_5)[↑](#3_5)[↓](#3_5_1_1) Data Protection
 
-<a name="3_4_1_1"></a>
-#### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_1_2) In Transit
+<a name="3_5_1_1"></a>
+#### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_1_2) In Transit
 * TLS for transit encryption
 * ACM to manage SSL/TLS certificates
 * Load Balancers
@@ -692,8 +694,8 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 * All AWS services expose https endpoint
   * S3 also has http (shouldn't use it)
 
-<a name="3_4_1_2"></a>
-#### [↖](#3_4)[↑](#3_4_1_1)[↓](#3_4_2) At Rest
+<a name="3_5_1_2"></a>
+#### [↖](#3_5)[↑](#3_5_1_1)[↓](#3_5_2) At Rest
 * S3
   * SSE-S3: Server-side encryption using AWS' key
   * SSE-KMS: Server-side encryption using own KMS key
@@ -709,8 +711,8 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
   * PHI - protected health information
   * PII - personally-identifying information
 
-<a name="3_4_2"></a>
-### [↖](#3_4)[↑](#3_4_1_2)[↓](#3_5) Network Protection
+<a name="3_5_2"></a>
+### [↖](#3_5)[↑](#3_5_1_2)[↓](#3_6) Network Protection
 * Direct Connect
   * Private direct connection between on-site and AWS
 * Public Internet: Use VPN
@@ -722,38 +724,38 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 
 ---
 
-<a name="3_5"></a>
-## [↖](#top)[↑](#3_4_2)[↓](#3_5_1) Multi AZ
+<a name="3_6"></a>
+## [↖](#top)[↑](#3_5_2)[↓](#3_6_1) Multi AZ
 <!-- toc_start -->
-* [Services where multi AZ needs to enabled manually](#3_5_1)
-* [Services that are implicitely multi AZ](#3_5_2)
+* [Services where multi AZ needs to enabled manually](#3_6_1)
+* [Services that are implicitely multi AZ](#3_6_2)
 <!-- toc_end -->
 
-<a name="3_5_1"></a>
-### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) Services where multi AZ needs to enabled manually
+<a name="3_6_1"></a>
+### [↖](#3_6)[↑](#3_6)[↓](#3_6_2) Services where multi AZ needs to enabled manually
 * Assign AZ
   * ELB, EFS, ASG, Elastic Beanstalk
 * Synchronous database for failover in different AZ
   * RDS, ElastiCache, Aurora (for DB itself, data is already multi AZ)
   * ElasticSearch
 
-<a name="3_5_2"></a>
-### [↖](#3_5)[↑](#3_5_1)[↓](#3_6) Services that are implicitely multi AZ
+<a name="3_6_2"></a>
+### [↖](#3_6)[↑](#3_6_1)[↓](#3_7) Services that are implicitely multi AZ
 * S3 (with the exception of One Zone Infrequent Access)
 * DynamoDB
 * All of AWS' propriertrary services
 
 ---
 
-<a name="3_6"></a>
-## [↖](#top)[↑](#3_5_2)[↓](#3_6_1) Multi Region
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_2)[↓](#3_7_1) Multi Region
 <!-- toc_start -->
-* [Services that have a concept of multi region](#3_6_1)
-* [Multi Region with Route 53](#3_6_2)
+* [Services that have a concept of multi region](#3_7_1)
+* [Multi Region with Route 53](#3_7_2)
 <!-- toc_end -->
 
-<a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6)[↓](#3_6_2) Services that have a concept of multi region
+<a name="3_7_1"></a>
+### [↖](#3_7)[↑](#3_7)[↓](#3_7_2) Services that have a concept of multi region
 
 .|.
 -|-
@@ -770,8 +772,8 @@ Lambda@Edge|For Global Lambda Functions at Edge Locations
 CloudFormation|StackSets
 CodePipeline|*action* can be region specific -> multi-region deploys
 
-<a name="3_6_2"></a>
-### [↖](#3_6)[↑](#3_6_1)[↓](#3_7) Multi Region with Route 53
+<a name="3_7_2"></a>
+### [↖](#3_7)[↑](#3_7_1)[↓](#3_8) Multi Region with Route 53
 * Deploy stacks behind ALB in different regions
 * Use Route 53 routing
   * Latency
@@ -780,14 +782,14 @@ CodePipeline|*action* can be region specific -> multi-region deploys
   * Trigger automated DNS failover
   * E.g. base health checks on CloudWatch Alarms
 
-<a name="3_7"></a>
-## [↖](#top)[↑](#3_6_2)[↓](#3_7_1) Multi Account
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_2)[↓](#3_8_1) Multi Account
 <!-- toc_start -->
-* [Services that have a concept of multi account](#3_7_1)
+* [Services that have a concept of multi account](#3_8_1)
 <!-- toc_end -->
 
-<a name="3_7_1"></a>
-### [↖](#3_7)[↑](#3_7)[↓](#3_8) Services that have a concept of multi account
+<a name="3_8_1"></a>
+### [↖](#3_8)[↑](#3_8)[↓](#3_9) Services that have a concept of multi account
 
 .|.
 -|-
@@ -800,8 +802,8 @@ CloudFormation|*StackSets* can be deployed across accounts
 
 ---
 
-<a name="3_8"></a>
-## [↖](#top)[↑](#3_7_1)[↓](#3_9) Disaster Recovery
+<a name="3_9"></a>
+## [↖](#top)[↑](#3_8_1)[↓](#3_10) Disaster Recovery
 * DR is about preparing for and recovering from a disaster
 * *Recovery Point Objective* - RPO
   * How often do you run backups? How much data will be lost (since last backup)
@@ -823,8 +825,8 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 
 ---
 
-<a name="3_9"></a>
-## [↖](#top)[↑](#3_8)[↓](#3_10) Security Automation
+<a name="3_10"></a>
+## [↖](#top)[↑](#3_9)[↓](#3_11) Security Automation
 
 Service|What it does |Will warn about (example)
 -|-|-
@@ -834,16 +836,16 @@ Macie|Protects data|SSH private key uploaded to S3
 Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
 TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, performance, service limits, security|Open security groups, EBS snapshot permissions
 
-<a name="3_10"></a>
-## [↖](#top)[↑](#3_9)[↓](#3_10_1) External Tools
+<a name="3_11"></a>
+## [↖](#top)[↑](#3_10)[↓](#3_11_1) External Tools
 <!-- toc_start -->
-* [Jenkins](#3_10_1)
-  * [Integrating into CodePipeline](#3_10_1_1)
-  * [Plugins](#3_10_1_2)
+* [Jenkins](#3_11_1)
+  * [Integrating into CodePipeline](#3_11_1_1)
+  * [Plugins](#3_11_1_2)
 <!-- toc_end -->
 
-<a name="3_10_1"></a>
-### [↖](#3_10)[↑](#3_10)[↓](#3_10_1_1) Jenkins
+<a name="3_11_1"></a>
+### [↖](#3_11)[↑](#3_11)[↓](#3_11_1_1) Jenkins
 * Can replace CodeBuild, CodePipeline, CodeDeploy
 	* Tight integration with those services
 
@@ -854,14 +856,14 @@ TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, p
 * `Jenkinsfile` to configure CI/CD
 * Many AWS plugins
 
-<a name="3_10_1_1"></a>
-#### [↖](#3_10)[↑](#3_10_1)[↓](#3_10_1_2) Integrating into CodePipeline
+<a name="3_11_1_1"></a>
+#### [↖](#3_11)[↑](#3_11_1)[↓](#3_11_1_2) Integrating into CodePipeline
 * CodePipeline can send build jobs to Jenkins instead of CodeBuild
 * Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
 * Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
 
-<a name="3_10_1_2"></a>
-#### [↖](#3_10)[↑](#3_10_1_1)[↓](#4) Plugins
+<a name="3_11_1_2"></a>
+#### [↖](#3_11)[↑](#3_11_1_1)[↓](#4) Plugins
 * *EC2-Plugin*
 	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
 	* Also support spot instances
@@ -874,7 +876,7 @@ TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, p
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_10_1_2)[↓](#4_1) Services
+# [↖](#top)[↑](#3_11_1_2)[↓](#4_1) Services
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector (Core Service)
@@ -3035,11 +3037,6 @@ so you can direct resources toward differentiating your business.
 * [Overview](#4_22_1)
 * [Components](#4_22_2)
 * [Lifecycle Events](#4_22_3)
-  * [Setup](#4_22_3_1)
-  * [Configure](#4_22_3_2)
-  * [Deploy](#4_22_3_3)
-  * [Undeploy](#4_22_3_4)
-  * [Shutdown](#4_22_3_5)
 * [Under the hood](#4_22_4)
 <!-- toc_end -->
 
@@ -3088,7 +3085,7 @@ environments.
   * Deployment operation is handled by each instance's Deploy recipes, which are determined by the instance's layer
 
 <a name="4_22_3"></a>
-### [↖](#4_22)[↑](#4_22_2)[↓](#4_22_3_1) Lifecycle Events
+### [↖](#4_22)[↑](#4_22_2)[↓](#4_22_4) Lifecycle Events
 * **Each layer** has a set of five lifecycle events, each of which has an associated set of recipes that are specific to the layer
 * When an event occurs on a layer's instance, AWS OpsWorks Stacks automatically runs the appropriate set of recipes
 
@@ -3101,7 +3098,7 @@ environments.
 **Shutdown**|Occurs after you direct AWS OpsWorks Stacks to shut an instance down but before the associated Amazon EC2 instance is actually terminated.
 
 <a name="4_22_4"></a>
-### [↖](#4_22)[↑](#4_22_3_5)[↓](#4_23) Under the hood
+### [↖](#4_22)[↑](#4_22_3)[↓](#4_23) Under the hood
 * CloudWatch event integration
   * Can configure event rules to trigger alarms
 * Under the hood
