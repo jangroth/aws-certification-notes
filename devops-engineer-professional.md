@@ -1753,10 +1753,7 @@ CloudFront Access Logs|S3
 * [Benefits](#4_6_2)
 * [Components](#4_6_3)
   * [How it works](#4_6_3_1)
-  * [Buildspec](#4_6_3_2)
 <!-- toc_end -->
-
-TODO: trigger, supported environments
 
 <a name="4_6_1"></a>
 ### [↖](#4_6)[↑](#4_6)[↓](#4_6_2) Overview
@@ -1767,6 +1764,7 @@ multiple builds concurrently, so your builds are not left waiting in a queue. Yo
 quickly by using prepackaged build environments, or you can create custom build environments that
 use your own build tools. With CodeBuild, you are charged by the minute for the compute resources
 you use.
+* Provides preconfigured environments for supported versions of Java, Ruby, Python, Go, Node.js, Android, .NET Core, PHP, and Docker
 * On AWS: <a href="https://aws.amazon.com/codebuild/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codebuild/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codebuild/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_6_2"></a>
@@ -1775,13 +1773,10 @@ you use.
 	* Serverless
 	* Leverages Docker under the hood
 	* Can use own docker images
+	* Integrates with KMS, IAM, VPC and CloudTrail
 * Continuous scaling
 * Extensible
   * Can use own build tools and runtimes
-* Pay as you go
-* Enables CI/CD
-* Secure
-	* Integrates with KMS, IAM, VPC and CloudTrail
 
 <a name="4_6_3"></a>
 ### [↖](#4_6)[↑](#4_6_2)[↓](#4_6_3_1) Components
@@ -1789,14 +1784,16 @@ you use.
 * Build defined in `buildspec.yml`
   * Build timeouts up to 8h
   * Uses queue to process build jobs
+* Triggers can schedule a build, can also use cron expressions
 * CloudWatch integration
   * Logs (can also go to S3)
   * *Metrics* to monitor CodeBuild statistics
 	* Can set up *Alarms* on top of those
   * Can schedule CloudWatch *Events*
+* CodeStar Notifications integration
 
 <a name="4_6_3_1"></a>
-#### [↖](#4_6)[↑](#4_6_3)[↓](#4_6_3_2) How it works
+#### [↖](#4_6)[↑](#4_6_3)[↓](#4_7) How it works
 * CodeBuild is provided with a *build project*.
 	* Defines how Codebuild runs
 		* Source code location, build environment to use, build commands
@@ -1804,30 +1801,28 @@ you use.
   * Build runs in container, in phases
   * `submitted`, `queued`, `provisioning`, `download_source`, `install`, `pre_build`, `build`, `post_build`, `upload_artifacts`, `finalizing`, `completed`
 * Download source code into build environment, use *buildspec* to build
-* If there is build output, upload to S3
-* While build is running, the build environments sends information to CloudWatch and CodeBuild
-	* Can also use console, CLI, SDK to retrieve information about runnign build
-
-<a name="4_6_3_2"></a>
-#### [↖](#4_6)[↑](#4_6_3_1)[↓](#4_7) Buildspec
 
 .|.
 -|-
 `version`|`0.3`
 `run-as`|.
 `env`|`variables`, `parameter-store`, `exported-variables`, `secrets-manager`, `git-credentials-helper`
-`phases`|`install`, `pre_build`, `build`, `post_build`, `reports`, `artifacts`, `secondary-artifacts`
+`phases`|`install`, `pre_build`, `build`, `post_build`
+`reports`|.
+`artifacts`, `secondary-artifacts`|.
 `cache`|`paths`
 
-* *Artifacts* are what is kept after the build has finished.
+* Environment variables can come from SSM / Secrets Manager.
+* If there is build output, upload to S3
   * Uploaded to S3, encrypted by default
   * With default configuration, artifacts are overwritten each time
-* Environment variables can come from SSM / Secrets Manager.
+* While build is running, the build environments sends information to CloudWatch and CodeBuild
+	* Can also use console, CLI, SDK to retrieve information about running build
 
 ---
 
 <a name="4_7"></a>
-## [↖](#top)[↑](#4_6_3_2)[↓](#4_7_1) CodeCommit (Core Service)
+## [↖](#top)[↑](#4_6_3_1)[↓](#4_7_1) CodeCommit (Core Service)
 <!-- toc_start -->
 * [Overview](#4_7_1)
 * [Benefits](#4_7_2)
@@ -1882,13 +1877,12 @@ Use IAM policy:
 
 <a name="4_7_3_2"></a>
 #### [↖](#4_7)[↑](#4_7_3_1)[↓](#4_7_3_3) Send Notifications
-Use CloudWatch Events Rules under the hood
-
+* CodeStar Notifications integration
+* Uses CloudWatch Events Rules under the hood
 * Set up notification / notification rules:
 	* Pick triggering event (`on commit`, ..., `brunch updated`)
 	* Pick SNS topic as target
 	* Add subscriber to target
-
 * Set up CloudWatch Events directly:
 	* Pick event *source* (AWS service)
 	* Pick event *type* (different types, also includes CloudTrail)
@@ -2011,11 +2005,12 @@ hooks:
 
 <a name="4_8_3_2"></a>
 #### [↖](#4_8)[↑](#4_8_3_1)[↓](#4_8_3_3) CloudWatch integration
-	* Events can report and notify other services
-	* CloudWatch Log Agent on machine can push logs to CloudWatch
-		* *No logs* for ECS / Lambda deploys
-	* Deployment *triggers* can notify SNS
-    * Can trigger based on *deployment* or *instance* events
+* CodeStar Notifications integration
+* Events can report and notify other services
+* CloudWatch Log Agent on machine can push logs to CloudWatch
+  * *No logs* for ECS / Lambda deploys
+* Deployment *triggers* can notify SNS
+  * Can trigger based on *deployment* or *instance* events
 
 <a name="4_8_3_3"></a>
 #### [↖](#4_8)[↑](#4_8_3_2)[↓](#4_8_3_4) Rollback
@@ -2096,7 +2091,6 @@ are no upfront fees or long-term commitments.
       * Various *action providers* provide functionality
       * `runOrder` allows to decide about sequential and parallel
       * `region` replicates source bucket into target region. This enables multi-region deploys
-
 * Stages create *Artifacts*
   * Stored in S3, passed on to the next stage
     * *Default* setting for artifact store would create one bucket per pipe, can also specify *Custom* location
@@ -2104,8 +2098,8 @@ are no upfront fees or long-term commitments.
     * Always encrypted, default KMS or CMK
   * Artifacts are the way different pipeline stages 'communicate' with each other
   * CodePipelin artifacts are sightly different to CodeBuild artifacts
-
 * Integrates with CloudWatch Events
+* CodeStar Notifications integration
 
 * Can invoke Lambda as an almost arbitrary pipeline action
 	* `codepipeline:PutJobSuccessResult`, `codepipeline:PutJobFailureResult`
@@ -2520,7 +2514,7 @@ TODO: https://aws.amazon.com/blogs/devops/build-a-continuous-delivery-pipeline-f
 * [Overview](#4_14_1)
 * [Concepts](#4_14_2)
   * [Components](#4_14_2_1)
-  * [Configuration](#4_14_2_2)
+  * [Configuration precedence](#4_14_2_2)
   * [Deployment Types](#4_14_2_3)
 * [Limits](#4_14_3)
 <!-- toc_end -->
