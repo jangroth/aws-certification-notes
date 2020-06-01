@@ -1550,8 +1550,7 @@ optimize your applications, and ensure they are running smoothly.
 ### [↖](#4_5)[↑](#4_5_1)[↓](#4_5_2_1) Concepts
 
 <a name="4_5_2_1"></a>
-#### [↖](#4_5)[↑](#4_5_2)[↓](#4_5_2_2) Logging
-**Logs**
+#### [↖](#4_5)[↑](#4_5_2)[↓](#4_5_2_2) CloudWatch Logs
 * *Log events* are records of some activity recorded by the application or resource being monitored
 * *Log streams* are sequences of log events from the same source
 * *Log groups* are groups of log streams that share the same retention, monitoring, and access control settings
@@ -1559,19 +1558,18 @@ optimize your applications, and ensure they are running smoothly.
   * Search for and match terms, phrases, or values in log events
   * Can increment the value of a CloudWatch metric
 * *Retention settings* can be used to specify how long log events are kept in CloudWatch Logs
-
-Logs can be exported to S3 for durable storage.
+* Logs can be exported to S3 for durable storage.
   * This can be automated with `EventsFilter` -> `Lambda`
 
 <a name="4_5_2_2"></a>
-#### [↖](#4_5)[↑](#4_5_2_1)[↓](#4_5_2_3) Metrics
+#### [↖](#4_5)[↑](#4_5_2_1)[↓](#4_5_2_3) CloudWatch Metrics
 **Namespaces**
 * Container for CloudWatch metrics
 * Metrics in different namespaces are isolated from each other
 * The AWS namespaces typically use the following naming convention: `AWS/service`
 
 **Metrics**
-* Metrics are the fundamental concept in CloudWatch.
+* Metrics are the fundamental concept in CloudWatch Metrics
 * A metric represents a time-ordered set of *data points* that are published to CloudWatch.
 * *High resolution metrics* down to 1 second
   * Higher resolution data automatically aggregates into lower resolution data
@@ -1608,11 +1606,11 @@ Logs can be exported to S3 for durable storage.
 * CloudWatch aggregates statistics according to the period length that you specify when retrieving statistics
 
 <a name="4_5_2_3"></a>
-#### [↖](#4_5)[↑](#4_5_2_2)[↓](#4_5_2_3_1) Alarms
+#### [↖](#4_5)[↑](#4_5_2_2)[↓](#4_5_2_3_1) CloudWatch Alarms
 * Based on thresholds defined on metrics, including custom metrics
   * Can only be based on a *single* metric
 * Can trigger *Lambda*, *SNS*, email, ...
-  * Also *auto scaling* or *ec2* action
+  * Also *Auto Scaling* or *EC2* action
   * Alarms do *not* raise CloudWatch Events themselves
 * *High resolution alarms* down to 10 seconds
 * Takes place once, at a specific point in time
@@ -1624,7 +1622,7 @@ Logs can be exported to S3 for durable storage.
 * Only available in *us-east-1*
 
 <a name="4_5_2_4"></a>
-#### [↖](#4_5)[↑](#4_5_2_3_1)[↓](#4_5_2_4_1) Events
+#### [↖](#4_5)[↑](#4_5_2_3_1)[↓](#4_5_2_4_1) CloudWatch Events
 * Define actions on things that happened
 * Or schedule `cron`-based events
 * Events are recorded constantly over time
