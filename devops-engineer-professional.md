@@ -408,6 +408,7 @@ terminate instances as demand on your application increases or decreases.
 * CloudFormation init scripts
 * Cloud init scripts
 * Scale out/scale in
+* On AWS: <a href="https://aws.amazon.com/autoscaling/" target="_blank">Service</a> - <a href="https://aws.amazon.com/autoscaling/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/autoscaling" target="_blank">User Guide</a>
 
 <a name="3_3_3_2"></a>
 #### [↖](#3_3)[↑](#3_3_3_1)[↓](#3_3_3_2_1) Components
@@ -475,6 +476,9 @@ After Lifecycle Hooks are added to the instance:
 * Going into `pending:proceed`/`terminating:proceed` after that.
 * By default, the instance remains in a wait state for one hour, and then the Auto Scaling Group
   continues the launch or terminate process
+
+`scale out` -> *Pending* -> ***Pending:Wait*** -> ***Pending:Proceed*** -> *InService*
+`scale in` -> *Terminating* -> ***Terminating:Wait*** -> ***Terminating:Proceed*** -> *Terminated*
 
 ##### Scaling
 Scaling is the ability to increase or decrease the compute capacity of your application. Scaling
@@ -835,7 +839,7 @@ Amazon Inspector|Application security, scans EC2 instances for CVEs|Root login v
 GuardDuty|Scans accounts and workloads|Instance has bitcoin activiy, unusual console logins (e.g. new location)
 Macie|Protects data|SSH private key uploaded to S3
 Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
-TrustedAdvisor|Scans accounts, recommends cost optimisations, fault tolerance, performance, service limits, security|Open security groups, EBS snapshot permissions
+TrustedAdvisor|Scans accounts, recommends *cost optimisations*, *fault tolerance*, *performance*, *service limits*, *security*|Open security groups, EBS snapshot permissions
 
 <a name="3_11"></a>
 ## [↖](#top)[↑](#3_10)[↓](#3_11_1) External Tools
@@ -1557,6 +1561,7 @@ optimize your applications, and ensure they are running smoothly.
   * Search for and match terms, phrases, or values in log events
   * Can increment the value of a CloudWatch metric
 * *Retention settings* can be used to specify how long log events are kept in CloudWatch Logs
+  Default: Indefinetely
 * Logs can be exported to S3 for durable storage.
   * This can be automated with `EventsFilter` -> `Lambda`
 
@@ -1581,9 +1586,6 @@ CloudFront Access Logs|S3
 **Metrics**
 * Metrics are the fundamental concept in CloudWatch Metrics
 * A metric represents a time-ordered set of *data points* that are published to CloudWatch.
-* *High resolution metrics* down to 1 second
-  * Higher resolution data automatically aggregates into lower resolution data
-* Data is kept for 3h to 15m, depending on the metric resolution
 * Available metrics are based on currently used service
 * Not everything is available out of the box, e.g. no data on memory usage of EC2 instances
 * Can also create *Custom Metrics*
@@ -1593,6 +1595,15 @@ CloudFront Access Logs|S3
   * `aws cloudwatch put-metric-data --metric-name PageViewCount --namespace MyService --value 2 --timestamp 2016-10-20T12:00:00.000Z`
 * Can also *export* metrics
   * `get-metric-statistics --namespace <value> --metric-name <value> --start-time <value> --end-time <value>...`
+* *High resolution metrics* down to 1 second
+  * Higher resolution data automatically aggregates into lower resolution data
+
+Resolution|Data retention
+-|-
+<60s|3h
+60s|15d
+300s (5min)|63d
+3600s (1h)|15m
 
 **Time Stamps**
 * Each metric data point must be associated with a time stamp.
@@ -2351,7 +2362,21 @@ million requests per second.
 * *Global* as in "over many partitions"
 * Cannot request not-projected attributes for query or scan operation
 
-###
+### Capacity provisioning
+* Unit for operations:
+	* 1 *strongly consistent* `read` per second (up to 4KB/s)
+	* 2 *eventual consistent* `read` per second (up to 8KB/s)
+	* 1 `write` per second (up to 1KB)
+* Algorithm
+
+.|.
+-|-
+.|*300 strongly consistent reads of 11KB per minute*
+Calculate read / writes per second|`300r/60s = 5r/s`
+Multiply with payload factor|`5r/s * (11KB/4KB) = 15cu`
+If eventual consistent, devide by 2|`15cu / 2 = 8cu`
+
+### DynamoDB Accelerator (DAX)
 
 Amazon DynamoDB Accelerator (DAX) is a fully managed, highly available, in-memory cache for
 DynamoDB that delivers up to a 10x performance improvement – from milliseconds to microseconds –
@@ -2742,7 +2767,7 @@ collected before the processing can begin.
 
 [`various data sources`]->`Kinesis Streams`->`Kinesis Analytics`->`Kinesis Firehose`->[`S3`]
 
-* On AWS: <a href="https://aws.amazon.com/kinesis/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/kinesis/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/" target="_blank">User Guide</a>
 
 <a name="4_17_1"></a>
 ### [↖](#4_17)[↑](#4_17)[↓](#4_17_1_1) Overview
@@ -3354,6 +3379,8 @@ action on your groups of resources. Systems Manager simplifies resource and appl
 shortens the time to detect and resolve operational problems, and makes it easy to operate and
 manage your infrastructure securely at scale.
 
+*Group resources* -> *Visualize data* -> *Take action*
+
 * Manage EC2 and on-prem instances at scale
   * On-prem requires generation of secret *activation code* / *activation id*
 * Get operational insights of infrastructure
@@ -3365,7 +3392,7 @@ manage your infrastructure securely at scale.
 * SSM Agent
   * Installed on instances
   * Need correct IAM permissions, then shows up on SSM dashboard
-* On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_28_2"></a>
 ### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_2_1) Components
@@ -3460,7 +3487,7 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
   * Automate by triggering lambdas
 * Checks are usually refreshed every 5min
   * Can trigger refresh via API
-* On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/trustedadvisor/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/trustedadvisor/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
 
 ---
 
@@ -3486,3 +3513,10 @@ complex microservices applications consisting of thousands of services.
   * Automation could base on regular polling of `GetServiceGraph`
 * X-Ray Console displays information in *service map*
 * On AWS: <a href="https://aws.amazon.com/xray/" target="_blank">Service</a> - <a href="https://aws.amazon.com/xray/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/xray/latest/userguide/" target="_blank">User Guide</a>
+
+--
+
+# Random Information from practice questions
+
+## CLI
+* `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
