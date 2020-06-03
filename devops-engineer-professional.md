@@ -835,7 +835,7 @@ Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always 
 
 Service|What it does |Will warn about (example)
 -|-|-
-Amazon Inspector|Application security, scans EC2 instances for CVEs|Root login via ssh not disabled
+Amazon Inspector|Application and service security, scans EC2 instances for CVEs|Root login via ssh not disabled
 GuardDuty|Scans accounts and workloads|Instance has bitcoin activiy, unusual console logins (e.g. new location)
 Macie|Protects data|SSH private key uploaded to S3
 Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
@@ -935,19 +935,19 @@ installed. These rules are regularly updated by AWS security researchers.
 ### [↖](#4_2)[↑](#4_2)[↓](#4_2_1_1) Overview
 *Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish,
 maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console,
-you can create REST and WebSocket APIs that act as a “front door” for applications to access data,
+you can create *REST* and *WebSocket* APIs that act as a “front door” for applications to access data,
 business logic, or functionality from your backend services, such as workloads running on Amazon
 Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time
 communication applications.
 
-* On AWS: <a href="https://aws.amazon.com/api-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/api-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/api-gateway/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/api-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/api-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2020</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2018</a>
 
 <a name="4_2_1_1"></a>
 #### [↖](#4_2)[↑](#4_2_1)[↓](#4_2_2) Benefits
-* **RESTful** or **Websocket** APIs
-* Powerful, flexible **authentication** mechanisms, such as AWS Identity and Access Management policies,
+* **RESTful** (stateless) or **Websocket** (stateful) APIs
+* Powerful, flexible **authentication** mechanisms, such as AWS IAM policies,
   Lambda authorizer functions, and Amazon Cognito user pools.
 * **Developer portal** for publishing your APIs.
 * **Canary release deployments** for safely rolling out changes.
@@ -986,8 +986,6 @@ A logical reference to a lifecycle state of your REST or WebSocket API (for exam
   * Canaray releases attaches a new version to an existing stage deployment and randomly shift traffic over
   * Logs and metrics are generated separately for all canary requests
   * This is blue/green for API Gateway/Lambda
-
-TODO: play with gateway stages, variables, lambda alias and versions
 
 <a name="4_2_2_3"></a>
 #### [↖](#4_2)[↑](#4_2_2_2)[↓](#4_2_2_4) Deployment
@@ -3520,3 +3518,6 @@ complex microservices applications consisting of thousands of services.
 
 ## CLI
 * `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
+
+## Aurora
+* Can have up to 15 read replicas
