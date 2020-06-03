@@ -47,6 +47,9 @@
   * [Systems Manager (Core Service)](#4_28)
   * [Trusted Advisor (Core Service)](#4_29)
   * [X-Ray (Core Service)](#4_30)
+* [Random Information from practice questions](#5)
+  * [CLI](#5_1)
+  * [Aurora](#5_2)
 ---
 <!-- toc_end -->
 
@@ -1032,7 +1035,8 @@ A data schema specifying the data structure of a request or response payload.
 * [Components](#4_3_2)
   * [Template](#4_3_2_1)
   * [Stacks](#4_3_2_2)
-  * [StackSets](#4_3_2_3)
+  * [Processes](#4_3_2_3)
+  * [StackSets](#4_3_2_4)
 * [Concepts](#4_3_3)
   * [Running code on instance boot](#4_3_3_1)
   * [Custom Resources](#4_3_3_2)
@@ -1055,7 +1059,7 @@ needed to run your applications.
 * Allows to create and provision **resources** in a reusable **template** fashion
 * Declarative - no need for ordering and orchestration
 * Separation of concerns - different stacks for different purposes
-* On AWS: <a href="https://aws.amazon.com/cloudformation/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudformation/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudformation/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/cloudformation/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudformation/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" target="_blank">User Guide</a>
 
 <a name="4_3_2"></a>
 ### [↖](#4_3)[↑](#4_3_1)[↓](#4_3_2_1) Components
@@ -1163,7 +1167,7 @@ Name|Attributes|Description
 `Fn::Transform`| Name: *String*<br/> Parameters:<br/>   { *key*: *Value*, ... } | * Specifies a macro to perform custom processing on part of a stack template
 
 <a name="4_3_2_2"></a>
-#### [↖](#4_3)[↑](#4_3_2_1_6)[↓](#4_3_2_2_1) Stacks
+#### [↖](#4_3)[↑](#4_3_2_1_6)[↓](#4_3_2_3) Stacks
 * Related resources are managed in a single unit called a **stack**
 	* All the resources in a stack are defined by the stack's *CloudFormation* template
 	* Controls lifecycle of managed resources
@@ -1173,14 +1177,14 @@ Name|Attributes|Description
   * Possible to detect **stack drift**, if supported by created rersources
   * Can enable **termination protection**
 * A **stack policy** is an *IAM*-style policy statements that governs who can do what
-  Defines which actions can be performed on specified resources. With CloudFormation stack policies
-  you can protect all or certain resources in your stacks from being unintentionally updated or
+  * Defines which actions can be performed on specified resources.
+  * With CloudFormation stack policies you can protect all or certain resources in your stacks from being unintentionally updated or
   deleted during the update process.
 
   * Check **stack policy** if updates are allowed
     * No policy present: All updates are allowed -> This differs from IAM default!
     * Once a policy is applied
-      * It cannot be deleted
+      * It cannot be updated or removed from the stack (deleted)
       * *All* resources that are not explicitely allowed are denied
       * Default deny can be explicitely overwritten
     * Policy format JSON
@@ -1195,7 +1199,8 @@ Element|.
 `Resource`,`NotResource`|.
 `Condition`|Typically evaluates based on resource type
 
-#### Processes
+<a name="4_3_2_3"></a>
+#### [↖](#4_3)[↑](#4_3_2_2)[↓](#4_3_2_3_1) Processes
 
 ##### Stack Creation
 1. Template upload into S3 bucket
@@ -1243,8 +1248,8 @@ Element|.
 * Use the `UpdateReplacePolicy` attribute to retain or (in some cases) backup the existing
 	physical instance of a resource when it is replaced during a stack update operation.
 * On Failure, the stack will rollback automatically to the last known working state
-* ** Interuption while updating**
-  * Update can impact a resource in 4 possible ways
+* **Interuption while updating**
+  * Update can impact a resource in 3 possible ways
     * *No interruption*
       * E.g. change `ProvisionedThroughput` of a DynamoDB table
     * Some interruption
@@ -1254,7 +1259,6 @@ Element|.
       * E.g. change `AvailabilityZone` of an EC2 instance
       * E.g. change `ImageId` of an EC2 instance
       * E.g. change `Tablename` of a DynamoDB table
-    * Deletion
 
 ##### Stack Deletion
 * Specify the stack to delete, and AWS CloudFormation deletes the stack and all the resources in that stack.
@@ -1283,8 +1287,8 @@ Element|.
         * `AWS::Redshift::Cluster`
       * Allow data recovery at a later stage
 
-<a name="4_3_2_3"></a>
-#### [↖](#4_3)[↑](#4_3_2_2_4_2)[↓](#4_3_2_3_1) StackSets
+<a name="4_3_2_4"></a>
+#### [↖](#4_3)[↑](#4_3_2_3_3)[↓](#4_3_2_4_1) StackSets
 *StackSets* lets you create stacks in multiple AWS *accounts* across multiple *regions* by using a single CloudFormation
 template. All the resources included in each stack are defined by the stack set's
 AWS CloudFormation template. As you create the stack set, you specify the template to use, as well
@@ -1295,15 +1299,15 @@ as any parameters and capabilities that template requires.
 * A *stack instance* is a reference to a stack in a target account within a region
   * Can exist without a stack, e.g. if stack failed to create, then the stack instance shows the reason for that
 * Operations: *Create*, *Update*, *Delete*
-* Operation options:
-  * *Maximum concurrent accounts* - maximum number or percentage of target accounts in which an operation is performed at one time
-  * *Failure tolerance* - maximum number or percentage of stack operation failures that can occur,
-    per region, beyond which AWS CloudFormation stops an operation automatically
-  * *Retain stack* (delete operations only) - keep stacks and their resources running even after
-    they have been removed from a stack set
+
+Operation options|.
+-|-
+*Maximum concurrent accounts*|Maximum number or percentage of target accounts in which an operation is performed at one time
+*Failure tolerance*|Maximum number or percentage of stack operation failures that can occur, per region, beyond which AWS CloudFormation stops an operation automatically
+*Retain stack* (delete operations only)|Keep stacks and their resources running even after they have been removed from a stack set
 
 <a name="4_3_3"></a>
-### [↖](#4_3)[↑](#4_3_2_3_1)[↓](#4_3_3_1) Concepts
+### [↖](#4_3)[↑](#4_3_2_4_1)[↓](#4_3_3_1) Concepts
 
 <a name="4_3_3_1"></a>
 #### [↖](#4_3)[↑](#4_3_3)[↓](#4_3_3_1_1) Running code on instance boot
@@ -2271,7 +2275,9 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
   * [Projected attributes](#4_12_3_1)
   * [Local secondary index](#4_12_3_2)
   * [Global secondary index](#4_12_3_3)
-* [DynamoDB Streams](#4_12_4)
+* [Capacity provisioning](#4_12_4)
+* [DynamoDB Accelerator (DAX)](#4_12_5)
+* [DynamoDB Streams](#4_12_6)
 <!-- toc_end -->
 
 <a name="4_12_1"></a>
@@ -2352,7 +2358,8 @@ million requests per second.
 * *Global* as in "over many partitions"
 * Cannot request not-projected attributes for query or scan operation
 
-### Capacity provisioning
+<a name="4_12_4"></a>
+### [↖](#4_12)[↑](#4_12_3_3)[↓](#4_12_5) Capacity provisioning
 * Unit for operations:
 	* 1 *strongly consistent* `read` per second (up to 4KB/s)
 	* 2 *eventual consistent* `read` per second (up to 8KB/s)
@@ -2366,7 +2373,8 @@ Calculate read / writes per second|`300r/60s = 5r/s`
 Multiply with payload factor|`5r/s * (11KB/4KB) = 15cu`
 If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 
-### DynamoDB Accelerator (DAX)
+<a name="4_12_5"></a>
+### [↖](#4_12)[↑](#4_12_4)[↓](#4_12_6) DynamoDB Accelerator (DAX)
 
 Amazon DynamoDB Accelerator (DAX) is a fully managed, highly available, in-memory cache for
 DynamoDB that delivers up to a 10x performance improvement – from milliseconds to microseconds –
@@ -2378,8 +2386,8 @@ customers without worrying about performance at scale. You do not need to modify
 clicks in the AWS Management Console or using the AWS SDK. Just as with DynamoDB, you only pay for
 the capacity you provision.
 
-<a name="4_12_4"></a>
-### [↖](#4_12)[↑](#4_12_3_3)[↓](#4_13) DynamoDB Streams
+<a name="4_12_6"></a>
+### [↖](#4_12)[↑](#4_12_5)[↓](#4_13) DynamoDB Streams
 
 *DynamoDB Streams* captures a time-ordered sequence of item-level modifications in any DynamoDB
 table and stores this information in a log for up to 24 hours. Applications can access this log
@@ -2399,7 +2407,7 @@ data items in the table.
 ---
 
 <a name="4_13"></a>
-## [↖](#top)[↑](#4_12_4)[↓](#4_13_1) ECS
+## [↖](#top)[↑](#4_12_6)[↓](#4_13_1) ECS
 <!-- toc_start -->
 * [Overview](#4_13_1)
   * [Benefits](#4_13_1_1)
@@ -3488,7 +3496,7 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
 <!-- toc_end -->
 
 <a name="4_30_1"></a>
-### [↖](#4_30)[↑](#4_30) Overview
+### [↖](#4_30)[↑](#4_30)[↓](#5) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
@@ -3506,10 +3514,13 @@ complex microservices applications consisting of thousands of services.
 
 --
 
-# Random Information from practice questions
+<a name="5"></a>
+# [↖](#top)[↑](#4_30_1)[↓](#5_1) Random Information from practice questions
 
-## CLI
+<a name="5_1"></a>
+## [↖](#top)[↑](#5)[↓](#5_2) CLI
 * `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
 
-## Aurora
+<a name="5_2"></a>
+## [↖](#top)[↑](#5_1) Aurora
 * Can have up to 15 read replicas
