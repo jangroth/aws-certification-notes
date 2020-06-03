@@ -970,10 +970,9 @@ A hostname for an API in API Gateway that is deployed to a specific region. The 
 form `{api-id}.execute-api.{region}.amazonaws.com`.
 
 The following types of API endpoints are supported:
-* Regional - deployed to the specified region and intended to serve clients in the same AWS region.
-* Edge Optimized - deployed to the specified region while using a *CloudFront distribution* to
-  facilitate client access typically from across AWS regions
-* Private - exposed through interface VPC endpoints
+* *Regional* - deployed to the specified region and intended to serve clients in the same AWS region.
+* *Edge Optimized* - deployed to the specified region while using a *CloudFront distribution* to facilitate client access typically from across AWS regions
+* *Private* - exposed through interface VPC endpoints
 
 <a name="4_2_2_2"></a>
 #### [↖](#4_2)[↑](#4_2_2_1)[↓](#4_2_2_3) Stage
