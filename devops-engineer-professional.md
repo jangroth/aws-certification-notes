@@ -1173,10 +1173,31 @@ Name|Attributes|Description
   * Possible to detect **stack drift**, if supported by created rersources
   * Can enable **termination protection**
 * A **stack policy** is an *IAM*-style policy statements that governs who can do what
+  Defines which actions can be performed on specified resources. With CloudFormation stack policies
+  you can protect all or certain resources in your stacks from being unintentionally updated or
+  deleted during the update process.
+
+  * Check **stack policy** if updates are allowed
+    * No policy present: All updates are allowed -> This differs from IAM default!
+    * Once a policy is applied
+      * It cannot be deleted
+      * *All* resources that are not explicitely allowed are denied
+      * Default deny can be explicitely overwritten
+    * Policy format JSON
+      * Contains *policy documents*
+  * Don't confuse with `DeletionPolicy`, `UpdatePolicy`, `UpdateRollbackPolicy` attributes
+
+Element|.
+-|-
+`Effect`|.
+`Principal`|*Must* be wildcard for stack policies
+`Action`|`Update:Modify`,`Update:Replace`,`Update:Delete`,`Update:(wildcard)`
+`Resource`,`NotResource`|.
+`Condition`|Typically evaluates based on resource type
+
+#### Processes
 
 ##### Stack Creation
-
-###### Process
 1. Template upload into S3 bucket
 2. Template syntax check
     * CloudFormation will check for any IAM resources being created, and require `CAPABILITY_IAM`|
@@ -1208,8 +1229,6 @@ Name|Attributes|Description
     * Can try to manually resolve problems if in state `UPDATE_ROLLBACK_FAILED`
 
 ##### Stacks Updates
-
-###### Process
 * **Direct updates**
 	* You submit changes and AWS CloudFormation immediately deploys them
 * **Change sets**
@@ -1224,72 +1243,45 @@ Name|Attributes|Description
 * Use the `UpdateReplacePolicy` attribute to retain or (in some cases) backup the existing
 	physical instance of a resource when it is replaced during a stack update operation.
 * On Failure, the stack will rollback automatically to the last known working state
-
-###### Interuption while updating
-* Update can impact a resource in 4 possible ways
-	* *No interruption*
-		* E.g. change `ProvisionedThroughput` of a DynamoDB table
-	* Some interruption
-		* E.g. change `EbsOptimized` of an EC2 instance (EBS-backed)
-		* E.g. change `InstanceType` of an EC2 instance (EBS-backed)
-	* Replacement
-		* E.g. change `AvailabilityZone` of an EC2 instance
-		* E.g. change `ImageId` of an EC2 instance
-		* E.g. change `Tablename` of a DynamoDB table
-	* Deletion
-
-##### Stack Policy
-Defines which actions can be performed on specified resources. With CloudFormation stack policies
-you can protect all or certain resources in your stacks from being unintentionally updated or
-deleted during the update process.
-
-* Check **stack policy** if updates are allowed
-	* No policy present: All updates are allowed -> This differs from IAM default!
-	* Once a policy is applied
-		* It cannot be deleted
-		* *All* resources that are not explicitely allowed are denied
-		* Default deny can be explicitely overwritten
-	* Policy format JSON
-		* Contains *policy documents*
-* Don't confuse with `DeletionPolicy`, `UpdatePolicy`, `UpdateRollbackPolicy` attributes
-
-Element|.
--|-
-`Effect`|.
-`Principal`|*Must* be wildcard for stack policies
-`Action`|`Update:Modify`,`Update:Replace`,`Update:Delete`,`Update:(wildcard)`
-`Resource`,`NotResource`|.
-`Condition`|Typically evaluates based on resource type
+* ** Interuption while updating**
+  * Update can impact a resource in 4 possible ways
+    * *No interruption*
+      * E.g. change `ProvisionedThroughput` of a DynamoDB table
+    * Some interruption
+      * E.g. change `EbsOptimized` of an EC2 instance (EBS-backed)
+      * E.g. change `InstanceType` of an EC2 instance (EBS-backed)
+    * Replacement
+      * E.g. change `AvailabilityZone` of an EC2 instance
+      * E.g. change `ImageId` of an EC2 instance
+      * E.g. change `Tablename` of a DynamoDB table
+    * Deletion
 
 ##### Stack Deletion
-
-###### Process
 * Specify the stack to delete, and AWS CloudFormation deletes the stack and all the resources in that stack.
 * With the `DeletionPolicy` attribute you can preserve or (in some cases) backup a resource when its
-stack is deleted.
+  stack is deleted.
 * If AWS CloudFormation cannot delete a resource, the stack will not be deleted.
 * A stack can have *termination protection* enabled, which will prevent it from being deleted accidentally
-
-###### Resource deletion policy
-* **Policy** / statement that is associated with every resource of a stack
-* Controls what happens if stack is deleted
-* `DeletionPolicy`
-	* `Delete`
-		* (default)
-		* Creates transitive environment - immutable architecture
-	* `Retain`
-		* Obviously needs further cleanup - non-immutable architecture
-	* `Snapshot`
-		* Takes snapshot prior to deletion
-		* Some resourcetypes only
-			* `AWS::EC2::Volume`
-			* `AWS::ElastiCache::CacheCluster`
-			* `AWS::ElastiCache::ReplicationGroup`
-			* `AWS::Neptune::DBCluster`
-			* `AWS::RDS::DBCluster`
-			* `AWS::RDS::DBInstance`
-			* `AWS::Redshift::Cluster`
-		* Allow data recovery at a later stage
+* **Resource Deletion policy**
+  * **Policy** / statement that is associated with every resource of a stack
+  * Controls what happens if stack is deleted
+  * `DeletionPolicy`
+    * `Delete`
+      * (default)
+      * Creates transitive environment - immutable architecture
+    * `Retain`
+      * Obviously needs further cleanup - non-immutable architecture
+    * `Snapshot`
+      * Takes snapshot prior to deletion
+      * Some resourcetypes only
+        * `AWS::EC2::Volume`
+        * `AWS::ElastiCache::CacheCluster`
+        * `AWS::ElastiCache::ReplicationGroup`
+        * `AWS::Neptune::DBCluster`
+        * `AWS::RDS::DBCluster`
+        * `AWS::RDS::DBInstance`
+        * `AWS::Redshift::Cluster`
+      * Allow data recovery at a later stage
 
 <a name="4_3_2_3"></a>
 #### [↖](#4_3)[↑](#4_3_2_2_4_2)[↓](#4_3_2_3_1) StackSets
