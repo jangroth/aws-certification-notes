@@ -40,13 +40,14 @@
   * [Managed Services](#4_21)
   * [OpsWorks Stacks (Core Service)](#4_22)
   * [Organizations](#4_23)
-  * [S3](#4_24)
-  * [Secrets Manager](#4_25)
-  * [Service Catalog (Core Service)](#4_26)
-  * [Step Functions](#4_27)
-  * [Systems Manager (Core Service)](#4_28)
-  * [Trusted Advisor (Core Service)](#4_29)
-  * [X-Ray (Core Service)](#4_30)
+  * [Relational Database Service](#4_24)
+  * [S3](#4_25)
+  * [Secrets Manager](#4_26)
+  * [Service Catalog (Core Service)](#4_27)
+  * [Step Functions](#4_28)
+  * [Systems Manager (Core Service)](#4_29)
+  * [Trusted Advisor (Core Service)](#4_30)
+  * [X-Ray (Core Service)](#4_31)
 * [Random Information from practice questions](#5)
   * [CLI](#5_1)
   * [Aurora](#5_2)
@@ -3153,22 +3154,100 @@ Maximum linked accounts|20
 ---
 
 <a name="4_24"></a>
-## [↖](#top)[↑](#4_23_4)[↓](#4_24_1) S3
+## [↖](#top)[↑](#4_23_4)[↓](#4_24_1) Relational Database Service
 <!-- toc_start -->
 * [Overview](#4_24_1)
-* [Versioning](#4_24_2)
-* [Logging](#4_24_3)
-* [Cross-Region Replication](#4_24_4)
-* [Storage classes](#4_24_5)
-* [Access Control](#4_24_6)
-  * [Defaults](#4_24_6_1)
-  * [IAM](#4_24_6_2)
-  * [Bucket policies](#4_24_6_3)
-  * [ACLs](#4_24_6_4)
+* [Backups](#4_24_2)
+* [Multi-AZ deployments](#4_24_3)
+* [Read replicas](#4_24_4)
 <!-- toc_end -->
 
 <a name="4_24_1"></a>
 ### [↖](#4_24)[↑](#4_24)[↓](#4_24_2) Overview
+Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a
+relational database in the cloud. It provides cost-efficient and resizable capacity while
+automating time-consuming administration tasks such as hardware provisioning, database setup,
+patching and backups. It frees you to focus on your applications so you can give them the fast
+performance, high availability, security and compatibility they need.
+
+Amazon RDS is available on several database instance types - optimized for memory, performance or I/O - 
+and provides you with six familiar database engines to choose from, including Amazon Aurora,
+PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database
+Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
+
+<a name="4_24_2"></a>
+### [↖](#4_24)[↑](#4_24_1)[↓](#4_24_3) Backups
+* **Automated backups**
+  * Enabled by default
+  * Allow to recover database within a *retention period* (1d - 35d)
+    * *Transactional* storage engine recommended as DB engine
+    * Will take daily snapshot and use transaction logs
+    * PITR down to 1 second (within retention period)
+  * Backups are taken within defined window
+    * Degrades performance if *multi-AZ* is not enabled!
+    * Taken from slave if *multi-AZ* is enabled
+  * Backups are stored internaly on S3
+    * Free storage space equal to DB size
+    * Deleting an instance deletes all *automated* backups
+* **Database Snapshots**
+  * Only manually, always user initiated
+  * Won't be deleted with DB instance
+
+<a name="4_24_3"></a>
+### [↖](#4_24)[↑](#4_24_2)[↓](#4_24_4) Multi-AZ deployments
+Provide enhanced availability for database instances within a *single* AWS Region.
+
+* Meant for *disaster recover*, not for performance improvement (-> Read Replica)
+* Configure RDS for *multi-AZ deployments* and turn *replication* on
+  * Keeps a **synchronous** standby replica in a different AZ
+  * Automatic failover in case of planned or unplanned outage of the first AZ
+    * Most likely still has downtime
+    * Can *force* failover by *rebooting*
+  * Other benefits
+    * Patching
+    * Backups
+  * *Aurora* can replicate accross 3 AZs
+
+<a name="4_24_4"></a>
+### [↖](#4_24)[↑](#4_24_3)[↓](#4_25) Read replicas
+* Read queries are routed to *read replicas*, reducing load on primary db instance (*source instance*)
+* To create read replicas, AWS initally creates a snapshot of the source instance
+  * Multi-AZ failover instance (if enabled) is used for snapshotting
+  * After that all read queries are then **asynchronously** copied to read replica
+  * Implies data latency, which typically is acceptable.
+    * `ReplicaLag` can be monitored and *CloudWatch* alarms can be configured
+  * No AWS charges for data replication in *same* region
+* A single master can have **up to 5** read replicas
+  * Can be in different regions
+  * Can have Multi-AZ enabled themselves
+* *Read replicas* are **not** the same as *multi-AZ failover* instances which
+  * are *synchronously* updated
+  * are designed to handle failover
+  * don't receive any load unless failover actually happens
+* Often it is beneficial to have both *read replicas* and *multi-AZ failover* instances
+* Read replicas can be promoted to normal instances
+  * E.g. use read replica to implement bigger changes on db level, after these have been finished promote to master instance
+  * This will break replication
+
+---
+
+<a name="4_25"></a>
+## [↖](#top)[↑](#4_24_4)[↓](#4_25_1) S3
+<!-- toc_start -->
+* [Overview](#4_25_1)
+* [Versioning](#4_25_2)
+* [Logging](#4_25_3)
+* [Cross-Region Replication](#4_25_4)
+* [Storage classes](#4_25_5)
+* [Access Control](#4_25_6)
+  * [Defaults](#4_25_6_1)
+  * [IAM](#4_25_6_2)
+  * [Bucket policies](#4_25_6_3)
+  * [ACLs](#4_25_6_4)
+<!-- toc_end -->
+
+<a name="4_25_1"></a>
+### [↖](#4_25)[↑](#4_25)[↓](#4_25_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
 scale past trillions of objects worldwide.
@@ -3186,14 +3265,14 @@ scale past trillions of objects worldwide.
 * On AWS: <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/s3/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-S3/Amazon-S3.jpg" target="_blank">AWS Geek 2018</a>
 
-<a name="4_24_2"></a>
-### [↖](#4_24)[↑](#4_24_1)[↓](#4_24_3) Versioning
+<a name="4_25_2"></a>
+### [↖](#4_25)[↑](#4_25_1)[↓](#4_25_3) Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
 * **Version ids** are automatically assigned to objects
 
-<a name="4_24_3"></a>
-### [↖](#4_24)[↑](#4_24_2)[↓](#4_24_4) Logging
+<a name="4_25_3"></a>
+### [↖](#4_25)[↑](#4_25_2)[↓](#4_25_4) Logging
 * *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
   stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
   specific events.
@@ -3201,15 +3280,15 @@ scale past trillions of objects worldwide.
   * Provide detailed records for the requests that are made to a bucket
   * Needs to be enabled on bucket level
 
-<a name="4_24_4"></a>
-### [↖](#4_24)[↑](#4_24_3)[↓](#4_24_5) Cross-Region Replication
+<a name="4_25_4"></a>
+### [↖](#4_25)[↑](#4_25_3)[↓](#4_25_5) Cross-Region Replication
 * Buckets *must* be in different regions
   * Can replicate cross-account
 * *Must* have versioning enabled
 * Only new / changed objects will be replicated
 
-<a name="4_24_5"></a>
-### [↖](#4_24)[↑](#4_24_4)[↓](#4_24_6) Storage classes
+<a name="4_25_5"></a>
+### [↖](#4_25)[↑](#4_25_4)[↓](#4_25_6) Storage classes
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
 S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
@@ -3220,16 +3299,16 @@ Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *stand
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-<a name="4_24_6"></a>
-### [↖](#4_24)[↑](#4_24_5)[↓](#4_24_6_1) Access Control
+<a name="4_25_6"></a>
+### [↖](#4_25)[↑](#4_25_5)[↓](#4_25_6_1) Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
 
-<a name="4_24_6_1"></a>
-#### [↖](#4_24)[↑](#4_24_6)[↓](#4_24_6_2) Defaults
+<a name="4_25_6_1"></a>
+#### [↖](#4_25)[↑](#4_25_6)[↓](#4_25_6_2) Defaults
 * Bucket is *owned* by the AWS account that created it
   * Ownership refers to the identity and email address used to create the account
 	* Bucket ownership is not transferable
@@ -3237,15 +3316,15 @@ Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
 
-<a name="4_24_6_2"></a>
-#### [↖](#4_24)[↑](#4_24_6_1)[↓](#4_24_6_3) IAM
+<a name="4_25_6_2"></a>
+#### [↖](#4_25)[↑](#4_25_6_1)[↓](#4_25_6_3) IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
 
-<a name="4_24_6_3"></a>
-#### [↖](#4_24)[↑](#4_24_6_2)[↓](#4_24_6_4) Bucket policies
+<a name="4_25_6_3"></a>
+#### [↖](#4_25)[↑](#4_25_6_2)[↓](#4_25_6_4) Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
 * Defined as JSON
@@ -3254,8 +3333,8 @@ attached to
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
 
-<a name="4_24_6_4"></a>
-#### [↖](#4_24)[↑](#4_24_6_3)[↓](#4_25) ACLs
+<a name="4_25_6_4"></a>
+#### [↖](#4_25)[↑](#4_25_6_3)[↓](#4_26) ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -3269,14 +3348,14 @@ bucket.
 
 ---
 
-<a name="4_25"></a>
-## [↖](#top)[↑](#4_24_6_4)[↓](#4_25_1) Secrets Manager
+<a name="4_26"></a>
+## [↖](#top)[↑](#4_25_6_4)[↓](#4_26_1) Secrets Manager
 <!-- toc_start -->
-* [Overview](#4_25_1)
+* [Overview](#4_26_1)
 <!-- toc_end -->
 
-<a name="4_25_1"></a>
-### [↖](#4_25)[↑](#4_25)[↓](#4_26) Overview
+<a name="4_26_1"></a>
+### [↖](#4_26)[↑](#4_26)[↓](#4_27) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
 resources. The service enables you to easily rotate, manage, and retrieve database credentials,
 API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
@@ -3293,15 +3372,15 @@ AWS Cloud, third-party services, and on-premises.
 
 ---
 
-<a name="4_26"></a>
-## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) Service Catalog (Core Service)
+<a name="4_27"></a>
+## [↖](#top)[↑](#4_26_1)[↓](#4_27_1) Service Catalog (Core Service)
 <!-- toc_start -->
-* [Overview](#4_26_1)
-* [Components](#4_26_2)
+* [Overview](#4_27_1)
+* [Components](#4_27_2)
 <!-- toc_end -->
 
-<a name="4_26_1"></a>
-### [↖](#4_26)[↑](#4_26)[↓](#4_26_2) Overview
+<a name="4_27_1"></a>
+### [↖](#4_27)[↑](#4_27)[↓](#4_27_2) Overview
 AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
 approved for use on AWS. These IT services can include everything from virtual machine images,
 servers, software, and databases to complete multi-tier application architectures. AWS Service
@@ -3314,10 +3393,11 @@ deploy only the approved IT services they need.
 * Connect with ITSM/ITOM software
 * Self-service for user
   * Integrates with self-service portals like ServiceNow
+* Users of Service Catalog *only* required IAM permissions for the product, but *not* the underlying services
 * On AWS: <a href="https://aws.amazon.com/servicecatalog/" target="_blank">Service</a> - <a href="https://aws.amazon.com/servicecatalog/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/servicecatalog/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_26_2"></a>
-### [↖](#4_26)[↑](#4_26_1)[↓](#4_27) Components
+<a name="4_27_2"></a>
+### [↖](#4_27)[↑](#4_27_1)[↓](#4_28) Components
 * **Admins** define
   * **Product**
     * Defined in CloudFormation
@@ -3331,14 +3411,14 @@ deploy only the approved IT services they need.
 
 ---
 
-<a name="4_27"></a>
-## [↖](#top)[↑](#4_26_2)[↓](#4_27_1) Step Functions
+<a name="4_28"></a>
+## [↖](#top)[↑](#4_27_2)[↓](#4_28_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_27_1)
+* [Overview](#4_28_1)
 <!-- toc_end -->
 
-<a name="4_27_1"></a>
-### [↖](#4_27)[↑](#4_27)[↓](#4_28) Overview
+<a name="4_28_1"></a>
+### [↖](#4_28)[↑](#4_28)[↓](#4_29) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -3353,20 +3433,20 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_28"></a>
-## [↖](#top)[↑](#4_27_1)[↓](#4_28_1) Systems Manager (Core Service)
+<a name="4_29"></a>
+## [↖](#top)[↑](#4_28_1)[↓](#4_29_1) Systems Manager (Core Service)
 <!-- toc_start -->
-* [Overview](#4_28_1)
-* [Components](#4_28_2)
-  * [Resources groups](#4_28_2_1)
-  * [Insights](#4_28_2_2)
-  * [Parameter store](#4_28_2_3)
-  * [Action & Change](#4_28_2_4)
-  * [Instances & Nodes](#4_28_2_5)
+* [Overview](#4_29_1)
+* [Components](#4_29_2)
+  * [Resources groups](#4_29_2_1)
+  * [Insights](#4_29_2_2)
+  * [Parameter store](#4_29_2_3)
+  * [Action & Change](#4_29_2_4)
+  * [Instances & Nodes](#4_29_2_5)
 <!-- toc_end -->
 
-<a name="4_28_1"></a>
-### [↖](#4_28)[↑](#4_28)[↓](#4_28_2) Overview
+<a name="4_29_1"></a>
+### [↖](#4_29)[↑](#4_29)[↓](#4_29_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
 Manager provides a unified user interface so you can view operational data from multiple AWS
 services and allows you to automate operational tasks across your AWS resources. With Systems
@@ -3391,16 +3471,16 @@ manage your infrastructure securely at scale.
   * Need correct IAM permissions, then shows up on SSM dashboard
 * On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_28_2"></a>
-### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_2_1) Components
-<a name="4_28_2_1"></a>
-#### [↖](#4_28)[↑](#4_28_2)[↓](#4_28_2_2) Resources groups
+<a name="4_29_2"></a>
+### [↖](#4_29)[↑](#4_29_1)[↓](#4_29_2_1) Components
+<a name="4_29_2_1"></a>
+#### [↖](#4_29)[↑](#4_29_2)[↓](#4_29_2_2) Resources groups
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
 
-<a name="4_28_2_2"></a>
-#### [↖](#4_28)[↑](#4_28_2_1)[↓](#4_28_2_3) Insights
+<a name="4_29_2_2"></a>
+#### [↖](#4_29)[↑](#4_29_2_1)[↓](#4_29_2_3) Insights
 * **Insights dashboards**
   * Automatically aggregates and displays operational data for each resource group
 * **Inventory**
@@ -3408,13 +3488,13 @@ manage your infrastructure securely at scale.
 * **Configuration Compliance**
   * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
 
-<a name="4_28_2_3"></a>
-#### [↖](#4_28)[↑](#4_28_2_2)[↓](#4_28_2_4) Parameter store
+<a name="4_29_2_3"></a>
+#### [↖](#4_29)[↑](#4_29_2_2)[↓](#4_29_2_4) Parameter store
 * Centralized store to manage your configuration data, whether plain-text data such as database
   strings or secrets such as passwords
 
-<a name="4_28_2_4"></a>
-#### [↖](#4_28)[↑](#4_28_2_3)[↓](#4_28_2_5) Action & Change
+<a name="4_29_2_4"></a>
+#### [↖](#4_29)[↑](#4_29_2_3)[↓](#4_29_2_5) Action & Change
 * **Automation**
   * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
   * Build Automation workflows to configure and manage instances and AWS resources.
@@ -3428,8 +3508,8 @@ manage your infrastructure securely at scale.
 * **Change Calendar**
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
-<a name="4_28_2_5"></a>
-#### [↖](#4_28)[↑](#4_28_2_4)[↓](#4_29) Instances & Nodes
+<a name="4_29_2_5"></a>
+#### [↖](#4_29)[↑](#4_29_2_4)[↓](#4_30) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -3461,14 +3541,14 @@ manage your infrastructure securely at scale.
 
 ---
 
-<a name="4_29"></a>
-## [↖](#top)[↑](#4_28_2_5)[↓](#4_29_1) Trusted Advisor (Core Service)
+<a name="4_30"></a>
+## [↖](#top)[↑](#4_29_2_5)[↓](#4_30_1) Trusted Advisor (Core Service)
 <!-- toc_start -->
-* [Overview](#4_29_1)
+* [Overview](#4_30_1)
 <!-- toc_end -->
 
-<a name="4_29_1"></a>
-### [↖](#4_29)[↑](#4_29)[↓](#4_30) Overview
+<a name="4_30_1"></a>
+### [↖](#4_30)[↑](#4_30)[↓](#4_31) Overview
 * AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision
 your resources following AWS best practices. Whether establishing new workflows, developing
 applications, or as part of ongoing improvement, take advantage of the recommendations provided by
@@ -3488,14 +3568,14 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
 
 ---
 
-<a name="4_30"></a>
-## [↖](#top)[↑](#4_29_1)[↓](#4_30_1) X-Ray (Core Service)
+<a name="4_31"></a>
+## [↖](#top)[↑](#4_30_1)[↓](#4_31_1) X-Ray (Core Service)
 <!-- toc_start -->
-* [Overview](#4_30_1)
+* [Overview](#4_31_1)
 <!-- toc_end -->
 
-<a name="4_30_1"></a>
-### [↖](#4_30)[↑](#4_30)[↓](#5) Overview
+<a name="4_31_1"></a>
+### [↖](#4_31)[↑](#4_31)[↓](#5) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
@@ -3514,7 +3594,7 @@ complex microservices applications consisting of thousands of services.
 --
 
 <a name="5"></a>
-# [↖](#top)[↑](#4_30_1)[↓](#5_1) Random Information from practice questions
+# [↖](#top)[↑](#4_31_1)[↓](#5_1) Random Information from practice questions
 
 <a name="5_1"></a>
 ## [↖](#top)[↑](#5)[↓](#5_2) CLI
