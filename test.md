@@ -1903,8 +1903,7 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
 * [Overview](#4_8_1)
   * [Benefits](#4_8_1_1)
 * [Components](#4_8_2)
-  * [Application](#4_8_2_1)
-  * [AppSpec](#4_8_2_2)
+  * [AppSpec](#4_8_2_1)
 * [How it works](#4_8_3)
   * [Overview](#4_8_3_1)
   * [CloudWatch integration](#4_8_3_2)
@@ -1952,8 +1951,8 @@ manual operations. The service scales to match your deployment needs.
       * Define _minimum healthy hosts_ by percentage or number
       * E.g. 9 instances in total, 6 minimum healthy hosts, deploy 3 at a time. Deployment is successful after 6 hosts have been successfully deployed
 
-<a name="4_8_2_2"></a>
-#### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_8_3) AppSpec
+<a name="4_8_2_1"></a>
+#### [↖](#4_8)[↑](#4_8_2)[↓](#4_8_3) AppSpec
 * Slightly different format for EC2/ECS/Lambda.
 
 * The content in the 'hooks' section of the AppSpec file varies, depending on the compute platform
@@ -1966,7 +1965,7 @@ lifecycle event.
 allow to implement logic in installation process.
 
 <a name="4_8_3"></a>
-### [↖](#4_8)[↑](#4_8_2_2)[↓](#4_8_3_1) How it works
+### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_8_3_1) How it works
 
 <a name="4_8_3_1"></a>
 #### [↖](#4_8)[↑](#4_8_3)[↓](#4_8_3_2) Overview
