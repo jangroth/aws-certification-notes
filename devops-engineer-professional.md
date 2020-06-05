@@ -1903,8 +1903,7 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
 * [Overview](#4_8_1)
   * [Benefits](#4_8_1_1)
 * [Components](#4_8_2)
-  * [Application](#4_8_2_1)
-  * [AppSpec](#4_8_2_2)
+  * [AppSpec](#4_8_2_1)
 * [How it works](#4_8_3)
   * [Overview](#4_8_3_1)
   * [CloudWatch integration](#4_8_3_2)
@@ -1952,8 +1951,8 @@ manual operations. The service scales to match your deployment needs.
       * Define _minimum healthy hosts_ by percentage or number
       * E.g. 9 instances in total, 6 minimum healthy hosts, deploy 3 at a time. Deployment is successful after 6 hosts have been successfully deployed
 
-<a name="4_8_2_2"></a>
-#### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_8_3) AppSpec
+<a name="4_8_2_1"></a>
+#### [↖](#4_8)[↑](#4_8_2)[↓](#4_8_3) AppSpec
 * Slightly different format for EC2/ECS/Lambda.
 
 * The content in the 'hooks' section of the AppSpec file varies, depending on the compute platform
@@ -1966,7 +1965,7 @@ lifecycle event.
 allow to implement logic in installation process.
 
 <a name="4_8_3"></a>
-### [↖](#4_8)[↑](#4_8_2_2)[↓](#4_8_3_1) How it works
+### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_8_3_1) How it works
 
 <a name="4_8_3_1"></a>
 #### [↖](#4_8)[↑](#4_8_3)[↓](#4_8_3_2) Overview
@@ -2001,15 +2000,15 @@ allow to implement logic in installation process.
 <a name="4_8_3_4"></a>
 #### [↖](#4_8)[↑](#4_8_3_3)[↓](#4_8_3_5) On-prem Deploys
 * Configure each on-premises instance, register it with CodeDeploy, and then tag it.
-	* Can create IAM User per instance
+	* Can create *IAM User per instance*
 		* Needs configuration file with AK/SAK
 		* Use `register` or `register-on-premises-instances` command
 		* Best for only few instances
-	* Can create IAM Role
-		* Use `register-on-premises-instances` command together with STS token service
-    * Needs credentials to call STS with
+	* Can create *IAM Role*
+		* Needs credentials to call STS with
 		* Best for many instances, also more secure
 		* Setup more complicated
+		* Use `register-on-premises-instances` command together with STS token service
 * Need to install CodeDeploy agent, obviously
 * Deploy application revisions to the on-premises instance.
 * On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
@@ -2062,11 +2061,11 @@ are no upfront fees or long-term commitments.
 #### [↖](#4_9)[↑](#4_9_1_1)[↓](#4_9_1_3) Components
 * **stage**
   * **action group** (run in sequence)
-    * **action** (run in sequnece _or_ parallel)
+    * **action** (run in sequence *or* parallel)
       * Various *action providers* provide functionality
       * `runOrder` allows to decide about sequential and parallel
       * `region` replicates source bucket into target region. This enables multi-region deploys
-* Stages create *Artifacts*
+* Stages create *artifacts*
   * Stored in S3, passed on to the next stage
     * *Default* setting for artifact store would create one bucket per pipe, can also specify *Custom* location
     * Store must be in the same region as pipeline
@@ -2081,32 +2080,6 @@ are no upfront fees or long-term commitments.
 
 <a name="4_9_1_3"></a>
 #### [↖](#4_9)[↑](#4_9_1_2)[↓](#4_9_2) Pipeline Actions
-```
-[
-		{
-			 "inputArtifacts": [
-						An input artifact structure, if supported for the action category
-				],
-			 "name": "ActionName",
-			 "region": "Region",
-			 "namespace": "source_namespace",
-			 "actionTypeId": {
-						"category": "An action category",
-						"owner": "AWS",
-						"version": "1"
-						"provider": "A provider type for the action category",
-			 },
-			 "outputArtifacts": [
-						An output artifact structure, if supported for the action category
-			 ],
-			 "configuration": {
-						Configuration details appropriate to the provider type
-			 },
-			 "runOrder": A positive integer that indicates the run order within the stage,
-		}
-]
-```
-
 * Source
   * S3
   * CodeCommit
