@@ -2185,12 +2185,12 @@ auditing, security analysis, change management, and operational troubleshooting.
 * Retrieve historical configurations of one or more resources.
 * Receive a notification whenever a resource is created, modified, or deleted.
 * View relationships between resources. For example, you might want to find all resources that use a particular security group.
-* On AWS: <a href="https://aws.amazon.com/config/" target="_blank">Service</a> - <a href="https://aws.amazon.com/config/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/config/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/config/" target="_blank">Service</a> - <a href="https://aws.amazon.com/config/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank">User Guide</a>
 
 <a name="4_11_2"></a>
 ### [↖](#4_11)[↑](#4_11_1)[↓](#4_11_3) Config Rules
 * Evaluate the configuration settings of AWS resources
-* A AWS Config rule represents your ideal configuration settings
+* A Config rule represents your ideal configuration settings
 * Predefined rules called *managed rules* to help you get started
 * Can also create *custom rules*
 * AWS Config continuously tracks the configuration changes that occur among your resources
@@ -2719,6 +2719,7 @@ collected before the processing can begin.
 
 <a name="4_17_1_1"></a>
 #### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_1_2) Kinesis Data Stream
+* Enables you to build custom applications that process or analyze streaming data for specialized needs
 * Real-time data delivery
 * Streams are devided into ordered *shards*/*partitions*
   * Shards can evolve over time (reshard/merge)
@@ -2741,6 +2742,7 @@ collected before the processing can begin.
 
 <a name="4_17_1_2"></a>
 #### [↖](#4_17)[↑](#4_17_1_1)[↓](#4_17_1_3) Kinesis Data Firehose
+* The easiest way to load streaming data into data stores and analytics tools
 * Near Real-time data delivery (~60 seconds)
 * Automatic Scaling
 * Can do data transformation through Lambda
@@ -2762,6 +2764,7 @@ For _real time delivery_ Kinesis data streams are the only option.
 
 <a name="4_17_1_3"></a>
 #### [↖](#4_17)[↑](#4_17_1_2)[↓](#4_17_2) Kinesis Data Analytics
+* The easiest way to analyze streaming data, gain actionable insights, and respond to your business and customer needs in real time
 * Performing real time analytics on Kinesis Streams using SQL
 * Managed, auto-scaling
 * Can create Kinesis Streams in real-time
