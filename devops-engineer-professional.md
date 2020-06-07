@@ -41,15 +41,16 @@
   * [Managed Services](#4_22)
   * [OpsWorks Stacks (Core Service)](#4_23)
   * [Organizations](#4_24)
-  * [QuickSight](#4_25)
-  * [Relational Database Service](#4_26)
-  * [S3](#4_27)
-  * [Secrets Manager](#4_28)
-  * [Service Catalog (Core Service)](#4_29)
-  * [Step Functions](#4_30)
-  * [Systems Manager (Core Service)](#4_31)
-  * [Trusted Advisor (Core Service)](#4_32)
-  * [X-Ray (Core Service)](#4_33)
+  * [Personal Health Dashboard](#4_25)
+  * [QuickSight](#4_26)
+  * [Relational Database Service](#4_27)
+  * [S3](#4_28)
+  * [Secrets Manager](#4_29)
+  * [Service Catalog (Core Service)](#4_30)
+  * [Step Functions](#4_31)
+  * [Systems Manager (Core Service)](#4_32)
+  * [Trusted Advisor (Core Service)](#4_33)
+  * [X-Ray (Core Service)](#4_34)
 * [Random Information from practice questions](#5)
   * [Aurora](#5_1)
   * [CloudWatch Metrics](#5_2)
@@ -57,8 +58,9 @@
   * [CodePipeline](#5_4)
   * [EC2](#5_5)
   * [ECR](#5_6)
-  * [RDS](#5_7)
-  * [S3](#5_8)
+  * [Personal Health Dashboard](#5_7)
+  * [RDS](#5_8)
+  * [S3](#5_9)
 ---
 <!-- toc_end -->
 
@@ -1868,7 +1870,9 @@ you use.
 `artifacts`, `secondary-artifacts`|.
 `cache`|`paths`
 
-* Environment variables can come from SSM / Secrets Manager.
+* Environment variables
+  * Can come from SSM / Secrets Manager
+  * Precendence: `start-build` (CLI), *project definition*, *buildspec.yml*
 * If there is build output, upload to S3
   * Uploaded to S3, encrypted by default
   * With default configuration, artifacts are overwritten each time
@@ -1934,7 +1938,7 @@ Use IAM policy:
 <a name="4_8_3_2"></a>
 #### [↖](#4_8)[↑](#4_8_3_1)[↓](#4_8_3_3) Send Notifications
 * CodeStar Notifications integration
-* Uses CloudWatch Events Rules under the hood
+  * Uses CloudWatch Events Rules under the hood
 * Set up notification / notification rules:
 	* Pick triggering event (`on commit`, ..., `brunch updated`)
 	* Pick SNS topic as target
@@ -1945,10 +1949,11 @@ Use IAM policy:
 	* Pick target (many different types, e.g. Lambda, SNS, SSM, Code*)
 
 <a name="4_8_3_3"></a>
-#### [↖](#4_8)[↑](#4_8_3_2)[↓](#4_9) Trigger SNS / Lambda
-More limited in scope than Notifications. Do not us CloudWatch Events under the hood.
-
-* Configure CodeCommit as Lambda trigger
+#### [↖](#4_8)[↑](#4_8_3_2)[↓](#4_9) Triggers
+* Can trigger SNS or Lambda
+* Up to 10 triggers
+* Can be augmented with custom data (an uninterpreted string) that you can use to distinguish the trigger from others that run for the same event.
+* More limited in scope than Notifications. Does not us CloudWatch Events under the hood.
 
 ---
 
@@ -2054,8 +2059,33 @@ manual operations. The service scales to match your deployment needs.
 			* Add CloudWatch Alarm to deployment group
 	* Can define `cleanup` file to help removing already installed files
 
-<a name="4_9_3_4"></a>
-#### [↖](#4_9)[↑](#4_9_3_3)[↓](#4_9_3_5) On-prem Deploys
+### Deploys
+
+#### To EC2
+TODO
+
+##### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_2) Integration with Elastic Load Balancing
+* During deployments, a load balancer prevents internet traffic from being routed to instances when they are not ready, are currently being deployed to, or are no longer needed as part of an environment.
+* **Blue/Green Deployments**
+  * Allows traffic to be routed to the new instances in a deployment group that the latest application revision has been deployed to (the replacement environment), according to the rules you specify
+  * Blocks traffic from the old instances where the previous application revision was running (the original environment).
+  * After instances in a replacement environment are registered with a load balancer, instances from the original environment are deregistered and, if you choose, terminated.
+  * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer in your deployment group.
+* **In-Place Deployments**
+  * Prevents internet traffic from being routed to an instance while it is being deployed to
+  * Makes the instance available for traffic again after the deployment to that instance is complete.
+  * If a load balancer isn't used during an in-place deployment, internet traffic may still be directed to an instance during the deployment process.
+  * When you use a load balancer with an in-place deployment, instances in a deployment group are deregistered from a load balancer, updated with the latest application revision, and then reregistered with the load balancer as part of the same deployment group after the deployment is successful.
+  * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer. You can specify the load balancer as part of the deployment group's configuration, or use a script provided by CodeDeploy to implement the load balancer.
+
+##### [↖](#4_9)[↑](#4_9_4_1)[↓](#4_10) Integratoion with Auto Scaling Groups
+* When new Amazon EC2 instances are launched as part of an Amazon EC2 Auto Scaling group, CodeDeploy can deploy your revisions to the new instances automatically.
+* During blue/green deployments on an EC2/On-Premises compute platform, you have two options for adding instances to your replacement (green) environment:
+  * Use instances that already exist or that you create manually.
+  * Use settings from an Amazon EC2 Auto Scaling group that you specify to define and create instances in a new Amazon EC2 Auto Scaling group.
+* If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed.
+
+#### [↖](#4_9)[↑](#4_9_3_3)[↓](#4_9_3_5) To On-premises
 * Configure each on-premises instance, register it with CodeDeploy, and then tag it.
 	* Can create *IAM User per instance*
 		* Needs configuration file with AK/SAK
@@ -2071,7 +2101,7 @@ manual operations. The service scales to match your deployment needs.
 * On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
 <a name="4_9_3_5"></a>
-#### [↖](#4_9)[↑](#4_9_3_4)[↓](#4_9_4) Lambda Deploys
+#### [↖](#4_9)[↑](#4_9_3_4)[↓](#4_9_4) To Lambdas
 * Simpler `appspec`
 * No source code uploads to S3 (?)
 * Deploy Configuration options
@@ -2081,30 +2111,11 @@ manual operations. The service scales to match your deployment needs.
 * Lambda deploys a new *version* under an *alias*, and traffic is shifted between old and new version
 	* (Versions and Aliases are native Lambda features)
 
-<a name="4_9_4"></a>
-### [↖](#4_9)[↑](#4_9_3_5)[↓](#4_9_4_1) Integration
-<a name="4_9_4_1"></a>
-#### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_2) With Elastic Load Balancing
-* During deployments, a load balancer prevents internet traffic from being routed to instances when they are not ready, are currently being deployed to, or are no longer needed as part of an environment.
-* **Blue/Green Deployments**
-  * Allows traffic to be routed to the new instances in a deployment group that the latest application revision has been deployed to (the replacement environment), according to the rules you specify
-  * Blocks traffic from the old instances where the previous application revision was running (the original environment).
-  * After instances in a replacement environment are registered with a load balancer, instances from the original environment are deregistered and, if you choose, terminated.
-  * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer in your deployment group.
-* **In-Place Deployments**
-  * Prevents internet traffic from being routed to an instance while it is being deployed to
-  * Makes the instance available for traffic again after the deployment to that instance is complete.
-  * If a load balancer isn't used during an in-place deployment, internet traffic may still be directed to an instance during the deployment process.
-  * When you use a load balancer with an in-place deployment, instances in a deployment group are deregistered from a load balancer, updated with the latest application revision, and then reregistered with the load balancer as part of the same deployment group after the deployment is successful.
-  * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer. You can specify the load balancer as part of the deployment group's configuration, or use a script provided by CodeDeploy to implement the load balancer.
+##### Integration with AWS Serverless
+TODO
 
-<a name="4_9_4_2"></a>
-#### [↖](#4_9)[↑](#4_9_4_1)[↓](#4_10) With Auto Scaling Groups
-* When new Amazon EC2 instances are launched as part of an Amazon EC2 Auto Scaling group, CodeDeploy can deploy your revisions to the new instances automatically.
-* During blue/green deployments on an EC2/On-Premises compute platform, you have two options for adding instances to your replacement (green) environment:
-  * Use instances that already exist or that you create manually.
-  * Use settings from an Amazon EC2 Auto Scaling group that you specify to define and create instances in a new Amazon EC2 Auto Scaling group.
-* If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed.
+#### To ECS
+TODO
 
 ---
 
@@ -3188,9 +3199,14 @@ Maximum linked accounts|20
 
 ---
 
-## Personal Health Dashboard
+<a name="4_25"></a>
+## [↖](#top)[↑](#4_24_4)[↓](#4_25_1) Personal Health Dashboard
+<!-- toc_start -->
+* [Overview](#4_25_1)
+<!-- toc_end -->
 
-### Overview
+<a name="4_25_1"></a>
+### [↖](#4_25)[↑](#4_25)[↓](#4_26) Overview
 AWS Personal Health Dashboard provides alerts and remediation guidance when AWS is experiencing
 events that may impact you. While the Service Health Dashboard displays the general status of AWS
 services, Personal Health Dashboard gives you a personalized view into the performance and
@@ -3203,14 +3219,14 @@ visibility, and guidance to help quickly diagnose and resolve issues.
 
 ---
 
-<a name="4_25"></a>
-## [↖](#top)[↑](#4_24_4)[↓](#4_25_1) QuickSight
+<a name="4_26"></a>
+## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) QuickSight
 <!-- toc_start -->
-* [Overview](#4_25_1)
+* [Overview](#4_26_1)
 <!-- toc_end -->
 
-<a name="4_25_1"></a>
-### [↖](#4_25)[↑](#4_25)[↓](#4_26) Overview
+<a name="4_26_1"></a>
+### [↖](#4_26)[↑](#4_26)[↓](#4_27) Overview
 Amazon QuickSight is a fast, cloud-powered business intelligence service that makes it easy to
 deliver insights to everyone in your organization.
 
@@ -3225,17 +3241,17 @@ need, while only paying for what you use.
 
 ---
 
-<a name="4_26"></a>
-## [↖](#top)[↑](#4_25_1)[↓](#4_26_1) Relational Database Service
+<a name="4_27"></a>
+## [↖](#top)[↑](#4_26_1)[↓](#4_27_1) Relational Database Service
 <!-- toc_start -->
-* [Overview](#4_26_1)
-* [Backups](#4_26_2)
-* [Multi-AZ deployments](#4_26_3)
-* [Read replicas](#4_26_4)
+* [Overview](#4_27_1)
+* [Backups](#4_27_2)
+* [Multi-AZ deployments](#4_27_3)
+* [Read replicas](#4_27_4)
 <!-- toc_end -->
 
-<a name="4_26_1"></a>
-### [↖](#4_26)[↑](#4_26)[↓](#4_26_2) Overview
+<a name="4_27_1"></a>
+### [↖](#4_27)[↑](#4_27)[↓](#4_27_2) Overview
 Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a
 relational database in the cloud. It provides cost-efficient and resizable capacity while
 automating time-consuming administration tasks such as hardware provisioning, database setup,
@@ -3247,8 +3263,8 @@ and provides you with six familiar database engines to choose from, including Am
 PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database
 Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
 
-<a name="4_26_2"></a>
-### [↖](#4_26)[↑](#4_26_1)[↓](#4_26_3) Backups
+<a name="4_27_2"></a>
+### [↖](#4_27)[↑](#4_27_1)[↓](#4_27_3) Backups
 * **Automated backups**
   * Enabled by default
   * Allow to recover database within a *retention period* (1d - 35d)
@@ -3265,8 +3281,8 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
   * Only manually, always user initiated
   * Won't be deleted with DB instance
 
-<a name="4_26_3"></a>
-### [↖](#4_26)[↑](#4_26_2)[↓](#4_26_4) Multi-AZ deployments
+<a name="4_27_3"></a>
+### [↖](#4_27)[↑](#4_27_2)[↓](#4_27_4) Multi-AZ deployments
 Provide enhanced availability for database instances within a *single* AWS Region.
 
 * Meant for *disaster recover*, not for performance improvement (-> Read Replica)
@@ -3280,8 +3296,8 @@ Provide enhanced availability for database instances within a *single* AWS Regio
     * Backups
   * *Aurora* can replicate accross 3 AZs
 
-<a name="4_26_4"></a>
-### [↖](#4_26)[↑](#4_26_3)[↓](#4_27) Read replicas
+<a name="4_27_4"></a>
+### [↖](#4_27)[↑](#4_27_3)[↓](#4_28) Read replicas
 * Read queries are routed to *read replicas*, reducing load on primary db instance (*source instance*)
 * To create read replicas, AWS initally creates a snapshot of the source instance
   * Multi-AZ failover instance (if enabled) is used for snapshotting
@@ -3303,23 +3319,23 @@ Provide enhanced availability for database instances within a *single* AWS Regio
 
 ---
 
-<a name="4_27"></a>
-## [↖](#top)[↑](#4_26_4)[↓](#4_27_1) S3
+<a name="4_28"></a>
+## [↖](#top)[↑](#4_27_4)[↓](#4_28_1) S3
 <!-- toc_start -->
-* [Overview](#4_27_1)
-* [Versioning](#4_27_2)
-* [Logging](#4_27_3)
-* [Cross-Region Replication](#4_27_4)
-* [Storage classes](#4_27_5)
-* [Access Control](#4_27_6)
-  * [Defaults](#4_27_6_1)
-  * [IAM](#4_27_6_2)
-  * [Bucket policies](#4_27_6_3)
-  * [ACLs](#4_27_6_4)
+* [Overview](#4_28_1)
+* [Versioning](#4_28_2)
+* [Logging](#4_28_3)
+* [Cross-Region Replication](#4_28_4)
+* [Storage classes](#4_28_5)
+* [Access Control](#4_28_6)
+  * [Defaults](#4_28_6_1)
+  * [IAM](#4_28_6_2)
+  * [Bucket policies](#4_28_6_3)
+  * [ACLs](#4_28_6_4)
 <!-- toc_end -->
 
-<a name="4_27_1"></a>
-### [↖](#4_27)[↑](#4_27)[↓](#4_27_2) Overview
+<a name="4_28_1"></a>
+### [↖](#4_28)[↑](#4_28)[↓](#4_28_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
 scale past trillions of objects worldwide.
@@ -3337,14 +3353,14 @@ scale past trillions of objects worldwide.
 * On AWS: <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/s3/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-S3/Amazon-S3.jpg" target="_blank">AWS Geek 2018</a>
 
-<a name="4_27_2"></a>
-### [↖](#4_27)[↑](#4_27_1)[↓](#4_27_3) Versioning
+<a name="4_28_2"></a>
+### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_3) Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
 * **Version ids** are automatically assigned to objects
 
-<a name="4_27_3"></a>
-### [↖](#4_27)[↑](#4_27_2)[↓](#4_27_4) Logging
+<a name="4_28_3"></a>
+### [↖](#4_28)[↑](#4_28_2)[↓](#4_28_4) Logging
 * *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
   stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
   specific events.
@@ -3352,15 +3368,15 @@ scale past trillions of objects worldwide.
   * Provide detailed records for the requests that are made to a bucket
   * Needs to be enabled on bucket level
 
-<a name="4_27_4"></a>
-### [↖](#4_27)[↑](#4_27_3)[↓](#4_27_5) Cross-Region Replication
+<a name="4_28_4"></a>
+### [↖](#4_28)[↑](#4_28_3)[↓](#4_28_5) Cross-Region Replication
 * Buckets *must* be in different regions
   * Can replicate cross-account
 * *Must* have versioning enabled
 * Only new / changed objects will be replicated
 
-<a name="4_27_5"></a>
-### [↖](#4_27)[↑](#4_27_4)[↓](#4_27_6) Storage classes
+<a name="4_28_5"></a>
+### [↖](#4_28)[↑](#4_28_4)[↓](#4_28_6) Storage classes
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
 S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
@@ -3371,16 +3387,16 @@ Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *stand
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-<a name="4_27_6"></a>
-### [↖](#4_27)[↑](#4_27_5)[↓](#4_27_6_1) Access Control
+<a name="4_28_6"></a>
+### [↖](#4_28)[↑](#4_28_5)[↓](#4_28_6_1) Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
 
-<a name="4_27_6_1"></a>
-#### [↖](#4_27)[↑](#4_27_6)[↓](#4_27_6_2) Defaults
+<a name="4_28_6_1"></a>
+#### [↖](#4_28)[↑](#4_28_6)[↓](#4_28_6_2) Defaults
 * Bucket is *owned* by the AWS account that created it
   * Ownership refers to the identity and email address used to create the account
 	* Bucket ownership is not transferable
@@ -3388,15 +3404,15 @@ Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
 
-<a name="4_27_6_2"></a>
-#### [↖](#4_27)[↑](#4_27_6_1)[↓](#4_27_6_3) IAM
+<a name="4_28_6_2"></a>
+#### [↖](#4_28)[↑](#4_28_6_1)[↓](#4_28_6_3) IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
 
-<a name="4_27_6_3"></a>
-#### [↖](#4_27)[↑](#4_27_6_2)[↓](#4_27_6_4) Bucket policies
+<a name="4_28_6_3"></a>
+#### [↖](#4_28)[↑](#4_28_6_2)[↓](#4_28_6_4) Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
 * Defined as JSON
@@ -3405,8 +3421,8 @@ attached to
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
 
-<a name="4_27_6_4"></a>
-#### [↖](#4_27)[↑](#4_27_6_3)[↓](#4_28) ACLs
+<a name="4_28_6_4"></a>
+#### [↖](#4_28)[↑](#4_28_6_3)[↓](#4_29) ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -3420,14 +3436,14 @@ bucket.
 
 ---
 
-<a name="4_28"></a>
-## [↖](#top)[↑](#4_27_6_4)[↓](#4_28_1) Secrets Manager
+<a name="4_29"></a>
+## [↖](#top)[↑](#4_28_6_4)[↓](#4_29_1) Secrets Manager
 <!-- toc_start -->
-* [Overview](#4_28_1)
+* [Overview](#4_29_1)
 <!-- toc_end -->
 
-<a name="4_28_1"></a>
-### [↖](#4_28)[↑](#4_28)[↓](#4_29) Overview
+<a name="4_29_1"></a>
+### [↖](#4_29)[↑](#4_29)[↓](#4_30) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
 resources. The service enables you to easily rotate, manage, and retrieve database credentials,
 API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
@@ -3444,15 +3460,15 @@ AWS Cloud, third-party services, and on-premises.
 
 ---
 
-<a name="4_29"></a>
-## [↖](#top)[↑](#4_28_1)[↓](#4_29_1) Service Catalog (Core Service)
+<a name="4_30"></a>
+## [↖](#top)[↑](#4_29_1)[↓](#4_30_1) Service Catalog (Core Service)
 <!-- toc_start -->
-* [Overview](#4_29_1)
-* [Components](#4_29_2)
+* [Overview](#4_30_1)
+* [Components](#4_30_2)
 <!-- toc_end -->
 
-<a name="4_29_1"></a>
-### [↖](#4_29)[↑](#4_29)[↓](#4_29_2) Overview
+<a name="4_30_1"></a>
+### [↖](#4_30)[↑](#4_30)[↓](#4_30_2) Overview
 AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
 approved for use on AWS. These IT services can include everything from virtual machine images,
 servers, software, and databases to complete multi-tier application architectures. AWS Service
@@ -3468,8 +3484,8 @@ deploy only the approved IT services they need.
 * Users of Service Catalog *only* required IAM permissions for the product, but *not* the underlying services
 * On AWS: <a href="https://aws.amazon.com/servicecatalog/" target="_blank">Service</a> - <a href="https://aws.amazon.com/servicecatalog/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/servicecatalog/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_29_2"></a>
-### [↖](#4_29)[↑](#4_29_1)[↓](#4_30) Components
+<a name="4_30_2"></a>
+### [↖](#4_30)[↑](#4_30_1)[↓](#4_31) Components
 * **Admins** define
   * **Product**
     * Defined in CloudFormation
@@ -3483,14 +3499,14 @@ deploy only the approved IT services they need.
 
 ---
 
-<a name="4_30"></a>
-## [↖](#top)[↑](#4_29_2)[↓](#4_30_1) Step Functions
+<a name="4_31"></a>
+## [↖](#top)[↑](#4_30_2)[↓](#4_31_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_30_1)
+* [Overview](#4_31_1)
 <!-- toc_end -->
 
-<a name="4_30_1"></a>
-### [↖](#4_30)[↑](#4_30)[↓](#4_31) Overview
+<a name="4_31_1"></a>
+### [↖](#4_31)[↑](#4_31)[↓](#4_32) Overview
 *AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
 build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
 together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
@@ -3505,20 +3521,20 @@ retries when there are errors, so your application executes in order and as expe
 
 ---
 
-<a name="4_31"></a>
-## [↖](#top)[↑](#4_30_1)[↓](#4_31_1) Systems Manager (Core Service)
+<a name="4_32"></a>
+## [↖](#top)[↑](#4_31_1)[↓](#4_32_1) Systems Manager (Core Service)
 <!-- toc_start -->
-* [Overview](#4_31_1)
-* [Components](#4_31_2)
-  * [Resources groups](#4_31_2_1)
-  * [Insights](#4_31_2_2)
-  * [Parameter store](#4_31_2_3)
-  * [Action & Change](#4_31_2_4)
-  * [Instances & Nodes](#4_31_2_5)
+* [Overview](#4_32_1)
+* [Components](#4_32_2)
+  * [Resources groups](#4_32_2_1)
+  * [Insights](#4_32_2_2)
+  * [Parameter store](#4_32_2_3)
+  * [Action & Change](#4_32_2_4)
+  * [Instances & Nodes](#4_32_2_5)
 <!-- toc_end -->
 
-<a name="4_31_1"></a>
-### [↖](#4_31)[↑](#4_31)[↓](#4_31_2) Overview
+<a name="4_32_1"></a>
+### [↖](#4_32)[↑](#4_32)[↓](#4_32_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
 Manager provides a unified user interface so you can view operational data from multiple AWS
 services and allows you to automate operational tasks across your AWS resources. With Systems
@@ -3543,16 +3559,16 @@ manage your infrastructure securely at scale.
   * Need correct IAM permissions, then shows up on SSM dashboard
 * On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_31_2"></a>
-### [↖](#4_31)[↑](#4_31_1)[↓](#4_31_2_1) Components
-<a name="4_31_2_1"></a>
-#### [↖](#4_31)[↑](#4_31_2)[↓](#4_31_2_2) Resources groups
+<a name="4_32_2"></a>
+### [↖](#4_32)[↑](#4_32_1)[↓](#4_32_2_1) Components
+<a name="4_32_2_1"></a>
+#### [↖](#4_32)[↑](#4_32_2)[↓](#4_32_2_2) Resources groups
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
 
-<a name="4_31_2_2"></a>
-#### [↖](#4_31)[↑](#4_31_2_1)[↓](#4_31_2_3) Insights
+<a name="4_32_2_2"></a>
+#### [↖](#4_32)[↑](#4_32_2_1)[↓](#4_32_2_3) Insights
 * **Insights dashboards**
   * Automatically aggregates and displays operational data for each resource group
 * **Inventory**
@@ -3560,13 +3576,13 @@ manage your infrastructure securely at scale.
 * **Configuration Compliance**
   * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
 
-<a name="4_31_2_3"></a>
-#### [↖](#4_31)[↑](#4_31_2_2)[↓](#4_31_2_4) Parameter store
+<a name="4_32_2_3"></a>
+#### [↖](#4_32)[↑](#4_32_2_2)[↓](#4_32_2_4) Parameter store
 * Centralized store to manage your configuration data, whether plain-text data such as database
   strings or secrets such as passwords
 
-<a name="4_31_2_4"></a>
-#### [↖](#4_31)[↑](#4_31_2_3)[↓](#4_31_2_5) Action & Change
+<a name="4_32_2_4"></a>
+#### [↖](#4_32)[↑](#4_32_2_3)[↓](#4_32_2_5) Action & Change
 * **Automation**
   * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
   * Build Automation workflows to configure and manage instances and AWS resources.
@@ -3581,8 +3597,8 @@ manage your infrastructure securely at scale.
 * **Change Calendar**
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
-<a name="4_31_2_5"></a>
-#### [↖](#4_31)[↑](#4_31_2_4)[↓](#4_32) Instances & Nodes
+<a name="4_32_2_5"></a>
+#### [↖](#4_32)[↑](#4_32_2_4)[↓](#4_33) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -3614,14 +3630,14 @@ manage your infrastructure securely at scale.
 
 ---
 
-<a name="4_32"></a>
-## [↖](#top)[↑](#4_31_2_5)[↓](#4_32_1) Trusted Advisor (Core Service)
+<a name="4_33"></a>
+## [↖](#top)[↑](#4_32_2_5)[↓](#4_33_1) Trusted Advisor (Core Service)
 <!-- toc_start -->
-* [Overview](#4_32_1)
+* [Overview](#4_33_1)
 <!-- toc_end -->
 
-<a name="4_32_1"></a>
-### [↖](#4_32)[↑](#4_32)[↓](#4_33) Overview
+<a name="4_33_1"></a>
+### [↖](#4_33)[↑](#4_33)[↓](#4_34) Overview
 * AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision
 your resources following AWS best practices. Whether establishing new workflows, developing
 applications, or as part of ongoing improvement, take advantage of the recommendations provided by
@@ -3641,14 +3657,14 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
 
 ---
 
-<a name="4_33"></a>
-## [↖](#top)[↑](#4_32_1)[↓](#4_33_1) X-Ray (Core Service)
+<a name="4_34"></a>
+## [↖](#top)[↑](#4_33_1)[↓](#4_34_1) X-Ray (Core Service)
 <!-- toc_start -->
-* [Overview](#4_33_1)
+* [Overview](#4_34_1)
 <!-- toc_end -->
 
-<a name="4_33_1"></a>
-### [↖](#4_33)[↑](#4_33)[↓](#5) Overview
+<a name="4_34_1"></a>
+### [↖](#4_34)[↑](#4_34)[↓](#5) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
@@ -3667,7 +3683,7 @@ complex microservices applications consisting of thousands of services.
 --
 
 <a name="5"></a>
-# [↖](#top)[↑](#4_33_1)[↓](#5_1) Random Information from practice questions
+# [↖](#top)[↑](#4_34_1)[↓](#5_1) Random Information from practice questions
 
 <a name="5_1"></a>
 ## [↖](#top)[↑](#5)[↓](#5_2) Aurora
@@ -3681,6 +3697,7 @@ complex microservices applications consisting of thousands of services.
 <a name="5_3"></a>
 ## [↖](#top)[↑](#5_2)[↓](#5_4) CodeBuild
 * `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built.
+* `MSBuild` container image is required for building .NET applications
 
 <a name="5_4"></a>
 ## [↖](#top)[↑](#5_3)[↓](#5_5) CodePipeline
@@ -3694,13 +3711,17 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-## Personal Health Dashboard
-* The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
+## GitHub
+* The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
 <a name="5_7"></a>
-## [↖](#top)[↑](#5_6)[↓](#5_8) RDS
-* `EngineVersion` - The version number of the database engine to use.
+## [↖](#top)[↑](#5_6)[↓](#5_8) Personal Health Dashboard
+* The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 
 <a name="5_8"></a>
-## [↖](#top)[↑](#5_7) S3
+## [↖](#top)[↑](#5_7)[↓](#5_9) RDS
+* `EngineVersion` - The version number of the database engine to use.
+
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
