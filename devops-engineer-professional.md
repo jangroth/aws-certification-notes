@@ -51,10 +51,14 @@
   * [Trusted Advisor (Core Service)](#4_32)
   * [X-Ray (Core Service)](#4_33)
 * [Random Information from practice questions](#5)
-  * [CLI](#5_1)
-  * [Aurora](#5_2)
+  * [Aurora](#5_1)
+  * [CloudWatch Metrics](#5_2)
   * [CodeBuild](#5_3)
-  * [RDS](#5_4)
+  * [CodePipeline](#5_4)
+  * [EC2](#5_5)
+  * [ECR](#5_6)
+  * [RDS](#5_7)
+  * [S3](#5_8)
 ---
 <!-- toc_end -->
 
@@ -1954,13 +1958,15 @@ More limited in scope than Notifications. Do not us CloudWatch Events under the 
 * [Overview](#4_9_1)
   * [Benefits](#4_9_1_1)
 * [Components](#4_9_2)
-  * [AppSpec](#4_9_2_1)
 * [How it works](#4_9_3)
   * [Overview](#4_9_3_1)
   * [Logging and notifcations](#4_9_3_2)
   * [Rollback](#4_9_3_3)
   * [On-prem Deploys](#4_9_3_4)
   * [Lambda Deploys](#4_9_3_5)
+* [Integration](#4_9_4)
+  * [With Elastic Load Balancing](#4_9_4_1)
+  * [With Auto Scaling Groups](#4_9_4_2)
 <!-- toc_end -->
 
 <a name="4_9_1"></a>
@@ -1986,7 +1992,7 @@ manual operations. The service scales to match your deployment needs.
 * Integrates with AWS SAM
 
 <a name="4_9_2"></a>
-### [↖](#4_9)[↑](#4_9_1_1)[↓](#4_9_2_1) Components
+### [↖](#4_9)[↑](#4_9_1_1)[↓](#4_9_3) Components
 * **Application**
   * The application that should be deployed
 * **Deployment**
@@ -2012,7 +2018,7 @@ manual operations. The service scales to match your deployment needs.
   allow to implement logic in installation process.
 
 <a name="4_9_3"></a>
-### [↖](#4_9)[↑](#4_9_2_1)[↓](#4_9_3_1) How it works
+### [↖](#4_9)[↑](#4_9_2)[↓](#4_9_3_1) How it works
 
 <a name="4_9_3_1"></a>
 #### [↖](#4_9)[↑](#4_9_3)[↓](#4_9_3_2) Overview
@@ -2065,7 +2071,7 @@ manual operations. The service scales to match your deployment needs.
 * On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
 <a name="4_9_3_5"></a>
-#### [↖](#4_9)[↑](#4_9_3_4)[↓](#4_10) Lambda Deploys
+#### [↖](#4_9)[↑](#4_9_3_4)[↓](#4_9_4) Lambda Deploys
 * Simpler `appspec`
 * No source code uploads to S3 (?)
 * Deploy Configuration options
@@ -2075,8 +2081,10 @@ manual operations. The service scales to match your deployment needs.
 * Lambda deploys a new *version* under an *alias*, and traffic is shifted between old and new version
 	* (Versions and Aliases are native Lambda features)
 
-### Integration
-#### With Elastic Load Balancing
+<a name="4_9_4"></a>
+### [↖](#4_9)[↑](#4_9_3_5)[↓](#4_9_4_1) Integration
+<a name="4_9_4_1"></a>
+#### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_2) With Elastic Load Balancing
 * During deployments, a load balancer prevents internet traffic from being routed to instances when they are not ready, are currently being deployed to, or are no longer needed as part of an environment.
 * **Blue/Green Deployments**
   * Allows traffic to be routed to the new instances in a deployment group that the latest application revision has been deployed to (the replacement environment), according to the rules you specify
@@ -2086,21 +2094,22 @@ manual operations. The service scales to match your deployment needs.
 * **In-Place Deployments**
   * Prevents internet traffic from being routed to an instance while it is being deployed to
   * Makes the instance available for traffic again after the deployment to that instance is complete.
-  * If a load balancer isn't used during an in-place deployment, internet traffic may still be directed to an instance during the deployment process. 
+  * If a load balancer isn't used during an in-place deployment, internet traffic may still be directed to an instance during the deployment process.
   * When you use a load balancer with an in-place deployment, instances in a deployment group are deregistered from a load balancer, updated with the latest application revision, and then reregistered with the load balancer as part of the same deployment group after the deployment is successful.
   * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer. You can specify the load balancer as part of the deployment group's configuration, or use a script provided by CodeDeploy to implement the load balancer.
 
-#### With Auto Scaling Groups
+<a name="4_9_4_2"></a>
+#### [↖](#4_9)[↑](#4_9_4_1)[↓](#4_10) With Auto Scaling Groups
 * When new Amazon EC2 instances are launched as part of an Amazon EC2 Auto Scaling group, CodeDeploy can deploy your revisions to the new instances automatically.
 * During blue/green deployments on an EC2/On-Premises compute platform, you have two options for adding instances to your replacement (green) environment:
   * Use instances that already exist or that you create manually.
   * Use settings from an Amazon EC2 Auto Scaling group that you specify to define and create instances in a new Amazon EC2 Auto Scaling group.
-* If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed. 
+* If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed.
 
 ---
 
 <a name="4_10"></a>
-## [↖](#top)[↑](#4_9_3_5)[↓](#4_10_1) CodePipeline (Core Service)
+## [↖](#top)[↑](#4_9_4_2)[↓](#4_10_1) CodePipeline (Core Service)
 <!-- toc_start -->
 * [Overview](#4_10_1)
   * [Benefits](#4_10_1_1)
@@ -2648,23 +2657,25 @@ Via console, eb-cli, ...
 * *Folder* is part of application source bundle
 * Allows granular configuration & customisation of the EB environment and its resources
 * Contains `*.config` in *YAML* format with different sections like
-	* `option_settings` - global configuration options
-	* `resources` - specify additional resources, allows granular configuration of these
-    * Put *CloudFormation* here, export *outputs* into beanstalk environment
+* `option_settings`
+  * Global configuration options
+* `resources`
+  * Specify additional resources, allows granular configuration of these
+  * Put *CloudFormation* here, export *outputs* into beanstalk environment
     * Good for e.g. DDB table, SNS topic, ...
-    * However, those resources are part of the *environemt* and would be deleted with it
-      * If this is not desired, then create resources independently
-      * Usually best for e.g. databases
-	* `commands`
-    * Execute on ec2 instance
-    * Run before application and web server are being set up
-	* `container_commands`
-    * Affects application source code
-    * Run after application archive has been extracted, but before application version has been
-    deployed
-    * Can use `leader_only` to only run on a single instance. E.g. migrate database
-	* `packages`, `sources`, `files`, `users`, `groups`, `service`
-* Applied with next `eb deploy`
+  * However, those resources are part of the *environment* and would be deleted with it
+    * If this is not desired, then create resources independently
+    * Usually best for e.g. databases
+* `commands`
+  * Executed on ec2 instance
+  * Run before application and web server are being set up
+* `container_commands`
+  * Executed on ec2 instance
+  * Affects application source code
+  * Run after application archive has been extracted, but before application version has been deployed
+  * Can use `leader_only` to only run on a single instance. E.g. migrate database
+  * `packages`, `sources`, `files`, `users`, `groups`, `service`
+  * Applied with next `eb deploy`
 
 ##### Default values
 As the name says.
@@ -3177,6 +3188,21 @@ Maximum linked accounts|20
 
 ---
 
+## Personal Health Dashboard
+
+### Overview
+AWS Personal Health Dashboard provides alerts and remediation guidance when AWS is experiencing
+events that may impact you. While the Service Health Dashboard displays the general status of AWS
+services, Personal Health Dashboard gives you a personalized view into the performance and
+availability of the AWS services underlying your AWS resources.
+
+The dashboard displays relevant and timely information to help you manage events in progress, and
+provides proactive notification to help you plan for scheduled activities. With Personal Health
+Dashboard, alerts are triggered by changes in the health of AWS resources, giving you event
+visibility, and guidance to help quickly diagnose and resolve issues.
+
+---
+
 <a name="4_25"></a>
 ## [↖](#top)[↑](#4_24_4)[↓](#4_25_1) QuickSight
 <!-- toc_start -->
@@ -3216,7 +3242,7 @@ automating time-consuming administration tasks such as hardware provisioning, da
 patching and backups. It frees you to focus on your applications so you can give them the fast
 performance, high availability, security and compatibility they need.
 
-Amazon RDS is available on several database instance types - optimized for memory, performance or I/O - 
+Amazon RDS is available on several database instance types - optimized for memory, performance or I/O -
 and provides you with six familiar database engines to choose from, including Amazon Aurora,
 PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database
 Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
@@ -3643,31 +3669,38 @@ complex microservices applications consisting of thousands of services.
 <a name="5"></a>
 # [↖](#top)[↑](#4_33_1)[↓](#5_1) Random Information from practice questions
 
-<a name="5_2"></a>
-## [↖](#top)[↑](#5_1)[↓](#5_3) Aurora
+<a name="5_1"></a>
+## [↖](#top)[↑](#5)[↓](#5_2) Aurora
 * Can have up to 15 read replicas
 * Can have a *Global Database*, spawning across multiple regions
 
-<a name="5_1"></a>
-## [↖](#top)[↑](#5)[↓](#5_2) CloudWatch Metrics
+<a name="5_2"></a>
+## [↖](#top)[↑](#5_1)[↓](#5_3) CloudWatch Metrics
 * `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
 
 <a name="5_3"></a>
 ## [↖](#top)[↑](#5_2)[↓](#5_4) CodeBuild
-* `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built. 
-
-## CodePipeline
-* `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
-
-## EC2
-* In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
-
-## ECR
-* Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
+* `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built.
 
 <a name="5_4"></a>
-## [↖](#top)[↑](#5_3) RDS
+## [↖](#top)[↑](#5_3)[↓](#5_5) CodePipeline
+* `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
+
+<a name="5_5"></a>
+## [↖](#top)[↑](#5_4)[↓](#5_6) EC2
+* In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
+
+<a name="5_6"></a>
+## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
+* Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
+
+## Personal Health Dashboard
+* The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
+
+<a name="5_7"></a>
+## [↖](#top)[↑](#5_6)[↓](#5_8) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-## S3
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
