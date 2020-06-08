@@ -1964,21 +1964,19 @@ Use IAM policy:
 ## [↖](#top)[↑](#4_8_3_3)[↓](#4_9_1) CodeDeploy (Core Service)
 <!-- toc_start -->
 * [Overview](#4_9_1)
-  * [Benefits](#4_9_1_1)
 * [Components](#4_9_2)
 * [How it works](#4_9_3)
   * [Overview](#4_9_3_1)
-  * [Logging and notifcations](#4_9_3_2)
+  * [Notifications and logging](#4_9_3_2)
   * [Rollback](#4_9_3_3)
 * [Deploys](#4_9_4)
-  * [To EC2](#4_9_4_1)
-  * [To On-premises](#4_9_4_2)
-  * [To Lambdas](#4_9_4_3)
-  * [To ECS](#4_9_4_4)
+  * [To EC2/On-premises](#4_9_4_1)
+  * [To Lambdas](#4_9_4_2)
+  * [To ECS](#4_9_4_3)
 <!-- toc_end -->
 
 <a name="4_9_1"></a>
-### [↖](#4_9)[↑](#4_9)[↓](#4_9_1_1) Overview
+### [↖](#4_9)[↑](#4_9)[↓](#4_9_2) Overview
 *AWS CodeDeploy* is a fully managed deployment service that automates software deployments to a
 variety of compute services such as Amazon EC2, AWS Fargate, AWS Lambda, and your on-premises
 servers. AWS CodeDeploy makes it easier for you to rapidly release new features, helps you avoid
@@ -1997,7 +1995,7 @@ manual operations. The service scales to match your deployment needs.
 * On AWS: <a href="https://aws.amazon.com/codedeploy/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codedeploy/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_9_2"></a>
-### [↖](#4_9)[↑](#4_9_1_1)[↓](#4_9_3) Components
+### [↖](#4_9)[↑](#4_9_1)[↓](#4_9_3) Components
 * **Application**
   * The application that should be deployed
 * **Deployment**
@@ -2125,8 +2123,8 @@ Step|Comment
 * Need to install CodeDeploy agent, obviously
 * On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
-<a name="4_9_4_3"></a>
-#### [↖](#4_9)[↑](#4_9_4_2)[↓](#4_9_4_3_1) To Lambdas
+<a name="4_9_4_2"></a>
+#### [↖](#4_9)[↑](#4_9_4_1_3)[↓](#4_9_4_2_1) To Lambdas
 Step|Comment
 -|-
 *Create application*|.
@@ -2164,14 +2162,14 @@ DeploymentPreference:
    PostTraffic: !Ref PostTrafficLambdaFunction
 ```
 
-<a name="4_9_4_4"></a>
-#### [↖](#4_9)[↑](#4_9_4_3_1)[↓](#4_10) To ECS
+<a name="4_9_4_3"></a>
+#### [↖](#4_9)[↑](#4_9_4_2_1)[↓](#4_10) To ECS
 TODO
 
 ---
 
 <a name="4_10"></a>
-## [↖](#top)[↑](#4_9_4_4)[↓](#4_10_1) CodePipeline (Core Service)
+## [↖](#top)[↑](#4_9_4_3)[↓](#4_10_1) CodePipeline (Core Service)
 <!-- toc_start -->
 * [Overview](#4_10_1)
   * [Benefits](#4_10_1_1)
