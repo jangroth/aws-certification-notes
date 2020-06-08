@@ -1988,68 +1988,63 @@ manual operations. The service scales to match your deployment needs.
 
 * CodeDeploy can be chained into CodePipeline and can use artifacts from there
 * CodeDeploy does not provision resources
-* On AWS: <a href="https://aws.amazon.com/codedeploy/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codedeploy/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/" target="_blank">User Guide</a>
-
-<a name="4_9_1_1"></a>
-#### [↖](#4_9)[↑](#4_9_1)[↓](#4_9_2) Benefits
 * Automated deployments
   * EC2, on-prem, (ASG), ECS, (Fargate), Lambda
 * Minimize downtime
 * Centralized control
 * Easy to adopt
 * Integrates with AWS SAM
+* On AWS: <a href="https://aws.amazon.com/codedeploy/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codedeploy/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_9_2"></a>
 ### [↖](#4_9)[↑](#4_9_1_1)[↓](#4_9_3) Components
 * **Application**
   * The application that should be deployed
 * **Deployment**
-  * **Deployment Group**
-    * Set of instances, defined by tags, e.g. 'environment=prod'
+  * **Revision**
+    * Specific version of deployable content, such as source code, post-build artifacts, web pages, executable files, and deployment scripts, along with an AppSpec file
+    * **AppSpec File**
+      * Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`), allow to implement logic in installation process.
+      * Slightly different format for EC2/ECS/Lambda.
+  * **Deployment group**
+    * Set of instances or Lambda functions, defined by tags, e.g. 'environment=prod'
+    * Can define multiple deployment groups with an application, such a *prod* or *staging*
     * Can be associated with
       * CloudWatch Alarms that would stop the deployment if triggered
       * Triggers for notification
       * Rollbacks
   * **Deployment configuration**
+    * Specifies how the behavior for how deployment should proceed
     * `CodeDeployDefault.OneAtATime`, ..., `CodeDeployDefault.LambdaCanary10Percent10Minutes`
     * Can create own
       * Define _minimum healthy hosts_ by percentage or number
       * E.g. 9 instances in total, 6 minimum healthy hosts, deploy 3 at a time. Deployment is successful after 6 hosts have been successfully deployed
-* `AppSpec`
-  * Slightly different format for EC2/ECS/Lambda.
-  * The content in the 'hooks' section of the AppSpec file varies, depending on the compute platform
-  for your deployment. The 'hooks' section for an EC2/On-Premises deployment contains mappings that
-  link deployment lifecycle event hooks to one or more *scripts*. The 'hooks' section for a Lambda or
-  an Amazon ECS deployment specifies *Lambda validation functions* to run during a deployment
-  lifecycle event.
-  * Environment variables are being exposed as well (e.g. `DEPLOYMENT_ID`, `DEPLOYMENT_GROUP_NAME`),
-  allow to implement logic in installation process.
+
+EC2/On-Premises|ECS|Lambda
+-|-|-
+`version`: *0.0*<br/>`os`: *operating-system-name*<br/>`files`:<br/> *source-destination-files-mappings*<br/>`permissions`:<br/> *permissions-specifications*<br/>`hooks`:<br/> *deployment-lifecycle-event-mappings*|`version`: *0.0*<br/>`resources`: *ecs-service-specifications*<br/>`hooks`:<br/> *deployment-lifecycle-event-mappings*|`version`: *0.0*<br/>`resources`: *lambda-function-specifications*<br/>`hooks`:<br/> *deployment-lifecycle-event-mappings*
+`hooks` section contains mappings that link one or more *scripts*|`hooks` section specifies *Lambda validation functions*|`hooks` section specifies *Lambda validation functions*
 
 <a name="4_9_3"></a>
 ### [↖](#4_9)[↑](#4_9_2)[↓](#4_9_3_1) How it works
 
 <a name="4_9_3_1"></a>
 #### [↖](#4_9)[↑](#4_9_3)[↓](#4_9_3_2) Overview
-* CodeDeploy Agent continuously polls CodeDeploy
-* CodeDeploy sends `appspec.yml`
-* Application is pulled from S3/GitHub/BitBucket
-  * Actual deployment always comes from S3, needs IAM permissions for the bucket
-* EC2 will run deploy instructions
-  * *In-place* or *blue/green*
-  * Run in phases `ApplicationStop`, `DownloadBundle`, `BeforeInstall`, `Install`, `AfterInstall`, `ApplicationStart`, `ValidateService`
-  * If doing a rolling deploy on an Auto Scaling Group, *new* instances *during* deploy (*scale out*) will still receive the old version
-    * Suspend scaling during rolling deploys
-    * Or re-deploy
-* CodeDeploy Agent reports back success/failure
+* CodeDeploy (Agent) continuously polls CodeDeploy
+* CodeDeploy sends AppSpec file
+* Revision is pulled from S3/GitHub/BitBucket
+  * Actual revison *always* comes from S3, needs IAM permissions for the bucket
+* Run in phases `ApplicationStop`, (`DownloadBundle`), `BeforeInstall`, (`Install`), `AfterInstall`, `ApplicationStart`, `ValidateService`
+* CodeDeploy (Agent) reports back success/failure
 
 <a name="4_9_3_2"></a>
-#### [↖](#4_9)[↑](#4_9_3_1)[↓](#4_9_3_3) Logging and notifcations
-* CodeStar Notifications integration
-* Events can report and notify other services
-* CloudWatch Log Agent on machine can push logs to CloudWatch
-  * *No logs* for ECS / Lambda deploys
+#### [↖](#4_9)[↑](#4_9_3_1)[↓](#4_9_3_3) Notifications and logging
+* CodeStar Notifications integration (goes out to SNS only)
+* CloudWatch Event integration
 * Deployment *triggers* can notify SNS
   * Can trigger based on *deployment* or *instance* events
+* CloudWatch Log Agent on machine can push logs to CloudWatch
+  * *No logs* for ECS / Lambda deploys
 
 <a name="4_9_3_3"></a>
 #### [↖](#4_9)[↑](#4_9_3_2)[↓](#4_9_4) Rollback
@@ -2066,8 +2061,32 @@ manual operations. The service scales to match your deployment needs.
 ### [↖](#4_9)[↑](#4_9_3_3)[↓](#4_9_4_1) Deploys
 
 <a name="4_9_4_1"></a>
-#### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_1_1) To EC2
-TODO
+#### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_1_1) To EC2/On-premises
+
+Step|Comment
+-|-
+*Create application*|.
+*Specify deployment group*|Tags and/or ASG name.
+*Specify deployment configuration*|`AllAtOnce`,`HalfAtATime`,`OneAtATime` (default)<br/>*In-place* (default), *Blue/green*
+*Upload revison*|.
+*Deploy*|.
+*Check results*|.
+*Redeploy as needed*|.
+
+* **In-place**
+  * The application on each instance in the deployment group is stopped
+  * The latest application revision is installed
+  * The new version of the application is started and validated.
+  * You can use a load balancer so that each instance is deregistered during its deployment and then restored to service after the deployment is complete.
+  * Only deployments that use the EC2/On-Premises compute platform can use in-place deployments.0
+
+* **Blue/green**
+  * Instances are provisioned for the replacement environment.
+  * The latest application revision is installed on the replacement instances.
+  * An optional wait time occurs for activities such as application testing and system verification.
+  * Instances in the *replacement* environment are registered with an Elastic Load Balancing load balancer, causing traffic to be rerouted to them. 
+  * Instances in the *original* environment are deregistered and can be terminated or kept running for other uses.
+  * If you use an EC2/On-Premises compute platform, be aware that blue/green deployments work with Amazon EC2 instances only.
 
 ##### Integration with Elastic Load Balancing
 * During deployments, a load balancer prevents internet traffic from being routed to instances when they are not ready, are currently being deployed to, or are no longer needed as part of an environment.
@@ -2089,9 +2108,10 @@ TODO
   * Use instances that already exist or that you create manually.
   * Use settings from an Amazon EC2 Auto Scaling group that you specify to define and create instances in a new Amazon EC2 Auto Scaling group.
 * If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed.
+  * Suspend scaling during rolling deploys
+  * Or redeploy
 
-<a name="4_9_4_2"></a>
-#### [↖](#4_9)[↑](#4_9_4_1_2)[↓](#4_9_4_3) To On-premises
+##### Register on-premises instances
 * Configure each on-premises instance, register it with CodeDeploy, and then tag it.
 	* Can create *IAM User per instance*
 		* Needs configuration file with AK/SAK
@@ -2103,11 +2123,20 @@ TODO
 		* Setup more complicated
 		* Use `register-on-premises-instances` command together with STS token service
 * Need to install CodeDeploy agent, obviously
-* Deploy application revisions to the on-premises instance.
 * On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
 <a name="4_9_4_3"></a>
 #### [↖](#4_9)[↑](#4_9_4_2)[↓](#4_9_4_3_1) To Lambdas
+Step|Comment
+-|-
+*Create application*|.
+*Specify deployment group*|Only a name, Lambdas are specified in appspec
+*Specify deployment configuration*|`LambdaCanary10Percent5Minutes`/10/15/30<br/>`LambdaLinear10PercentEvery1Minute`/2/3/10<br/>only *Blue/green*
+*Upload revison*|.
+*Deploy*|.
+*Check results*|.
+
+*Redeploy as needed*|.
 * Simpler `appspec`
 * No source code uploads to S3 (?)
 * Deploy Configuration options
