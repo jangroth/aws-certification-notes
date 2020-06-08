@@ -58,9 +58,10 @@
   * [CodePipeline](#5_4)
   * [EC2](#5_5)
   * [ECR](#5_6)
-  * [Personal Health Dashboard](#5_7)
-  * [RDS](#5_8)
-  * [S3](#5_9)
+  * [GitHub](#5_7)
+  * [Personal Health Dashboard](#5_8)
+  * [RDS](#5_9)
+  * [S3](#5_10)
 ---
 <!-- toc_end -->
 
@@ -1835,6 +1836,7 @@ you use.
 * Continuous scaling
 * Extensible
   * Can use own build tools and runtimes
+* Can attach to VPC
 
 <a name="4_7_3"></a>
 ### [↖](#4_7)[↑](#4_7_2)[↓](#4_7_3_1) Components
@@ -1873,9 +1875,10 @@ you use.
 * Environment variables
   * Can come from SSM / Secrets Manager
   * Precendence: `start-build` (CLI), *project definition*, *buildspec.yml*
-* If there is build output, upload to S3
+* If there is build output and CodeBuild is *not* managed by CodePipeline
   * Uploaded to S3, encrypted by default
   * With default configuration, artifacts are overwritten each time
+  * Can provide *Namespace type* to save output to different location every time
 * While build is running, the build environments sends information to CloudWatch and CodeBuild
 	* Can also use console, CLI, SDK to retrieve information about running build
 
@@ -1889,7 +1892,7 @@ you use.
 * [How To](#4_8_3)
   * [Protect branches](#4_8_3_1)
   * [Send Notifications](#4_8_3_2)
-  * [Trigger SNS / Lambda](#4_8_3_3)
+  * [Triggers](#4_8_3_3)
 <!-- toc_end -->
 
 <a name="4_8_1"></a>
@@ -1967,11 +1970,11 @@ Use IAM policy:
   * [Overview](#4_9_3_1)
   * [Logging and notifcations](#4_9_3_2)
   * [Rollback](#4_9_3_3)
-  * [On-prem Deploys](#4_9_3_4)
-  * [Lambda Deploys](#4_9_3_5)
-* [Integration](#4_9_4)
-  * [With Elastic Load Balancing](#4_9_4_1)
-  * [With Auto Scaling Groups](#4_9_4_2)
+* [Deploys](#4_9_4)
+  * [To EC2](#4_9_4_1)
+  * [To On-premises](#4_9_4_2)
+  * [To Lambdas](#4_9_4_3)
+  * [To ECS](#4_9_4_4)
 <!-- toc_end -->
 
 <a name="4_9_1"></a>
@@ -2049,7 +2052,7 @@ manual operations. The service scales to match your deployment needs.
   * Can trigger based on *deployment* or *instance* events
 
 <a name="4_9_3_3"></a>
-#### [↖](#4_9)[↑](#4_9_3_2)[↓](#4_9_3_4) Rollback
+#### [↖](#4_9)[↑](#4_9_3_2)[↓](#4_9_4) Rollback
 * *Manual Rollback* by simply deploying a previous version
 * *Automated Rollbacks*
 	* Options
@@ -2059,12 +2062,14 @@ manual operations. The service scales to match your deployment needs.
 			* Add CloudWatch Alarm to deployment group
 	* Can define `cleanup` file to help removing already installed files
 
-### Deploys
+<a name="4_9_4"></a>
+### [↖](#4_9)[↑](#4_9_3_3)[↓](#4_9_4_1) Deploys
 
-#### To EC2
+<a name="4_9_4_1"></a>
+#### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_1_1) To EC2
 TODO
 
-##### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_2) Integration with Elastic Load Balancing
+##### Integration with Elastic Load Balancing
 * During deployments, a load balancer prevents internet traffic from being routed to instances when they are not ready, are currently being deployed to, or are no longer needed as part of an environment.
 * **Blue/Green Deployments**
   * Allows traffic to be routed to the new instances in a deployment group that the latest application revision has been deployed to (the replacement environment), according to the rules you specify
@@ -2078,14 +2083,15 @@ TODO
   * When you use a load balancer with an in-place deployment, instances in a deployment group are deregistered from a load balancer, updated with the latest application revision, and then reregistered with the load balancer as part of the same deployment group after the deployment is successful.
   * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer. You can specify the load balancer as part of the deployment group's configuration, or use a script provided by CodeDeploy to implement the load balancer.
 
-##### [↖](#4_9)[↑](#4_9_4_1)[↓](#4_10) Integratoion with Auto Scaling Groups
+##### Integration with Auto Scaling Groups
 * When new Amazon EC2 instances are launched as part of an Amazon EC2 Auto Scaling group, CodeDeploy can deploy your revisions to the new instances automatically.
 * During blue/green deployments on an EC2/On-Premises compute platform, you have two options for adding instances to your replacement (green) environment:
   * Use instances that already exist or that you create manually.
   * Use settings from an Amazon EC2 Auto Scaling group that you specify to define and create instances in a new Amazon EC2 Auto Scaling group.
 * If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed.
 
-#### [↖](#4_9)[↑](#4_9_3_3)[↓](#4_9_3_5) To On-premises
+<a name="4_9_4_2"></a>
+#### [↖](#4_9)[↑](#4_9_4_1_2)[↓](#4_9_4_3) To On-premises
 * Configure each on-premises instance, register it with CodeDeploy, and then tag it.
 	* Can create *IAM User per instance*
 		* Needs configuration file with AK/SAK
@@ -2100,8 +2106,8 @@ TODO
 * Deploy application revisions to the on-premises instance.
 * On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
-<a name="4_9_3_5"></a>
-#### [↖](#4_9)[↑](#4_9_3_4)[↓](#4_9_4) To Lambdas
+<a name="4_9_4_3"></a>
+#### [↖](#4_9)[↑](#4_9_4_2)[↓](#4_9_4_3_1) To Lambdas
 * Simpler `appspec`
 * No source code uploads to S3 (?)
 * Deploy Configuration options
@@ -2112,15 +2118,31 @@ TODO
 	* (Versions and Aliases are native Lambda features)
 
 ##### Integration with AWS Serverless
-TODO
+* Deploys new versions of your Lambda function, and automatically creates aliases that point to the new version.
+* Gradually shifts customer traffic to the new version until you're satisfied that it's working as expected, or you roll back the update.
+* Defines pre-traffic and post-traffic test functions to verify that the newly deployed code is configured correctly and your application operates as expected.
+* Rolls back the deployment if CloudWatch alarms are triggered.
 
-#### To ECS
+```
+DeploymentPreference:
+ Type: Canary10Percent10Minutes
+ Alarms:
+   # A list of alarms that you want to monitor
+   - !Ref AliasErrorMetricGreaterThanZeroAlarm
+ Hooks:
+   # Validation Lambda functions that are run before & after traffic shifting
+   PreTraffic: !Ref PreTrafficLambdaFunction
+   PostTraffic: !Ref PostTrafficLambdaFunction
+```
+
+<a name="4_9_4_4"></a>
+#### [↖](#4_9)[↑](#4_9_4_3_1)[↓](#4_10) To ECS
 TODO
 
 ---
 
 <a name="4_10"></a>
-## [↖](#top)[↑](#4_9_4_2)[↓](#4_10_1) CodePipeline (Core Service)
+## [↖](#top)[↑](#4_9_4_4)[↓](#4_10_1) CodePipeline (Core Service)
 <!-- toc_start -->
 * [Overview](#4_10_1)
   * [Benefits](#4_10_1_1)
@@ -3711,17 +3733,18 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-## GitHub
+<a name="5_7"></a>
+## [↖](#top)[↑](#5_6)[↓](#5_8) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-<a name="5_7"></a>
-## [↖](#top)[↑](#5_6)[↓](#5_8) Personal Health Dashboard
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7)[↓](#5_9) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 
-<a name="5_8"></a>
-## [↖](#top)[↑](#5_7)[↓](#5_9) RDS
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8)[↓](#5_10) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_9"></a>
-## [↖](#top)[↑](#5_8) S3
+<a name="5_10"></a>
+## [↖](#top)[↑](#5_9) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
