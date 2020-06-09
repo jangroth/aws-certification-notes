@@ -2082,7 +2082,7 @@ Step|Comment
   * Instances are provisioned for the replacement environment.
   * The latest application revision is installed on the replacement instances.
   * An optional wait time occurs for activities such as application testing and system verification.
-  * Instances in the *replacement* environment are registered with an Elastic Load Balancing load balancer, causing traffic to be rerouted to them. 
+  * Instances in the *replacement* environment are registered with an Elastic Load Balancing load balancer, causing traffic to be rerouted to them.
   * Instances in the *original* environment are deregistered and can be terminated or kept running for other uses.
   * If you use an EC2/On-Premises compute platform, be aware that blue/green deployments work with Amazon EC2 instances only.
 
@@ -2129,18 +2129,12 @@ Step|Comment
 -|-
 *Create application*|.
 *Specify deployment group*|Only a name, Lambdas are specified in appspec
-*Specify deployment configuration*|`LambdaCanary10Percent5Minutes`/10/15/30<br/>`LambdaLinear10PercentEvery1Minute`/2/3/10<br/>only *Blue/green*
-*Upload revison*|.
+*Specify deployment configuration*|`LambdaCanary10Percent5Minutes`/10/15/30<br/>`LambdaLinear10PercentEvery1Minute`/2/3/10<br/>`LambdaAllAtOnce`<br/>only *Blue/green*
+*Specify an AppSpec file*|S3 (local with AWS CLI)
 *Deploy*|.
 *Check results*|.
-
 *Redeploy as needed*|.
-* Simpler `appspec`
-* No source code uploads to S3 (?)
-* Deploy Configuration options
-	* *Canary* - deploy in 2 increments
-	* *Linear* - deploy in many increments
-	* *All-at-once*
+
 * Lambda deploys a new *version* under an *alias*, and traffic is shifted between old and new version
 	* (Versions and Aliases are native Lambda features)
 
@@ -2164,7 +2158,21 @@ DeploymentPreference:
 
 <a name="4_9_4_3"></a>
 #### [↖](#4_9)[↑](#4_9_4_2_1)[↓](#4_10) To ECS
-TODO
+Step|Comment
+-|-
+*Create ECS service*|Set its deployment controller to CodeDeploy
+*Create application*|.
+*Specify deployment group*|Specify<br/>* ECS cluster and service name<br/>* production listener, optional test listener, and target groups<br/>* deployment settings, such as when to reroute production traffic to the replacement ECS task<br/>* optional settings such as triggers, alarms and rollback behaviour
+*Specify deployment configuration*|`ECSCanary10Percent5Minutes`/15<br/>`LambdaLinear10PercentEvery1Minute`/3<br/>`ECSAllAtOnce`<br/>only *Blue/green*
+*Specify an AppSpec file*|S3 (local with AWS CLI)
+*Deploy*|.
+*Check results*|.
+*Redeploy as needed*|.
+
+* CodeDeploy reroutes traffic from the original version of a task set to a new, replacement task set
+* Target groups specified in the deployment group are used to serve traffic to the original and replacement task sets
+* After the deployment is complete, the original task set is terminated.
+* Can specify an optional test listener to serve test traffic to your replacement version before traffic is rerouted to it
 
 ---
 
