@@ -2359,6 +2359,8 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * Multiple accounts and multiple regions.
 * Single account and multiple regions.
 * An organization in AWS Organizations and all the accounts in that organization.
+* Is limited to 50 per account
+  * *"We are unable to complete the request at this time. Try again later or contact AWS Support"*
 
 ---
 
@@ -3564,17 +3566,43 @@ deploy only the approved IT services they need.
 
 <a name="4_31_1"></a>
 ### [↖](#4_31)[↑](#4_31)[↓](#4_32) Overview
-*AWS Step Functions* lets you coordinate multiple AWS services into serverless workflows so you can
-build and update apps quickly. Using Step Functions, you can design and run workflows that stitch
-together services such as AWS Lambda and Amazon ECS into feature-rich applications. Workflows are
-made up of a series of steps, with the output of one step acting as input into the next.
-Application development is simpler and more intuitive using Step Functions, because it translates
-your workflow into a state machine diagram that is easy to understand, easy to explain to others,
-and easy to change. You can monitor each step of execution as it happens, which means you can
-identify and fix problems quickly. Step Functions automatically triggers and tracks each step, and
-retries when there are errors, so your application executes in order and as expected.
+AWS Step Functions is a web service that enables you to coordinate the components of distributed
+applications and microservices using visual workflows. You build applications from individual
+components that each perform a discrete function, or task, allowing you to scale and change
+applications quickly.
+
+Step Functions provides a reliable way to coordinate components and step through the functions of
+your application. Step Functions offers a graphical console to visualize the components of your
+application as a series of steps. It automatically triggers and tracks each step, and retries when
+there are errors, so your application executes in order and as expected, every time. Step
+Functions logs the state of each step, so when things go wrong, you can diagnose and debug problems quickly.
+
+Step Functions manages the operations and underlying infrastructure for you to ensure your
+application is available at any scale.
 
 * On AWS: <a href="https://aws.amazon.com/step-functions/" target="_blank">Service</a> - <a href="https://aws.amazon.com/step-functions/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/step-functions/latest/userguide/" target="_blank">User Guide</a>
+
+### States
+
+.|.|.
+-|-|-
+`Pass`|Passes its input to its output, without performing work|.
+`Task`|Represents a single unit of work performed by a state machine|Can `Retry` after error
+`Choice`|Adds branching logic|.
+`Wait`|Delays the state machine from continuing for a specified time|.
+`Succeed`|Stops an execution successfully|.
+`Fail`|Stops the execution of the state machine and marks it as a failure|.
+`Parallel`|Create parallel branches of execution|Can `Retry` after error
+`Map`|Run a set of steps for each element of an input array|.
+
+### Error handling
+* By default, when a state reports an error, AWS Step Functions causes the execution to fail entirely.
+* `Task` and `Parallel` states can have a field named Retry, whose value must be an array of objects known as *retriers*.
+* An individual retrier represents a certain number of retries, usually at increasing time intervals.
+  * ErrorEquals (Required)
+  * IntervalSeconds (Optional)
+  * MaxAttempts (Optional)
+  * BackoffRate (Optional)
 
 ---
 
@@ -3767,6 +3795,11 @@ complex microservices applications consisting of thousands of services.
 <a name="5_6"></a>
 ## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
+
+## Fargate
+* If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
+  * One ENI per task
+  * ECS: ENIs per underlying instances:w
 
 <a name="5_7"></a>
 ## [↖](#top)[↑](#5_6)[↓](#5_8) GitHub
