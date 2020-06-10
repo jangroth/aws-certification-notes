@@ -3595,6 +3595,16 @@ application is available at any scale.
 `Parallel`|Create parallel branches of execution|Can `Retry` after error
 `Map`|Run a set of steps for each element of an input array|.
 
+### Input and Output processing
+* `InputPath`
+  * Selects which parts of the JSON input to pass to the task of the Task state
+* `OutputPath`
+  * Filter the JSON output to further limit the information that's passed to the output
+* `ResultPath`
+  * Selects what combination of the state input and the task result to pass to the output.
+* `Parameters`
+  * Collection of key-value pairs that are passed as input
+
 ### Error handling
 * By default, when a state reports an error, AWS Step Functions causes the execution to fail entirely.
 * `Task` and `Parallel` states can have a field named Retry, whose value must be an array of objects known as *retriers*.
@@ -3603,6 +3613,19 @@ application is available at any scale.
   * IntervalSeconds (Optional)
   * MaxAttempts (Optional)
   * BackoffRate (Optional)
+
+### Best Practices
+* Use Timeouts to Avoid Stuck Executions
+  * Specify a reasonable timeout when you create a task in your state machine
+* Use ARNs Instead of Passing Large Payloads
+* Avoid Reaching the History Quota
+  * Hard quota of 25,000 entries in the execution history. To avoid reaching this quota for long-running executions, implement a pattern that uses an AWS Lambda function that can start a new execution of your state machine to split ongoing work across multiple workflow executions
+* Handle Lambda Service Exceptions
+  * Lambda can occasionally experience transient service errors - proactively handle these exceptions in your state machine
+* Avoid Latency When Polling for Activity Tasks
+* Choosing Standard or Express Workflows
+  * Choose Standard Workflows when you need long-running, durable, and auditable workflows,
+  * Choose Express Workflows for high-volume, event processing workloads.
 
 ---
 
@@ -3799,7 +3822,7 @@ complex microservices applications consisting of thousands of services.
 ## Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
-  * ECS: ENIs per underlying instances:w
+  * ECS: ENIs come from underlying instance
 
 <a name="5_7"></a>
 ## [↖](#top)[↑](#5_6)[↓](#5_8) GitHub
@@ -3816,3 +3839,5 @@ complex microservices applications consisting of thousands of services.
 <a name="5_10"></a>
 ## [↖](#top)[↑](#5_9) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
+* The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
+
