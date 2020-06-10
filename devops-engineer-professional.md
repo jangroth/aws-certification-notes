@@ -58,10 +58,11 @@
   * [CodePipeline](#5_4)
   * [EC2](#5_5)
   * [ECR](#5_6)
-  * [GitHub](#5_7)
-  * [Personal Health Dashboard](#5_8)
-  * [RDS](#5_9)
-  * [S3](#5_10)
+  * [Fargate](#5_7)
+  * [GitHub](#5_8)
+  * [Personal Health Dashboard](#5_9)
+  * [RDS](#5_10)
+  * [S3](#5_11)
 ---
 <!-- toc_end -->
 
@@ -3562,10 +3563,14 @@ deploy only the approved IT services they need.
 ## [↖](#top)[↑](#4_30_2)[↓](#4_31_1) Step Functions
 <!-- toc_start -->
 * [Overview](#4_31_1)
+* [States](#4_31_2)
+* [Input and Output processing](#4_31_3)
+* [Error handling](#4_31_4)
+* [Best Practices](#4_31_5)
 <!-- toc_end -->
 
 <a name="4_31_1"></a>
-### [↖](#4_31)[↑](#4_31)[↓](#4_32) Overview
+### [↖](#4_31)[↑](#4_31)[↓](#4_31_2) Overview
 AWS Step Functions is a web service that enables you to coordinate the components of distributed
 applications and microservices using visual workflows. You build applications from individual
 components that each perform a discrete function, or task, allowing you to scale and change
@@ -3582,7 +3587,8 @@ application is available at any scale.
 
 * On AWS: <a href="https://aws.amazon.com/step-functions/" target="_blank">Service</a> - <a href="https://aws.amazon.com/step-functions/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/step-functions/latest/userguide/" target="_blank">User Guide</a>
 
-### States
+<a name="4_31_2"></a>
+### [↖](#4_31)[↑](#4_31_1)[↓](#4_31_3) States
 
 .|.|.
 -|-|-
@@ -3595,7 +3601,8 @@ application is available at any scale.
 `Parallel`|Create parallel branches of execution|Can `Retry` after error
 `Map`|Run a set of steps for each element of an input array|.
 
-### Input and Output processing
+<a name="4_31_3"></a>
+### [↖](#4_31)[↑](#4_31_2)[↓](#4_31_4) Input and Output processing
 * `InputPath`
   * Selects which parts of the JSON input to pass to the task of the Task state
 * `OutputPath`
@@ -3605,7 +3612,8 @@ application is available at any scale.
 * `Parameters`
   * Collection of key-value pairs that are passed as input
 
-### Error handling
+<a name="4_31_4"></a>
+### [↖](#4_31)[↑](#4_31_3)[↓](#4_31_5) Error handling
 * By default, when a state reports an error, AWS Step Functions causes the execution to fail entirely.
 * `Task` and `Parallel` states can have a field named Retry, whose value must be an array of objects known as *retriers*.
 * An individual retrier represents a certain number of retries, usually at increasing time intervals.
@@ -3614,7 +3622,8 @@ application is available at any scale.
   * MaxAttempts (Optional)
   * BackoffRate (Optional)
 
-### Best Practices
+<a name="4_31_5"></a>
+### [↖](#4_31)[↑](#4_31_4)[↓](#4_32) Best Practices
 * Use Timeouts to Avoid Stuck Executions
   * Specify a reasonable timeout when you create a task in your state machine
 * Use ARNs Instead of Passing Large Payloads
@@ -3630,7 +3639,7 @@ application is available at any scale.
 ---
 
 <a name="4_32"></a>
-## [↖](#top)[↑](#4_31_1)[↓](#4_32_1) Systems Manager (Core Service)
+## [↖](#top)[↑](#4_31_5)[↓](#4_32_1) Systems Manager (Core Service)
 <!-- toc_start -->
 * [Overview](#4_32_1)
 * [Components](#4_32_2)
@@ -3819,25 +3828,26 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-## Fargate
+<a name="5_7"></a>
+## [↖](#top)[↑](#5_6)[↓](#5_8) Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
   * ECS: ENIs come from underlying instance
 
-<a name="5_7"></a>
-## [↖](#top)[↑](#5_6)[↓](#5_8) GitHub
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7)[↓](#5_9) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-<a name="5_8"></a>
-## [↖](#top)[↑](#5_7)[↓](#5_9) Personal Health Dashboard
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8)[↓](#5_10) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 
-<a name="5_9"></a>
-## [↖](#top)[↑](#5_8)[↓](#5_10) RDS
+<a name="5_10"></a>
+## [↖](#top)[↑](#5_9)[↓](#5_11) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_10"></a>
-## [↖](#top)[↑](#5_9) S3
+<a name="5_11"></a>
+## [↖](#top)[↑](#5_10) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
