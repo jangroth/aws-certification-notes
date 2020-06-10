@@ -1636,7 +1636,11 @@ CloudFront Access Logs|S3
   * `aws cloudwatch put-metric-data --metric-name PageViewCount --namespace MyService --value 2 --timestamp 2016-10-20T12:00:00.000Z`
 * Can also *export* metrics
   * `get-metric-statistics --namespace <value> --metric-name <value> --start-time <value> --end-time <value>...`
-* *High resolution metrics* down to 1 second
+* Metrics produced by AWS services are standard resolution by default.
+  * When you publish a custom metric, you can define it as either *standard* resolution or *high* resolution.
+  * When you publish a high-resolution metric, CloudWatch stores it with a resolution of 1 second,
+  and you can read and retrieve it with a period of 1 second, 5 seconds, 10 seconds, 30 seconds,
+  or any multiple of 60 seconds.
   * Higher resolution data automatically aggregates into lower resolution data
 
 Resolution|Data retention
@@ -3049,6 +3053,13 @@ its handler method to process the event.
   * Can configure *provisioned concurrency* before an increase in invocations
     * Can ensure that all requests are served by initialized instances with very low latency.
 
+#### Monitoring and troubleshooting
+* AWS Lambda automatically monitors Lambda functions on your behalf and reports metrics through
+  Amazon CloudWatch. To help you monitor your code as it executes, Lambda automatically tracks the
+  *number of requests*, the *execution duration per request*, and the *number of requests that result in an error*.
+* It also publishes the associated CloudWatch metrics.
+* Need *custom metric* for memory usage
+
 ---
 
 <a name="4_20"></a>
@@ -3379,6 +3390,95 @@ Provide enhanced availability for database instances within a *single* AWS Regio
 
 ---
 
+## Route 53
+
+### Overview
+Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can
+use Route 53 to perform three main functions in any combination: domain registration, DNS routing,
+and health checking. If you choose to use Route 53 for all three functions, perform the steps in this order:
+
+* Register domain names
+  * Your website needs a name, such as example.com. Route 53 lets you register a name for your
+  website or web application, known as a domain name.
+* Route internet traffic to the resources for your domain
+  * When a user opens a web browser and enters your domain name (example.com) or subdomain name 
+  acme.example.com) in the address bar, Route 53 helps connect the browser with your website or web application.
+* Check the health of your resources
+  * Route 53 sends automated requests over the internet to a resource, such as a web server, to
+  verify that it's reachable, available, and functional. You also can choose to receive notifications when a resource becomes unavailable and choose to route internet traffic away from unhealthy resources.
+
+#### Terminology
+* **Hosts** - Computers or services accessible within a domain
+* **Name Server** - Translates domain names into IP addresses
+* **Zone File** - Text file that contains mappings between domain names and IP addresses
+* **Records** - Entries in zone file, mappings beween resources and names
+
+###  How it works
+
+#### Basic Flow
+Root Server -> TLD Server -> Domain-Level Name Server -> Zone File
+
+#### Zone File & Records
+Zone file stores records. Various records exists:
+
+Type|Definition|Example
+-|-|-
+**SOA**|State of Authority - Mandatory first entry, defines various things,<br/>eg name servers & admin contact|`ns1.dnsimple.com admin.dnsimple.com 2013022001 86400 7200 604800 300`
+**A**|Map host name to ip4 address|`px01.vc.example.com.  198.51.100.40`
+**AAAA**|Map host name to ip6 address|`px01.vc.example.com.  2a00:1450:4014:80c:0:0:0:2004`
+**CNAME**|Defines alias for host name<br/>(maps one domain name to another)|`www.dnsimple.com. dnsimple.com.`
+**MX**|Defines mail exchange|`example.com.  1800  MX  mail1.example.com.  10`
+**PTR**|Maps ip4 address to host name (inverse to A record)|`10.27/1.168.192.in-addr.arpa.  1800  PTR mail.example.com.`
+**SVR**|Points one domain to another domain name using a specific destination port|`_sip._tcp.example.com. 86400 IN SRV 0 5 5060 sipserver.example.com.`
+
+Route53 specific:
+* **Alias** record
+  * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality.
+  Alias records let you route traffic to selected AWS resources, such as CloudFront distributions
+  and Amazon S3 bucket. They also let you route traffic from one record in a hosted zone to another
+  record.
+  * Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also
+  known as the *zone apex*. For example, if you register the DNS name example.com, the zone apex is
+  example.com. You can't create a CNAME record for example.com, but you can create an alias record
+  for example.com that routes traffic to www.example.com
+  * Preferred choice over CNAME (TODO: why?)
+
+#### Route53 Routing Policies
+  * **Simple**
+    * Default policy, typically used if only a single resource performs functionality
+  * **Weighted**
+    * Control distribution of traffic with DNS entries
+      * This can be based on a certain percentage
+      * Set *routing policy* to weighted (instead of failover)
+  * **Latency**
+    * Control distribution of traffic based on latency.
+  * **Failover**
+    * Can set up *health checks* for endpoints or domains from within *Route53*
+      * Route 53 has health checkers in locations around the world. When you create a health check that
+        monitors an endpoint, health checkers start to send requests to the endpoint that you specify
+        to determine whether the endpoint is healthy.
+      * `evaluate target health`
+    * DNS entries are then being associated with health checks and can be configured to failover as
+      well (1 primary and n secondary recordsets)
+  * **Geolocation**
+    * Geolocation routing lets you choose the resources that serve your traffic based on the geographic
+      location of your users, meaning the location that DNS queries originate from. For example, you
+      might want all queries from Europe to be routed to an ELB load balancer in the Frankfurt region.
+  * **Geoproximity Routing (Traffic Flow Only)**
+    * Geoproximity routing lets Amazon Route 53 route traffic to your resources based on the geographic
+      location of your users and your resources. You can also optionally choose to route more traffic or
+      less to a given resource by specifying a value, known as a bias. A bias expands or shrinks the
+      size of the geographic region from which traffic is routed to a resource.
+  * **Multivalue Answer Routing**
+    * Multivalue answer routing lets you configure Amazon Route 53 to return multiple values, such as
+    IP addresses for your web servers, in response to DNS queries. You can specify multiple values for
+    almost any record, but multivalue answer routing also lets you check the health of each resource,
+    so Route 53 returns only values for healthy resources. It's not a substitute for a load balancer,
+    but the ability to return multiple health-checkable IP addresses is a way to use DNS to improve
+    availability and load balancing.
+
+---
+
 <a name="4_28"></a>
 ## [↖](#top)[↑](#4_27_4)[↓](#4_28_1) S3
 <!-- toc_start -->
@@ -3516,7 +3616,15 @@ AWS Cloud, third-party services, and on-premises.
 * Allows for easier rotation than SSM Parameter Store
 * Can trigger Lambda
 * Deeply integrates into RDS
-* On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secrets-manager/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secretsmanager" target="_blank">User Guide</a>
+
+### Automatically Rotating Your Secrets
+* Define and implement rotation with an AWS Lambda function
+  * Creates a new version of the secret.
+  * Stores the secret in Secrets Manager.
+  * Configures the protected service to use the new version.
+  * Verifies the new version.
+  * Marks the new version as production ready.
 
 ---
 
@@ -3790,7 +3898,7 @@ application, and shows a map of your application’s underlying components. You 
 analyze both applications in development and in production, from simple three-tier applications to
 complex microservices applications consisting of thousands of services.
 
-* X-Ray demon would run on EC2-instances
+* X-Ray demon would run on EC2-instances/Elastic Beanstalk instances/ECS
 * X-Ray SDK to send signals
 * X-Ray API collects information
   * Automation could base on regular polling of `GetServiceGraph`
@@ -3806,10 +3914,20 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5)[↓](#5_2) Aurora
 * Can have up to 15 read replicas
 * Can have a *Global Database*, spawning across multiple regions
+* Can have 'Reder Endpoint' - load-balances connections to available Aurora Replicas in an Aurora DB cluster
+
+## CloudFront
+* You must ensure that the certificate you wish to associate with your Alternate Domain Name is
+from a trusted CA, has a valid date and is formatted correctly. Wildcard certificates do work with
+Alternate Domain Names providing they match the main domain, and they also work with valid Third
+Party certificates. If all of these elements are correct, it may be that there was an internal
+CloudFront HTTP 500 being generated at the time of configuration, which should be transient and
+will resolve if you try again.
 
 <a name="5_2"></a>
 ## [↖](#top)[↑](#5_1)[↓](#5_3) CloudWatch Metrics
 * `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
+* Use `EstimatedCharges` metric to track your estimated AWS charges
 
 <a name="5_3"></a>
 ## [↖](#top)[↑](#5_2)[↓](#5_4) CodeBuild
@@ -3820,9 +3938,15 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5_3)[↓](#5_5) CodePipeline
 * `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
 
+## Direct Connect
+* Direct Connect is the only way to access your AWS resources from a Data Center without traversing the internet
+
 <a name="5_5"></a>
 ## [↖](#top)[↑](#5_4)[↓](#5_6) EC2
 * In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
+
+## Elastic Load Balancing
+* `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
 
 <a name="5_6"></a>
 ## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
@@ -3838,6 +3962,15 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5_7)[↓](#5_9) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
+## IAM
+* Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
+
+## Kinesis Data Streams
+* When using *KCL*, make sure `getRecords` is not throwing unhandled exceptions
+* Ensure the `maxRecords` value for the `GetRecords` call isn't set below the default setting
+* When resharding, sometimes a small shard is left over
+  * This occurs when the width of a shard is very small in size in relation to other shards in the stream. This is resolved by merging with any adjacent shard.
+
 <a name="5_9"></a>
 ## [↖](#top)[↑](#5_8)[↓](#5_10) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
@@ -3851,3 +3984,10 @@ complex microservices applications consisting of thousands of services.
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
+## Secrets Manager
+* Length of a secret - 65,536 bytes
+* You should ask the external party for a DB user with at least two credential sets or the ability to create new users yourself. Otherwise, you might encounter client sign-on failures. The risk is because of the time lag that can occur between the change of the actual password and - when using Secrets Manager - the change in the corresponding secret that tells the client which password to use.
+
+### SSO
+* You can use the User Principal Name (UPN) or the DOMAIN\UserName format to authenticate with AD, but you can't use the UPN format if you have two-step verification and Context-aware verification enabled.
+* AWS Organisations and the AWS Managed Microsoft AD must be in the same account and the same region
