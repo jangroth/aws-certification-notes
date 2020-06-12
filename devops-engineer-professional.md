@@ -44,25 +44,32 @@
   * [Personal Health Dashboard](#4_25)
   * [QuickSight](#4_26)
   * [Relational Database Service](#4_27)
-  * [S3](#4_28)
-  * [Secrets Manager](#4_29)
-  * [Service Catalog (Core Service)](#4_30)
-  * [Step Functions](#4_31)
-  * [Systems Manager (Core Service)](#4_32)
-  * [Trusted Advisor (Core Service)](#4_33)
-  * [X-Ray (Core Service)](#4_34)
+  * [Route 53](#4_28)
+  * [S3](#4_29)
+  * [Secrets Manager](#4_30)
+  * [Service Catalog (Core Service)](#4_31)
+  * [Step Functions](#4_32)
+  * [Systems Manager (Core Service)](#4_33)
+  * [Trusted Advisor (Core Service)](#4_34)
+  * [X-Ray (Core Service)](#4_35)
 * [Random Information from practice questions](#5)
   * [Aurora](#5_1)
-  * [CloudWatch Metrics](#5_2)
-  * [CodeBuild](#5_3)
-  * [CodePipeline](#5_4)
-  * [EC2](#5_5)
-  * [ECR](#5_6)
-  * [Fargate](#5_7)
-  * [GitHub](#5_8)
-  * [Personal Health Dashboard](#5_9)
-  * [RDS](#5_10)
-  * [S3](#5_11)
+  * [CloudFront](#5_2)
+  * [CloudWatch Metrics](#5_3)
+  * [CodeBuild](#5_4)
+  * [CodePipeline](#5_5)
+  * [Direct Connect](#5_6)
+  * [EC2](#5_7)
+  * [Elastic Load Balancing](#5_8)
+  * [ECR](#5_9)
+  * [Fargate](#5_10)
+  * [GitHub](#5_11)
+  * [IAM](#5_12)
+  * [Kinesis Data Streams](#5_13)
+  * [Personal Health Dashboard](#5_14)
+  * [RDS](#5_15)
+  * [S3](#5_16)
+  * [Secrets Manager](#5_17)
 ---
 <!-- toc_end -->
 
@@ -539,6 +546,12 @@ terminate Amazon EC2 instances.
 * No direct integration with CloudWatch Logs
   * However if the CloudWatch agent is installed on the instances they will send logs
 
+##### Health Checks
+Amazon EC2 Auto Scaling can determine the health status of an instance using one or more of the following:
+* Status checks provided by Amazon EC2 to identify hardware and software issues that may impair an instance. The default health checks for an Auto Scaling group are EC2 status checks only.
+* Health checks provided by Elastic Load Balancing (ELB). These health checks are disabled by default but can be enabled.
+* Your custom health checks.
+
 <a name="3_3_3_3"></a>
 #### [↖](#3_3)[↑](#3_3_3_2_7)[↓](#3_3_3_3_1) Integration with other services
 
@@ -619,7 +632,7 @@ application and making changes to your application without invoking the scaling 
 `AZRebalance`|.
 `AlarmNotification`|Suspends actions normally triggered by alarms
 `ScheduledAction`|.
-`AddToLoadBalancer`|.
+`AddToLoadBalancer`|Will *not* automatically add instances later
 
 <a name="3_3_4"></a>
 ### [↖](#3_3)[↑](#3_3_3_5_2)[↓](#3_3_4_1) EC2 Instance Compliance
@@ -932,7 +945,7 @@ installed. These rules are regularly updated by AWS security researchers.
   * Can use tag to find instances to asses
   * Cannot launch AMI, requires instance
 * Assessment templates can notify SNS
-  * Could trigger lambda to remediate EC2 findings via SSM documents
+  * Could trigger Lambda to remediate EC2 findings via SSM documents
 * On AWS: <a href="https://aws.amazon.com/inspector/" target="_blank">Service</a> - <a href="https://aws.amazon.com/inspector/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/inspector/latest/userguide/" target="_blank">User Guide</a>
 
 ---
@@ -1015,11 +1028,11 @@ and is made available for client apps to call.
 
 <a name="4_2_2_4"></a>
 #### [↖](#4_2)[↑](#4_2_2_3)[↓](#4_2_2_5) Integration
-* *Lambda Proxy* - request is passed through straight to a lambda
+* *Lambda Proxy* - request is passed through straight to a Lambda
   * Can point to an *alias* to enable canary testing
 * *Lambda* - allows integration of *mapping template*
   * Can transform request as well as repsonse
-  * Allows to evolve the API while keeping lambda function static
+  * Allows to evolve the API while keeping Lambda function static
 * *Any service*
   * **All** AWS services support dedicated APIs to expose their features. However, the application
   protocols or programming interfaces are likely to differ from service to service. An API Gateway
@@ -1336,6 +1349,9 @@ Element|.
 template. All the resources included in each stack are defined by the stack set's
 AWS CloudFormation template. As you create the stack set, you specify the template to use, as well
 as any parameters and capabilities that template requires.
+* Can roll out from Organizations master account
+  * To all accounts
+  * to all accounts of an OU
 
 ##### Concept
 * Stack sets are created in a region of an administrator account
@@ -1459,7 +1475,7 @@ WaitCondition:
 		* `ServiceToken: arnOfSnsOrLambda`
 	* If stack is *created*, *updated* or *deleted* a payload is sent to `ServiceToken`
 		* Payload contains any custom data that's defined with the resource together with the action type
-		* This invokes a *lambda* that performs any sort of custom action
+		* This invokes a *Lambda* that performs any sort of custom action
     * Or an *SNS topic*, e.g. to communicate with on-prem resources
 		* Returns outcome of operation back to *CloudFormation*, typically includes custom data as well
 
@@ -1829,6 +1845,7 @@ quickly by using prepackaged build environments, or you can create custom build 
 use your own build tools. With CodeBuild, you are charged by the minute for the compute resources
 you use.
 * Provides preconfigured environments for supported versions of Java, Ruby, Python, Go, Node.js, Android, .NET Core, PHP, and Docker
+* Build images are *Amazon Linux 2*, *Ubuntu 18.04*, *Windows Server Core 2016*
 * On AWS: <a href="https://aws.amazon.com/codebuild/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codebuild/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codebuild/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_7_2"></a>
@@ -2211,6 +2228,8 @@ are no upfront fees or long-term commitments.
   * No CI/CD infastructue needs to be provisioned
 * Easy to integrate
   * Plugin concept to integrate with other components
+* Integrates with CloudWatch Events
+* CodeStar Notifications integration
 
 <a name="4_10_1_2"></a>
 #### [↖](#4_10)[↑](#4_10_1_1)[↓](#4_10_1_3) Components
@@ -2220,18 +2239,14 @@ are no upfront fees or long-term commitments.
       * Various *action providers* provide functionality
       * `runOrder` allows to decide about sequential and parallel
       * `region` replicates source bucket into target region. This enables multi-region deploys
-* Stages create *artifacts*
+      * Can invoke Lambda as an almost arbitrary pipeline action
+* Stages create **artifacts**
   * Stored in S3, passed on to the next stage
     * *Default* setting for artifact store would create one bucket per pipe, can also specify *Custom* location
     * Store must be in the same region as pipeline
     * Always encrypted, default KMS or CMK
   * Artifacts are the way different pipeline stages 'communicate' with each other
   * CodePipelin artifacts are sightly different to CodeBuild artifacts
-* Integrates with CloudWatch Events
-* CodeStar Notifications integration
-
-* Can invoke Lambda as an almost arbitrary pipeline action
-	* `codepipeline:PutJobSuccessResult`, `codepipeline:PutJobFailureResult`
 
 <a name="4_10_1_3"></a>
 #### [↖](#4_10)[↑](#4_10_1_2)[↓](#4_10_2) Pipeline Actions
@@ -2685,6 +2700,7 @@ underlying resources at any time.
       * Represents a web application
     * Type **Worker** environment
       * Act upon output created by another environment - pulls work from SQS queue
+        * Elastic Beanstalk is running a daemon process on each instance that reads from the queue
       * Ideal for long running workloads
       * Should only be loosely coupled to web server environments, eg. via *SQS*
       * Can also be invoked on a schedule (`cron.yml`)
@@ -2701,6 +2717,7 @@ underlying resources at any time.
   * Can be deployed to one or more *environments* within an application
   * Limit of 1000 version -> can configure application version *lifecycle management*
 
+##### In CloudFormation stack
 *Web Application*<br/>(non-docker)|*Web Application*<br/>(docker, runs on ECS)|*Worker*
 -|-|-
 `AWS::AutoScaling::AutoScalingGroup`|`AWS::AutoScaling::AutoScalingGroup`|`AWS::CloudFormation::WaitConditionHandle`
@@ -2918,7 +2935,7 @@ Kinesis Data Streams|Kinesis Firehose
 Must manage scaling|Fully managed
 Real time | Near real time
 Data storage| No data storage
-Can write custom code for consumers/producers| Serverless lambda
+Can write custom code for consumers/producers| Serverless Lambda
 
 For _real time delivery_ Kinesis data streams are the only option.
 
@@ -2954,6 +2971,7 @@ For _real time delivery_ Kinesis data streams are the only option.
 * [Invoking Functions](#4_19_3)
   * [Synchronous / Asynchronous / Event Source Invocation](#4_19_3_1)
   * [Function Scaling](#4_19_3_2)
+  * [Monitoring and troubleshooting](#4_19_3_3)
 <!-- toc_end -->
 
 <a name="4_19_1"></a>
@@ -2969,7 +2987,7 @@ call it directly from any web or mobile app.
   * No
   servers
   * Continuous scaling
-    * Cold Start - if no idle container is available to run the lambda
+    * Cold Start - if no idle container is available to run the Lambda
   * Very cheap
   * Can give more RAM which will proportionaly increase CPU as well
 * Supported languages
@@ -3040,7 +3058,7 @@ process reads events from the queue and runs your function.
   * -> Kinesis, DynamoDB, SQS
 
 <a name="4_19_3_2"></a>
-#### [↖](#4_19)[↑](#4_19_3_1)[↓](#4_20) Function Scaling
+#### [↖](#4_19)[↑](#4_19_3_1)[↓](#4_19_3_3) Function Scaling
 * The first time you invoke your function, AWS Lambda creates an instance of the function and runs
 its handler method to process the event.
   * When the function returns a response, it sticks around to process additional events.
@@ -3053,7 +3071,8 @@ its handler method to process the event.
   * Can configure *provisioned concurrency* before an increase in invocations
     * Can ensure that all requests are served by initialized instances with very low latency.
 
-#### Monitoring and troubleshooting
+<a name="4_19_3_3"></a>
+#### [↖](#4_19)[↑](#4_19_3_2)[↓](#4_20) Monitoring and troubleshooting
 * AWS Lambda automatically monitors Lambda functions on your behalf and reports metrics through
   Amazon CloudWatch. To help you monitor your code as it executes, Lambda automatically tracks the
   *number of requests*, the *execution duration per request*, and the *number of requests that result in an error*.
@@ -3063,7 +3082,7 @@ its handler method to process the event.
 ---
 
 <a name="4_20"></a>
-## [↖](#top)[↑](#4_19_3_2)[↓](#4_20_1) License Manager
+## [↖](#top)[↑](#4_19_3_3)[↓](#4_20_1) License Manager
 <!-- toc_start -->
 * [Overview](#4_20_1)
 <!-- toc_end -->
@@ -3166,6 +3185,7 @@ environments.
   * Share common configuration elements
   * E.g. loadbalancer layer, app layer, db layer
   * Type: *OpsWorks*, *ECS* or *RDS*
+  * If a layer has *auto healing* enabled—the default setting—AWS OpsWorks Stacks automatically replaces the layer's failed instances
 * **Instance**
   * Units of compute within the platform
   * Must be associated with at least one layer
@@ -3255,7 +3275,8 @@ Service control policies (SCPs) are one type of policy that you can use to manag
 SCPs offer central control over the maximum available permissions for all accounts in your
 organization, allowing you to ensure your accounts stay within your organization’s access control
 guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't
-available if your organization has enabled only the consolidated billing features.
+available if your organization has enabled only the consolidated billing features. SCPs do *not* apply
+for the master account itself.
 
 <a name="4_24_3"></a>
 ### [↖](#4_24)[↑](#4_24_2)[↓](#4_24_4) Tag Policies
@@ -3390,9 +3411,19 @@ Provide enhanced availability for database instances within a *single* AWS Regio
 
 ---
 
-## Route 53
+<a name="4_28"></a>
+## [↖](#top)[↑](#4_27_4)[↓](#4_28_1) Route 53
+<!-- toc_start -->
+* [Overview](#4_28_1)
+  * [Terminology](#4_28_1_1)
+* [ How it works](#4_28_2)
+  * [Basic Flow](#4_28_2_1)
+  * [Zone File & Records](#4_28_2_2)
+  * [Route53 Routing Policies](#4_28_2_3)
+<!-- toc_end -->
 
-### Overview
+<a name="4_28_1"></a>
+### [↖](#4_28)[↑](#4_28)[↓](#4_28_1_1) Overview
 Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can
 use Route 53 to perform three main functions in any combination: domain registration, DNS routing,
 and health checking. If you choose to use Route 53 for all three functions, perform the steps in this order:
@@ -3407,18 +3438,22 @@ and health checking. If you choose to use Route 53 for all three functions, perf
   * Route 53 sends automated requests over the internet to a resource, such as a web server, to
   verify that it's reachable, available, and functional. You also can choose to receive notifications when a resource becomes unavailable and choose to route internet traffic away from unhealthy resources.
 
-#### Terminology
+<a name="4_28_1_1"></a>
+#### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_2) Terminology
 * **Hosts** - Computers or services accessible within a domain
 * **Name Server** - Translates domain names into IP addresses
 * **Zone File** - Text file that contains mappings between domain names and IP addresses
 * **Records** - Entries in zone file, mappings beween resources and names
 
-###  How it works
+<a name="4_28_2"></a>
+### [↖](#4_28)[↑](#4_28_1_1)[↓](#4_28_2_1)  How it works
 
-#### Basic Flow
+<a name="4_28_2_1"></a>
+#### [↖](#4_28)[↑](#4_28_2)[↓](#4_28_2_2) Basic Flow
 Root Server -> TLD Server -> Domain-Level Name Server -> Zone File
 
-#### Zone File & Records
+<a name="4_28_2_2"></a>
+#### [↖](#4_28)[↑](#4_28_2_1)[↓](#4_28_2_3) Zone File & Records
 Zone file stores records. Various records exists:
 
 Type|Definition|Example
@@ -3443,7 +3478,8 @@ Route53 specific:
   for example.com that routes traffic to www.example.com
   * Preferred choice over CNAME (TODO: why?)
 
-#### Route53 Routing Policies
+<a name="4_28_2_3"></a>
+#### [↖](#4_28)[↑](#4_28_2_2)[↓](#4_29) Route53 Routing Policies
   * **Simple**
     * Default policy, typically used if only a single resource performs functionality
   * **Weighted**
@@ -3479,23 +3515,23 @@ Route53 specific:
 
 ---
 
-<a name="4_28"></a>
-## [↖](#top)[↑](#4_27_4)[↓](#4_28_1) S3
+<a name="4_29"></a>
+## [↖](#top)[↑](#4_28_2_3)[↓](#4_29_1) S3
 <!-- toc_start -->
-* [Overview](#4_28_1)
-* [Versioning](#4_28_2)
-* [Logging](#4_28_3)
-* [Cross-Region Replication](#4_28_4)
-* [Storage classes](#4_28_5)
-* [Access Control](#4_28_6)
-  * [Defaults](#4_28_6_1)
-  * [IAM](#4_28_6_2)
-  * [Bucket policies](#4_28_6_3)
-  * [ACLs](#4_28_6_4)
+* [Overview](#4_29_1)
+* [Versioning](#4_29_2)
+* [Logging](#4_29_3)
+* [Cross-Region Replication](#4_29_4)
+* [Storage classes](#4_29_5)
+* [Access Control](#4_29_6)
+  * [Defaults](#4_29_6_1)
+  * [IAM](#4_29_6_2)
+  * [Bucket policies](#4_29_6_3)
+  * [ACLs](#4_29_6_4)
 <!-- toc_end -->
 
-<a name="4_28_1"></a>
-### [↖](#4_28)[↑](#4_28)[↓](#4_28_2) Overview
+<a name="4_29_1"></a>
+### [↖](#4_29)[↑](#4_29)[↓](#4_29_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
 scale past trillions of objects worldwide.
@@ -3513,14 +3549,14 @@ scale past trillions of objects worldwide.
 * On AWS: <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/s3/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-S3/Amazon-S3.jpg" target="_blank">AWS Geek 2018</a>
 
-<a name="4_28_2"></a>
-### [↖](#4_28)[↑](#4_28_1)[↓](#4_28_3) Versioning
+<a name="4_29_2"></a>
+### [↖](#4_29)[↑](#4_29_1)[↓](#4_29_3) Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
 * **Version ids** are automatically assigned to objects
 
-<a name="4_28_3"></a>
-### [↖](#4_28)[↑](#4_28_2)[↓](#4_28_4) Logging
+<a name="4_29_3"></a>
+### [↖](#4_29)[↑](#4_29_2)[↓](#4_29_4) Logging
 * *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
   stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
   specific events.
@@ -3528,15 +3564,15 @@ scale past trillions of objects worldwide.
   * Provide detailed records for the requests that are made to a bucket
   * Needs to be enabled on bucket level
 
-<a name="4_28_4"></a>
-### [↖](#4_28)[↑](#4_28_3)[↓](#4_28_5) Cross-Region Replication
+<a name="4_29_4"></a>
+### [↖](#4_29)[↑](#4_29_3)[↓](#4_29_5) Cross-Region Replication
 * Buckets *must* be in different regions
   * Can replicate cross-account
 * *Must* have versioning enabled
 * Only new / changed objects will be replicated
 
-<a name="4_28_5"></a>
-### [↖](#4_28)[↑](#4_28_4)[↓](#4_28_6) Storage classes
+<a name="4_29_5"></a>
+### [↖](#4_29)[↑](#4_29_4)[↓](#4_29_6) Storage classes
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
 S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
@@ -3547,16 +3583,16 @@ Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *stand
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-<a name="4_28_6"></a>
-### [↖](#4_28)[↑](#4_28_5)[↓](#4_28_6_1) Access Control
+<a name="4_29_6"></a>
+### [↖](#4_29)[↑](#4_29_5)[↓](#4_29_6_1) Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
 
-<a name="4_28_6_1"></a>
-#### [↖](#4_28)[↑](#4_28_6)[↓](#4_28_6_2) Defaults
+<a name="4_29_6_1"></a>
+#### [↖](#4_29)[↑](#4_29_6)[↓](#4_29_6_2) Defaults
 * Bucket is *owned* by the AWS account that created it
   * Ownership refers to the identity and email address used to create the account
 	* Bucket ownership is not transferable
@@ -3564,15 +3600,15 @@ Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
 
-<a name="4_28_6_2"></a>
-#### [↖](#4_28)[↑](#4_28_6_1)[↓](#4_28_6_3) IAM
+<a name="4_29_6_2"></a>
+#### [↖](#4_29)[↑](#4_29_6_1)[↓](#4_29_6_3) IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
 
-<a name="4_28_6_3"></a>
-#### [↖](#4_28)[↑](#4_28_6_2)[↓](#4_28_6_4) Bucket policies
+<a name="4_29_6_3"></a>
+#### [↖](#4_29)[↑](#4_29_6_2)[↓](#4_29_6_4) Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
 * Defined as JSON
@@ -3581,8 +3617,8 @@ attached to
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
 
-<a name="4_28_6_4"></a>
-#### [↖](#4_28)[↑](#4_28_6_3)[↓](#4_29) ACLs
+<a name="4_29_6_4"></a>
+#### [↖](#4_29)[↑](#4_29_6_3)[↓](#4_30) ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -3596,14 +3632,15 @@ bucket.
 
 ---
 
-<a name="4_29"></a>
-## [↖](#top)[↑](#4_28_6_4)[↓](#4_29_1) Secrets Manager
+<a name="4_30"></a>
+## [↖](#top)[↑](#4_29_6_4)[↓](#4_30_1) Secrets Manager
 <!-- toc_start -->
-* [Overview](#4_29_1)
+* [Overview](#4_30_1)
+* [Automatically Rotating Your Secrets](#4_30_2)
 <!-- toc_end -->
 
-<a name="4_29_1"></a>
-### [↖](#4_29)[↑](#4_29)[↓](#4_30) Overview
+<a name="4_30_1"></a>
+### [↖](#4_30)[↑](#4_30)[↓](#4_30_2) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
 resources. The service enables you to easily rotate, manage, and retrieve database credentials,
 API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
@@ -3618,7 +3655,8 @@ AWS Cloud, third-party services, and on-premises.
 * Deeply integrates into RDS
 * On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secretsmanager" target="_blank">User Guide</a>
 
-### Automatically Rotating Your Secrets
+<a name="4_30_2"></a>
+### [↖](#4_30)[↑](#4_30_1)[↓](#4_31) Automatically Rotating Your Secrets
 * Define and implement rotation with an AWS Lambda function
   * Creates a new version of the secret.
   * Stores the secret in Secrets Manager.
@@ -3628,15 +3666,15 @@ AWS Cloud, third-party services, and on-premises.
 
 ---
 
-<a name="4_30"></a>
-## [↖](#top)[↑](#4_29_1)[↓](#4_30_1) Service Catalog (Core Service)
+<a name="4_31"></a>
+## [↖](#top)[↑](#4_30_2)[↓](#4_31_1) Service Catalog (Core Service)
 <!-- toc_start -->
-* [Overview](#4_30_1)
-* [Components](#4_30_2)
+* [Overview](#4_31_1)
+* [Components](#4_31_2)
 <!-- toc_end -->
 
-<a name="4_30_1"></a>
-### [↖](#4_30)[↑](#4_30)[↓](#4_30_2) Overview
+<a name="4_31_1"></a>
+### [↖](#4_31)[↑](#4_31)[↓](#4_31_2) Overview
 AWS Service Catalog allows organizations to create and manage catalogs of IT services that are
 approved for use on AWS. These IT services can include everything from virtual machine images,
 servers, software, and databases to complete multi-tier application architectures. AWS Service
@@ -3652,8 +3690,8 @@ deploy only the approved IT services they need.
 * Users of Service Catalog *only* required IAM permissions for the product, but *not* the underlying services
 * On AWS: <a href="https://aws.amazon.com/servicecatalog/" target="_blank">Service</a> - <a href="https://aws.amazon.com/servicecatalog/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/servicecatalog/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_30_2"></a>
-### [↖](#4_30)[↑](#4_30_1)[↓](#4_31) Components
+<a name="4_31_2"></a>
+### [↖](#4_31)[↑](#4_31_1)[↓](#4_32) Components
 * **Admins** define
   * **Product**
     * Defined in CloudFormation
@@ -3667,18 +3705,18 @@ deploy only the approved IT services they need.
 
 ---
 
-<a name="4_31"></a>
-## [↖](#top)[↑](#4_30_2)[↓](#4_31_1) Step Functions
+<a name="4_32"></a>
+## [↖](#top)[↑](#4_31_2)[↓](#4_32_1) Step Functions
 <!-- toc_start -->
-* [Overview](#4_31_1)
-* [States](#4_31_2)
-* [Input and Output processing](#4_31_3)
-* [Error handling](#4_31_4)
-* [Best Practices](#4_31_5)
+* [Overview](#4_32_1)
+* [States](#4_32_2)
+* [Input and Output processing](#4_32_3)
+* [Error handling](#4_32_4)
+* [Best Practices](#4_32_5)
 <!-- toc_end -->
 
-<a name="4_31_1"></a>
-### [↖](#4_31)[↑](#4_31)[↓](#4_31_2) Overview
+<a name="4_32_1"></a>
+### [↖](#4_32)[↑](#4_32)[↓](#4_32_2) Overview
 AWS Step Functions is a web service that enables you to coordinate the components of distributed
 applications and microservices using visual workflows. You build applications from individual
 components that each perform a discrete function, or task, allowing you to scale and change
@@ -3695,8 +3733,8 @@ application is available at any scale.
 
 * On AWS: <a href="https://aws.amazon.com/step-functions/" target="_blank">Service</a> - <a href="https://aws.amazon.com/step-functions/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/step-functions/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_31_2"></a>
-### [↖](#4_31)[↑](#4_31_1)[↓](#4_31_3) States
+<a name="4_32_2"></a>
+### [↖](#4_32)[↑](#4_32_1)[↓](#4_32_3) States
 
 .|.|.
 -|-|-
@@ -3709,8 +3747,8 @@ application is available at any scale.
 `Parallel`|Create parallel branches of execution|Can `Retry` after error
 `Map`|Run a set of steps for each element of an input array|.
 
-<a name="4_31_3"></a>
-### [↖](#4_31)[↑](#4_31_2)[↓](#4_31_4) Input and Output processing
+<a name="4_32_3"></a>
+### [↖](#4_32)[↑](#4_32_2)[↓](#4_32_4) Input and Output processing
 * `InputPath`
   * Selects which parts of the JSON input to pass to the task of the Task state
 * `OutputPath`
@@ -3720,8 +3758,8 @@ application is available at any scale.
 * `Parameters`
   * Collection of key-value pairs that are passed as input
 
-<a name="4_31_4"></a>
-### [↖](#4_31)[↑](#4_31_3)[↓](#4_31_5) Error handling
+<a name="4_32_4"></a>
+### [↖](#4_32)[↑](#4_32_3)[↓](#4_32_5) Error handling
 * By default, when a state reports an error, AWS Step Functions causes the execution to fail entirely.
 * `Task` and `Parallel` states can have a field named Retry, whose value must be an array of objects known as *retriers*.
 * An individual retrier represents a certain number of retries, usually at increasing time intervals.
@@ -3730,8 +3768,8 @@ application is available at any scale.
   * MaxAttempts (Optional)
   * BackoffRate (Optional)
 
-<a name="4_31_5"></a>
-### [↖](#4_31)[↑](#4_31_4)[↓](#4_32) Best Practices
+<a name="4_32_5"></a>
+### [↖](#4_32)[↑](#4_32_4)[↓](#4_33) Best Practices
 * Use Timeouts to Avoid Stuck Executions
   * Specify a reasonable timeout when you create a task in your state machine
 * Use ARNs Instead of Passing Large Payloads
@@ -3746,20 +3784,20 @@ application is available at any scale.
 
 ---
 
-<a name="4_32"></a>
-## [↖](#top)[↑](#4_31_5)[↓](#4_32_1) Systems Manager (Core Service)
+<a name="4_33"></a>
+## [↖](#top)[↑](#4_32_5)[↓](#4_33_1) Systems Manager (Core Service)
 <!-- toc_start -->
-* [Overview](#4_32_1)
-* [Components](#4_32_2)
-  * [Resources groups](#4_32_2_1)
-  * [Insights](#4_32_2_2)
-  * [Parameter store](#4_32_2_3)
-  * [Action & Change](#4_32_2_4)
-  * [Instances & Nodes](#4_32_2_5)
+* [Overview](#4_33_1)
+* [Components](#4_33_2)
+  * [Resources groups](#4_33_2_1)
+  * [Insights](#4_33_2_2)
+  * [Parameter store](#4_33_2_3)
+  * [Action & Change](#4_33_2_4)
+  * [Instances & Nodes](#4_33_2_5)
 <!-- toc_end -->
 
-<a name="4_32_1"></a>
-### [↖](#4_32)[↑](#4_32)[↓](#4_32_2) Overview
+<a name="4_33_1"></a>
+### [↖](#4_33)[↑](#4_33)[↓](#4_33_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems
 Manager provides a unified user interface so you can view operational data from multiple AWS
 services and allows you to automate operational tasks across your AWS resources. With Systems
@@ -3784,16 +3822,16 @@ manage your infrastructure securely at scale.
   * Need correct IAM permissions, then shows up on SSM dashboard
 * On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_32_2"></a>
-### [↖](#4_32)[↑](#4_32_1)[↓](#4_32_2_1) Components
-<a name="4_32_2_1"></a>
-#### [↖](#4_32)[↑](#4_32_2)[↓](#4_32_2_2) Resources groups
+<a name="4_33_2"></a>
+### [↖](#4_33)[↑](#4_33_1)[↓](#4_33_2_1) Components
+<a name="4_33_2_1"></a>
+#### [↖](#4_33)[↑](#4_33_2)[↓](#4_33_2_2) Resources groups
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
 
-<a name="4_32_2_2"></a>
-#### [↖](#4_32)[↑](#4_32_2_1)[↓](#4_32_2_3) Insights
+<a name="4_33_2_2"></a>
+#### [↖](#4_33)[↑](#4_33_2_1)[↓](#4_33_2_3) Insights
 * **Insights dashboards**
   * Automatically aggregates and displays operational data for each resource group
 * **Inventory**
@@ -3801,13 +3839,13 @@ manage your infrastructure securely at scale.
 * **Configuration Compliance**
   * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
 
-<a name="4_32_2_3"></a>
-#### [↖](#4_32)[↑](#4_32_2_2)[↓](#4_32_2_4) Parameter store
+<a name="4_33_2_3"></a>
+#### [↖](#4_33)[↑](#4_33_2_2)[↓](#4_33_2_4) Parameter store
 * Centralized store to manage your configuration data, whether plain-text data such as database
   strings or secrets such as passwords
 
-<a name="4_32_2_4"></a>
-#### [↖](#4_32)[↑](#4_32_2_3)[↓](#4_32_2_5) Action & Change
+<a name="4_33_2_4"></a>
+#### [↖](#4_33)[↑](#4_33_2_3)[↓](#4_33_2_5) Action & Change
 * **Automation**
   * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
   * Build Automation workflows to configure and manage instances and AWS resources.
@@ -3822,8 +3860,8 @@ manage your infrastructure securely at scale.
 * **Change Calendar**
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
-<a name="4_32_2_5"></a>
-#### [↖](#4_32)[↑](#4_32_2_4)[↓](#4_33) Instances & Nodes
+<a name="4_33_2_5"></a>
+#### [↖](#4_33)[↑](#4_33_2_4)[↓](#4_34) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -3855,14 +3893,14 @@ manage your infrastructure securely at scale.
 
 ---
 
-<a name="4_33"></a>
-## [↖](#top)[↑](#4_32_2_5)[↓](#4_33_1) Trusted Advisor (Core Service)
+<a name="4_34"></a>
+## [↖](#top)[↑](#4_33_2_5)[↓](#4_34_1) Trusted Advisor (Core Service)
 <!-- toc_start -->
-* [Overview](#4_33_1)
+* [Overview](#4_34_1)
 <!-- toc_end -->
 
-<a name="4_33_1"></a>
-### [↖](#4_33)[↑](#4_33)[↓](#4_34) Overview
+<a name="4_34_1"></a>
+### [↖](#4_34)[↑](#4_34)[↓](#4_35) Overview
 * AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision
 your resources following AWS best practices. Whether establishing new workflows, developing
 applications, or as part of ongoing improvement, take advantage of the recommendations provided by
@@ -3875,21 +3913,21 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
   * Fault tolerance
   * Service limits
 * Trusted Advisor *check results* are raised as CloudWatch Events
-  * Automate by triggering lambdas
+  * Automate by triggering Lambdas
 * Checks are usually refreshed every 5min
   * Can trigger refresh via API
 * On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
 
 ---
 
-<a name="4_34"></a>
-## [↖](#top)[↑](#4_33_1)[↓](#4_34_1) X-Ray (Core Service)
+<a name="4_35"></a>
+## [↖](#top)[↑](#4_34_1)[↓](#4_35_1) X-Ray (Core Service)
 <!-- toc_start -->
-* [Overview](#4_34_1)
+* [Overview](#4_35_1)
 <!-- toc_end -->
 
-<a name="4_34_1"></a>
-### [↖](#4_34)[↑](#4_34)[↓](#5) Overview
+<a name="4_35_1"></a>
+### [↖](#4_35)[↑](#4_35)[↓](#5) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those
 built using a microservices architecture. With X-Ray, you can understand how your application and
 its underlying services are performing to identify and troubleshoot the root cause of performance
@@ -3908,7 +3946,7 @@ complex microservices applications consisting of thousands of services.
 --
 
 <a name="5"></a>
-# [↖](#top)[↑](#4_34_1)[↓](#5_1) Random Information from practice questions
+# [↖](#top)[↑](#4_35_1)[↓](#5_1) Random Information from practice questions
 
 <a name="5_1"></a>
 ## [↖](#top)[↑](#5)[↓](#5_2) Aurora
@@ -3916,7 +3954,8 @@ complex microservices applications consisting of thousands of services.
 * Can have a *Global Database*, spawning across multiple regions
 * Can have 'Reder Endpoint' - load-balances connections to available Aurora Replicas in an Aurora DB cluster
 
-## CloudFront
+<a name="5_2"></a>
+## [↖](#top)[↑](#5_1)[↓](#5_3) CloudFront
 * You must ensure that the certificate you wish to associate with your Alternate Domain Name is
 from a trusted CA, has a valid date and is formatted correctly. Wildcard certificates do work with
 Alternate Domain Names providing they match the main domain, and they also work with valid Third
@@ -3924,70 +3963,86 @@ Party certificates. If all of these elements are correct, it may be that there w
 CloudFront HTTP 500 being generated at the time of configuration, which should be transient and
 will resolve if you try again.
 
-<a name="5_2"></a>
-## [↖](#top)[↑](#5_1)[↓](#5_3) CloudWatch Metrics
+<a name="5_3"></a>
+## [↖](#top)[↑](#5_2)[↓](#5_4) CloudWatch Metrics
 * `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
 * Use `EstimatedCharges` metric to track your estimated AWS charges
 
-<a name="5_3"></a>
-## [↖](#top)[↑](#5_2)[↓](#5_4) CodeBuild
+<a name="5_4"></a>
+## [↖](#top)[↑](#5_3)[↓](#5_5) CodeBuild
 * `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built.
 * `MSBuild` container image is required for building .NET applications
 
-<a name="5_4"></a>
-## [↖](#top)[↑](#5_3)[↓](#5_5) CodePipeline
+<a name="5_5"></a>
+## [↖](#top)[↑](#5_4)[↓](#5_6) CodePipeline
 * `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
 
-## Direct Connect
+<a name="5_6"></a>
+## [↖](#top)[↑](#5_5)[↓](#5_7) Direct Connect
 * Direct Connect is the only way to access your AWS resources from a Data Center without traversing the internet
 
-<a name="5_5"></a>
-## [↖](#top)[↑](#5_4)[↓](#5_6) EC2
-* In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
-
-## Elastic Load Balancing
-* `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
-
-<a name="5_6"></a>
-## [↖](#top)[↑](#5_5)[↓](#5_7) ECR
-* Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
+## EBS
+* In order to encrypt a EBS snapshot, copy the unencrypted snapshot and tick the checkbox to encrypt the target
 
 <a name="5_7"></a>
-## [↖](#top)[↑](#5_6)[↓](#5_8) Fargate
+## [↖](#top)[↑](#5_6)[↓](#5_8) EC2
+* In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
+
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7)[↓](#5_9) Elastic Load Balancing
+* `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
+* Network Load Balancers do not use security groups. This is different from Classic Load Balancer or Application Load Balancer.
+
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8)[↓](#5_10) ECR
+* Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
+
+<a name="5_10"></a>
+## [↖](#top)[↑](#5_9)[↓](#5_11) Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
   * ECS: ENIs come from underlying instance
 
-<a name="5_8"></a>
-## [↖](#top)[↑](#5_7)[↓](#5_9) GitHub
+<a name="5_11"></a>
+## [↖](#top)[↑](#5_10)[↓](#5_12) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-## IAM
+<a name="5_12"></a>
+## [↖](#top)[↑](#5_11)[↓](#5_13) IAM
 * Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
 
-## Kinesis Data Streams
+<a name="5_13"></a>
+## [↖](#top)[↑](#5_12)[↓](#5_14) Kinesis Data Streams
 * When using *KCL*, make sure `getRecords` is not throwing unhandled exceptions
 * Ensure the `maxRecords` value for the `GetRecords` call isn't set below the default setting
 * When resharding, sometimes a small shard is left over
   * This occurs when the width of a shard is very small in size in relation to other shards in the stream. This is resolved by merging with any adjacent shard.
 
-<a name="5_9"></a>
-## [↖](#top)[↑](#5_8)[↓](#5_10) Personal Health Dashboard
+<a name="5_14"></a>
+## [↖](#top)[↑](#5_13)[↓](#5_15) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 
-<a name="5_10"></a>
-## [↖](#top)[↑](#5_9)[↓](#5_11) RDS
+<a name="5_15"></a>
+## [↖](#top)[↑](#5_14)[↓](#5_16) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_11"></a>
-## [↖](#top)[↑](#5_10) S3
+<a name="5_16"></a>
+## [↖](#top)[↑](#5_15)[↓](#5_17) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
-## Secrets Manager
+<a name="5_17"></a>
+## [↖](#top)[↑](#5_16)[↓](#5_17_1) Secrets Manager
+<!-- toc_start -->
+* [SSO](#5_17_1)
+<!-- toc_end -->
 * Length of a secret - 65,536 bytes
 * You should ask the external party for a DB user with at least two credential sets or the ability to create new users yourself. Otherwise, you might encounter client sign-on failures. The risk is because of the time lag that can occur between the change of the actual password and - when using Secrets Manager - the change in the corresponding secret that tells the client which password to use.
 
-### SSO
+## Server Migration Service
+* The Server Migration Service replication job generates an AMI after the job is finished. However, it does not automatically launch EC2 instances.
+
+<a name="5_17_1"></a>
+### [↖](#5_17)[↑](#5_17) SSO
 * You can use the User Principal Name (UPN) or the DOMAIN\UserName format to authenticate with AD, but you can't use the UPN format if you have two-step verification and Context-aware verification enabled.
 * AWS Organisations and the AWS Managed Microsoft AD must be in the same account and the same region
