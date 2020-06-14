@@ -915,6 +915,26 @@ TrustedAdvisor|Scans accounts, recommends *cost optimisations*, *fault tolerance
 <a name="4"></a>
 # [↖](#top)[↑](#3_11_1_2)[↓](#4_1) Services
 
+## Amazon EMR
+
+### Overview
+Amazon EMR is a managed cluster platform that simplifies running big data frameworks, such as
+Apache Hadoop and Apache Spark, on AWS to process and analyze vast amounts of data. By using these
+frameworks and related open-source projects, such as Apache Hive and Apache Pig, you can process
+data for analytics purposes and business intelligence workloads. Additionally, you can use Amazon
+EMR to transform and move large amounts of data into and out of other AWS data stores and database,
+such as Amazon Simple Storage Service (Amazon S3) and Amazon DynamoDB.
+
+Use cases:
+* Machine learning
+* Extract transform load (ETL)
+* Clickstream analysis (from S3, using Apache Spark and Apache Hive)
+* Real-time streaming
+* Interactive analytics
+* Genomics
+
+---
+
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon Inspector (Core Service)
 <!-- toc_start -->
@@ -1513,6 +1533,17 @@ Parameters per stack|60
 Mappings per stack|100
 Resources per stack|200
 Outputs per stack|60
+
+---
+
+## CloudFront
+
+### Overview
+Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web
+content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your
+content through a worldwide network of data centers called edge locations. When a user requests
+content that you're serving with CloudFront, the user is routed to the edge location that provides
+the lowest latency (time delay), so that content is delivered with the best possible performance.
 
 ---
 
@@ -2823,6 +2854,7 @@ Service, you get the ELK stack you need, without the operational overhead.
   * Full text search
   * Clickstream analytics
   * Indexing
+* *Not* a good choice for record *processing*
 * On AWS: <a href="https://aws.amazon.com/elasticsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticsearch/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_16_2"></a>
@@ -3330,6 +3362,16 @@ With our Pay-per-Session pricing, QuickSight allows you to give everyone access 
 need, while only paying for what you use.
 
 * On AWS: <a href="https://aws.amazon.com/quicksight/" target="_blank">Service</a> - <a href="https://aws.amazon.com/quicksight/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/quicksight/latest/user/welcome.html" target="_blank">User Guide</a>
+
+---
+
+## Redshift
+
+### Overview
+Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. An Amazon
+Redshift data warehouse is a collection of computing resources called nodes, which are organized
+into a group called a cluster. Each cluster runs an Amazon Redshift engine and contains one or
+more databases.
 
 ---
 
