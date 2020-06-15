@@ -60,24 +60,26 @@
   * [CloudFront](#5_2)
   * [CloudWatch Metrics](#5_3)
   * [CodeBuild](#5_4)
-  * [CodePipeline](#5_5)
-  * [Cognito](#5_6)
-  * [Direct Connect](#5_7)
-  * [EBS](#5_8)
-  * [EC2](#5_9)
-  * [Elastic Load Balancing](#5_10)
-  * [ECR](#5_11)
-  * [Fargate](#5_12)
-  * [GitHub](#5_13)
-  * [IAM](#5_14)
-  * [Kinesis Data Streams](#5_15)
-  * [Personal Health Dashboard](#5_16)
-  * [RDS](#5_17)
-  * [S3](#5_18)
-  * [Secrets Manager](#5_19)
-  * [Server Migration Service](#5_20)
-  * [SQS](#5_21)
-  * [SSO](#5_22)
+  * [CodeCommit](#5_5)
+  * [CodePipeline](#5_6)
+  * [Cognito](#5_7)
+  * [Direct Connect](#5_8)
+  * [EBS](#5_9)
+  * [EC2](#5_10)
+  * [Elastic Load Balancing](#5_11)
+  * [ECR](#5_12)
+  * [Fargate](#5_13)
+  * [GitHub](#5_14)
+  * [IAM](#5_15)
+  * [Kinesis Data Streams](#5_16)
+  * [Personal Health Dashboard](#5_17)
+  * [RDS](#5_18)
+  * [S3](#5_19)
+  * [Secrets Manager](#5_20)
+  * [Server Migration Service](#5_21)
+  * [SQS](#5_22)
+  * [Trusted Advisor](#5_23)
+  * [SSO](#5_24)
 ---
 <!-- toc_end -->
 
@@ -1674,6 +1676,9 @@ optimize your applications, and ensure they are running smoothly.
 * Allow real-time delivery of log events
 * Can create subscription filter for *Lambda*, *Elasticsearch*, *Kinesis Data/Firehose* (not supported from console)
   * Only Kinesis Stream supports cross-account
+    * Need to establish *log data sender* and *log data recipient*.
+    * The log group and the destination must be in the same AWS region. However, the AWS resource
+    that the destination points to can be located in a different region.
 
 ##### AWS-Managed Logs
 
@@ -2764,30 +2769,43 @@ underlying resources at any time.
 <a name="4_17_2_1"></a>
 #### [↖](#4_17)[↑](#4_17_2)[↓](#4_17_2_1_1) Components
 * **Application**
+  * A logical collection of Elastic Beanstalk components, including environments, versions, and environment configurations.
+  * An application is conceptually similar to a folder.
   * Either *application* in the tradional sense
   * Or *application component*, e.g. service, frontend, backend
-* **Environment**
-  * Isolated, self-contained set of components of infrastructure
-    * Type **Web server** environment
-      * Represents a web application
-    * Type **Worker** environment
-      * Act upon output created by another environment - pulls work from SQS queue
-        * Elastic Beanstalk is running a daemon process on each instance that reads from the queue
-      * Ideal for long running workloads
-      * Should only be loosely coupled to web server environments, eg. via *SQS*
-      * Can also be invoked on a schedule (`cron.yml`)
-  * Single-instance or multi-instance scalable
-  * Application can have mulitple environments
-    * Either represent *development stages* (PROD, STAGING, ...)
-    * ...or *application component*, e.g. service, frontend, backend
-  * Can be cloned as a whole environment
-  * Can rebuild environment - complete delete and rebuild
 * **Application Version**
+  * Refers to a specific, labeled iteration of deployable code for a web application
   * Unique package that represents a version of the *application*
   * Uploaded as a zipped *application source bundle*
   * Each application can have many application versions
   * Can be deployed to one or more *environments* within an application
   * Limit of 1000 version -> can configure application version *lifecycle management*
+* **Environment**
+  * Collection of AWS resources running an application version
+  * Isolated, self-contained set of components of infrastructure
+  * Single-instance or multi-instance scalable
+  * Application can have multiple environments
+    * Either represent *development stages* (PROD, STAGING, ...)
+    * ...or *application component*, e.g. service, frontend, backend
+  * Environment has one application
+  * Can be cloned as a whole environment
+  * Can rebuild environment - complete delete and rebuild
+* **Environment tier**
+  * Designates the type of application that the environment runs, and determines what resources Elastic Beanstalk provisions to support it
+    * Type **Web server** environment tier
+      * Represents a web application
+    * Type **Worker** environment tier
+      * Act upon output created by another environment - pulls work from SQS queue
+        * Elastic Beanstalk is running a daemon process on each instance that reads from the queue
+      * Ideal for long running workloads
+      * Should only be loosely coupled to web server environments, eg. via *SQS*
+      * Can also be invoked on a schedule (`cron.yml`)
+* **Environment configuration**
+  * Identifies a collection of parameters and settings that define how an environment and its associated resources behave
+* **Saved configuration**
+  * A template that you can use as a starting point for creating unique environment configurations
+* **Platform**
+  * Combination of an operating system, programming language runtime, web server, application server, and Elastic Beanstalk components
 
 ##### In CloudFormation stack
 *Web Application*<br/>(non-docker)|*Web Application*<br/>(docker, runs on ECS)|*Worker*
@@ -4077,94 +4095,97 @@ will resolve if you try again.
 * `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built.
 * `MSBuild` container image is required for building .NET applications
 
-## CodeCommit
+<a name="5_5"></a>
+## [↖](#top)[↑](#5_4)[↓](#5_6) CodeCommit
 * Value for local ssh-config needs to match SSH key id from IAM Security Credentials
 
-<a name="5_5"></a>
-## [↖](#top)[↑](#5_4)[↓](#5_6) CodePipeline
+<a name="5_6"></a>
+## [↖](#top)[↑](#5_5)[↓](#5_7) CodePipeline
 * `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
 
-<a name="5_6"></a>
-## [↖](#top)[↑](#5_5)[↓](#5_7) Cognito
+<a name="5_7"></a>
+## [↖](#top)[↑](#5_6)[↓](#5_8) Cognito
 * Amazon Cognito provides authentication, authorization, and user management for your web and
 mobile apps. Your users can sign in directly with a user name and password, or through a third
 party such as Facebook, Amazon, Google or Apple.
 
-<a name="5_7"></a>
-## [↖](#top)[↑](#5_6)[↓](#5_8) Direct Connect
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7)[↓](#5_9) Direct Connect
 * Direct Connect is the only way to access your AWS resources from a Data Center without traversing the internet
 
-<a name="5_8"></a>
-## [↖](#top)[↑](#5_7)[↓](#5_9) EBS
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8)[↓](#5_10) EBS
 * In order to encrypt a EBS snapshot, copy the unencrypted snapshot and tick the checkbox to encrypt the target
 
-<a name="5_9"></a>
-## [↖](#top)[↑](#5_8)[↓](#5_10) EC2
+<a name="5_10"></a>
+## [↖](#top)[↑](#5_9)[↓](#5_11) EC2
 * In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
 * To maximise networking performance, *Jumbo frames* (9001 MTU) allow more than 1500 bytes of data
 
-<a name="5_10"></a>
-## [↖](#top)[↑](#5_9)[↓](#5_11) Elastic Load Balancing
+<a name="5_11"></a>
+## [↖](#top)[↑](#5_10)[↓](#5_12) Elastic Load Balancing
 * `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
 * Network Load Balancers do not use security groups. This is different from Classic Load Balancer or Application Load Balancer.
 
-<a name="5_11"></a>
-## [↖](#top)[↑](#5_10)[↓](#5_12) ECR
+<a name="5_12"></a>
+## [↖](#top)[↑](#5_11)[↓](#5_13) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-<a name="5_12"></a>
-## [↖](#top)[↑](#5_11)[↓](#5_13) Fargate
+<a name="5_13"></a>
+## [↖](#top)[↑](#5_12)[↓](#5_14) Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
   * ECS: ENIs come from underlying instance
 
-<a name="5_13"></a>
-## [↖](#top)[↑](#5_12)[↓](#5_14) GitHub
+<a name="5_14"></a>
+## [↖](#top)[↑](#5_13)[↓](#5_15) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-<a name="5_14"></a>
-## [↖](#top)[↑](#5_13)[↓](#5_15) IAM
-* Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
-
 <a name="5_15"></a>
-## [↖](#top)[↑](#5_14)[↓](#5_16) Kinesis Data Streams
+## [↖](#top)[↑](#5_14)[↓](#5_16) IAM
+* Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
+* Can store server certificates - only recommended for regions that don't support ACM
+
+<a name="5_16"></a>
+## [↖](#top)[↑](#5_15)[↓](#5_17) Kinesis Data Streams
 * When using *KCL*, make sure `getRecords` is not throwing unhandled exceptions
 * Ensure the `maxRecords` value for the `GetRecords` call isn't set below the default setting
 * When resharding, sometimes a small shard is left over
   * This occurs when the width of a shard is very small in size in relation to other shards in the stream. This is resolved by merging with any adjacent shard.
 
-<a name="5_16"></a>
-## [↖](#top)[↑](#5_15)[↓](#5_17) Personal Health Dashboard
+<a name="5_17"></a>
+## [↖](#top)[↑](#5_16)[↓](#5_18) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 * Integrates with CloudWatch Events, but cannot send notifications directly
 
-<a name="5_17"></a>
-## [↖](#top)[↑](#5_16)[↓](#5_18) RDS
+<a name="5_18"></a>
+## [↖](#top)[↑](#5_17)[↓](#5_19) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_18"></a>
-## [↖](#top)[↑](#5_17)[↓](#5_19) S3
+<a name="5_19"></a>
+## [↖](#top)[↑](#5_18)[↓](#5_20) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
-<a name="5_19"></a>
-## [↖](#top)[↑](#5_18)[↓](#5_20) Secrets Manager
+<a name="5_20"></a>
+## [↖](#top)[↑](#5_19)[↓](#5_21) Secrets Manager
 * Length of a secret - 65,536 bytes
 * You should ask the external party for a DB user with at least two credential sets or the ability to create new users yourself. Otherwise, you might encounter client sign-on failures. The risk is because of the time lag that can occur between the change of the actual password and - when using Secrets Manager - the change in the corresponding secret that tells the client which password to use.
 
-<a name="5_20"></a>
-## [↖](#top)[↑](#5_19)[↓](#5_21) Server Migration Service
+<a name="5_21"></a>
+## [↖](#top)[↑](#5_20)[↓](#5_22) Server Migration Service
 * The Server Migration Service replication job generates an AMI after the job is finished. However, it does not automatically launch EC2 instances.
 
-<a name="5_21"></a>
-## [↖](#top)[↑](#5_20)[↓](#5_22) SQS
+<a name="5_22"></a>
+## [↖](#top)[↑](#5_21)[↓](#5_23) SQS
 * You can use Amazon S3 and the Amazon SQS Extended Client Library for Java to manage Amazon SQS messages. This is especially useful for storing and consuming messages up to 2 GB in size.
 
-## Trusted Advisor
+<a name="5_23"></a>
+## [↖](#top)[↑](#5_22)[↓](#5_24) Trusted Advisor
 * In CloudWatch Events, use `check item refres status` to only observe some events
 
-<a name="5_22"></a>
-## [↖](#top)[↑](#5_21) SSO
+<a name="5_24"></a>
+## [↖](#top)[↑](#5_23) SSO
 * You can use the User Principal Name (UPN) or the DOMAIN\UserName format to authenticate with AD, but you can't use the UPN format if you have two-step verification and Context-aware verification enabled.
 * AWS Organisations and the AWS Managed Microsoft AD must be in the same account and the same region
 * AD Connector is a directory gateway with which you can redirect directory requests to your on-premises Microsoft Active Directory without caching any information in the cloud.
