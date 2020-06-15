@@ -61,20 +61,23 @@
   * [CloudWatch Metrics](#5_3)
   * [CodeBuild](#5_4)
   * [CodePipeline](#5_5)
-  * [Direct Connect](#5_6)
-  * [EBS](#5_7)
-  * [EC2](#5_8)
-  * [Elastic Load Balancing](#5_9)
-  * [ECR](#5_10)
-  * [Fargate](#5_11)
-  * [GitHub](#5_12)
-  * [IAM](#5_13)
-  * [Kinesis Data Streams](#5_14)
-  * [Personal Health Dashboard](#5_15)
-  * [RDS](#5_16)
-  * [S3](#5_17)
-  * [Secrets Manager](#5_18)
-  * [Server Migration Service](#5_19)
+  * [Cognito](#5_6)
+  * [Direct Connect](#5_7)
+  * [EBS](#5_8)
+  * [EC2](#5_9)
+  * [Elastic Load Balancing](#5_10)
+  * [ECR](#5_11)
+  * [Fargate](#5_12)
+  * [GitHub](#5_13)
+  * [IAM](#5_14)
+  * [Kinesis Data Streams](#5_15)
+  * [Personal Health Dashboard](#5_16)
+  * [RDS](#5_17)
+  * [S3](#5_18)
+  * [Secrets Manager](#5_19)
+  * [Server Migration Service](#5_20)
+  * [SQS](#5_21)
+  * [SSO](#5_22)
 ---
 <!-- toc_end -->
 
@@ -1780,6 +1783,8 @@ Resolution|Data retention
     * CloudTrail integration allows to trigger events on API calls
       * ReadOnly calls (`List*`, `Get*`, `Describe*`) are not supported
   * E.g. CodeCommit automatically triggers CodePipeline on new commits
+* Can deliver cross-account
+  * Must be in the same region
 
 ##### EventBridge
 * CloudWatch Events in its core
@@ -2447,6 +2452,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * [Capacity provisioning](#4_15_4)
 * [DynamoDB Accelerator (DAX)](#4_15_5)
 * [DynamoDB Streams](#4_15_6)
+* [Global Tables](#4_15_7)
 <!-- toc_end -->
 
 <a name="4_15_1"></a>
@@ -2556,7 +2562,7 @@ clicks in the AWS Management Console or using the AWS SDK. Just as with DynamoDB
 the capacity you provision.
 
 <a name="4_15_6"></a>
-### [↖](#4_15)[↑](#4_15_5)[↓](#4_16) DynamoDB Streams
+### [↖](#4_15)[↑](#4_15_5)[↓](#4_15_7) DynamoDB Streams
 
 *DynamoDB Streams* captures a time-ordered sequence of item-level modifications in any DynamoDB
 table and stores this information in a log for up to 24 hours. Applications can access this log
@@ -2573,7 +2579,8 @@ data items in the table.
   * Require DynamoDB streams and empty table
   * Replicate table in different region (*read* and *write*)
 
-### Global Tables
+<a name="4_15_7"></a>
+### [↖](#4_15)[↑](#4_15_6)[↓](#4_16) Global Tables
 Amazon DynamoDB global tables provide a fully managed solution for deploying a multiregion, multi
 master database, without having to build and maintain your own replication solution. With global
 tables you can specify the AWS Regions where you want the table to be available. DynamoDB performs
@@ -2591,7 +2598,7 @@ the write to the other replica tables in the other AWS Regions automatically.
 ---
 
 <a name="4_16"></a>
-## [↖](#top)[↑](#4_15_6)[↓](#4_16_1) ECS
+## [↖](#top)[↑](#4_15_7)[↓](#4_16_1) ECS
 <!-- toc_start -->
 * [Overview](#4_16_1)
   * [Benefits](#4_16_1_1)
@@ -2806,6 +2813,7 @@ Via console, eb-cli, ...
 * Can use `eb config ...` to save/snapshot a configuration of an application
 * Saved into `.elasticbeanstalk`
   * Only non-default values are being saved
+  * Format is `*.cfg.yml`
 * This can be modified, uploaded and applied
   * Good to backup existing applications
   * Can also be applied elsewhere, e.g. in a different region
@@ -2850,6 +2858,7 @@ As the name says.
     * Can manually create new environment
     * Either use *swap URL* feature or manually create DNS
   * *Traffic Splitting* via Application Load Balancer
+* Can configure Elastic Beanstalk to *ignore health checks* during deployments
 
 <a name="4_17_3"></a>
 ### [↖](#4_17)[↑](#4_17_2_3)[↓](#4_18) Limits
@@ -3136,6 +3145,10 @@ its handler method to process the event.
     * No other function can use that concurrency
   * Can configure *provisioned concurrency* before an increase in invocations
     * Can ensure that all requests are served by initialized instances with very low latency.
+* Default Burst concurrency limits
+    * `3000` – US West (Oregon), US East (N. Virginia), Europe (Ireland)
+    * `1000` – Asia Pacific (Tokyo), Europe (Frankfurt)
+    * `500` – Other Regions
 
 <a name="4_21_3_3"></a>
 #### [↖](#4_21)[↑](#4_21_3_2)[↓](#4_22) Monitoring and troubleshooting
@@ -4005,6 +4018,7 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
   * Automate by triggering Lambdas
 * Checks are usually refreshed every 5min
   * Can trigger refresh via API
+* Only available in `us-east-1`
 * On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
 
 ---
@@ -4041,6 +4055,7 @@ complex microservices applications consisting of thousands of services.
 ## [↖](#top)[↑](#5)[↓](#5_2) Aurora
 * Can have up to 15 read replicas
 * Can have a *Global Database*, spawning across multiple regions
+  * Available for both MySQL and PostgreSQL
 * Can have 'Reder Endpoint' - load-balances connections to available Aurora Replicas in an Aurora DB cluster
 
 <a name="5_2"></a>
@@ -4062,85 +4077,94 @@ will resolve if you try again.
 * `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built.
 * `MSBuild` container image is required for building .NET applications
 
+## CodeCommit
+* Value for local ssh-config needs to match SSH key id from IAM Security Credentials
+
 <a name="5_5"></a>
 ## [↖](#top)[↑](#5_4)[↓](#5_6) CodePipeline
 * `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
 
-## Cognito
+<a name="5_6"></a>
+## [↖](#top)[↑](#5_5)[↓](#5_7) Cognito
 * Amazon Cognito provides authentication, authorization, and user management for your web and
 mobile apps. Your users can sign in directly with a user name and password, or through a third
 party such as Facebook, Amazon, Google or Apple.
 
-<a name="5_6"></a>
-## [↖](#top)[↑](#5_5)[↓](#5_7) Direct Connect
+<a name="5_7"></a>
+## [↖](#top)[↑](#5_6)[↓](#5_8) Direct Connect
 * Direct Connect is the only way to access your AWS resources from a Data Center without traversing the internet
 
-<a name="5_7"></a>
-## [↖](#top)[↑](#5_6)[↓](#5_8) EBS
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7)[↓](#5_9) EBS
 * In order to encrypt a EBS snapshot, copy the unencrypted snapshot and tick the checkbox to encrypt the target
 
-<a name="5_8"></a>
-## [↖](#top)[↑](#5_7)[↓](#5_9) EC2
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8)[↓](#5_10) EC2
 * In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
 * To maximise networking performance, *Jumbo frames* (9001 MTU) allow more than 1500 bytes of data
 
-<a name="5_9"></a>
-## [↖](#top)[↑](#5_8)[↓](#5_10) Elastic Load Balancing
+<a name="5_10"></a>
+## [↖](#top)[↑](#5_9)[↓](#5_11) Elastic Load Balancing
 * `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
 * Network Load Balancers do not use security groups. This is different from Classic Load Balancer or Application Load Balancer.
 
-<a name="5_10"></a>
-## [↖](#top)[↑](#5_9)[↓](#5_11) ECR
+<a name="5_11"></a>
+## [↖](#top)[↑](#5_10)[↓](#5_12) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-<a name="5_11"></a>
-## [↖](#top)[↑](#5_10)[↓](#5_12) Fargate
+<a name="5_12"></a>
+## [↖](#top)[↑](#5_11)[↓](#5_13) Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
   * ECS: ENIs come from underlying instance
 
-<a name="5_12"></a>
-## [↖](#top)[↑](#5_11)[↓](#5_13) GitHub
+<a name="5_13"></a>
+## [↖](#top)[↑](#5_12)[↓](#5_14) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-<a name="5_13"></a>
-## [↖](#top)[↑](#5_12)[↓](#5_14) IAM
+<a name="5_14"></a>
+## [↖](#top)[↑](#5_13)[↓](#5_15) IAM
 * Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
 
-<a name="5_14"></a>
-## [↖](#top)[↑](#5_13)[↓](#5_15) Kinesis Data Streams
+<a name="5_15"></a>
+## [↖](#top)[↑](#5_14)[↓](#5_16) Kinesis Data Streams
 * When using *KCL*, make sure `getRecords` is not throwing unhandled exceptions
 * Ensure the `maxRecords` value for the `GetRecords` call isn't set below the default setting
 * When resharding, sometimes a small shard is left over
   * This occurs when the width of a shard is very small in size in relation to other shards in the stream. This is resolved by merging with any adjacent shard.
 
-<a name="5_15"></a>
-## [↖](#top)[↑](#5_14)[↓](#5_16) Personal Health Dashboard
+<a name="5_16"></a>
+## [↖](#top)[↑](#5_15)[↓](#5_17) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 * Integrates with CloudWatch Events, but cannot send notifications directly
 
-<a name="5_16"></a>
-## [↖](#top)[↑](#5_15)[↓](#5_17) RDS
+<a name="5_17"></a>
+## [↖](#top)[↑](#5_16)[↓](#5_18) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_17"></a>
-## [↖](#top)[↑](#5_16)[↓](#5_18) S3
+<a name="5_18"></a>
+## [↖](#top)[↑](#5_17)[↓](#5_19) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
-<a name="5_18"></a>
-## [↖](#top)[↑](#5_17)[↓](#5_19) Secrets Manager
+<a name="5_19"></a>
+## [↖](#top)[↑](#5_18)[↓](#5_20) Secrets Manager
 * Length of a secret - 65,536 bytes
 * You should ask the external party for a DB user with at least two credential sets or the ability to create new users yourself. Otherwise, you might encounter client sign-on failures. The risk is because of the time lag that can occur between the change of the actual password and - when using Secrets Manager - the change in the corresponding secret that tells the client which password to use.
 
-<a name="5_19"></a>
-## [↖](#top)[↑](#5_18)[↓](#5_19_1) Server Migration Service
+<a name="5_20"></a>
+## [↖](#top)[↑](#5_19)[↓](#5_21) Server Migration Service
 * The Server Migration Service replication job generates an AMI after the job is finished. However, it does not automatically launch EC2 instances.
 
-## SQS
+<a name="5_21"></a>
+## [↖](#top)[↑](#5_20)[↓](#5_22) SQS
 * You can use Amazon S3 and the Amazon SQS Extended Client Library for Java to manage Amazon SQS messages. This is especially useful for storing and consuming messages up to 2 GB in size.
 
-<a name="5_19_1"></a>
-## [↖](#5_19)[↑](#5_19) SSO
+## Trusted Advisor
+* In CloudWatch Events, use `check item refres status` to only observe some events
+
+<a name="5_22"></a>
+## [↖](#top)[↑](#5_21) SSO
 * You can use the User Principal Name (UPN) or the DOMAIN\UserName format to authenticate with AD, but you can't use the UPN format if you have two-step verification and Context-aware verification enabled.
 * AWS Organisations and the AWS Managed Microsoft AD must be in the same account and the same region
+* AD Connector is a directory gateway with which you can redirect directory requests to your on-premises Microsoft Active Directory without caching any information in the cloud.
