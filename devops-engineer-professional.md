@@ -876,15 +876,13 @@ Kinesis|-|-|-|.
 Lambda|-|-|+|.
 Macie|-|+|-|.
 OpsWorks|-|+|+|.
-S3|SNS<br/>SQS<br/>Lambda|-|+|[documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+S3|*Event notifications*:<br/>SNS<br/>SQS<br/>Lambda|-|+|[documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
 Service Catalog|+|-|+|.
 Systems Manager|+|+|+ *Run Command* metrics|Various CloudWatch Events
 Trusted Advisor|-|+|+|[documentation](https://docs.aws.amazon.com/awssupport/latest/user/cloudwatch-ta.html)
 
-*All* services have API calls delivered to EventBridge via CloudTrail.
-
-|||||
-https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html
+* *All* services have API calls delivered to EventBridge via CloudTrail.
+* EventBridge supports [many services](https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html)
 
 <a name="3_12"></a>
 ## [↖](#top)[↑](#3_11)[↓](#3_12_1) External Tools
