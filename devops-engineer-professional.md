@@ -1,4 +1,4 @@
-<!-- toc_start -->
+< !-- toc_start -->
 <a name="top"></a>
 ---
 * [DevOps Engineer Professional](#1)
@@ -592,13 +592,12 @@ Amazon EC2 Auto Scaling can determine the health status of an instance using one
   * Wait for notification from instances that they created successfully
   * Instances use `cfn-signal` in UserData section
 * *UpdatePolicy*
-  * If LaunchConfiguration or LaunchTemplate are changing, deployed instances will *not* update
-  unless defined in UpdatePolicy
+  * If Launch Configuration or Launch Template are changing, deployed instances will *not* update unless defined in UpdatePolicy
   * Can configure policy for *rolling*, *replacing* and *scheduled* updated
 
 ##### SQS
 * It's common pattern to have instances from within an ASG consuming messages from SQS
-* Can implement Custom Metric in CloudWatch to control Auto Scaling behaviour
+* Can implement custom metric in CloudWatch to control Auto Scaling behaviour
   * E.g. size of individual backlog on instances
 
 <a name="3_3_3_4"></a>
@@ -621,7 +620,6 @@ Blue/Green|`[R53 [ALB1 [ASG1 [...]]]]`|`[R53 [ALB1 [ASG1 [...]]]][ALB2 [...]]`|`
 * Associated keypair does not exist
 * Auto scaling configuration is not working correctly
 * Instance type specification does not exist in that AZ
-* Auto scaling is not enabled on that subnet
 * Invalid EBS device mapping
 * Attempt to attach EBS block device to instance-store AMI
 * AMI issues
@@ -645,32 +643,6 @@ application and making changes to your application without invoking the scaling 
 `AlarmNotification`|Suspends actions normally triggered by alarms
 `ScheduledAction`|.
 `AddToLoadBalancer`|Will *not* automatically add instances later
-
-<a name="3_3_4"></a>
-### [↖](#3_3)[↑](#3_3_3_5_2)[↓](#3_3_4_1) EC2 Instance Compliance
-
-<a name="3_3_4_1"></a>
-#### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_4_2) AWS Config
-* Ensure instance has proper AWS configuration, e.g. no open SSH port
-* Track audit and compliance over time
-
-<a name="3_3_4_2"></a>
-#### [↖](#3_3)[↑](#3_3_4_1)[↓](#3_3_4_3) Inspector
-* Security & vulnerability scans from within OS (with agent)
-* Network scans
-
-<a name="3_3_4_3"></a>
-#### [↖](#3_3)[↑](#3_3_4_2)[↓](#3_3_4_4) Systems Manager
-* Run automations, patches, commands, inventory at scale
-
-<a name="3_3_4_4"></a>
-#### [↖](#3_3)[↑](#3_3_4_3)[↓](#3_3_4_5) Service Catalog
-* Restrict how instances are launched by minimizing configuration
-
-<a name="3_3_4_5"></a>
-#### [↖](#3_3)[↑](#3_3_4_4)[↓](#3_3_5) Configuration Mangement
-* SSM, User data, OpsWorks, Ansible, ...
-* Ensure EC2 instances have proper configuration files
 
 <a name="3_3_5"></a>
 ### [↖](#3_3)[↑](#3_3_4_5)[↓](#3_3_5_1) On-Premises strategies
@@ -776,17 +748,17 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 <a name="3_6"></a>
 ## [↖](#top)[↑](#3_5_2)[↓](#3_6_1) Multi AZ
 <!-- toc_start -->
-* [Services where multi AZ needs to enabled manually](#3_6_1)
+* [Services where multi AZ needs to be_enabled manually](#3_6_1)
 * [Services that are implicitely multi AZ](#3_6_2)
 <!-- toc_end -->
 
 <a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6)[↓](#3_6_2) Services where multi AZ needs to enabled manually
+### [↖](#3_6)[↑](#3_6)[↓](#3_6_2) Services where multi AZ needs to be enabled manually
 * Assign AZ
   * ELB, EFS, ASG, Elastic Beanstalk
 * Synchronous database for failover in different AZ
   * RDS, ElastiCache, Aurora (for DB itself, data is already multi AZ)
-  * ElasticSearch
+  * Elasticsearch
 
 <a name="3_6_2"></a>
 ### [↖](#3_6)[↑](#3_6_1)[↓](#3_7) Services that are implicitely multi AZ
@@ -812,12 +784,12 @@ DynamoDB Global Tables|multi-way replication, implemented by Streams
 AWS Config Aggregators|multi region as well as multi account
 RDS|Cross-region read replicas
 Aurora Global Database|One region is master, other for read & DR
-EBS / AMi / RDS|Snapshots
+EBS / AMI / RDS|Snapshots
 VPC Peering|Private traffic between VPCs between regions
 Route 53|Uses global network of DNS servers
 S3 |Cross-region replication
 CloudFront|Global CDN at Edge Locations
-Lambda@Edge|For Global Lambda Functions at Edge Locations
+Lambda@Edge|For global Lambda functions at Edge Locations
 CloudFormation|StackSets
 CodePipeline|*action* can be region specific -> multi-region deploys
 
@@ -859,7 +831,7 @@ CloudFormation|*StackSets* can be deployed across accounts
 * *Recovery Time Objective* - RTO
   * How much downtime is acceptable?
 
-.|.|.
+From|To|.
 -|-|-
 On-prem|On-prem|Traditional DR, very expensive
 On-prem|Cloud|Hybrid recovery
@@ -867,23 +839,26 @@ Cloud Region A|Cloud Region B|.
 
 .|RPO|RTO|Costs|Comment|What to do for DR
 -|-|-|-|-|-
-Backup & Restore|High|High|Low|Regular backups|Restore
-Pilot Light|Medium|Medium|Medium|Core system is always running|Add non-critical systems
-Warm Standby|Low|Low|High|Full system at minimum size always running|Add resources
-Multi Site/Hot Site|Lowest|Lowest|Highest|Full system at production size always running|Only switch traffic
+Backup & Restore|High|High|$|Regular backups|Restore
+Pilot Light|Medium|Medium|$$|Core system is always running|Add non-critical systems
+Warm Standby|Low|Low|$$$|Full system at minimum size always running|Add resources
+Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always running|Only switch traffic
 
 ---
 
 <a name="3_10"></a>
-## [↖](#top)[↑](#3_9)[↓](#3_11) Security Automation
+## [↖](#top)[↑](#3_9)[↓](#3_11) Security Automation & Compliance
 
 Service|What it does |Will warn about (example)
 -|-|-
-Amazon Inspector|Application and service security, scans EC2 instances for CVEs|Root login via ssh not disabled
+Amazon Inspector|* Application and service security, scans EC2 instances for CVEs<br/>Network scans|Root login via ssh not disabled
+Config|* Ensure instance has proper AWS configuration, e.g. no open SSH port<br/>* Track audit and compliance over time|Checks whether Amazon SNS topic is encrypted with KMS
 GuardDuty|Scans accounts and workloads|Instance has bitcoin activiy, unusual console logins (e.g. new location)
 Macie|Protects data|SSH private key uploaded to S3
 Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
-TrustedAdvisor|Scans accounts, recommends *cost optimisations*, *fault tolerance*, *performance*, *service limits*, *security*|Open security groups, EBS snapshot permissions
+Service Catalog|* Restrict how instances are launched by minimizing configuration|.
+Systems Manager|* Run automations, patches, commands, inventory at scale|.
+TrustedAdvisor|* Scans accounts, recommends *cost optimisations*, *fault tolerance*, *performance*, *service limits*, *security*|Open security groups, EBS snapshot permissions
 
 <a name="3_11"></a>
 ## [↖](#top)[↑](#3_10)[↓](#3_11_1) External Tools
@@ -1063,12 +1038,19 @@ After creating your API, you *must* deploy it to make it callable by your users.
 you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API
 and is made available for client apps to call.
 
+#### Canary Deployments
+* Use stage variables for canary deployments
+  * Integrate Lambda via alias: `GetStartedLambdaProxyIntegration:${stageVariables.lambdaAlias}`
+  * Overwrite stage variable in canary deployment
+* Could also use Lambda's canary functionality with weighted aliases
+
 <a name="4_3_2_4"></a>
 #### [↖](#4_3)[↑](#4_3_2_3)[↓](#4_3_2_5) Integration
 * *Lambda Proxy* - request is passed through straight to a Lambda
-  * Can point to an *alias* to enable canary testing
-* *Lambda* - allows integration of *mapping template*
-  * Can transform request as well as repsonse
+  * Proxy Lambda deals with complete `http` request
+* *Lambda Non-Proxy/Custom*
+  * Allows integration of *mapping template*
+  * Can transform request as well as response
   * Allows to evolve the API while keeping Lambda function static
 * *Any service*
   * **All** AWS services support dedicated APIs to expose their features. However, the application
@@ -1409,7 +1391,7 @@ Operation options|.
 <a name="4_5_3_1"></a>
 #### [↖](#4_5)[↑](#4_5_3)[↓](#4_5_3_1_1) Running code on instance boot
 
-.|.
+Script Name|Purpose
 -|-
 `cfn-init`|Use to retrieve and interpret resource metadata, install packages, create files, and start services.
 `cfn-signal`|Use to signal with a CreationPolicy or WaitCondition, so you can synchronize other resources in the stack when the prerequisite resource or application is ready.
@@ -2642,32 +2624,32 @@ launch type.
 [Cluster
   [Service
     [Task Definition
-      [Container Definition]
+      [Family]
+      [Task role/execution role]
+      [Network mode]
+      [Container Definitions
+        [Name/Image]
+        [Memory/Port Mappings]
+        [Health Check]
+        [Environment]
+        [Network Settings]
+        [Storage and Logging]
+        [Security]
+        [Resource Limit]
+        [Docker labels]
+      ]
     ]
   ]
 ]
 ```
 
-* **Task Definition**
-  * ECS allows to run and maintain a specified number containers in a task definition
-    * Group by responsility, e.g. separate task definitions for frontend and backend
-  * The task definition is a text file, in JSON format, that describes one or more containers, up
-    to a maximum of ten, that form your application
-  * Specify various parameters, eg:
-    * Container image to use
-    * Port to be opened & networking
-    * Data volumes
-  * Either for ECS or Fargate
-* **Task**
-  * A *task* is the instantiation of a *task definition* within a cluster
-  * If a task should fail or stop, the ECS scheduler launches another instance of the task
-    definition to replace it and to maintain the desired count of tasks in service
-  * Static host port mapping: Only one task per container instance allowed, e.g. mapping host port 80 to container port
-  * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
-  * Tasks can have individual IAM roles
+* **Cluster**
+  * Logical grouping of EC2 instances that you can place tasks on
+  * Instances run ECS agent as a Docker container
+  * Cluster is an *Auto Scaling Group* with a launch configuration using a special ECS AMI
 * **Service**
   * Runs and maintains a specified number of tasks simultaneously
-  * Created on Cluster-Level, launch type EC2 or Fargate
+  * Created on cluster-level, launch type EC2 or Fargate
   * Can be linked to ALB/NLB/ELB
   * *Service type*
     * *Replica* - places and maintains the desired number of tasks across your cluster
@@ -2680,10 +2662,24 @@ launch type.
     * *Blue/Green*
       * Controlled by CodeDeploy
       * Allows to verify a new deployment of a service before sending production traffic to it
-* **Clusters**
-  * Logical grouping of EC2 instances that you can place tasks on
-  * Instances run ECS agent as a Docker container
-  * Cluster is an *Auto Scaling Group* with a launch configuration using a special ECS AMI
+* **Task Definition**
+  * ECS allows to run and maintain a specified number containers in a task definition
+    * Group by responsility, e.g. separate task definitions for frontend and backend
+  * The task definition is a text file, in JSON format, that describes one or more *containers*, up to a maximum of ten, that form your application
+  * Specify various parameters, eg:
+    * Container image to use
+    * Port to be opened & networking
+    * Data volumes
+  * Either for ECS or Fargate
+* **Container Definitions**
+  * Can mark container as *essential* - if that container fails or stops for any reason, all other containers that are part of the task are stopped
+* **Task**
+  * A *task* is the instantiation of a *task definition* within a cluster
+  * If a task should fail or stop, the ECS scheduler launches another instance of the task
+    definition to replace it and to maintain the desired count of tasks in service
+  * Static host port mapping: Only one task per container instance allowed, e.g. mapping host port 80 to container port
+  * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
+  * Tasks can have individual IAM roles
 
 <a name="4_16_3"></a>
 ### [↖](#4_16)[↑](#4_16_2)[↓](#4_16_4) Auto Scaling
@@ -3384,7 +3380,7 @@ Tag policies are a type of policy that can help you standardize tags across reso
 organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
 <a name="4_26_4"></a>
-### [↖](#4_26)[↑](#4_26_3)[↓](#4_27) Limits:
+### [↖](#4_26)[↑](#4_26_3)[↓](#4_27) Limits
 .|.
 -|-
 Maximum linked accounts|20
@@ -4034,9 +4030,10 @@ Trusted Advisor on a regular basis to help keep your solutions provisioned optim
   * Service limits
 * Trusted Advisor *check results* are raised as CloudWatch Events
   * Automate by triggering Lambdas
-* Checks are usually refreshed every 5min
+* Checks are refreshed on visits to the dashboard (max every 5 minutes)
   * Can trigger refresh via API
-* Only available in `us-east-1`
+* Integrates with CloudWatch Events
+  * Events are only available in `us-east-1`
 * On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
 
 ---
