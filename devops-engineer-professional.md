@@ -1,4 +1,4 @@
-< !-- toc_start -->
+<!-- toc_start -->
 <a name="top"></a>
 ---
 * [DevOps Engineer Professional](#1)
@@ -14,8 +14,9 @@
   * [Multi Region](#3_7)
   * [Multi Account](#3_8)
   * [Disaster Recovery](#3_9)
-  * [Security Automation](#3_10)
-  * [External Tools](#3_11)
+  * [Security Automation & Compliance](#3_10)
+  * [Notifications](#3_11)
+  * [External Tools](#3_12)
 * [Services](#4)
   * [Amazon EMR](#4_1)
   * [Amazon Inspector (Core Service)](#4_2)
@@ -82,7 +83,6 @@
   * [SSO](#5_24)
 ---
 <!-- toc_end -->
-
 <a name="1"></a>
 # [↖](#top)[↓](#2) DevOps Engineer Professional
 
@@ -367,17 +367,11 @@ Example:
   * [Integration with other services](#3_3_3_3)
   * [Deployment Concepts](#3_3_3_4)
   * [Troubleshooting](#3_3_3_5)
-* [EC2 Instance Compliance](#3_3_4)
-  * [AWS Config](#3_3_4_1)
-  * [Inspector](#3_3_4_2)
-  * [Systems Manager](#3_3_4_3)
-  * [Service Catalog](#3_3_4_4)
-  * [Configuration Mangement](#3_3_4_5)
-* [On-Premises strategies](#3_3_5)
-  * [EC2 and On-Premises VMs](#3_3_5_1)
-  * [AWS Application Discovery Service](#3_3_5_2)
-  * [AWS Database Migration Service](#3_3_5_3)
-  * [AWS Server Migration Service](#3_3_5_4)
+* [On-Premises strategies](#3_3_4)
+  * [EC2 and On-Premises VMs](#3_3_4_1)
+  * [AWS Application Discovery Service](#3_3_4_2)
+  * [AWS Database Migration Service](#3_3_4_3)
+  * [AWS Server Migration Service](#3_3_4_4)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
@@ -644,35 +638,35 @@ application and making changes to your application without invoking the scaling 
 `ScheduledAction`|.
 `AddToLoadBalancer`|Will *not* automatically add instances later
 
-<a name="3_3_5"></a>
-### [↖](#3_3)[↑](#3_3_4_5)[↓](#3_3_5_1) On-Premises strategies
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3_5_2)[↓](#3_3_4_1) On-Premises strategies
 
-<a name="3_3_5_1"></a>
-#### [↖](#3_3)[↑](#3_3_5)[↓](#3_3_5_2) EC2 and On-Premises VMs
+<a name="3_3_4_1"></a>
+#### [↖](#3_3)[↑](#3_3_4)[↓](#3_3_4_2) EC2 and On-Premises VMs
 * Can download Amazon Linux 2 AMI in VM format to run on-premises
 * Can import existing VMs into EC2
 
-<a name="3_3_5_2"></a>
-#### [↖](#3_3)[↑](#3_3_5_1)[↓](#3_3_5_3) AWS Application Discovery Service
+<a name="3_3_4_2"></a>
+#### [↖](#3_3)[↑](#3_3_4_1)[↓](#3_3_4_3) AWS Application Discovery Service
 * Gather information about On-premises instances to plan a migration
 * Server utilization and dependency mappings
 * Track with AWS Migration Hub
 
-<a name="3_3_5_3"></a>
-#### [↖](#3_3)[↑](#3_3_5_2)[↓](#3_3_5_4) AWS Database Migration Service
+<a name="3_3_4_3"></a>
+#### [↖](#3_3)[↑](#3_3_4_2)[↓](#3_3_4_4) AWS Database Migration Service
 * Replicate
   * On-prem -> AWS
   * AWS -> On-prem
   * AWS -> AWS
 
-<a name="3_3_5_4"></a>
-#### [↖](#3_3)[↑](#3_3_5_3)[↓](#3_4) AWS Server Migration Service
+<a name="3_3_4_4"></a>
+#### [↖](#3_3)[↑](#3_3_4_3)[↓](#3_4) AWS Server Migration Service
 * Incremental replication of on-prem instances into AWS
 
 ---
 
 <a name="3_4"></a>
-## [↖](#top)[↑](#3_3_5_4)[↓](#3_4_1) Cost Allocation Tags
+## [↖](#top)[↑](#3_3_4_4)[↓](#3_4_1) Cost Allocation Tags
 <!-- toc_start -->
 * [Overview](#3_4_1)
 <!-- toc_end -->
@@ -748,7 +742,7 @@ separately before they can appear in Cost Explorer or on a cost allocation repor
 <a name="3_6"></a>
 ## [↖](#top)[↑](#3_5_2)[↓](#3_6_1) Multi AZ
 <!-- toc_start -->
-* [Services where multi AZ needs to be_enabled manually](#3_6_1)
+* [Services where multi AZ needs to be enabled manually](#3_6_1)
 * [Services that are implicitely multi AZ](#3_6_2)
 <!-- toc_end -->
 
@@ -851,25 +845,57 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 
 Service|What it does |Will warn about (example)
 -|-|-
-Amazon Inspector|* Application and service security, scans EC2 instances for CVEs<br/>Network scans|Root login via ssh not disabled
+Amazon Inspector|* Application and service security, scans EC2 instances for CVEs<br/>* Network scans|Root login via ssh not disabled
 Config|* Ensure instance has proper AWS configuration, e.g. no open SSH port<br/>* Track audit and compliance over time|Checks whether Amazon SNS topic is encrypted with KMS
-GuardDuty|Scans accounts and workloads|Instance has bitcoin activiy, unusual console logins (e.g. new location)
-Macie|Protects data|SSH private key uploaded to S3
-Security Hub|Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
+GuardDuty|* Scans accounts and workloads|Instance has bitcoin activiy, unusual console logins (e.g. new location)
+Macie|* Protects data|SSH private key uploaded to S3
+Security Hub|* Aggregates view from GuardDuty, Amazon Inspector, Macie, IAM Access Analyzer, AWS Firewall Manager.<br/>Also integrates 3rd party services|Whatever was integrated with SecurityHub
 Service Catalog|* Restrict how instances are launched by minimizing configuration|.
 Systems Manager|* Run automations, patches, commands, inventory at scale|.
 TrustedAdvisor|* Scans accounts, recommends *cost optimisations*, *fault tolerance*, *performance*, *service limits*, *security*|Open security groups, EBS snapshot permissions
 
 <a name="3_11"></a>
-## [↖](#top)[↑](#3_10)[↓](#3_11_1) External Tools
+## [↖](#top)[↑](#3_10)[↓](#3_12) Notifications
+
+
+Service|SNS (native)|CloudWatch Events|CloudWatch Metrics/Alarms|Comment
+-|-|-|-|-
+Amazon Inspector|+|-|+ (every 5 min)|Notify SNS on assessment run and findings
+API Gateway|-|-|+ (API monitoring)|.
+CloudFormation|+|-|-|.
+CloudTrail|+|-|-|.
+CodeBuild|-|+|+|.
+CodeCommit|*Trigger* to SNS or Lambda<br/>*Notification* to SNS or Chatbot(Slack)|+|-|
+CodeDeploy|*Notification* to SNS or Chatbot(Slack)|+|-|.
+CodePipeline|*Notification* to SNS or Chatbot(Slack)|+|-|.
+Config|*All* events only|+|-|.
+ECS|-|+|+|.
+Elastic Beanstalk|+|-|minimal, environment health only|.
+GuardDuty|-|+|-|.
+Kinesis|-|-|-|.
+Lambda|-|-|+|.
+Macie|-|+|-|.
+OpsWorks|-|+|+|.
+S3|SNS<br/>SQS<br/>Lambda|-|+|[documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+Service Catalog|+|-|+|.
+Systems Manager|+|+|+ *Run Command* metrics|Various CloudWatch Events
+Trusted Advisor|-|+|+|[documentation](https://docs.aws.amazon.com/awssupport/latest/user/cloudwatch-ta.html)
+
+*All* services have API calls delivered to EventBridge via CloudTrail.
+
+|||||
+https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html
+
+<a name="3_12"></a>
+## [↖](#top)[↑](#3_11)[↓](#3_12_1) External Tools
 <!-- toc_start -->
-* [Jenkins](#3_11_1)
-  * [Integrating into CodePipeline](#3_11_1_1)
-  * [Plugins](#3_11_1_2)
+* [Jenkins](#3_12_1)
+  * [Integrating into CodePipeline](#3_12_1_1)
+  * [Plugins](#3_12_1_2)
 <!-- toc_end -->
 
-<a name="3_11_1"></a>
-### [↖](#3_11)[↑](#3_11)[↓](#3_11_1_1) Jenkins
+<a name="3_12_1"></a>
+### [↖](#3_12)[↑](#3_12)[↓](#3_12_1_1) Jenkins
 * Can replace CodeBuild, CodePipeline, CodeDeploy
 	* Tight integration with those services
 
@@ -880,14 +906,14 @@ TrustedAdvisor|* Scans accounts, recommends *cost optimisations*, *fault toleran
 * `Jenkinsfile` to configure CI/CD
 * Many AWS plugins
 
-<a name="3_11_1_1"></a>
-#### [↖](#3_11)[↑](#3_11_1)[↓](#3_11_1_2) Integrating into CodePipeline
+<a name="3_12_1_1"></a>
+#### [↖](#3_12)[↑](#3_12_1)[↓](#3_12_1_2) Integrating into CodePipeline
 * CodePipeline can send build jobs to Jenkins instead of CodeBuild
 * Jenkins can pull from CodeCommit and eg. upload build result to ECR, invoke Lambda, ...
 * Direct Jenkins support in CodePipeline, requires *CodePipeline-plugin* on the Jenkins end
 
-<a name="3_11_1_2"></a>
-#### [↖](#3_11)[↑](#3_11_1_1)[↓](#4) Plugins
+<a name="3_12_1_2"></a>
+#### [↖](#3_12)[↑](#3_12_1_1)[↓](#4) Plugins
 * *EC2-Plugin*
 	* Allows Jenkins to start agents on EC2 on demand, and kill them as they get unused.
 	* Also support spot instances
@@ -900,7 +926,7 @@ TrustedAdvisor|* Scans accounts, recommends *cost optimisations*, *fault toleran
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_11_1_2)[↓](#4_1) Services
+# [↖](#top)[↑](#3_12_1_2)[↓](#4_1) Services
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) Amazon EMR
@@ -971,10 +997,11 @@ installed. These rules are regularly updated by AWS security researchers.
   * [Endpoint](#4_3_2_1)
   * [Stage](#4_3_2_2)
   * [Deployment](#4_3_2_3)
-  * [Integration](#4_3_2_4)
-  * [Mapping Template](#4_3_2_5)
-  * [Model](#4_3_2_6)
-  * [Throttling](#4_3_2_7)
+  * [Canary Deployments](#4_3_2_4)
+  * [Integration](#4_3_2_5)
+  * [Mapping Template](#4_3_2_6)
+  * [Model](#4_3_2_7)
+  * [Throttling](#4_3_2_8)
 <!-- toc_end -->
 
 <a name="4_3_1"></a>
@@ -1038,14 +1065,15 @@ After creating your API, you *must* deploy it to make it callable by your users.
 you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API
 and is made available for client apps to call.
 
-#### Canary Deployments
+<a name="4_3_2_4"></a>
+#### [↖](#4_3)[↑](#4_3_2_3)[↓](#4_3_2_5) Canary Deployments
 * Use stage variables for canary deployments
   * Integrate Lambda via alias: `GetStartedLambdaProxyIntegration:${stageVariables.lambdaAlias}`
   * Overwrite stage variable in canary deployment
 * Could also use Lambda's canary functionality with weighted aliases
 
-<a name="4_3_2_4"></a>
-#### [↖](#4_3)[↑](#4_3_2_3)[↓](#4_3_2_5) Integration
+<a name="4_3_2_5"></a>
+#### [↖](#4_3)[↑](#4_3_2_4)[↓](#4_3_2_6) Integration
 * *Lambda Proxy* - request is passed through straight to a Lambda
   * Proxy Lambda deals with complete `http` request
 * *Lambda Non-Proxy/Custom*
@@ -1058,18 +1086,18 @@ and is made available for client apps to call.
   API with the AWS integration has the advantage of providing a consistent application protocol
   for your client to access different AWS services.
 
-<a name="4_3_2_5"></a>
-#### [↖](#4_3)[↑](#4_3_2_4)[↓](#4_3_2_6) Mapping Template
+<a name="4_3_2_6"></a>
+#### [↖](#4_3)[↑](#4_3_2_5)[↓](#4_3_2_7) Mapping Template
 * A scripts in Velocity Template Language (VTL) that transforms a request body from the frontend
 data format to the backend data format.
 * Cannot add default values to fields, only add new static fields
 
-<a name="4_3_2_6"></a>
-#### [↖](#4_3)[↑](#4_3_2_5)[↓](#4_3_2_7) Model
+<a name="4_3_2_7"></a>
+#### [↖](#4_3)[↑](#4_3_2_6)[↓](#4_3_2_8) Model
 A data schema specifying the data structure of a request or response payload.
 
-<a name="4_3_2_7"></a>
-#### [↖](#4_3)[↑](#4_3_2_6)[↓](#4_4) Throttling
+<a name="4_3_2_8"></a>
+#### [↖](#4_3)[↑](#4_3_2_7)[↓](#4_4) Throttling
 * Account-wide limit of 10,000 requests per second.
   * Applies at service/account level
 * Can create *usage plan*:
@@ -1079,7 +1107,7 @@ A data schema specifying the data structure of a request or response payload.
 ---
 
 <a name="4_4"></a>
-## [↖](#top)[↑](#4_3_2_7)[↓](#4_4_1) Athena
+## [↖](#top)[↑](#4_3_2_8)[↓](#4_4_1) Athena
 <!-- toc_start -->
 * [Overview](#4_4_1)
 <!-- toc_end -->
@@ -3334,7 +3362,7 @@ environments.
   * [Benefits](#4_26_1_1)
 * [Service Control Policies (SCP)](#4_26_2)
 * [Tag Policies](#4_26_3)
-* [Limits:](#4_26_4)
+* [Limits](#4_26_4)
 <!-- toc_end -->
 
 <a name="4_26_1"></a>
