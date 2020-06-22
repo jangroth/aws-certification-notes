@@ -56,32 +56,8 @@
   * [Systems Manager (Core Service)](#4_36)
   * [Trusted Advisor (Core Service)](#4_37)
   * [X-Ray (Core Service)](#4_38)
-* [Random Information from practice questions](#5)
-  * [Aurora](#5_1)
-  * [Auto Scaling Group](#5_2)
-  * [CloudFront](#5_3)
-  * [CloudWatch Metrics](#5_4)
-  * [CodeBuild](#5_5)
-  * [CodeCommit](#5_6)
-  * [CodePipeline](#5_7)
-  * [Cognito](#5_8)
-  * [Direct Connect](#5_9)
-  * [EBS](#5_10)
-  * [EC2](#5_11)
-  * [Elastic Load Balancing](#5_12)
-  * [ECR](#5_13)
-  * [Fargate](#5_14)
-  * [GitHub](#5_15)
-  * [IAM](#5_16)
-  * [Kinesis Data Streams](#5_17)
-  * [Personal Health Dashboard](#5_18)
-  * [RDS](#5_19)
-  * [S3](#5_20)
-  * [Secrets Manager](#5_21)
-  * [Server Migration Service](#5_22)
-  * [SQS](#5_23)
-  * [Trusted Advisor](#5_24)
-  * [SSO](#5_25)
+* [Etc](#5)
+  * [Random Information from practice questions](#5_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -450,6 +426,7 @@ terminate instances as demand on your application increases or decreases.
 * Instance configuration template that an Auto Scaling Group uses to launch EC2 instances
 * One Launch Configuration per ASG, can be used in many ASGs though
 * Can't be modified, needs to be recreated
+* To change instance type, copy the old Launch Configuration, change instance type, double *max* and *desired*, wait till new values have propagated, revert *max* and *desired*
 
 ##### Launch Template
 * Similar to Launch Configuration
@@ -879,12 +856,14 @@ Lambda|-|-|**+**|.
 Macie|-|**+**|-|.
 OpsWorks|-|**+**|**+**|.
 S3|**+**<br/>*Event notifications*:<br/>SNS<br/>SQS<br/>Lambda|-|**+**|[documentation](https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html)
+Server Migration Service|-|**+**|-|.
 Service Catalog|**+**|-|**+**|.
 Systems Manager|**+**|**+**|**+**<br/>*Run Command* metrics|Various CloudWatch Events
 Trusted Advisor|-|**+**|**+**|[documentation](https://docs.aws.amazon.com/awssupport/latest/user/cloudwatch-ta.html)
 
 * *All* services have API calls delivered to EventBridge via CloudTrail.
-* EventBridge supports [many services](https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html)
+* EventBridge supports [many services](https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html).
+* [All services](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html) that publish CloudWatch Metrics.
 
 <a name="3_12"></a>
 ## [↖](#top)[↑](#3_11)[↓](#3_12_1) External Tools
@@ -1407,6 +1386,7 @@ as any parameters and capabilities that template requires.
 * A *stack instance* is a reference to a stack in a target account within a region
   * Can exist without a stack, e.g. if stack failed to create, then the stack instance shows the reason for that
 * Operations: *Create*, *Update*, *Delete*
+* For updates, can choose to overwrite parameters only for some accounts/regions
 
 Operation options|.
 -|-
@@ -1569,10 +1549,11 @@ Outputs per stack|60
 ## [↖](#top)[↑](#4_5_4)[↓](#4_6_1) CloudFront
 <!-- toc_start -->
 * [Overview](#4_6_1)
+* [Lamdba@Edge](#4_6_2)
 <!-- toc_end -->
 
 <a name="4_6_1"></a>
-### [↖](#4_6)[↑](#4_6)[↓](#4_7) Overview
+### [↖](#4_6)[↑](#4_6)[↓](#4_6_2) Overview
 Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web
 content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your
 content through a worldwide network of data centers called edge locations. When a user requests
@@ -1580,7 +1561,8 @@ content that you're serving with CloudFront, the user is routed to the edge loca
 the lowest latency (time delay), so that content is delivered with the best possible performance.
 * CloudFront is usually the *cheapest* and *simplest* way to add caching to web application
 
-### Lamdba@Edge
+<a name="4_6_2"></a>
+### [↖](#4_6)[↑](#4_6_1)[↓](#4_7) Lamdba@Edge
 Lambda@Edge is a feature of Amazon CloudFront that lets you run code closer to users of your
 application, which improves performance and reduces latency. With Lambda@Edge, you don't have to
 provision or manage infrastructure in multiple locations around the world. You pay only for the
@@ -1597,8 +1579,19 @@ high availability at an AWS location closest to your end user.
 
 ---
 
+## CloudSearch
+
+### Overview
+Amazon CloudSearch is a fully managed service in the cloud that makes it easy to set up, manage,
+and scale a search solution for your website or application.
+
+With Amazon CloudSearch you can search large collections of data such as web pages, document file,
+forum posts, or product information. You can quickly add search capabilities without having to
+become a search expert or worry about hardware provisioning, setup, and maintenance. As your
+volume of data and traffic fluctuates, Amazon CloudSearch scales to meet your needs
+
 <a name="4_7"></a>
-## [↖](#top)[↑](#4_6_1)[↓](#4_7_1) CloudTrail (Core Service)
+## [↖](#top)[↑](#4_6_2)[↓](#4_7_1) CloudTrail (Core Service)
 <!-- toc_start -->
 * [Overview](#4_7_1)
 * [Concepts](#4_7_2)
@@ -1784,6 +1777,7 @@ Resolution|Data retention
 * Takes place once, at a specific point in time
   * Disable with `mon-disable-alarm-actions` via CLI
 * Can be added to dashboard
+* Using *alarm actions*, you can create alarms that automatically stop, terminate, reboot, or recover your EC2 instances.
 
 ##### Billing Alarms
 * Notfications on billing metrics
@@ -1953,6 +1947,7 @@ use your own build tools. With CodeBuild, you are charged by the minute for the 
 you use.
 * Provides preconfigured environments for supported versions of Java, Ruby, Python, Go, Node.js, Android, .NET Core, PHP, and Docker
 * Build images are *Amazon Linux 2*, *Ubuntu 18.04*, *Windows Server Core 2016*
+	* Can use build image from ECR, even cross-account
 * On AWS: <a href="https://aws.amazon.com/codebuild/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codebuild/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codebuild/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_9_2"></a>
@@ -2417,11 +2412,12 @@ activities in one place. With AWS CodeStar, you can set up your entire continuou
 toolchain in minutes, allowing you to start releasing code faster. AWS CodeStar makes it easy for
 your whole team to work together securely, allowing you to easily manage access and add owners,
 contributors, and viewers to your projects. Each AWS CodeStar project comes with a project
-management dashboard, including an integrated issue tracking capability powered by Atlassian JIRA
+management dashboard, including an integrated issue tracking capability powered by Atlassian **JIRA**
 Software. With the AWS CodeStar project dashboard, you can easily track progress across your
 entire software development process, from your backlog of work items to teams’ recent code
 deployments.
 
+* CodeStar provides a central console where you can assign project team members the roles they need to access tools and resources. These permissions are applied automatically across all AWS services used in your project, so you don't need to create or manage complex IAM policies.
 * On AWS: <a href="https://aws.amazon.com/codestar/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codestar/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codestar/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_13_2"></a>
@@ -3336,18 +3332,22 @@ environments.
   * *AWS OpsWorks Stacks* (**<- exam relevant**)
   * *AWS Opsworks for Chef Automate*
   * *AWS OpsWorks for Puppet Enterprise*
+* For Chef 11, *BerkShelf* is often used
+	* Allows to use external cookbooks
 * On AWS: <a href="https://aws.amazon.com/opsworks/stacks/" target="_blank">Service</a> - <a href="https://aws.amazon.com/opsworks/stacks/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/opsworks/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_25_2"></a>
 ### [↖](#4_25)[↑](#4_25_1)[↓](#4_25_3) Components
 * **Stack**
   * Set of resources that are managed as a group
+		* Need to enable *custom cookbooks*, this has to be enabled on stack level
 * **Layer**
   * Represent and configure components of a stack
   * Share common configuration elements
   * E.g. loadbalancer layer, app layer, db layer
   * Type: *OpsWorks*, *ECS* or *RDS*
   * If a layer has *auto healing* enabled—the default setting—AWS OpsWorks Stacks automatically replaces the layer's failed instances
+		* After 5 minutes a non-responsive instance becomes *failed*.
 * **Instance**
   * Units of compute within the platform
   * Must be associated with at least one layer
@@ -3355,14 +3355,15 @@ environments.
   * Can run
     * 24/7
     * Load-based
-			* Servers have to exist and to be pre-assigned to be e.g. load-based. So they are *not* created on demand.
     * Time-based
+		* Servers have to exist and to be pre-assigned to be e.g. load-based. So they are *not* created on demand.
 * **Application**
   * Applications that are deployed on one or more instances
   * Deployed through source code repo or S3
 * **Deployments**
   * Deploy application code and related files to application server instances
   * Deployment operation is handled by each instance's Deploy recipes, which are determined by the instance's layer
+	* Can *rollback* up to 4 versions
 
 <a name="4_25_3"></a>
 ### [↖](#4_25)[↑](#4_25_2)[↓](#4_25_4) Lifecycle Events
@@ -4133,21 +4134,45 @@ complex microservices applications consisting of thousands of services.
 <a name="5"></a>
 # [↖](#top)[↑](#4_38_1)[↓](#5_1) Etc
 
-## Random Information from practice questions
-
 <a name="5_1"></a>
-### [↖](#top)[↑](#5)[↓](#5_2) Aurora
+## [↖](#top)[↑](#5)[↓](#5_1_1) Random Information from practice questions
+<!-- toc_start -->
+* [Aurora](#5_1_1)
+* [Auto Scaling Group](#5_1_2)
+* [CloudFront](#5_1_3)
+* [CloudWatch Metrics](#5_1_4)
+* [CodeBuild](#5_1_5)
+* [CodeCommit](#5_1_6)
+* [CodePipeline](#5_1_7)
+* [Cognito](#5_1_8)
+* [Direct Connect](#5_1_9)
+* [EBS](#5_1_10)
+* [EC2](#5_1_11)
+* [Elastic Load Balancing](#5_1_12)
+* [ECR](#5_1_13)
+* [Fargate](#5_1_14)
+* [GitHub](#5_1_15)
+* [IAM](#5_1_16)
+* [Kinesis Data Streams](#5_1_17)
+* [Personal Health Dashboard](#5_1_18)
+* [RDS](#5_1_19)
+* [S3](#5_1_20)
+* [Secrets Manager](#5_1_21)
+* [Server Migration Service](#5_1_22)
+* [SQS](#5_1_23)
+* [Trusted Advisor](#5_1_24)
+* [SSO](#5_1_25)
+<!-- toc_end -->
+
+<a name="5_1_1"></a>
+### [↖](#5_1)[↑](#5_1)[↓](#5_1_2) Aurora
 * Can have up to 15 read replicas
 * Can have a *Global Database*, spawning across multiple regions
   * Available for both MySQL and PostgreSQL
 * Can have 'Reder Endpoint' - load-balances connections to available Aurora Replicas in an Aurora DB cluster
 
-<a name="5_2"></a>
-### [↖](#top)[↑](#5_1)[↓](#5_3) Auto Scaling Group
-* To change instance type, copy the old Launch Configuration, change instance type, double *max* and *desired*, wait till new values have propagated, revert *max* and *desired*
-
-<a name="5_3"></a>
-### [↖](#top)[↑](#5_2)[↓](#5_4) CloudFront
+<a name="5_1_3"></a>
+### [↖](#5_1)[↑](#5_1_2)[↓](#5_1_4) CloudFront
 * You must ensure that the certificate you wish to associate with your Alternate Domain Name is
 from a trusted CA, has a valid date and is formatted correctly. Wildcard certificates do work with
 Alternate Domain Names providing they match the main domain, and they also work with valid Third
@@ -4155,108 +4180,110 @@ Party certificates. If all of these elements are correct, it may be that there w
 CloudFront HTTP 500 being generated at the time of configuration, which should be transient and
 will resolve if you try again.
 
-<a name="5_4"></a>
-### [↖](#top)[↑](#5_3)[↓](#5_5) CloudWatch Metrics
+<a name="5_1_4"></a>
+### [↖](#5_1)[↑](#5_1_3)[↓](#5_1_5) CloudWatch Metrics
 * `aws cfn put-metric-data` - Publishes metric data points to Amazon CloudWatch
 * Use `EstimatedCharges` metric to track your estimated AWS charges
 
-<a name="5_5"></a>
-### [↖](#top)[↑](#5_4)[↓](#5_6) CodeBuild
+<a name="5_1_5"></a>
+### [↖](#5_1)[↑](#5_1_4)[↓](#5_1_6) CodeBuild
 * `CODEBUILD_SOURCE_VERSION` - For CodeCommit, it is the commit ID or branch name associated with the version of the source code to be built.
 * `MSBuild` container image is required for building .NET applications
 
-<a name="5_6"></a>
-### [↖](#top)[↑](#5_5)[↓](#5_7) CodeCommit
+<a name="5_1_6"></a>
+### [↖](#5_1)[↑](#5_1_5)[↓](#5_1_7) CodeCommit
 * Value for local ssh-config needs to match SSH key id from IAM Security Credentials
 
-<a name="5_7"></a>
-### [↖](#top)[↑](#5_6)[↓](#5_8) CodePipeline
+<a name="5_1_7"></a>
+### [↖](#5_1)[↑](#5_1_6)[↓](#5_1_8) CodePipeline
 * `CodePipeline Pipeline Execution State Change.` is the *detail-type* of the CloudWatch Event raised for pipeline failures
+* *AWS DeviceFarm* is an action provider
 
-<a name="5_8"></a>
-### [↖](#top)[↑](#5_7)[↓](#5_9) Cognito
+<a name="5_1_8"></a>
+### [↖](#5_1)[↑](#5_1_7)[↓](#5_1_9) Cognito
 * Amazon Cognito provides authentication, authorization, and user management for your web and
 mobile apps. Your users can sign in directly with a user name and password, or through a third
 party such as Facebook, Amazon, Google or Apple.
 
-<a name="5_9"></a>
-### [↖](#top)[↑](#5_8)[↓](#5_10) Direct Connect
+<a name="5_1_9"></a>
+### [↖](#5_1)[↑](#5_1_8)[↓](#5_1_10) Direct Connect
 * Direct Connect is the only way to access your AWS resources from a Data Center without traversing the internet
 
-<a name="5_10"></a>
-### [↖](#top)[↑](#5_9)[↓](#5_11) EBS
+<a name="5_1_10"></a>
+### [↖](#5_1)[↑](#5_1_9)[↓](#5_1_11) EBS
 * In order to encrypt a EBS snapshot, copy the unencrypted snapshot and tick the checkbox to encrypt the target
+* Amazon Data Lifecycle Manager (DLM) for EBS Snapshots provides a simple, automated way to back up data stored on Amazon EBS volumes. You can define backup and retention schedules for EBS snapshots by creating lifecycle policies based on tags.
 
-<a name="5_11"></a>
-### [↖](#top)[↑](#5_10)[↓](#5_12) EC2
+<a name="5_1_11"></a>
+### [↖](#5_1)[↑](#5_1_10)[↓](#5_1_12) EC2
 * In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
 * To maximise networking performance, *Jumbo frames* (9001 MTU) allow more than 1500 bytes of data
 
-<a name="5_12"></a>
-### [↖](#top)[↑](#5_11)[↓](#5_13) Elastic Load Balancing
+<a name="5_1_12"></a>
+### [↖](#5_1)[↑](#5_1_11)[↓](#5_1_13) Elastic Load Balancing
 * `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
 * Network Load Balancers do not use security groups. This is different from Classic Load Balancer or Application Load Balancer.
 
-<a name="5_13"></a>
-### [↖](#top)[↑](#5_12)[↓](#5_14) ECR
+<a name="5_1_13"></a>
+### [↖](#5_1)[↑](#5_1_12)[↓](#5_1_14) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-<a name="5_14"></a>
-### [↖](#top)[↑](#5_13)[↓](#5_15) Fargate
+<a name="5_1_14"></a>
+### [↖](#5_1)[↑](#5_1_13)[↓](#5_1_15) Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
   * ECS: ENIs come from underlying instance
 
-<a name="5_15"></a>
-### [↖](#top)[↑](#5_14)[↓](#5_16) GitHub
+<a name="5_1_15"></a>
+### [↖](#5_1)[↑](#5_1_14)[↓](#5_1_16) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-<a name="5_16"></a>
-### [↖](#top)[↑](#5_15)[↓](#5_17) IAM
+<a name="5_1_16"></a>
+### [↖](#5_1)[↑](#5_1_15)[↓](#5_1_17) IAM
 * Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
 * Can store server certificates - only recommended for regions that don't support ACM
 * Access Advisor show last services accessed per OU
 
-<a name="5_17"></a>
-### [↖](#top)[↑](#5_16)[↓](#5_18) Kinesis Data Streams
+<a name="5_1_17"></a>
+### [↖](#5_1)[↑](#5_1_16)[↓](#5_1_18) Kinesis Data Streams
 * When using *KCL*, make sure `getRecords` is not throwing unhandled exceptions
 * Ensure the `maxRecords` value for the `GetRecords` call isn't set below the default setting
 * When resharding, sometimes a small shard is left over
   * This occurs when the width of a shard is very small in size in relation to other shards in the stream. This is resolved by merging with any adjacent shard.
 
-<a name="5_18"></a>
-### [↖](#top)[↑](#5_17)[↓](#5_19) Personal Health Dashboard
+<a name="5_1_18"></a>
+### [↖](#5_1)[↑](#5_1_17)[↓](#5_1_19) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 * Integrates with CloudWatch Events, but cannot send notifications directly
 
-<a name="5_19"></a>
-### [↖](#top)[↑](#5_18)[↓](#5_20) RDS
+<a name="5_1_19"></a>
+### [↖](#5_1)[↑](#5_1_18)[↓](#5_1_20) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_20"></a>
-### [↖](#top)[↑](#5_19)[↓](#5_21) S3
+<a name="5_1_20"></a>
+### [↖](#5_1)[↑](#5_1_19)[↓](#5_1_21) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
-<a name="5_21"></a>
-### [↖](#top)[↑](#5_20)[↓](#5_22) Secrets Manager
+<a name="5_1_21"></a>
+### [↖](#5_1)[↑](#5_1_20)[↓](#5_1_22) Secrets Manager
 * Length of a secret - 65,536 bytes
 * You should ask the external party for a DB user with at least two credential sets or the ability to create new users yourself. Otherwise, you might encounter client sign-on failures. The risk is because of the time lag that can occur between the change of the actual password and - when using Secrets Manager - the change in the corresponding secret that tells the client which password to use.
 
-<a name="5_22"></a>
-### [↖](#top)[↑](#5_21)[↓](#5_23) Server Migration Service
+<a name="5_1_22"></a>
+### [↖](#5_1)[↑](#5_1_21)[↓](#5_1_23) Server Migration Service
 * The Server Migration Service replication job generates an AMI after the job is finished. However, it does not automatically launch EC2 instances.
 
-<a name="5_23"></a>
-### [↖](#top)[↑](#5_22)[↓](#5_24) SQS
+<a name="5_1_23"></a>
+### [↖](#5_1)[↑](#5_1_22)[↓](#5_1_24) SQS
 * You can use Amazon S3 and the Amazon SQS Extended Client Library for Java to manage Amazon SQS messages. This is especially useful for storing and consuming messages up to 2 GB in size.
 
-<a name="5_24"></a>
-### [↖](#top)[↑](#5_23)[↓](#5_25) Trusted Advisor
+<a name="5_1_24"></a>
+### [↖](#5_1)[↑](#5_1_23)[↓](#5_1_25) Trusted Advisor
 * In CloudWatch Events, use `check item refres status` to only observe some events
 
-<a name="5_25"></a>
-### [↖](#top)[↑](#5_24) SSO
+<a name="5_1_25"></a>
+### [↖](#5_1)[↑](#5_1_24) SSO
 * You can use the User Principal Name (UPN) or the DOMAIN\UserName format to authenticate with AD, but you can't use the UPN format if you have two-step verification and Context-aware verification enabled.
 * AWS Organisations and the AWS Managed Microsoft AD must be in the same account and the same region
 * AD Connector is a directory gateway with which you can redirect directory requests to your on-premises Microsoft Active Directory without caching any information in the cloud.
