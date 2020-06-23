@@ -440,11 +440,11 @@ terminate instances as demand on your application increases or decreases.
 ##### Termination Policy
 * To specify which instances to terminate first during scale in, configure a Termination Policy for the Auto Scaling Group.
 * Policies will be applied to the AZ with the most instances
-* Can be combined with *instance proctection* to prevent termination of specific instances, this starts as soon as the instance is *in service*.
+* Can be combined with *instance protection* to prevent termination of specific instances, this starts as soon as the instance is *in service*.
   * Instances can still be terminated manually (unless *termination protection* has been enabled)
   * Unhealthy instance will still be replaced
   * Spot instance interuptions can still occur
-* *Instance protection* can also be applied to an Auto Scaling Group - protecting the whole group: *protect from scale in*
+	* *Instance protection* can also be applied to an Auto Scaling Group - protecting the whole group: *protect from scale in*
 * Can specify *multiple* policies, will be executed in order until an instance has been found
 * *Default* policy being last in a list of multiple policies is like `catchAll`, will always find an instance
   * Determine which AZ has most instances and at least one instance that's not protected from scale in
@@ -758,7 +758,7 @@ DynamoDB Global Tables|multi-way replication, implemented by Streams
 AWS Config Aggregators|multi region as well as multi account
 RDS|Cross-region read replicas
 Aurora Global Database|One region is master, other for read & DR
-EBS / AMI / RDS|Snapshots
+EBS/AMI/RDS|Snapshots
 VPC Peering|Private traffic between VPCs between regions
 Route 53|Uses global network of DNS servers
 S3 |Cross-region replication
@@ -794,6 +794,7 @@ AWS Config|Agregate across accounts
 CloudWatch Events|Use *EventBus* to share events across accounts
 CloudWatch Logs|Use *Logs Destination* to send events into logging account
 CloudFormation|*StackSets* can be deployed across accounts
+CloudTrail|Can deliver trails into cross-account bucket
 
 ---
 
@@ -842,6 +843,7 @@ Service|SNS (native)|CloudWatch/EventBridge Events|CloudWatch Metrics/Alarms|Com
 -|-|-|-|-
 Amazon Inspector|**+**|-|**+**<br/>(every 5 min)|Notify SNS on assessment run and findings
 API Gateway|-|-|**+**<br/>(API monitoring)|.
+Auto Scaling Lifecycle Hooks|**+**<br/>SNS or SQS|**+**|**+**|.
 CloudFormation|**+**|-|-|.
 CloudTrail|**+**|-|-|.
 CodeBuild|-|**+**|**+**|.
@@ -1165,7 +1167,7 @@ Element|Comment
 * Type: `String`, `Number`, `List`, `CommaDelimitedList`, AWS-specific types like `AWS::EC2::KeyPair::KeyName`, SSM-Parameter key (`AWS::SSM::Parameter`)
   * SSM *SecureString* is not supported
 * *Description*, *Default Value*, *Allowed Values*, *Allowed Pattern*
-* Validation: *regular expression* / *MinLength* / *MaxLength* / *MinValue* / *MaxValue*
+* Validation: *regular expression*/*MinLength*/*MaxLength*/*MinValue*/*MaxValue*
 * Can set `NoEcho` for secrets, will be masked with `****`
 * Can set `UsePreviousValue` for stack updates
 * *Pseudo parameters* are parameters that are predefined by AWS CloudFormation. You do not declare them in your template. Use them the same way as you would a parameter, as the argument for the Ref function.
@@ -1219,7 +1221,7 @@ Conditions:
 
 ##### Outputs
 * Can be
-	* constructed value / parameter reference / pseudo parameter / output from a function like `fn::getAtt` or `Ref`
+	* constructed value/parameter reference/pseudo parameter/output from a function like `fn::getAtt` or `Ref`
 * Can be used in a different stack (*cross stack references*)
   * `!ImportValue NameOfTheExport`
   * Cannot delete stack if its outputs are used in another stack
@@ -1256,7 +1258,7 @@ Name|Attributes|Description
 	* Controls lifecycle of managed resources
 	* Stack has `name` & `id`
   * Can be updated *directly* or via *change set*
-  * Will **rollback** stack if it fails to create (can be disabled via API / console)
+  * Will **rollback** stack if it fails to create (can be disabled via API/console)
   * Possible to detect **stack drift**, if supported by created rersources
   * Can enable **termination protection**
   * Can send *stack events* to SNS topic
@@ -1351,7 +1353,7 @@ Element|.
 * If AWS CloudFormation cannot delete a resource, the stack will not be deleted.
 * A stack can have *termination protection* enabled, which will prevent it from being deleted accidentally
 * **Resource Deletion policy**
-  * **Policy** / statement that is associated with every resource of a stack
+  * **Policy**/statement that is associated with every resource of a stack
   * Controls what happens if stack is deleted
   * `DeletionPolicy`
     * `Delete`
@@ -1408,26 +1410,25 @@ Script Name|Purpose
 `cfn-hup`|Use to check for updates to metadata and execute custom hooks when changes are detected.
 
 ##### Define code and scripts to run
-**CloudFormation User Data**
-* Scripts and commands to be passed to a launching EC2 instance.
-* Failing user data scripts don't fail the CFN stack
-* Logged to `/var/log/cloud-init-output.log`
-* Needs to be base64-encoded
+* **CloudFormation User Data**
+	* Scripts and commands to be passed to a launching EC2 instance.
+	* Failing user data scripts don't fail the CFN stack
+	* Logged to `/var/log/cloud-init-output.log`
+	* Needs to be base64-encoded
 ```
 UserData:
   Fn::Base64: |
         #!/bin/bash -x
         ...
 ```
-`cfn-init`
-* Use the AWS::CloudFormation::Init type to include *metadata* on an Amazon EC2 instance for the cfn
-  init helper script. If your template calls the `cfn-init` script, the script looks for resource
-  metadata rooted in the `AWS::CloudFormation::Init` metadata key.
-* Different sections: `packages`, `groups`, `users`, `sources`, `files`, `commands`, `services`
-* Need to make sure `aws-cfn-bootstrap` is in place und up to date
-* Logged to `/var/log/cfn-init.log`
-* Can use *WaitCondition*/`cfn-signal` to make CloudFormation wait for successful finish of code
-
+* **cfn-init**
+	* Use the AWS::CloudFormation::Init type to include *metadata* on an Amazon EC2 instance for the cfn
+		init helper script. If your template calls the `cfn-init` script, the script looks for resource
+		metadata rooted in the `AWS::CloudFormation::Init` metadata key.
+	* Different sections: `packages`, `groups`, `users`, `sources`, `files`, `commands`, `services`
+	* Need to make sure `aws-cfn-bootstrap` is in place und up to date
+	* Logged to `/var/log/cfn-init.log`
+	* Can use *WaitCondition*/`cfn-signal` to make CloudFormation wait for successful finish of code
 * By default, user data scripts and cloud-init directives run only during the boot cycle when you first launch an instance.
 * Can use `cfn-hup` to detect changes in resource metadata and run user-specified actions when a change is detected
 * Use `cfn-get-metadata` to fetch a metadata block from AWS CloudFormation and print it to standard out
@@ -1632,10 +1633,10 @@ recorded as CloudTrail events.
 <a name="4_8_3"></a>
 ### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_9) Trail
 * Can configure what type of events to log
-	* Management evetns
-	* Insights events
-	* Date events
-* One region / all regions / organization-wide
+	* Management events
+	* CloudWatch Insights events
+	* Data events
+* One region/all regions/organization-wide
 * Store data in nominated S3 bucket, this can be encrypted as well
 	* Can be in a different region
 * Can also deliver and analyse events in a trail with CloudWatch Logs and CloudWatch Events
@@ -1874,7 +1875,7 @@ Metric|Effect
 -|-
 `GroupMinSize`<br/>`GroupMinSize`|The minimum/maximum size of the Auto Scaling Group.
 `GroupDesiredCapacity`|The number of instances that the Auto Scaling Group attempts to maintain.
-`GroupInServiceInstances`<br/>`GroupPendingInstances`<br/>`GroupStandbyInstances`<br/>`GroupTerminatingInstances`|The number of instances that are running / pending (not yet in service) / standby (still running) / terminating as part of the Auto Scaling Group.
+`GroupInServiceInstances`<br/>`GroupPendingInstances`<br/>`GroupStandbyInstances`<br/>`GroupTerminatingInstances`|The number of instances that are running/pending (not yet in service)/standby (still running)/ terminating as part of the Auto Scaling Group.
 `GroupTotalInstances`|The total number of instances in the Auto Scaling Group. This metric identifies the number of instances that are in service, pending, and terminating.
 
 <a name="4_9_4_3"></a>
@@ -1983,7 +1984,6 @@ you use.
   * *Metrics* to monitor CodeBuild statistics
 	* Can set up *Alarms* on top of those
   * Can schedule CloudWatch *Events*
-* CodeStar Notifications integration
 
 <a name="4_10_3_1"></a>
 #### [↖](#4_10)[↑](#4_10_3)[↓](#4_11) How it works
@@ -2006,7 +2006,7 @@ you use.
 `cache`|`paths`|.
 
 * Environment variables
-  * Can come from SSM / Secrets Manager
+  * Can come from SSM/Secrets Manager
   * Precendence: `start-build` (CLI), *project definition*, *buildspec.yml*
 * If there is build output and CodeBuild is *not* managed by CodePipeline
   * Uploaded to S3, encrypted by default
@@ -2075,7 +2075,7 @@ Use IAM policy:
 #### [↖](#4_11)[↑](#4_11_3_1)[↓](#4_11_3_3) Send Notifications
 * CodeStar Notifications integration
   * Uses CloudWatch Events Rules under the hood
-* Set up notification / notification rules:
+* Set up notification/notification rules:
 	* Pick triggering event (`on commit`, ..., `brunch updated`)
 	* Pick SNS topic as target
 	* Add subscriber to target
@@ -2175,7 +2175,7 @@ EC2/On-Premises|ECS|Lambda
 * Deployment *triggers* can notify SNS
   * Can trigger based on *deployment* or *instance* events
 * CloudWatch Log Agent on machine can push logs to CloudWatch
-  * *No logs* for ECS / Lambda deploys
+  * *No logs* for ECS/Lambda deploys
 
 <a name="4_12_3_3"></a>
 #### [↖](#4_12)[↑](#4_12_3_2)[↓](#4_12_4) Rollback
@@ -2357,7 +2357,7 @@ are no upfront fees or long-term commitments.
     * Store must be in the same region as pipeline
     * Always encrypted, default KMS or CMK
   * Artifacts are the way different pipeline stages 'communicate' with each other
-  * CodePipelin artifacts are sightly different to CodeBuild artifacts
+  * CodePipeline artifacts are sightly different to CodeBuild artifacts
 
 <a name="4_13_1_3"></a>
 #### [↖](#4_13)[↑](#4_13_1_2)[↓](#4_13_2) Pipeline Actions
@@ -2569,18 +2569,19 @@ million requests per second.
 
 <a name="4_16_3_2"></a>
 #### [↖](#4_16)[↑](#4_16_3_1)[↓](#4_16_3_3) Local secondary index
+* *Local* as in "co-located on the same partition"
 * Uses the *same PK*, but offers different *SK*
 * Every partition of a local secondary index is scoped to a base table partition that has the same
   partition key value
 * Local secondary indexes are extra tables that DynamoDB keeps in the background
 * Can only by created *together* with the base table
 * Can choose *eventual consistency* or *strong consistency* at *creation* time
-* *Local* as in "co-located on the same partition"
 * Can request *not-projected* attributes for query or scan operation
 * Consumes read/write throughput from the original table.
 
 <a name="4_16_3_3"></a>
 #### [↖](#4_16)[↑](#4_16_3_2)[↓](#4_16_4) Global secondary index
+* *Global* as in "over many partitions"
 * Uses *different PK* and offers additional *SK* (or none).
 * *PK* does not have to be unique (unlike base table)
 * Queries on the global index can span all of the data in the base table, across all partitions
@@ -2588,7 +2589,6 @@ million requests per second.
 * Only support *eventual consistency*
 * Have their own provisioned read/write throughput
 * Global secondary keys are distributed transactions across multiple partitions
-* *Global* as in "over many partitions"
 * Cannot request not-projected attributes for query or scan operation
 
 <a name="4_16_4"></a>
@@ -2602,7 +2602,7 @@ million requests per second.
 .|.
 -|-
 .|*300 strongly consistent reads of 11KB per minute*
-Calculate read / writes per second|`300r/60s = 5r/s`
+Calculate read/writes per second|`300r/60s = 5r/s`
 Multiply with payload factor|`5r/s * (11KB/4KB) = 15cu`
 If eventual consistent, devide by 2|`15cu / 2 = 8cu`
 
@@ -2645,12 +2645,12 @@ tables you can specify the AWS Regions where you want the table to be available.
 all of the necessary tasks to create identical tables in these Regions and propagate ongoing data
 changes to all of them.
 * A **global table** is a collection of one or more replica tables, all owned by a single AWS account.
-* A **replica table** (or replica, for short) is a single DynamoDB table that functions as a part
-of a global table. Each replica stores the same set of data items.
+* A **replica table** is a single DynamoDB table that functions as a part
+	of a global table. Each replica stores the same set of data items.
 * When you create a DynamoDB global table, it consists of multiple replica tables (one per Region)
-that DynamoDB treats as a single unit. Every replica has the same table name and the same primary
-key schema. When an application writes data to a replica table in one Region, DynamoDB propagates
-the write to the other replica tables in the other AWS Regions automatically.
+	that DynamoDB treats as a single unit. Every replica has the same table name and the same primary
+	key schema. When an application writes data to a replica table in one Region, DynamoDB propagates
+	the write to the other replica tables in the other AWS Regions automatically.
 * You can add replica tables to the global table so that it can be available in additional Regions.
 
 ---
@@ -2693,8 +2693,8 @@ launch type.
 ### [↖](#4_17)[↑](#4_17_1_1)[↓](#4_17_3) Components
 ```
 [Cluster
-  [Service
-    [Task Definition
+  [Services
+    [Task Definitions
       [Family]
       [Task role/execution role]
       [Network mode]
@@ -2717,7 +2717,7 @@ launch type.
 * **Cluster**
   * Logical grouping of EC2 instances that you can place tasks on
   * Instances run ECS agent as a Docker container
-  * Cluster is an *Auto Scaling Group* with a launch configuration using a special ECS AMI
+  * Cluster is an *Auto Scaling Group* with a Launch Configuration using a special ECS AMI
 * **Service**
   * Runs and maintains a specified number of tasks simultaneously
   * Created on cluster-level, launch type EC2 or Fargate
@@ -2785,9 +2785,6 @@ launch type.
   * Does not need EC2 instance roles to create cluster
 * Requires VPC
 
-TODO: why do load balancers interfere in udemy example?
-TODO: https://aws.amazon.com/blogs/devops/build-a-continuous-delivery-pipeline-for-your-container-images-with-amazon-ecr-as-source/
-
 ---
 
 <a name="4_18"></a>
@@ -2838,7 +2835,7 @@ underlying resources at any time.
 * **Application**
   * A logical collection of Elastic Beanstalk components, including environments, versions, and environment configurations.
   * An application is conceptually similar to a folder.
-  * Either *application* in the tradional sense
+  * Either *application* in the traditional sense
   * Or *application component*, e.g. service, frontend, backend
 * **Application Version**
   * Refers to a specific, labeled iteration of deployable code for a web application
@@ -2987,7 +2984,7 @@ Service, you get the ELK stack you need, without the operational overhead.
 * On AWS: <a href="https://aws.amazon.com/elasticsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticsearch/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="4_19_2"></a>
-### [↖](#4_19)[↑](#4_19_1)[↓](#4_20) Elk
+### [↖](#4_19)[↑](#4_19_1)[↓](#4_20) ELK
 * Elasticsearch
   * Provides search and indexing capabilities
 * Logstash
@@ -3205,7 +3202,7 @@ to a specific Lambda function *version*.
 ### [↖](#4_22)[↑](#4_22_2_5)[↓](#4_22_3_1) Invoking Functions
 
 <a name="4_22_3_1"></a>
-#### [↖](#4_22)[↑](#4_22_3)[↓](#4_22_3_2) Synchronous / Asynchronous / Event Source Invocation
+#### [↖](#4_22)[↑](#4_22_3)[↓](#4_22_3_2) Synchronous/Asynchronous/Event Source Invocation
 * When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
   * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
@@ -3354,7 +3351,7 @@ environments.
 * **Layer**
   * Represent and configure components of a stack
   * Share common configuration elements
-  * E.g. loadbalancer layer, app layer, db layer
+  * E.g. load balancer layer, app layer, db layer
   * Type: *OpsWorks*, *ECS* or *RDS*
   * If a layer has *auto healing* enabled—the default setting—AWS OpsWorks Stacks automatically replaces the layer's failed instances
 		* After 5 minutes a non-responsive instance becomes *failed*.
@@ -3397,7 +3394,7 @@ environments.
 		* Configuration of machines
 	* *OpsWorks* **automation engine**
 		* *Create*, *update* & *delete* of various AWS components
-		* Handles *loadbalancing*, *auto scaling* and *auto healing*
+		* Handles *load balancing*, *auto scaling* and *auto healing*
 		* Supports *lifecycle* events
 * BerkShelf
   * Addresses an *OpsWorks* shortcoming from old versions - only one repository for recipes
@@ -3763,7 +3760,7 @@ scale past trillions of objects worldwide.
 * Buckets *must* be in different regions
   * Can replicate cross-account
 * *Must* have versioning enabled
-* Only new / changed objects will be replicated
+* Only new/changed objects will be replicated
 
 <a name="4_33_5"></a>
 ### [↖](#4_33)[↑](#4_33_4)[↓](#4_33_6) Storage classes
@@ -4004,7 +4001,7 @@ manage your infrastructure securely at scale.
 *Group resources* -> *Visualize data* -> *Take action*
 
 * Manage EC2 and on-prem instances at scale
-  * On-prem requires generation of secret *activation code* / *activation id*
+  * On-prem requires generation of secret *activation code*/*activation id*
 * Get operational insights of infrastructure
 * Easily detect problems
 * Patching automation for enhanced compliance
@@ -4023,6 +4020,7 @@ manage your infrastructure securely at scale.
 * Organize your AWS resources.
 * Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
   * Define groups based on tags or on CloudFormation stacks
+	* Same region only
 
 <a name="4_37_2_2"></a>
 #### [↖](#4_37)[↑](#4_37_2_1)[↓](#4_37_2_3) Insights
