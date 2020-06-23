@@ -4158,20 +4158,21 @@ complex microservices applications consisting of thousands of services.
 * [Direct Connect](#5_1_8)
 * [EBS](#5_1_9)
 * [EC2](#5_1_10)
-* [Elastic Load Balancing](#5_1_11)
-* [ECR](#5_1_12)
-* [Fargate](#5_1_13)
-* [GitHub](#5_1_14)
-* [IAM](#5_1_15)
-* [Kinesis Data Streams](#5_1_16)
-* [Personal Health Dashboard](#5_1_17)
-* [RDS](#5_1_18)
-* [S3](#5_1_19)
-* [Secrets Manager](#5_1_20)
-* [Server Migration Service](#5_1_21)
-* [SQS](#5_1_22)
-* [Trusted Advisor](#5_1_23)
-* [SSO](#5_1_24)
+* [Elastic Beanstalk](#5_1_11)
+* [Elastic Load Balancing](#5_1_12)
+* [ECR](#5_1_13)
+* [Fargate](#5_1_14)
+* [GitHub](#5_1_15)
+* [IAM](#5_1_16)
+* [Kinesis Data Streams](#5_1_17)
+* [Personal Health Dashboard](#5_1_18)
+* [RDS](#5_1_19)
+* [S3](#5_1_20)
+* [Secrets Manager](#5_1_21)
+* [Server Migration Service](#5_1_22)
+* [SQS](#5_1_23)
+* [Trusted Advisor](#5_1_24)
+* [SSO](#5_1_25)
 <!-- toc_end -->
 
 <a name="5_1_1"></a>
@@ -4229,74 +4230,75 @@ party such as Facebook, Amazon, Google or Apple.
 * In order to get access to the CPU sockets for billing purposes, you need to use EC2 Dedicated Hosts
 * To maximise networking performance, *Jumbo frames* (9001 MTU) allow more than 1500 bytes of data
 
-### Elastic Beanstalk
+<a name="5_1_11"></a>
+### [↖](#5_1)[↑](#5_1_10)[↓](#5_1_12) Elastic Beanstalk
 * `Dockerrun.aws.json` v2 is the file to configure a multi-container Docker environment
 
-<a name="5_1_11"></a>
-### [↖](#5_1)[↑](#5_1_10)[↓](#5_1_12) Elastic Load Balancing
+<a name="5_1_12"></a>
+### [↖](#5_1)[↑](#5_1_11)[↓](#5_1_13) Elastic Load Balancing
 * `IPv6` is only supported by Application Load Balancers, not NLB, not Classic
 * Network Load Balancers do not use security groups. This is different from Classic Load Balancer or Application Load Balancer.
 
-<a name="5_1_12"></a>
-### [↖](#5_1)[↑](#5_1_11)[↓](#5_1_13) ECR
+<a name="5_1_13"></a>
+### [↖](#5_1)[↑](#5_1_12)[↓](#5_1_14) ECR
 * Adding the SHA256 to a docker image URL makes sure that ECS get the *latest* images. Otherwhise, it might still get the previous `:lastest`.
 
-<a name="5_1_13"></a>
-### [↖](#5_1)[↑](#5_1_12)[↓](#5_1_14) Fargate
+<a name="5_1_14"></a>
+### [↖](#5_1)[↑](#5_1_13)[↓](#5_1_15) Fargate
 * If a container image requires many network connections (e.g. Websocket) it's better installed as multiple tasks across an ECS Cluster
   * One ENI per task
   * ECS: ENIs come from underlying instance
 
-<a name="5_1_14"></a>
-### [↖](#5_1)[↑](#5_1_13)[↓](#5_1_15) GitHub
+<a name="5_1_15"></a>
+### [↖](#5_1)[↑](#5_1_14)[↓](#5_1_16) GitHub
 * The number of OAUTH tokens is limited and CodePipeline might stop working with older tokens
 
-<a name="5_1_15"></a>
-### [↖](#5_1)[↑](#5_1_14)[↓](#5_1_16) IAM
+<a name="5_1_16"></a>
+### [↖](#5_1)[↑](#5_1_15)[↓](#5_1_17) IAM
 * Create and configure an IAM SAML Identity Provider, create a role with a SAML Trusted Entity, Configure AD, Configure ADFS with Relay Party, Create Custom Claim Rules
 * Can store server certificates - only recommended for regions that don't support ACM
 * Access Advisor show last services accessed per OU
 
-<a name="5_1_16"></a>
-### [↖](#5_1)[↑](#5_1_15)[↓](#5_1_17) Kinesis Data Streams
+<a name="5_1_17"></a>
+### [↖](#5_1)[↑](#5_1_16)[↓](#5_1_18) Kinesis Data Streams
 * When using *KCL*, make sure `getRecords` is not throwing unhandled exceptions
 * Ensure the `maxRecords` value for the `GetRecords` call isn't set below the default setting
 * When resharding, sometimes a small shard is left over
   * This occurs when the width of a shard is very small in size in relation to other shards in the stream. This is resolved by merging with any adjacent shard.
 
-<a name="5_1_17"></a>
-### [↖](#5_1)[↑](#5_1_16)[↓](#5_1_18) Personal Health Dashboard
+<a name="5_1_18"></a>
+### [↖](#5_1)[↑](#5_1_17)[↓](#5_1_19) Personal Health Dashboard
 * The `AWS_RISK_CREDENTIALS_EXPOSED` is exposed by the Personal Health Dashboard service.
 * Integrates with CloudWatch Events, but cannot send notifications directly
 
-<a name="5_1_18"></a>
-### [↖](#5_1)[↑](#5_1_17)[↓](#5_1_19) RDS
+<a name="5_1_19"></a>
+### [↖](#5_1)[↑](#5_1_18)[↓](#5_1_20) RDS
 * `EngineVersion` - The version number of the database engine to use.
 
-<a name="5_1_19"></a>
-### [↖](#5_1)[↑](#5_1_18)[↓](#5_1_20) S3
+<a name="5_1_20"></a>
+### [↖](#5_1)[↑](#5_1_19)[↓](#5_1_21) S3
 * When encrypting at rest, `SSE-S3` is more performant as `SSE-KMS`, as the latter gets throtteled above 10,000 objects per seconds
 * The Amazon S3 notification feature enables you to receive notifications when certain events happen in your bucket.
 
-<a name="5_1_20"></a>
-### [↖](#5_1)[↑](#5_1_19)[↓](#5_1_21) Secrets Manager
+<a name="5_1_21"></a>
+### [↖](#5_1)[↑](#5_1_20)[↓](#5_1_22) Secrets Manager
 * Length of a secret - 65,536 bytes
 * You should ask the external party for a DB user with at least two credential sets or the ability to create new users yourself. Otherwise, you might encounter client sign-on failures. The risk is because of the time lag that can occur between the change of the actual password and - when using Secrets Manager - the change in the corresponding secret that tells the client which password to use.
 
-<a name="5_1_21"></a>
-### [↖](#5_1)[↑](#5_1_20)[↓](#5_1_22) Server Migration Service
+<a name="5_1_22"></a>
+### [↖](#5_1)[↑](#5_1_21)[↓](#5_1_23) Server Migration Service
 * The Server Migration Service replication job generates an AMI after the job is finished. However, it does not automatically launch EC2 instances.
 
-<a name="5_1_22"></a>
-### [↖](#5_1)[↑](#5_1_21)[↓](#5_1_23) SQS
+<a name="5_1_23"></a>
+### [↖](#5_1)[↑](#5_1_22)[↓](#5_1_24) SQS
 * You can use Amazon S3 and the Amazon SQS Extended Client Library for Java to manage Amazon SQS messages. This is especially useful for storing and consuming messages up to 2 GB in size.
 
-<a name="5_1_23"></a>
-### [↖](#5_1)[↑](#5_1_22)[↓](#5_1_24) Trusted Advisor
+<a name="5_1_24"></a>
+### [↖](#5_1)[↑](#5_1_23)[↓](#5_1_25) Trusted Advisor
 * In CloudWatch Events, use `check item refres status` to only observe some events
 
-<a name="5_1_24"></a>
-### [↖](#5_1)[↑](#5_1_23) SSO
+<a name="5_1_25"></a>
+### [↖](#5_1)[↑](#5_1_24) SSO
 * You can use the User Principal Name (UPN) or the DOMAIN\UserName format to authenticate with AD, but you can't use the UPN format if you have two-step verification and Context-aware verification enabled.
 * AWS Organisations and the AWS Managed Microsoft AD must be in the same account and the same region
 * AD Connector is a directory gateway with which you can redirect directory requests to your on-premises Microsoft Active Directory without caching any information in the cloud.
