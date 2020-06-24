@@ -63,7 +63,7 @@
 <a name="1"></a>
 # [↖](#top)[↓](#2) DevOps Engineer Professional
 
-> 10/2019 - *current*
+> 10/2019 - 6/2020
 
 ---
 
