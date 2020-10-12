@@ -1,18 +1,16 @@
 # Solutions Architect Professional
 
 > 10/2020 -
-
 ---
 
 # Exam Objectives
-* Implement and manage continuous delivery systems and methodologies on AWS
-* Implement and automate security controls, governance processes, and compliance validation
-* Define and deploy monitoring, metrics, and logging systems on AWS
-* Implement systems that are highly available, scalable, and self-healing on the AWS platform
-* Design, manage, and maintain tools to automate operational processes
+* Design and deploy dynamically scalable, highly available, fault-tolerant, and reliable applications on AWS
+* Select appropriate AWS services to design and deploy an application based on given requirements
+* Migrate complex, multi-tier applications on AWS
+* Design and deploy enterprise-wide scalable operations on AWS
+* Implement cost-control strategies
 
-<a name="2_1"></a>
-## [↖](#top)[↑](#2)[↓](#2_1_1) Content
+## Content
 
 ### Domain 1: Design for Organizational Complexity
 * Determine cross-account authentication and access strategy for complex organizations
@@ -43,4 +41,21 @@
 * Determine a strategy to improve the performance of an existing solution
 * Determine a strategy to improve the securityof an existing solution
 * Determine how to improve the deployment of an existing solution
+
+# Concepts
+
+## Identity and Federation
+
+### IAM
+
+#### Overview
+AWS Identity and Access Management (IAM) enables you to manage access to AWS services and
+resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions
+to allow and deny their access to AWS resources.
+
+IAM is a feature of your AWS account offered at no additional charge. You will be charged only for
+use of other AWS services by your users.
+
+* On AWS: <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
+
 
