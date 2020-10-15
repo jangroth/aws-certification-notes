@@ -95,13 +95,13 @@ to allow and deny their access to AWS resources.
 ### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_3) Users
 * An AWS Identity and Access Management (IAM) user is an entity that you create in AWS to
   represent the person or application that uses it to interact with AWS. A user in AWS consists of a
-  name and credentials. 
+  name and credentials.
 * Hold long-term credentials
 
 <a name="3_1_3"></a>
 ### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_4) Groups
 * An IAM group is a collection of IAM users. Groups let you specify permissions for multiple users,
-  which can make it easier to manage the permissions for those users. 
+  which can make it easier to manage the permissions for those users.
 * Typically only provides permission to assume a role
 
 <a name="3_1_4"></a>
@@ -119,7 +119,7 @@ to allow and deny their access to AWS resources.
   AWS resources that it needs. Service roles vary from service to service, but many allow you to
   choose your permissions, as long as you meet the documented requirements for that service. Service
   roles provide access only within your account and cannot be used to grant access to services in
-  other accounts. You can create, modify, and delete a service role from within IAM. 
+  other accounts. You can create, modify, and delete a service role from within IAM.
 * **AWS service role for an EC2 instance** - A special type of service role that an application
   running on an Amazon EC2 instance can assume to perform actions in your account. This role is
   assigned to the EC2 instance when it is launched. Applications running on that instance can
@@ -146,6 +146,23 @@ to allow and deny their access to AWS resources.
   principals in another AWS account access to the resource. Some of these resources include S3,
   S3 Glacier vaults, SNS and SQS.
 
+```
+Type: AWS::IAM::Role
+Properties:
+  RoleName: String
+  Description: String
+  Path: String
+  AssumeRolePolicyDocument: Json (Trust policy)
+  ManagedPolicyArns:
+    - String (ARN)
+  PermissionsBoundary: String (ARN)
+  Policies:
+    - Policy
+  MaxSessionDuration: Integer
+  Tags:
+    - Tag
+```
+
 <a name="3_1_5"></a>
 ### [↖](#3_1)[↑](#3_1_4) Policies
 * You manage access in AWS by creating policies and attaching them to IAM identities (users,
@@ -153,7 +170,7 @@ to allow and deny their access to AWS resources.
   with an identity or resource, defines their permissions. AWS evaluates these policies when an IAM
   principal (user or role) makes a request. Permissions in the policies determine whether the
   request is allowed or denied. Most policies are stored in AWS as JSON documents. AWS supports six
-  types of policies: 
+  types of policies:
 
 * **Identity-based policies** – Attach managed and inline policies to IAM identities (users,
   groups to which users belong, or roles). Identity-based policies grant permissions to an identity.
@@ -161,13 +178,13 @@ to allow and deny their access to AWS resources.
   resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource
   based policies grant permissions to the principal that is specified in the policy. Principals
   can be in the same account as the resource or in other accounts.
-* **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity 
-  user or role). That policy defines the maximum permissions that the identity-based policies can
+* **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity
+  (user or role). That policy defines the maximum permissions that the identity-based policies can
   grant to an entity, but does not grant permissions. Permissions boundaries do not define the
   maximum permissions that a resource-based policy can grant to an entity.
 * **Organizations SCPs** – Use an AWS Organizations service control policy (SCP) to define the
   maximum permissions for account members of an organization or organizational unit (OU). SCPs
-  limit permissions that identity-based policies or resource-based policies grant to entities 
+  limit permissions that identity-based policies or resource-based policies grant to entities
   (users or roles) within the account, but do not grant permissions.
 * **Access control lists (ACLs)** – Use ACLs to control which principals in other accounts can
   access the resource to which the ACL is attached. ACLs are similar to resource-based policies,
@@ -175,7 +192,24 @@ to allow and deny their access to AWS resources.
   ACLs are cross-account permissions policies that grant permissions to the specified principal.
   ACLs cannot grant permissions to entities within the same account.
 * **Session policies** – Pass advanced session policies when you use the AWS CLI or AWS API to
-  assume a role or a federated user. Session policies limit the permissions that the role or 
+  assume a role or a federated user. Session policies limit the permissions that the role or
   user's identity-based policies grant to the session. Session policies limit permissions for a
   created session, but do not grant permissions. For more information, see Session Policies.
 
+```
+Type: AWS::IAM::Policy
+Properties:
+  PolicyName: String
+  PolicyDocument: Json (YAML in CFN)
+    Version: 2012-10-17
+    Statement:
+      - Effect: Allow
+        Action: '*'
+        Resource: '*'
+  Groups:
+    - String (!Ref)
+  Roles:
+    - String (!Ref)
+  Users:
+    - String (!Ref)
+```
