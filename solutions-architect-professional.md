@@ -86,10 +86,26 @@ AWS Identity and Access Management (IAM) enables you to manage access to AWS ser
 resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions
 to allow and deny their access to AWS resources.
 
-* **Policies** - defines one or more permissions
-  * Can be attached to users, groups or roles (preferred)
+Best pracices:
+* Lock away your AWS account root user access keys
+* Create individual IAM users
+* Use groups to assign permissions to IAM users
+* Grant least privilege
+* Get started using permissions with AWS managed policies
+* Use customer managed policies instead of inline policies
+* Use access levels to review IAM permissions
+* Configure a strong password policy for your users
+* Enable MFA
+* Use roles for applications that run on Amazon EC2 instances
+* Use roles to delegate permissions
+* Do not share access keys
+* Rotate credentials regularly
+* Remove unnecessary credentials
+* Use policy conditions for extra security
+* Monitor activity in your AWS account
 
-* On AWS: <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
+IAM on AWS:
+* <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
 
 <a name="3_1_2"></a>
 ### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_3) Users
@@ -213,3 +229,24 @@ Properties:
   Users:
     - String (!Ref)
 ```
+
+### Automated Scanning
+
+#### Access Advisor
+Access Advisor shows the services that a certain user or role can access and when those services
+were last accessed. Review this data to remove unused permissions.
+
+#### Access Analyzer
+Makes it simple for security teams and administrators to check that their policies provide only
+the intended access to resources. Resource policies allow customers to granularly control who is
+able to access a specific resource and how they are able to use it across the entire cloud
+environment.
+
+IAM Access Analyzer continuously monitors policies for changes, meaning customers no longer need
+to rely on intermittent manual checks in order to catch issues as policies are added or updated.
+Using IAM Access Analyzer, customers can proactively address any resource policies that violate
+their security and governance best practices around resource sharing and protect their resources
+from unintended access. IAM Access Analyzer delivers comprehensive, detailed findings through the
+AWS IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Findings can also be
+exported as a report for auditing purposes. IAM Access Analyzer findings provide definitive
+answers of who has public and cross-account access to AWS resources from outside an account.
