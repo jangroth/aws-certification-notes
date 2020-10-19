@@ -5,7 +5,8 @@
 * [Exam Objectives](#2)
   * [Content](#2_1)
 * [Identity and Federation](#3)
-  * [IAM](#3_1)
+  * [Identity and Access Management (IAM)](#3_1)
+  * [STS (Security Token Service)](#3_2)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -71,13 +72,19 @@
 # [↖](#top)[↑](#2_1_5)[↓](#3_1) Identity and Federation
 
 <a name="3_1"></a>
-## [↖](#top)[↑](#3)[↓](#3_1_1) IAM
+## [↖](#top)[↑](#3)[↓](#3_1_1) Identity and Access Management (IAM)
 <!-- toc_start -->
 * [Overview](#3_1_1)
 * [Users](#3_1_2)
 * [Groups](#3_1_3)
 * [Roles](#3_1_4)
 * [Policies](#3_1_5)
+  * [Policy Conditions](#3_1_5_1)
+  * [Policy Variables & Tags](#3_1_5_2)
+  * [Identity-based vs resource-based policies](#3_1_5_3)
+* [Automated Scanning](#3_1_6)
+  * [Access Advisor](#3_1_6_1)
+  * [Access Analyzer](#3_1_6_2)
 <!-- toc_end -->
 
 <a name="3_1_1"></a>
@@ -86,7 +93,7 @@ AWS Identity and Access Management (IAM) enables you to manage access to AWS ser
 resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions
 to allow and deny their access to AWS resources.
 
-Best pracices:
+Best practices:
 * Lock away your AWS account root user access keys
 * Create individual IAM users
 * Use groups to assign permissions to IAM users
@@ -179,38 +186,40 @@ Properties:
     - Tag
 ```
 
+
 <a name="3_1_5"></a>
-### [↖](#3_1)[↑](#3_1_4) Policies
+### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_5_1) Policies
 * You manage access in AWS by creating policies and attaching them to IAM identities (users,
   groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated
   with an identity or resource, defines their permissions. AWS evaluates these policies when an IAM
   principal (user or role) makes a request. Permissions in the policies determine whether the
   request is allowed or denied. Most policies are stored in AWS as JSON documents. AWS supports six
   types of policies:
-
-* **Identity-based policies** – Attach managed and inline policies to IAM identities (users,
-  groups to which users belong, or roles). Identity-based policies grant permissions to an identity.
-* **Resource-based policies** – Attach inline policies to resources. The most common examples of
-  resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource
-  based policies grant permissions to the principal that is specified in the policy. Principals
-  can be in the same account as the resource or in other accounts.
-* **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity
-  (user or role). That policy defines the maximum permissions that the identity-based policies can
-  grant to an entity, but does not grant permissions. Permissions boundaries do not define the
-  maximum permissions that a resource-based policy can grant to an entity.
-* **Organizations SCPs** – Use an AWS Organizations service control policy (SCP) to define the
-  maximum permissions for account members of an organization or organizational unit (OU). SCPs
-  limit permissions that identity-based policies or resource-based policies grant to entities
-  (users or roles) within the account, but do not grant permissions.
-* **Access control lists (ACLs)** – Use ACLs to control which principals in other accounts can
-  access the resource to which the ACL is attached. ACLs are similar to resource-based policies,
-  although they are the only policy type that does not use the JSON policy document structure.
-  ACLs are cross-account permissions policies that grant permissions to the specified principal.
-  ACLs cannot grant permissions to entities within the same account.
-* **Session policies** – Pass advanced session policies when you use the AWS CLI or AWS API to
-  assume a role or a federated user. Session policies limit the permissions that the role or
-  user's identity-based policies grant to the session. Session policies limit permissions for a
-  created session, but do not grant permissions. For more information, see Session Policies.
+  * **Identity-based policies** – Attach managed and inline policies to IAM identities (users,
+    groups to which users belong, or roles). Identity-based policies grant permissions to an identity.
+  * **Resource-based policies** – Attach inline policies to resources. The most common examples of
+    resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource
+    based policies grant permissions to the principal that is specified in the policy. Principals
+    can be in the same account as the resource or in other accounts.
+  * **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity
+    (user or role). That policy defines the maximum permissions that the identity-based policies can
+    grant to an entity, but does not grant permissions. Permissions boundaries do not define the
+    maximum permissions that a resource-based policy can grant to an entity.
+  * **Organizations SCPs** – Use an AWS Organizations service control policy (SCP) to define the
+    maximum permissions for account members of an organization or organizational unit (OU). SCPs
+    limit permissions that identity-based policies or resource-based policies grant to entities
+    (users or roles) within the account, but do not grant permissions.
+  * **Access control lists (ACLs)** – Use ACLs to control which principals in other accounts can
+    access the resource to which the ACL is attached. ACLs are similar to resource-based policies,
+    although they are the only policy type that does not use the JSON policy document structure.
+    ACLs are cross-account permissions policies that grant permissions to the specified principal.
+    ACLs cannot grant permissions to entities within the same account.
+  * **Session policies** – Pass advanced session policies when you use the AWS CLI or AWS API to
+    assume a role or a federated user. Session policies limit the permissions that the role or
+    user's identity-based policies grant to the session. Session policies limit permissions for a
+    created session, but do not grant permissions. For more information, see Session Policies.
+* An **AWS managed policy** is a standalone policy that is created and administered by AWS. Standalone policy means that the policy has its own Amazon Resource Name (ARN) that includes the policy name. 
+* <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_examples.html" target="_blank">Policy Examples</a>
 
 ```
 Type: AWS::IAM::Policy
@@ -229,14 +238,48 @@ Properties:
   Users:
     - String (!Ref)
 ```
+<a name="3_1_5_1"></a>
+#### [↖](#3_1)[↑](#3_1_5)[↓](#3_1_5_2) Policy Conditions
+* String (`StringEquals`, `StringNotEquals`, `StringLike`...)
+  * "Condition": {"StringEquals": {"aws:PrincipalTag/job-category": "iamuser-admin"}}
+  * "Condition": {"StringLike": {"s3:prefix": [ "", "home/", "home/${aws:username}/" ]}}
+* Numeric (`NumericEquals`, `NumericNotEquals`, `NumericLessThan`...)
+* Date (`DateEquals`, `DateNotEquals`, `DateLessThan`...)
+* Boolean (`Bool`):
+  * “Condition": {"Bool": {"aws:SecureTransport": "true"}}
+  * "Condition": {"Bool": {"aws:MultiFactorAuthPresent": "true"}}
+* (`Not`)`IpAddress`:
+  * "Condition": {"IpAddress": {"aws:SourceIp": "203.0.113.0/24"}}
+* `ArnEquals`, `ArnLike`
+* `Null`: "Condition":{"Null":{"aws:TokenIssueTime":"true"}}
 
-### Automated Scanning
+<a name="3_1_5_2"></a>
+#### [↖](#3_1)[↑](#3_1_5_1)[↓](#3_1_5_3) Policy Variables & Tags
+Example: `${aws:username}`
+• "Resource": ["arn:aws:s3:::mybucket/${aws:username}/*"]
+AWS Specific:
+• `aws:CurrentTime`, `aws:TokenIssueTime`, `aws:principaltype`, `aws:SecureTransport`, `aws:SourceIp`, `aws:userid`, `ec2:SourceInstanceARN`
+Service Specific:
+• `s3:prefix`, `s3:max-keys`, `s3:x-amz-acl`, `sns:Endpoint`, `sns:Protocol`...
+Tag Based:
+• `iam:ResourceTag/key-name`, `aws:PrincipalTag/key-name`...
 
-#### Access Advisor
+<a name="3_1_5_3"></a>
+#### [↖](#3_1)[↑](#3_1_5_2)[↓](#3_1_6) Identity-based vs resource-based policies
+* **Identity-based policies** are attached to an IAM user, group, or role. These policies let you specify what that identity can do (its permissions).
+* **Resource-based policies** are attached to a resource.
+<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html" target="_blank">AWS services that work with IAM</a>
+
+<a name="3_1_6"></a>
+### [↖](#3_1)[↑](#3_1_5_3)[↓](#3_1_6_1) Automated Scanning
+
+<a name="3_1_6_1"></a>
+#### [↖](#3_1)[↑](#3_1_6)[↓](#3_1_6_2) Access Advisor
 Access Advisor shows the services that a certain user or role can access and when those services
 were last accessed. Review this data to remove unused permissions.
 
-#### Access Analyzer
+<a name="3_1_6_2"></a>
+#### [↖](#3_1)[↑](#3_1_6_1)[↓](#3_2) Access Analyzer
 Makes it simple for security teams and administrators to check that their policies provide only
 the intended access to resources. Resource policies allow customers to granularly control who is
 able to access a specific resource and how they are able to use it across the entire cloud
@@ -250,3 +293,18 @@ from unintended access. IAM Access Analyzer delivers comprehensive, detailed fin
 AWS IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Findings can also be
 exported as a report for auditing purposes. IAM Access Analyzer findings provide definitive
 answers of who has public and cross-account access to AWS resources from outside an account.
+
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1_6_2)[↓](#3_2_1) STS (Security Token Service)
+<!-- toc_start -->
+* [Overview](#3_2_1)
+<!-- toc_end -->
+
+<a name="3_2_1"></a>
+### [↖](#3_2)[↑](#3_2) Overview
+AWS Security Token Service (AWS STS) is a web service that enables you to request temporary,
+limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
+
+STS on AWS:
+* <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
+
