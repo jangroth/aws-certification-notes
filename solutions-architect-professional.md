@@ -218,7 +218,7 @@ Properties:
     assume a role or a federated user. Session policies limit the permissions that the role or
     user's identity-based policies grant to the session. Session policies limit permissions for a
     created session, but do not grant permissions. For more information, see Session Policies.
-* An **AWS managed policy** is a standalone policy that is created and administered by AWS. Standalone policy means that the policy has its own Amazon Resource Name (ARN) that includes the policy name. 
+* An **AWS managed policy** is a standalone policy that is created and administered by AWS. Standalone policy means that the policy has its own Amazon Resource Name (ARN) that includes the policy name.
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_examples.html" target="_blank">Policy Examples</a>
 
 ```
@@ -305,6 +305,26 @@ answers of who has public and cross-account access to AWS resources from outside
 AWS Security Token Service (AWS STS) is a web service that enables you to request temporary,
 limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
 
+* Provide access for an IAM user in one AWS account that you own to access resources in another account that you own
+* Provide access to IAM users in AWS accounts owned by third parties
+* Provide access for services offered by AWS to AWS resources
+* Provide access for externally authenticated users (identity federation)
+* Ability to revoke active sessions and credentials for a role (by adding a policy using a time statement – AWSRevokeOlderSessions)
+
 STS on AWS:
 * <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
 
+### Providing access to an IAM user in another AWS account that you own
+* In *target account*, create *target role* that should be assumed
+  * Define trust policy that specifies *source account* as `Principal`
+  * Share role ARN
+* In *source account*, grant members of a group permission to assume that role
+  ```
+  {
+    "Sid": "assumeIntoAirplanes",
+    "Effect": "Allow",
+    "Action": "sts:AssumeRole",
+    "Resource": "arn:aws:iam::339228396083:role/OrganizationAccountAccessRole"
+  }
+  ```
+  
