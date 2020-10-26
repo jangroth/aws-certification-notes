@@ -315,6 +315,7 @@ STS on AWS:
 * <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
 
 ### Providing access to an IAM user in another AWS account that you own
+• *Zone of trust* are accounts or organizations that you own
 * In *target account*, create *target role* that should be assumed
   * Define trust policy that specifies *source account* as `Principal`
   * Share role ARN
@@ -327,4 +328,21 @@ STS on AWS:
     "Resource": "arn:aws:iam::339228396083:role/OrganizationAccountAccessRole"
   }
   ```
-  
+
+### Providing access to an IAM user from a third party AWS account
+• *Outside Zone of Trust* are third parties
+* Create role for third party
+* Communicate role name and secret `ExternalId` to third party
+  * `ExternalId` is *best practice* only, would also work without
+  ```
+  "Effect": "Allow",
+  "Principal": {
+    "AWS": "arn:aws:iam::123456789012:root"
+  },
+  "Action": "sts:AssumeRole",
+  "Condition": {
+    "StringEquals": {
+      "sts:ExternalId": "secret"
+    }
+  }
+  ```
