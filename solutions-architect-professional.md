@@ -311,6 +311,8 @@ limited-privilege credentials for AWS Identity and Access Management (IAM) users
 * Provide access for externally authenticated users (identity federation)
 * Ability to revoke active sessions and credentials for a role (by adding a policy using a time statement – AWSRevokeOlderSessions)
 
+Whenever an IAM assumes another role, it's *giving up* its original permissions.
+
 STS on AWS:
 * <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
 
@@ -346,3 +348,15 @@ STS on AWS:
     }
   }
   ```
+* *Confused Deputy* refers to the fact that *without* `externalId`, it wouldn't be possible for
+service providers to make sure that they are accessing the right account (as role ARNs are guessable)
+
+## Identity Federation
+
+### Overview
+If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating
+IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of
+AWS and give these external user identities permissions to use AWS resources in your account.
+
+### Federating users of a mobile or web-based app with Amazon Cognito
+If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito
