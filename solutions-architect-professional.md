@@ -7,6 +7,7 @@
 * [Identity and Federation](#3)
   * [Identity and Access Management (IAM)](#3_1)
   * [STS (Security Token Service)](#3_2)
+  * [Identity Federation](#3_3)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -298,10 +299,12 @@ answers of who has public and cross-account access to AWS resources from outside
 ## [↖](#top)[↑](#3_1_6_2)[↓](#3_2_1) STS (Security Token Service)
 <!-- toc_start -->
 * [Overview](#3_2_1)
+* [Providing access to an IAM user in another AWS account that you own](#3_2_2)
+* [Providing access to an IAM user from a third party AWS account](#3_2_3)
 <!-- toc_end -->
 
 <a name="3_2_1"></a>
-### [↖](#3_2)[↑](#3_2) Overview
+### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Overview
 AWS Security Token Service (AWS STS) is a web service that enables you to request temporary,
 limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
 
@@ -316,7 +319,8 @@ Whenever an IAM assumes another role, it's *giving up* its original permissions.
 STS on AWS:
 * <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
 
-### Providing access to an IAM user in another AWS account that you own
+<a name="3_2_2"></a>
+### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Providing access to an IAM user in another AWS account that you own
 • *Zone of trust* are accounts or organizations that you own
 * In *target account*, create *target role* that should be assumed
   * Define trust policy that specifies *source account* as `Principal`
@@ -331,7 +335,8 @@ STS on AWS:
   }
   ```
 
-### Providing access to an IAM user from a third party AWS account
+<a name="3_2_3"></a>
+### [↖](#3_2)[↑](#3_2_2)[↓](#3_3) Providing access to an IAM user from a third party AWS account
 • *Outside Zone of Trust* are third parties
 * Create role for third party
 * Communicate role name and secret `ExternalId` to third party
@@ -351,12 +356,19 @@ STS on AWS:
 * *Confused Deputy* refers to the fact that *without* `externalId`, it wouldn't be possible for
 service providers to make sure that they are accessing the right account (as role ARNs are guessable)
 
-## Identity Federation
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2_3)[↓](#3_3_1) Identity Federation
+<!-- toc_start -->
+* [Overview](#3_3_1)
+* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_2)
+<!-- toc_end -->
 
-### Overview
+<a name="3_3_1"></a>
+### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
 If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating
 IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of
 AWS and give these external user identities permissions to use AWS resources in your account.
 
-### Federating users of a mobile or web-based app with Amazon Cognito
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with Amazon Cognito
 If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito
