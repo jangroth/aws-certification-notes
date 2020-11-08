@@ -367,8 +367,54 @@ service providers to make sure that they are accessing the right account (as rol
 ### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
 If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating
 IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of
-AWS and give these external user identities permissions to use AWS resources in your account.
+AWS and give these external user identities permissions to use AWS resources in your account. These users assume
+identity provided access *role*.
+
+Federations can have many flavors:
+* SAML 2.0
+* Custom Identity Broker
+* Web Identity Federation with Amazon Cognito
+* Web Identity Federation without Amazon Cognito
+* Single Sign On
+* Non-SAML with AWS Microsoft AD
+
+### SAML 2.0
+* Overview
+  * To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
+  * Access through console or CI
+  * Client app authenticates against IdP, receives *SAML assertion* back
+  * SAML assertion is exchanged with STS to reveive temporary credentials
+* To configure your organization's IdP and AWS to trust each other
+  * You begin by registering AWS with your IdP. In your organization's IdP you register AWS as a service provider (SP)
+  * AD/ADFS
+    * For *AD*, using your organization's IdP, you generate an equivalent metadata XML file that can describe your IdP as an IAM identity provider in AWS.
+    * For *ADFS*, invoke ADFS instead of IdP
+  * In the IAM console, you create a SAML identity provider entity.
+  * In IAM, you create one or more IAM roles. In the role's trust policy, you set the SAML provider as the principal, which establishes a trust relationship between your organization and AWS.
+  * In your organization's IdP, you define assertions that map users or groups in your organization to the IAM roles.
+  * API/Console
+    * For *API access*, in the application that you're creating, you call the AWS STS `AssumeRoleWithSAML` API, passing it the ARN of the SAML provider you created in Step 3, the ARN of the role to assume that you created in Step 4, and the SAML assertion about the current user that you get from your IdP.
+    * For *Console access*, this goes against an AWS SSO endpoint instead, SSO then invokes STS
+  * If the request is successful, the API returns a set of temporary security credentials,
+* Note - federation through SAML is the 'old' way of doing things. Better to use AWS SSO
+
+> Security Assertion Markup Language (**SAML**) is an open standard for exchanging
+> authentication and authorization data between parties, in particular, between an identity provider
+> and a service provider.
+
+> Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is
+> included in most Windows Server operating systems as a set of processes and services.
+
+> Active Directory Federation Services (**ADFS**), a software component developed by Microsoft, can run on
+> Windows Server operating systems to provide users with single sign-on access to systems and
+> applications located across organizational boundaries.
+
+> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information
+> for principals and also provides authentication services to relying applications within a
+> federation or distributed network.
 
 <a name="3_3_2"></a>
 ### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with Amazon Cognito
-If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito
+If you create a mobile or web-based app that accesses AWS resources, the app needs security
+credentials in order to make programmatic requests to AWS. For most mobile application scenarios,
+we recommend that you use Amazon Cognito
