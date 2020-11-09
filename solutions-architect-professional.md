@@ -413,8 +413,40 @@ Federations can have many flavors:
 > for principals and also provides authentication services to relying applications within a
 > federation or distributed network.
 
+### Custom Identity Broker
+* If identity provider is not compatible with SAML 2.0
+* The identity broker must determine the appropriate IAM policy (talks directly to STS, unlike SAML scenarios)
+* Use STS `AssumeRole` or `GetFederationToken`
+* <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
+
+### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with WebIdentity
+* Login with WebIdentity provider (Amazon, Google or Facebook)
+* Get temporary credentials from STS
+* Assume IAM role
+* After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
+  * `www.amazon.com:user_id`
+  * `graph.facebook.com:id`
+  * `accounts.google.com:sub`
+* Not recommended, use Amazon Cognito instead
+  * Does not support anonymous users
+  * Does not support MFA
+  * Does not support data syncronization
+* <a href="https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html" target="_blank">Documentation On AWS</a>
+
 <a name="3_3_2"></a>
 ### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with Amazon Cognito
-If you create a mobile or web-based app that accesses AWS resources, the app needs security
-credentials in order to make programmatic requests to AWS. For most mobile application scenarios,
-we recommend that you use Amazon Cognito
+If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic 
+requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
+* App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
+  * Retrieves OpenID Connect token
+* App calls Amazon Cognito and retrieves STS token in exchange for OpenID Connect token
+* After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
+  * `cognito-identity.amazonaws.com:sub`
+* Requires trust relationship between Amazon Cognito and OpenID Connect IdP
+* Amazon Cognito prefered over WebIdentiy federation
+  * Supports anonymous users
+  * Supports MFA
+  * Supports data syncronization
+* Amazon Connect replaces old service called Token Vending Machine
+* <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_cognito.html" target="_blank">Documentation On AWS</a>
+
