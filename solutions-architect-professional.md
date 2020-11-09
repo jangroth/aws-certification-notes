@@ -360,7 +360,10 @@ service providers to make sure that they are accessing the right account (as rol
 ## [↖](#top)[↑](#3_2_3)[↓](#3_3_1) Identity Federation
 <!-- toc_start -->
 * [Overview](#3_3_1)
-* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_2)
+* [SAML 2.0](#3_3_2)
+* [Custom Identity Broker](#3_3_3)
+* [Federating users of a mobile or web-based app with WebIdentity](#3_3_4)
+* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_5)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
@@ -378,7 +381,8 @@ Federations can have many flavors:
 * Single Sign On
 * Non-SAML with AWS Microsoft AD
 
-### SAML 2.0
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_3) SAML 2.0
 * Overview
   * To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
   * Access through console or CI
@@ -413,13 +417,15 @@ Federations can have many flavors:
 > for principals and also provides authentication services to relying applications within a
 > federation or distributed network.
 
-### Custom Identity Broker
+<a name="3_3_3"></a>
+### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_4) Custom Identity Broker
 * If identity provider is not compatible with SAML 2.0
 * The identity broker must determine the appropriate IAM policy (talks directly to STS, unlike SAML scenarios)
 * Use STS `AssumeRole` or `GetFederationToken`
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
-### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with WebIdentity
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_5) Federating users of a mobile or web-based app with WebIdentity
 * Login with WebIdentity provider (Amazon, Google or Facebook)
 * Get temporary credentials from STS
 * Assume IAM role
@@ -433,8 +439,8 @@ Federations can have many flavors:
   * Does not support data syncronization
 * <a href="https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_3_2"></a>
-### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with Amazon Cognito
+<a name="3_3_5"></a>
+### [↖](#3_3)[↑](#3_3_4) Federating users of a mobile or web-based app with Amazon Cognito
 If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic 
 requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
 * App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
