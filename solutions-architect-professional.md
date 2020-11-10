@@ -360,10 +360,7 @@ service providers to make sure that they are accessing the right account (as rol
 ## [↖](#top)[↑](#3_2_3)[↓](#3_3_1) Identity Federation
 <!-- toc_start -->
 * [Overview](#3_3_1)
-* [SAML 2.0](#3_3_2)
-* [Custom Identity Broker](#3_3_3)
-* [Federating users of a mobile or web-based app with WebIdentity](#3_3_4)
-* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_5)
+* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_2)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
@@ -381,8 +378,7 @@ Federations can have many flavors:
 * Single Sign On
 * Non-SAML with AWS Microsoft AD
 
-<a name="3_3_2"></a>
-### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_3) SAML 2.0
+### SAML 2.0
 * Overview
   * To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
   * Access through console or CI
@@ -406,26 +402,17 @@ Federations can have many flavors:
 > authentication and authorization data between parties, in particular, between an identity provider
 > and a service provider.
 
-> Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is
-> included in most Windows Server operating systems as a set of processes and services.
-
-> Active Directory Federation Services (**ADFS**), a software component developed by Microsoft, can run on
-> Windows Server operating systems to provide users with single sign-on access to systems and
-> applications located across organizational boundaries.
-
 > An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information
 > for principals and also provides authentication services to relying applications within a
 > federation or distributed network.
 
-<a name="3_3_3"></a>
-### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_4) Custom Identity Broker
+### Custom Identity Broker
 * If identity provider is not compatible with SAML 2.0
 * The identity broker must determine the appropriate IAM policy (talks directly to STS, unlike SAML scenarios)
 * Use STS `AssumeRole` or `GetFederationToken`
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_3_4"></a>
-### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_5) Federating users of a mobile or web-based app with WebIdentity
+### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with WebIdentity
 * Login with WebIdentity provider (Amazon, Google or Facebook)
 * Get temporary credentials from STS
 * Assume IAM role
@@ -439,9 +426,9 @@ Federations can have many flavors:
   * Does not support data syncronization
 * <a href="https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_3_5"></a>
-### [↖](#3_3)[↑](#3_3_4) Federating users of a mobile or web-based app with Amazon Cognito
-If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic 
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with Amazon Cognito
+If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic
 requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
 * App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
   * Retrieves OpenID Connect token
@@ -455,4 +442,36 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
   * Supports data syncronization
 * Amazon Connect replaces old service called Token Vending Machine
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_cognito.html" target="_blank">Documentation On AWS</a>
+
+## AWS Active Directory Services
+
+### Overview
+
+> Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is
+> included in most Windows Server operating systems as a set of processes and services.
+
+> Active Directory Federation Services (**ADFS**), a software component developed by Microsoft, can run on
+> Windows Server operating systems to provide users with single sign-on access to systems and
+> applications located across organizational boundaries.
+
+> The Lightweight Directory Access Protocol (**LDAP**) is an open, vendor-neutral, industry standard application
+> protocol for accessing and maintaining distributed directory information services over an Internet Protocol network.
+
+* AWS Managed Microsoft AD
+  * Create your own AD in AWS, manage users locally, supports MFA
+  * Establish “trust" connections with on-premises AD
+* Active Directory Connector
+  * Directory Gateway (proxy) to redirect to on-premises AD
+  * Users are managed on the on-premise AD
+* Simple Active Directory
+  * AD-compatible managed directory on AWS
+  * Cannot be joined with on-premise AD
+* <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
+
+### AWS Managed Microsoft AD
+* Managed Service
+
+### AD Connector
+
+### Simple AD
 
