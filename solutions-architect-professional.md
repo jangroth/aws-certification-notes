@@ -8,6 +8,7 @@
   * [Identity and Access Management (IAM)](#3_1)
   * [STS (Security Token Service)](#3_2)
   * [Identity Federation](#3_3)
+  * [AWS Active Directory Services](#3_4)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -360,7 +361,10 @@ service providers to make sure that they are accessing the right account (as rol
 ## [↖](#top)[↑](#3_2_3)[↓](#3_3_1) Identity Federation
 <!-- toc_start -->
 * [Overview](#3_3_1)
-* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_2)
+* [SAML 2.0](#3_3_2)
+* [Custom Identity Broker](#3_3_3)
+* [Federating users of a mobile or web-based app with WebIdentity](#3_3_4)
+* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_5)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
@@ -378,7 +382,8 @@ Federations can have many flavors:
 * Single Sign On
 * Non-SAML with AWS Microsoft AD
 
-### SAML 2.0
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_3) SAML 2.0
 * Overview
   * To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
   * Access through console or CI
@@ -406,13 +411,15 @@ Federations can have many flavors:
 > for principals and also provides authentication services to relying applications within a
 > federation or distributed network.
 
-### Custom Identity Broker
+<a name="3_3_3"></a>
+### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_4) Custom Identity Broker
 * If identity provider is not compatible with SAML 2.0
 * The identity broker must determine the appropriate IAM policy (talks directly to STS, unlike SAML scenarios)
 * Use STS `AssumeRole` or `GetFederationToken`
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
-### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with WebIdentity
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_5) Federating users of a mobile or web-based app with WebIdentity
 * Login with WebIdentity provider (Amazon, Google or Facebook)
 * Get temporary credentials from STS
 * Assume IAM role
@@ -426,8 +433,8 @@ Federations can have many flavors:
   * Does not support data syncronization
 * <a href="https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_3_2"></a>
-### [↖](#3_3)[↑](#3_3_1) Federating users of a mobile or web-based app with Amazon Cognito
+<a name="3_3_5"></a>
+### [↖](#3_3)[↑](#3_3_4)[↓](#3_4) Federating users of a mobile or web-based app with Amazon Cognito
 If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic
 requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
 * App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
@@ -443,9 +450,17 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 * Amazon Connect replaces old service called Token Vending Machine
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_cognito.html" target="_blank">Documentation On AWS</a>
 
-## AWS Active Directory Services
+<a name="3_4"></a>
+## [↖](#top)[↑](#3_3_5)[↓](#3_4_1) AWS Active Directory Services
+<!-- toc_start -->
+* [Overview](#3_4_1)
+* [AWS Managed Microsoft AD](#3_4_2)
+* [AD Connector](#3_4_3)
+* [Simple AD](#3_4_4)
+<!-- toc_end -->
 
-### Overview
+<a name="3_4_1"></a>
+### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) Overview
 
 > Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is
 > included in most Windows Server operating systems as a set of processes and services.
@@ -468,10 +483,13 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
   * Cannot be joined with on-premise AD
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
 
-### AWS Managed Microsoft AD
+<a name="3_4_2"></a>
+### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) AWS Managed Microsoft AD
 * Managed Service
 
-### AD Connector
+<a name="3_4_3"></a>
+### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_4) AD Connector
 
-### Simple AD
+<a name="3_4_4"></a>
+### [↖](#3_4)[↑](#3_4_3) Simple AD
 
