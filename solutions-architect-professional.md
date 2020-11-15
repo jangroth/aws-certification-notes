@@ -472,13 +472,13 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 > The Lightweight Directory Access Protocol (**LDAP**) is an open, vendor-neutral, industry standard application
 > protocol for accessing and maintaining distributed directory information services over an Internet Protocol network.
 
-* AWS Managed Microsoft AD
+* **AWS Managed Microsoft AD**
   * Create your own AD in AWS, manage users locally, supports MFA
   * Establish “trust" connections with on-premises AD
-* Active Directory Connector
+* **Active Directory Connector**
   * Directory Gateway (proxy) to redirect to on-premises AD
   * Users are managed on the on-premise AD
-* Simple Active Directory
+* **Simple Active Directory**
   * AD-compatible managed directory on AWS
   * Cannot be joined with on-premise AD
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
@@ -486,6 +486,28 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 <a name="3_4_2"></a>
 ### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) AWS Managed Microsoft AD
 * Managed Service
+* Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
+  * Standalone in cloud, or joined to on-premises AD
+* *Seamless Domain Join* allows to join AD from different accounts or VPCs
+* Automated backups are supported
+* Can join on-premises AD
+  * *AD two-way forest trust*
+
+#### Integrations
+* Windows applications on EC2 can *join the domain* and run traditional AD applications
+  * Sharepoint, ...
+* RDS for SQL Server, AWS Workspaces, Quicksight, ...
+* AWS SSO for 3rd party access (SAML)
+
+#### Connectin to On-premises AD
+* Needs Direct Connect or VPN
+* Three kinds of of forest trust
+  * One way on-premises -> AWS
+  * One way AWS -> on-premises
+  * Two way AWS <-> on-premises
+* Forest trust is different to syncronization!
+  * Replication not supported
+  * Users on both ADs are independent from each other
 
 <a name="3_4_3"></a>
 ### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_4) AD Connector
