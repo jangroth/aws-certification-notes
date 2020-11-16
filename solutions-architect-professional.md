@@ -485,6 +485,17 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 
 <a name="3_4_2"></a>
 ### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) AWS Managed Microsoft AD
+#### Overview
+
+AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft Active
+Directory (AD), enables your directory-aware workloads and AWS resources to use managed Active
+Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not
+require you to synchronize or replicate data from your existing Active Directory to the cloud. You
+can use the standard AD administration tools and take advantage of the built-in AD features, such
+as Group Policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2
+and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing (EUC)
+services, such as Amazon WorkSpaces, with AD users and groups.
+
 * Managed Service
 * Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
   * Standalone in cloud, or joined to on-premises AD
@@ -492,6 +503,7 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 * Automated backups are supported
 * Can join on-premises AD
   * *AD two-way forest trust*
+* On AWS: <a href="https://aws.amazon.com/directoryservice/" target="_blank">Service</a> - <a href="https://aws.amazon.com/directoryservice/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">User Guide</a>
 
 #### Integrations
 * Windows applications on EC2 can *join the domain* and run traditional AD applications
@@ -499,7 +511,7 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 * RDS for SQL Server, AWS Workspaces, Quicksight, ...
 * AWS SSO for 3rd party access (SAML)
 
-#### Connectin to On-premises AD
+#### Connecting to on-premises AD
 * Needs Direct Connect or VPN
 * Three kinds of of forest trust
   * One way on-premises -> AWS
@@ -509,9 +521,68 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
   * Replication not supported
   * Users on both ADs are independent from each other
 
+#### Syncronizing with on-premises AD
+* Have to install Microsoft AD on EC2 yourself and setup replication
+* Establish forest trust between this installation and AWS Managed Microsoft AD
+
 <a name="3_4_3"></a>
 ### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_4) AD Connector
+* AD Connector is a directory gateway (*proxy*) to redirect directory requests to your on-premises Microsoft Active Directory
+* No caching capability
+  * Has latency
+* Manage users solely on-premises, no possibility of setting up a trust
+  * No MFA
+* VPN or Direct Connect -> can't function if connection goes down
+* Doesn’t work with SQL Server, doesn’t do seamless joining, can’t share directory
 
 <a name="3_4_4"></a>
 ### [↖](#3_4)[↑](#3_4_3) Simple AD
+* Simple AD is an inexpensive Active Directory–compatible service with the common directory features.
+* Supports joining EC2 instances, manage users and groups
+* Does not support MFA, RDS SQL server, AWS SSO
+* Small: 500 users, large: 5000 users
+* Powered by Samba 4, compatible with Microsoft AD
+* Lower cost, low scale, basic AD compatible, or LDAP compatibility
+* No trust relationship to on-premises Microsoft AD
 
+## AWS Organization
+### [↖](#4_27)[↑](#4_27)[↓](#4_27_1_1) Overview
+*AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
+you can create groups of accounts, automate account creation, apply and manage policies for those
+groups. Organizations enables you to centrally manage policies across multiple accounts, without
+requiring custom scripts and manual processes.
+
+Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS
+service use across multiple AWS accounts. You can also use Organizations to help automate the
+creation of new accounts through APIs. Organizations helps simplify the billing for multiple
+accounts by enabling you to setup a single payment method for all the accounts in your
+organization through consolidated billing. AWS Organizations is available to all AWS customers at
+no additional charge.
+
+* On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
+
+<a name="4_27_1_1"></a>
+#### [↖](#4_27)[↑](#4_27_1)[↓](#4_27_2) Benefits
+* Centrally manage policies across multiple accounts
+* Control access to AWS services
+* Automate AWS account creation and management
+* *Consolidated billing*
+  * One *paying account* linked to many *linked accounts*
+  * Pricing benefits (Volumes, Storage, Instances)
+* Create account hierachy with *Organizational Units* (OUs)
+* Apply SCPs across the hierachy
+* Apply Tag Policies across the hierachy
+
+<a name="4_27_2"></a>
+### [↖](#4_27)[↑](#4_27_1_1)[↓](#4_27_3) Service Control Policies (SCP)
+Service control policies (SCPs) are one type of policy that you can use to manage your organization.
+SCPs offer central control over the maximum available permissions for all accounts in your
+organization, allowing you to ensure your accounts stay within your organization’s access control
+guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't
+available if your organization has enabled only the consolidated billing features. SCPs do *not* apply
+for the master account itself.
+
+<a name="4_27_3"></a>
+### [↖](#4_27)[↑](#4_27_2)[↓](#4_27_4) Tag Policies
+Tag policies are a type of policy that can help you standardize tags across resources in your
+organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
