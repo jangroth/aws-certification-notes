@@ -576,6 +576,15 @@ accounts by enabling you to setup a single payment method for all the accounts i
 organization through consolidated billing. AWS Organizations is available to all AWS customers at
 no additional charge.
 
+* Master accounts must invite child accounts
+  * Invited accounts must approve enabling all features
+* Master accounts can create child accounts
+* Master can access child accounts using:
+  * CloudFormation StackSets to create IAM roles in target accounts
+  * Assume the roles using the STS Cross Account capability
+* Recommended strategy to create a dedicated account for logging or security
+* API is available to automate AWS account creation
+* Integration with AWS Single Sign-On (SSO)
 * On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="3_5_1_1"></a>
@@ -588,7 +597,18 @@ no additional charge.
   * Pricing benefits (Volumes, Storage, Instances)
 * Create account hierachy with *Organizational Units* (OUs)
 * Apply SCPs across the hierachy
+  * Ability to apply an SCP to prevent member accounts from leaving the org
 * Apply Tag Policies across the hierachy
+
+#### Multi-account strategies
+• Create accounts per department, per cost center, per dev / test / prod, based on regulatory
+  restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account
+  service limits, isolated account for logging,
+• Multi account vs one account multi vPC
+• Use tagging standards for billing purposes
+• Enable CloudTrail on all accounts, send logs to central S3 account
+• Send CloudWatch logs to central logging account
+• Establish cross account roles for admin purposes
 
 <a name="3_5_2"></a>
 ### [↖](#3_5)[↑](#3_5_1_1)[↓](#3_5_3) Service Control Policies (SCP)
@@ -599,7 +619,20 @@ guidelines. SCPs are available only in an organization that has all features ena
 available if your organization has enabled only the consolidated billing features. SCPs do *not* apply
 for the master account itself.
 
+* Whitelist or blacklist IAM actions
+  * Applied at the Root, OU or Account level
+  * SCP is applied to all the users and roles of the account, including root (*no effect on root though*)
+  * The SCP does not affect service-linked roles
+    * Service-linked roles enable other AWS services to integrate with AWS Organizations and can't be restricted by SCPs.
+* SCPs are inherit on OU level, *not* account level
+  * Child *OU* inherits from parent *OU*, but child *account* does *not* inherit from parent *account*
+* SCP must have an explicit `allow` (does not allow anything by default)
+* Use cases:
+  * Restrict access to certain services (for example: can’t use EMR)
+  * Enforce PCI compliance by explicitly disabling services
+
 <a name="3_5_3"></a>
 ### [↖](#3_5)[↑](#3_5_2) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your
 organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
+
