@@ -630,9 +630,28 @@ for the master account itself.
 * Use cases:
   * Restrict access to certain services (for example: can’t use EMR)
   * Enforce PCI compliance by explicitly disabling services
+* On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
 <a name="3_5_3"></a>
 ### [↖](#3_5)[↑](#3_5_2) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your
 organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
+
+### Reserved Instances
+* For billing purposes, the consolidated billing feature of AWS Organizations treats all the
+  accounts in the organization as one account.
+* This means that all accounts in the organization can receive the hourly cost benefit of Reserved
+  Instances that are purchased by any other account.
+* The payer account (master account) of an organization can turn off Reserved Instance (RI)
+  discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
+* This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
+* To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
+
+## AWS Resource Access Manager
+### Overview
+AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you
+have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those
+resources with other accounts.
+
+* On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
