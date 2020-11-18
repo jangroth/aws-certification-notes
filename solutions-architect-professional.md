@@ -10,6 +10,7 @@
   * [Identity Federation](#3_3)
   * [AWS Active Directory Services](#3_4)
   * [AWS Organization](#3_5)
+  * [AWS Resource Access Manager](#3_6)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -559,8 +560,10 @@ services, such as Amazon WorkSpaces, with AD users and groups.
 <!-- toc_start -->
 * [Overview](#3_5_1)
   * [Benefits](#3_5_1_1)
+  * [Multi-account strategies](#3_5_1_2)
 * [Service Control Policies (SCP)](#3_5_2)
 * [Tag Policies](#3_5_3)
+* [Reserved Instances](#3_5_4)
 <!-- toc_end -->
 <a name="3_5_1"></a>
 ### [↖](#3_5)[↑](#3_5)[↓](#3_5_1_1) Overview
@@ -588,7 +591,7 @@ no additional charge.
 * On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
 
 <a name="3_5_1_1"></a>
-#### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_2) Benefits
+#### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_1_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -600,7 +603,8 @@ no additional charge.
   * Ability to apply an SCP to prevent member accounts from leaving the org
 * Apply Tag Policies across the hierachy
 
-#### Multi-account strategies
+<a name="3_5_1_2"></a>
+#### [↖](#3_5)[↑](#3_5_1_1)[↓](#3_5_2) Multi-account strategies
 • Create accounts per department, per cost center, per dev / test / prod, based on regulatory
   restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account
   service limits, isolated account for logging,
@@ -611,7 +615,7 @@ no additional charge.
 • Establish cross account roles for admin purposes
 
 <a name="3_5_2"></a>
-### [↖](#3_5)[↑](#3_5_1_1)[↓](#3_5_3) Service Control Policies (SCP)
+### [↖](#3_5)[↑](#3_5_1_2)[↓](#3_5_3) Service Control Policies (SCP)
 Service control policies (SCPs) are one type of policy that you can use to manage your organization.
 SCPs offer central control over the maximum available permissions for all accounts in your
 organization, allowing you to ensure your accounts stay within your organization’s access control
@@ -633,11 +637,12 @@ for the master account itself.
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
 <a name="3_5_3"></a>
-### [↖](#3_5)[↑](#3_5_2) Tag Policies
+### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_4) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your
 organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
-### Reserved Instances
+<a name="3_5_4"></a>
+### [↖](#3_5)[↑](#3_5_3)[↓](#3_6) Reserved Instances
 * For billing purposes, the consolidated billing feature of AWS Organizations treats all the
   accounts in the organization as one account.
 * This means that all accounts in the organization can receive the hourly cost benefit of Reserved
@@ -647,8 +652,13 @@ organization's accounts. In a tag policy, you specify tagging rules applicable t
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
-## AWS Resource Access Manager
-### Overview
+<a name="3_6"></a>
+## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Resource Access Manager
+<!-- toc_start -->
+* [Overview](#3_6_1)
+<!-- toc_end -->
+<a name="3_6_1"></a>
+### [↖](#3_6)[↑](#3_6) Overview
 AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you
 have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those
 resources with other accounts.
