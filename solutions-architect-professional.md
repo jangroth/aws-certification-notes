@@ -663,5 +663,39 @@ AWS RAM lets you share your resources with any AWS account or through AWS Organi
 have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those
 resources with other accounts.
 
+* Avoids resource duplication
+* Key resources that can be shared
+  * VPC Subnets
+    * allow to have all the resources launched in the same subnets
+    * must be from the same AWS Organizations.
+    * Cannot share security groups and default VPC
+    * Participants can manage their own resources in there
+    * Participants can't view, modify, delete resources that belong to other participants or the owner
+  * AWS Transit Gateway
+  * Route53 Resolver Rules
+  * License Manager Configurations
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
+
+## AWS Single Sign-On
+
+### Overview
+AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally
+manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you
+manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO
+also helps you manage access and permissions to commonly used third-party software as a service (SaaS)
+applications, AWS SSO-integrated applications as well as custom applications that support Security
+Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find
+and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
+
+* Centrally manage Single Sign-On to access multiple accounts and 3rd-party business applications.
+  * No need for custom IdP login portal, AWS SSO communicates directly with SAML-compatible login portal
+* Integrated with AWS Organizations
+* Supports SAML 2.0 markup
+* Integration with on-premises Active Directory
+  * Standalone AWS Managed Microsoft AD
+  * AD Connector to on-premises AD
+  * AWS Managed Microsoft AD with two-way forest trust with on-premise AD
+* Centralized permission management
+* Centralized auditing with CloudTrail
+* On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
