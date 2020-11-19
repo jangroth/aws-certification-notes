@@ -11,6 +11,7 @@
   * [AWS Active Directory Services](#3_4)
   * [AWS Organization](#3_5)
   * [AWS Resource Access Manager](#3_6)
+  * [AWS Single Sign-On](#3_7)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -658,7 +659,7 @@ organization's accounts. In a tag policy, you specify tagging rules applicable t
 * [Overview](#3_6_1)
 <!-- toc_end -->
 <a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6) Overview
+### [↖](#3_6)[↑](#3_6)[↓](#3_7) Overview
 AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you
 have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those
 resources with other accounts.
@@ -676,9 +677,14 @@ resources with other accounts.
   * License Manager Configurations
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
-## AWS Single Sign-On
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_1)[↓](#3_7_1) AWS Single Sign-On
+<!-- toc_start -->
+* [Overview](#3_7_1)
+<!-- toc_end -->
 
-### Overview
+<a name="3_7_1"></a>
+### [↖](#3_7)[↑](#3_7) Overview
 AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally
 manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you
 manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO
