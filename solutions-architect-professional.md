@@ -5,13 +5,16 @@
 * [Exam Objectives](#2)
   * [Content](#2_1)
 * [Identity and Federation](#3)
-  * [Identity and Access Management (IAM)](#3_1)
-  * [STS (Security Token Service)](#3_2)
-  * [Identity Federation](#3_3)
-  * [AWS Active Directory Services](#3_4)
-  * [AWS Organization](#3_5)
-  * [AWS Resource Access Manager](#3_6)
-  * [AWS Single Sign-On](#3_7)
+  * [Summary](#3_1)
+  * [Identity and Access Management (IAM)](#3_2)
+  * [STS (Security Token Service)](#3_3)
+  * [Identity Federation](#3_4)
+  * [AWS Active Directory Services](#3_5)
+  * [AWS Organization](#3_6)
+  * [AWS Resource Access Manager](#3_7)
+  * [AWS Single Sign-On](#3_8)
+* [Security](#4)
+  * [CloudTrail](#4_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -76,7 +79,8 @@
 <a name="3"></a>
 # [↖](#top)[↑](#2_1_5)[↓](#3_1) Identity and Federation
 
-## Summary
+<a name="3_1"></a>
+## [↖](#top)[↑](#3)[↓](#3_2) Summary
 * Users and Accounts all in AWS
 * AWS Organizations
 * Federation with SAML
@@ -90,24 +94,24 @@
   * Simple AD: standalone & cheap AD-compatible with no MFA, no advanced capabilities
   * Single Sign On to connect to multiple AWS Accounts (Organization) and SAML apps
 
-<a name="3_1"></a>
-## [↖](#top)[↑](#3)[↓](#3_1_1) Identity and Access Management (IAM)
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1)[↓](#3_2_1) Identity and Access Management (IAM)
 <!-- toc_start -->
-* [Overview](#3_1_1)
-* [Users](#3_1_2)
-* [Groups](#3_1_3)
-* [Roles](#3_1_4)
-* [Policies](#3_1_5)
-  * [Policy Conditions](#3_1_5_1)
-  * [Policy Variables & Tags](#3_1_5_2)
-  * [Identity-based vs resource-based policies](#3_1_5_3)
-* [Automated Scanning](#3_1_6)
-  * [Access Advisor](#3_1_6_1)
-  * [Access Analyzer](#3_1_6_2)
+* [Overview](#3_2_1)
+* [Users](#3_2_2)
+* [Groups](#3_2_3)
+* [Roles](#3_2_4)
+* [Policies](#3_2_5)
+  * [Policy Conditions](#3_2_5_1)
+  * [Policy Variables & Tags](#3_2_5_2)
+  * [Identity-based vs resource-based policies](#3_2_5_3)
+* [Automated Scanning](#3_2_6)
+  * [Access Advisor](#3_2_6_1)
+  * [Access Analyzer](#3_2_6_2)
 <!-- toc_end -->
 
-<a name="3_1_1"></a>
-### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Overview
+<a name="3_2_1"></a>
+### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Overview
 AWS Identity and Access Management (IAM) enables you to manage access to AWS services and
 resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions
 to allow and deny their access to AWS resources.
@@ -133,21 +137,21 @@ Best practices:
 IAM on AWS:
 * <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
 
-<a name="3_1_2"></a>
-### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_3) Users
+<a name="3_2_2"></a>
+### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Users
 * An AWS Identity and Access Management (IAM) user is an entity that you create in AWS to
   represent the person or application that uses it to interact with AWS. A user in AWS consists of a
   name and credentials.
 * Hold long-term credentials
 
-<a name="3_1_3"></a>
-### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_4) Groups
+<a name="3_2_3"></a>
+### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_4) Groups
 * An IAM group is a collection of IAM users. Groups let you specify permissions for multiple users,
   which can make it easier to manage the permissions for those users.
 * Typically only provides permission to assume a role
 
-<a name="3_1_4"></a>
-### [↖](#3_1)[↑](#3_1_3)[↓](#3_1_5) Roles
+<a name="3_2_4"></a>
+### [↖](#3_2)[↑](#3_2_3)[↓](#3_2_5) Roles
 * **Role** - An IAM identity that you can create in your account that has specific permissions. An IAM role
   has some similarities to an IAM user. Roles and users are both AWS identities with permissions
   policies that determine what the identity can and cannot do in AWS. However, instead of being
@@ -206,8 +210,8 @@ Properties:
 ```
 
 
-<a name="3_1_5"></a>
-### [↖](#3_1)[↑](#3_1_4)[↓](#3_1_5_1) Policies
+<a name="3_2_5"></a>
+### [↖](#3_2)[↑](#3_2_4)[↓](#3_2_5_1) Policies
 * You manage access in AWS by creating policies and attaching them to IAM identities (users,
   groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated
   with an identity or resource, defines their permissions. AWS evaluates these policies when an IAM
@@ -257,8 +261,8 @@ Properties:
   Users:
     - String (!Ref)
 ```
-<a name="3_1_5_1"></a>
-#### [↖](#3_1)[↑](#3_1_5)[↓](#3_1_5_2) Policy Conditions
+<a name="3_2_5_1"></a>
+#### [↖](#3_2)[↑](#3_2_5)[↓](#3_2_5_2) Policy Conditions
 * String (`StringEquals`, `StringNotEquals`, `StringLike`...)
   * "Condition": {"StringEquals": {"aws:PrincipalTag/job-category": "iamuser-admin"}}
   * "Condition": {"StringLike": {"s3:prefix": [ "", "home/", "home/${aws:username}/" ]}}
@@ -272,8 +276,8 @@ Properties:
 * `ArnEquals`, `ArnLike`
 * `Null`: "Condition":{"Null":{"aws:TokenIssueTime":"true"}}
 
-<a name="3_1_5_2"></a>
-#### [↖](#3_1)[↑](#3_1_5_1)[↓](#3_1_5_3) Policy Variables & Tags
+<a name="3_2_5_2"></a>
+#### [↖](#3_2)[↑](#3_2_5_1)[↓](#3_2_5_3) Policy Variables & Tags
 Example: `${aws:username}`
 • "Resource": ["arn:aws:s3:::mybucket/${aws:username}/*"]
 AWS Specific:
@@ -283,22 +287,22 @@ Service Specific:
 Tag Based:
 • `iam:ResourceTag/key-name`, `aws:PrincipalTag/key-name`...
 
-<a name="3_1_5_3"></a>
-#### [↖](#3_1)[↑](#3_1_5_2)[↓](#3_1_6) Identity-based vs resource-based policies
+<a name="3_2_5_3"></a>
+#### [↖](#3_2)[↑](#3_2_5_2)[↓](#3_2_6) Identity-based vs resource-based policies
 * **Identity-based policies** are attached to an IAM user, group, or role. These policies let you specify what that identity can do (its permissions).
 * **Resource-based policies** are attached to a resource.
 <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-services-that-work-with-iam.html" target="_blank">AWS services that work with IAM</a>
 
-<a name="3_1_6"></a>
-### [↖](#3_1)[↑](#3_1_5_3)[↓](#3_1_6_1) Automated Scanning
+<a name="3_2_6"></a>
+### [↖](#3_2)[↑](#3_2_5_3)[↓](#3_2_6_1) Automated Scanning
 
-<a name="3_1_6_1"></a>
-#### [↖](#3_1)[↑](#3_1_6)[↓](#3_1_6_2) Access Advisor
+<a name="3_2_6_1"></a>
+#### [↖](#3_2)[↑](#3_2_6)[↓](#3_2_6_2) Access Advisor
 Access Advisor shows the services that a certain user or role can access and when those services
 were last accessed. Review this data to remove unused permissions.
 
-<a name="3_1_6_2"></a>
-#### [↖](#3_1)[↑](#3_1_6_1)[↓](#3_2) Access Analyzer
+<a name="3_2_6_2"></a>
+#### [↖](#3_2)[↑](#3_2_6_1)[↓](#3_3) Access Analyzer
 Makes it simple for security teams and administrators to check that their policies provide only
 the intended access to resources. Resource policies allow customers to granularly control who is
 able to access a specific resource and how they are able to use it across the entire cloud
@@ -313,16 +317,16 @@ AWS IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Fin
 exported as a report for auditing purposes. IAM Access Analyzer findings provide definitive
 answers of who has public and cross-account access to AWS resources from outside an account.
 
-<a name="3_2"></a>
-## [↖](#top)[↑](#3_1_6_2)[↓](#3_2_1) STS (Security Token Service)
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2_6_2)[↓](#3_3_1) STS (Security Token Service)
 <!-- toc_start -->
-* [Overview](#3_2_1)
-* [Providing access to an IAM user in another AWS account that you own](#3_2_2)
-* [Providing access to an IAM user from a third party AWS account](#3_2_3)
+* [Overview](#3_3_1)
+* [Providing access to an IAM user in another AWS account that you own](#3_3_2)
+* [Providing access to an IAM user from a third party AWS account](#3_3_3)
 <!-- toc_end -->
 
-<a name="3_2_1"></a>
-### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Overview
+<a name="3_3_1"></a>
+### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
 AWS Security Token Service (AWS STS) is a web service that enables you to request temporary,
 limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
 
@@ -337,8 +341,8 @@ Whenever an IAM assumes another role, it's *giving up* its original permissions.
 STS on AWS:
 * <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
 
-<a name="3_2_2"></a>
-### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Providing access to an IAM user in another AWS account that you own
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_3) Providing access to an IAM user in another AWS account that you own
 • *Zone of trust* are accounts or organizations that you own
 * In *target account*, create *target role* that should be assumed
   * Define trust policy that specifies *source account* as `Principal`
@@ -353,8 +357,8 @@ STS on AWS:
   }
   ```
 
-<a name="3_2_3"></a>
-### [↖](#3_2)[↑](#3_2_2)[↓](#3_3) Providing access to an IAM user from a third party AWS account
+<a name="3_3_3"></a>
+### [↖](#3_3)[↑](#3_3_2)[↓](#3_4) Providing access to an IAM user from a third party AWS account
 • *Outside Zone of Trust* are third parties
 * Create role for third party
 * Communicate role name and secret `ExternalId` to third party
@@ -374,18 +378,18 @@ STS on AWS:
 * *Confused Deputy* refers to the fact that *without* `externalId`, it wouldn't be possible for
 service providers to make sure that they are accessing the right account (as role ARNs are guessable)
 
-<a name="3_3"></a>
-## [↖](#top)[↑](#3_2_3)[↓](#3_3_1) Identity Federation
+<a name="3_4"></a>
+## [↖](#top)[↑](#3_3_3)[↓](#3_4_1) Identity Federation
 <!-- toc_start -->
-* [Overview](#3_3_1)
-* [SAML 2.0](#3_3_2)
-* [Custom Identity Broker](#3_3_3)
-* [Federating users of a mobile or web-based app with WebIdentity](#3_3_4)
-* [Federating users of a mobile or web-based app with Amazon Cognito](#3_3_5)
+* [Overview](#3_4_1)
+* [SAML 2.0](#3_4_2)
+* [Custom Identity Broker](#3_4_3)
+* [Federating users of a mobile or web-based app with WebIdentity](#3_4_4)
+* [Federating users of a mobile or web-based app with Amazon Cognito](#3_4_5)
 <!-- toc_end -->
 
-<a name="3_3_1"></a>
-### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
+<a name="3_4_1"></a>
+### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) Overview
 If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating
 IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of
 AWS and give these external user identities permissions to use AWS resources in your account. These users assume
@@ -399,8 +403,8 @@ Federations can have many flavors:
 * Single Sign On
 * Non-SAML with AWS Microsoft AD
 
-<a name="3_3_2"></a>
-### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_3) SAML 2.0
+<a name="3_4_2"></a>
+### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) SAML 2.0
 * Overview
   * To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
   * Access through console or CI
@@ -428,15 +432,15 @@ Federations can have many flavors:
 > for principals and also provides authentication services to relying applications within a
 > federation or distributed network.
 
-<a name="3_3_3"></a>
-### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_4) Custom Identity Broker
+<a name="3_4_3"></a>
+### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_4) Custom Identity Broker
 * If identity provider is not compatible with SAML 2.0
 * The identity broker must determine the appropriate IAM policy (talks directly to STS, unlike SAML scenarios)
 * Use STS `AssumeRole` or `GetFederationToken`
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_3_4"></a>
-### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_5) Federating users of a mobile or web-based app with WebIdentity
+<a name="3_4_4"></a>
+### [↖](#3_4)[↑](#3_4_3)[↓](#3_4_5) Federating users of a mobile or web-based app with WebIdentity
 * Login with WebIdentity provider (Amazon, Google or Facebook)
 * Get temporary credentials from STS
 * Assume IAM role
@@ -450,8 +454,8 @@ Federations can have many flavors:
   * Does not support data syncronization
 * <a href="https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_3_5"></a>
-### [↖](#3_3)[↑](#3_3_4)[↓](#3_4) Federating users of a mobile or web-based app with Amazon Cognito
+<a name="3_4_5"></a>
+### [↖](#3_4)[↑](#3_4_4)[↓](#3_5) Federating users of a mobile or web-based app with Amazon Cognito
 If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic
 requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
 * App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
@@ -467,21 +471,21 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 * Amazon Connect replaces old service called Token Vending Machine
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_cognito.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_4"></a>
-## [↖](#top)[↑](#3_3_5)[↓](#3_4_1) AWS Active Directory Services
+<a name="3_5"></a>
+## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services
 <!-- toc_start -->
-* [Overview](#3_4_1)
-* [AWS Managed Microsoft AD](#3_4_2)
-  * [Overview](#3_4_2_1)
-  * [Integrations](#3_4_2_2)
-  * [Connecting to on-premises AD](#3_4_2_3)
-  * [Syncronizing with on-premises AD](#3_4_2_4)
-* [AD Connector](#3_4_3)
-* [Simple AD](#3_4_4)
+* [Overview](#3_5_1)
+* [AWS Managed Microsoft AD](#3_5_2)
+  * [Overview](#3_5_2_1)
+  * [Integrations](#3_5_2_2)
+  * [Connecting to on-premises AD](#3_5_2_3)
+  * [Syncronizing with on-premises AD](#3_5_2_4)
+* [AD Connector](#3_5_3)
+* [Simple AD](#3_5_4)
 <!-- toc_end -->
 
-<a name="3_4_1"></a>
-### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) Overview
+<a name="3_5_1"></a>
+### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) Overview
 
 > Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is
 > included in most Windows Server operating systems as a set of processes and services.
@@ -504,10 +508,10 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
   * Cannot be joined with on-premise AD
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_4_2"></a>
-### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_2_1) AWS Managed Microsoft AD
-<a name="3_4_2_1"></a>
-#### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_2_2) Overview
+<a name="3_5_2"></a>
+### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_2_1) AWS Managed Microsoft AD
+<a name="3_5_2_1"></a>
+#### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_2_2) Overview
 
 AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft Active
 Directory (AD), enables your directory-aware workloads and AWS resources to use managed Active
@@ -527,15 +531,15 @@ services, such as Amazon WorkSpaces, with AD users and groups.
   * *AD two-way forest trust*
 * On AWS: <a href="https://aws.amazon.com/directoryservice/" target="_blank">Service</a> - <a href="https://aws.amazon.com/directoryservice/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">User Guide</a>
 
-<a name="3_4_2_2"></a>
-#### [↖](#3_4)[↑](#3_4_2_1)[↓](#3_4_2_3) Integrations
+<a name="3_5_2_2"></a>
+#### [↖](#3_5)[↑](#3_5_2_1)[↓](#3_5_2_3) Integrations
 * Windows applications on EC2 can *join the domain* and run traditional AD applications
   * Sharepoint, ...
 * RDS for SQL Server, AWS Workspaces, Quicksight, ...
 * AWS SSO for 3rd party access (SAML)
 
-<a name="3_4_2_3"></a>
-#### [↖](#3_4)[↑](#3_4_2_2)[↓](#3_4_2_4) Connecting to on-premises AD
+<a name="3_5_2_3"></a>
+#### [↖](#3_5)[↑](#3_5_2_2)[↓](#3_5_2_4) Connecting to on-premises AD
 * Needs Direct Connect or VPN
 * Three kinds of of forest trust
   * One way on-premises -> AWS
@@ -545,13 +549,13 @@ services, such as Amazon WorkSpaces, with AD users and groups.
   * Replication not supported
   * Users on both ADs are independent from each other
 
-<a name="3_4_2_4"></a>
-#### [↖](#3_4)[↑](#3_4_2_3)[↓](#3_4_3) Syncronizing with on-premises AD
+<a name="3_5_2_4"></a>
+#### [↖](#3_5)[↑](#3_5_2_3)[↓](#3_5_3) Syncronizing with on-premises AD
 * Have to install Microsoft AD on EC2 yourself and setup replication
 * Establish forest trust between this installation and AWS Managed Microsoft AD
 
-<a name="3_4_3"></a>
-### [↖](#3_4)[↑](#3_4_2_4)[↓](#3_4_4) AD Connector
+<a name="3_5_3"></a>
+### [↖](#3_5)[↑](#3_5_2_4)[↓](#3_5_4) AD Connector
 * AD Connector is a directory gateway (*proxy*) to redirect directory requests to your on-premises Microsoft Active Directory
 * No caching capability
   * Has latency
@@ -560,8 +564,8 @@ services, such as Amazon WorkSpaces, with AD users and groups.
 * VPN or Direct Connect -> can't function if connection goes down
 * Doesn’t work with SQL Server, doesn’t do seamless joining, can’t share directory
 
-<a name="3_4_4"></a>
-### [↖](#3_4)[↑](#3_4_3)[↓](#3_5) Simple AD
+<a name="3_5_4"></a>
+### [↖](#3_5)[↑](#3_5_3)[↓](#3_6) Simple AD
 * Simple AD is an inexpensive Active Directory–compatible service with the common directory features.
 * Supports joining EC2 instances, manage users and groups
 * Does not support MFA, RDS SQL server, AWS SSO
@@ -570,18 +574,18 @@ services, such as Amazon WorkSpaces, with AD users and groups.
 * Lower cost, low scale, basic AD compatible, or LDAP compatibility
 * No trust relationship to on-premises Microsoft AD
 
-<a name="3_5"></a>
-## [↖](#top)[↑](#3_4_4)[↓](#3_5_1) AWS Organization
+<a name="3_6"></a>
+## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Organization
 <!-- toc_start -->
-* [Overview](#3_5_1)
-  * [Benefits](#3_5_1_1)
-  * [Multi-account strategies](#3_5_1_2)
-* [Service Control Policies (SCP)](#3_5_2)
-* [Tag Policies](#3_5_3)
-* [Reserved Instances](#3_5_4)
+* [Overview](#3_6_1)
+  * [Benefits](#3_6_1_1)
+  * [Multi-account strategies](#3_6_1_2)
+* [Service Control Policies (SCP)](#3_6_2)
+* [Tag Policies](#3_6_3)
+* [Reserved Instances](#3_6_4)
 <!-- toc_end -->
-<a name="3_5_1"></a>
-### [↖](#3_5)[↑](#3_5)[↓](#3_5_1_1) Overview
+<a name="3_6_1"></a>
+### [↖](#3_6)[↑](#3_6)[↓](#3_6_1_1) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
 you can create groups of accounts, automate account creation, apply and manage policies for those
 groups. Organizations enables you to centrally manage policies across multiple accounts, without
@@ -605,8 +609,8 @@ no additional charge.
 * Integration with AWS Single Sign-On (SSO)
 * On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="3_5_1_1"></a>
-#### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_1_2) Benefits
+<a name="3_6_1_1"></a>
+#### [↖](#3_6)[↑](#3_6_1)[↓](#3_6_1_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -618,8 +622,8 @@ no additional charge.
   * Ability to apply an SCP to prevent member accounts from leaving the org
 * Apply Tag Policies across the hierachy
 
-<a name="3_5_1_2"></a>
-#### [↖](#3_5)[↑](#3_5_1_1)[↓](#3_5_2) Multi-account strategies
+<a name="3_6_1_2"></a>
+#### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_2) Multi-account strategies
 • Create accounts per department, per cost center, per dev / test / prod, based on regulatory
   restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account
   service limits, isolated account for logging,
@@ -629,8 +633,8 @@ no additional charge.
 • Send CloudWatch logs to central logging account
 • Establish cross account roles for admin purposes
 
-<a name="3_5_2"></a>
-### [↖](#3_5)[↑](#3_5_1_2)[↓](#3_5_3) Service Control Policies (SCP)
+<a name="3_6_2"></a>
+### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_3) Service Control Policies (SCP)
 Service control policies (SCPs) are one type of policy that you can use to manage your organization.
 SCPs offer central control over the maximum available permissions for all accounts in your
 organization, allowing you to ensure your accounts stay within your organization’s access control
@@ -651,13 +655,13 @@ for the master account itself.
   * Enforce PCI compliance by explicitly disabling services
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
-<a name="3_5_3"></a>
-### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_4) Tag Policies
+<a name="3_6_3"></a>
+### [↖](#3_6)[↑](#3_6_2)[↓](#3_6_4) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your
 organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
-<a name="3_5_4"></a>
-### [↖](#3_5)[↑](#3_5_3)[↓](#3_6) Reserved Instances
+<a name="3_6_4"></a>
+### [↖](#3_6)[↑](#3_6_3)[↓](#3_7) Reserved Instances
 * For billing purposes, the consolidated billing feature of AWS Organizations treats all the
   accounts in the organization as one account.
 * This means that all accounts in the organization can receive the hourly cost benefit of Reserved
@@ -667,13 +671,13 @@ organization's accounts. In a tag policy, you specify tagging rules applicable t
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
-<a name="3_6"></a>
-## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Resource Access Manager
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_4)[↓](#3_7_1) AWS Resource Access Manager
 <!-- toc_start -->
-* [Overview](#3_6_1)
+* [Overview](#3_7_1)
 <!-- toc_end -->
-<a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6)[↓](#3_7) Overview
+<a name="3_7_1"></a>
+### [↖](#3_7)[↑](#3_7)[↓](#3_8) Overview
 AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you
 have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those
 resources with other accounts.
@@ -691,14 +695,14 @@ resources with other accounts.
   * License Manager Configurations
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
-<a name="3_7"></a>
-## [↖](#top)[↑](#3_6_1)[↓](#3_7_1) AWS Single Sign-On
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_1)[↓](#3_8_1) AWS Single Sign-On
 <!-- toc_start -->
-* [Overview](#3_7_1)
+* [Overview](#3_8_1)
 <!-- toc_end -->
 
-<a name="3_7_1"></a>
-### [↖](#3_7)[↑](#3_7) Overview
+<a name="3_8_1"></a>
+### [↖](#3_8)[↑](#3_8)[↓](#4) Overview
 AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally
 manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you
 manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO
@@ -719,11 +723,20 @@ and access all their assigned AWS accounts, cloud applications, and custom appli
 * Centralized auditing with CloudTrail
 * On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
-# Security
+<a name="4"></a>
+# [↖](#top)[↑](#3_8_1)[↓](#4_1) Security
 
-## CloudTrail
+<a name="4_1"></a>
+## [↖](#top)[↑](#4)[↓](#4_1_1) CloudTrail
+<!-- toc_start -->
+* [Overview](#4_1_1)
+* [Concepts](#4_1_2)
+  * [Event](#4_1_2_1)
+* [Trail](#4_1_3)
+<!-- toc_end -->
 
-### Overview
+<a name="4_1_1"></a>
+### [↖](#4_1)[↑](#4_1)[↓](#4_1_2) Overview
 AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk
 auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain
 account activity related to actions across your AWS infrastructure. CloudTrail provides event
@@ -737,16 +750,17 @@ CloudTrail is enabled by default in every account. All activities in an AWS acco
 recorded as CloudTrail events.
 
 * On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
-### [↖](#4_8)[↑](#4_8_1)[↓](#4_8_2_1) Concepts
+<a name="4_1_2"></a>
+### [↖](#4_1)[↑](#4_1_1)[↓](#4_1_2_1) Concepts
 
-<a name="4_8_2_1"></a>
-#### [↖](#4_8)[↑](#4_8_2)[↓](#4_8_3) Event
+<a name="4_1_2_1"></a>
+#### [↖](#4_1)[↑](#4_1_2)[↓](#4_1_3) Event
 * JSON format, who did what (API calls).
 * ~15min delay
 * Stored for 90 days
 
-<a name="4_8_3"></a>
-### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_9) Trail
+<a name="4_1_3"></a>
+### [↖](#4_1)[↑](#4_1_2_1) Trail
 * Can configure what type of events to log
 	* Management events
 	* CloudWatch Insights events
