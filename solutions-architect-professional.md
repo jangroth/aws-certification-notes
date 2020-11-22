@@ -76,6 +76,20 @@
 <a name="3"></a>
 # [↖](#top)[↑](#2_1_5)[↓](#3_1) Identity and Federation
 
+## Summary
+* Users and Accounts all in AWS
+* AWS Organizations
+* Federation with SAML
+* Federation without SAML with a custom IdP (GetFederationToken)
+* Federation with SSO for multiple accounts with AWS Organizations
+* Web Identity Federation (not recommended)
+* Cognito for most web and mobile applications (has anonymous mode, MFA)
+* Active Directory on AWS:
+  * Microsoft AD: standalone or setup trust AD with on-premise, has MFA, seamless join, RDS integration
+  * AD Connector: proxy requests to on-premise
+  * Simple AD: standalone & cheap AD-compatible with no MFA, no advanced capabilities
+  * Single Sign On to connect to multiple AWS Accounts (Organization) and SAML apps
+
 <a name="3_1"></a>
 ## [↖](#top)[↑](#3)[↓](#3_1_1) Identity and Access Management (IAM)
 <!-- toc_start -->
@@ -705,3 +719,43 @@ and access all their assigned AWS accounts, cloud applications, and custom appli
 * Centralized auditing with CloudTrail
 * On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
+# Security
+
+## CloudTrail
+
+### Overview
+AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk
+auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain
+account activity related to actions across your AWS infrastructure. CloudTrail provides event
+history of your AWS account activity, including actions taken through the AWS Management Console,
+AWS SDKs, command line tools, and other AWS services. This event history simplifies security
+analysis, resource change tracking, and troubleshooting. In addition, you can use CloudTrail to
+detect unusual activity in your AWS accounts. These capabilities help simplify operational
+analysis and troubleshooting.
+
+CloudTrail is enabled by default in every account. All activities in an AWS account are being
+recorded as CloudTrail events.
+
+* On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
+### [↖](#4_8)[↑](#4_8_1)[↓](#4_8_2_1) Concepts
+
+<a name="4_8_2_1"></a>
+#### [↖](#4_8)[↑](#4_8_2)[↓](#4_8_3) Event
+* JSON format, who did what (API calls).
+* ~15min delay
+* Stored for 90 days
+
+<a name="4_8_3"></a>
+### [↖](#4_8)[↑](#4_8_2_1)[↓](#4_9) Trail
+* Can configure what type of events to log
+	* Management events
+	* CloudWatch Insights events
+	* Data events
+* One region/all regions/organization-wide
+* Store data in nominated S3 bucket, this can be encrypted as well
+  * Every 5 min
+	* Can be in a different region
+* Can also deliver and analyse events in a trail with CloudWatch Logs and CloudWatch Events
+* Can validate integrity of log files using digest files
+* Can deliver trails from multiple accounts into the same bucket
+  * Change bucket policy to allow that
