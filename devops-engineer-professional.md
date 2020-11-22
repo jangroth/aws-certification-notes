@@ -1605,6 +1605,8 @@ volume of data and traffic fluctuates, Amazon CloudSearch scales to meet your ne
 * [Trail](#4_8_3)
 <!-- toc_end -->
 
+<a name="4_8_1"></a>
+### [↖](#4_8)[↑](#4_8)[↓](#4_8_2) Overview
 AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk
 auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain
 account activity related to actions across your AWS infrastructure. CloudTrail provides event
@@ -1614,12 +1616,10 @@ analysis, resource change tracking, and troubleshooting. In addition, you can us
 detect unusual activity in your AWS accounts. These capabilities help simplify operational
 analysis and troubleshooting.
 
-* On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
-
-<a name="4_8_1"></a>
-### [↖](#4_8)[↑](#4_8)[↓](#4_8_2) Overview
 CloudTrail is enabled by default in every account. All activities in an AWS account are being
 recorded as CloudTrail events.
+
+* On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
 
 <a name="4_8_2"></a>
 ### [↖](#4_8)[↑](#4_8_1)[↓](#4_8_2_1) Concepts
