@@ -750,13 +750,14 @@ CloudTrail is enabled by default in every account. All activities in an AWS acco
 recorded as CloudTrail events.
 
 * On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
+
 <a name="4_1_2"></a>
 ### [↖](#4_1)[↑](#4_1_1)[↓](#4_1_2_1) Concepts
 
 <a name="4_1_2_1"></a>
 #### [↖](#4_1)[↑](#4_1_2)[↓](#4_1_3) Event
 * JSON format, who did what (API calls).
-* ~15min delay
+* Up to 15min delay
 * Stored for 90 days
 
 <a name="4_1_3"></a>
@@ -773,3 +774,38 @@ recorded as CloudTrail events.
 * Can validate integrity of log files using digest files
 * Can deliver trails from multiple accounts into the same bucket
   * Change bucket policy to allow that
+
+### Notification options
+.|.
+-|-
+SNS|Can notify SQS/Lambda from there
+S3|Can use bucket events from there
+Stream into CloudWatch Logs|Can utilize metric filtering and raise alarms
+CloudWatch Events|Fastest way, works for every API call
+
+## KMS
+### Overview
+AWS Key Management Service (KMS) makes it easy for you to create and manage cryptographic keys and
+control their use across a wide range of AWS services and in your applications. AWS KMS is a
+secure and resilient service that uses hardware security modules that have been validated under
+FIPS 140-2, or are in the process of being validated, to protect your keys. AWS KMS is integrated
+with AWS CloudTrail to provide you with logs of all key usage to help meet your regulatory and compliance needs.
+
+* Fully managed
+* Centralized key management
+* Manage Encryption for AWS services
+* Encrypt data in your application
+* Built-in auditing
+* Low cost
+* Secure
+* Compliance
+* On AWS: <a href="https://aws.amazon.com/kms/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kms/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank">User Guide</a>
+
+### Concepts
+• The value in KMS is that the CMK used to encrypt data can never be retrieved by the user, and the CMK can be rotated for extra security
+• KMS can only help in encrypting up to 4KB of data per call
+• If data > 4 KB, use Envelope Encryption
+• To give access to KMS to someone:
+  • Make sure the Key Policy allows the user
+  • Make sure the IAM Policy allows the API calls
+• Track API calls made to KMS in CloudTrail
