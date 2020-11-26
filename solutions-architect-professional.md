@@ -802,10 +802,39 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
 * On AWS: <a href="https://aws.amazon.com/kms/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kms/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank">User Guide</a>
 
 ### Concepts
-• The value in KMS is that the CMK used to encrypt data can never be retrieved by the user, and the CMK can be rotated for extra security
-• KMS can only help in encrypting up to 4KB of data per call
-• If data > 4 KB, use Envelope Encryption
-• To give access to KMS to someone:
-  • Make sure the Key Policy allows the user
-  • Make sure the IAM Policy allows the API calls
-• Track API calls made to KMS in CloudTrail
+* The value in KMS is that the CMK used to encrypt data can never be retrieved by the user, and
+  the CMK can be rotated for extra security
+* KMS can only help in encrypting up to 4KB of data per call
+* If data > 4 KB, use Envelope Encryption
+* To give access to KMS to someone:
+  * Make sure the Key Policy allows the user
+  * Make sure the IAM Policy allows the API calls
+* Track API calls made to KMS in CloudTrail
+
+### Keys, ownership and management responsibilities
+#### Customer master keys (CMKs)
+* Customer master keys are the primary resources in AWS KMS.
+* A customer master key (CMK) is a logical representation of a master key. The CMK includes
+  metadata, such as the key ID, creation date, description, and key state. The CMK also contains
+  the key material used to encrypt and decrypt data.
+* Create, manage and use, can enable or disable
+* Possibility of rotation policy (new key generated every year, old key preserved)
+* Can add a key policy (resource policy)
+* Leverage for envelope encryption
+
+#### Customer managed CMKs
+Customer managed CMKs are CMKs in your AWS account that you create, own, and manage. You have full
+control over these CMKs, including establishing and maintaining their key policies, IAM policies,
+and grants, enabling and disabling them, rotating their cryptographic material, adding tags,
+creating aliases that refer to the CMK, and scheduling the CMKs for deletion.
+
+#### AWS managed CMKs
+AWS managed CMKs are CMKs in your account that are created, managed, and used on your behalf by an
+AWS service that is integrated with AWS KMS. Some AWS services support only an AWS managed CMK.
+Others use an AWS owned CMK or offer you a choice of CMKs.
+
+#### AWS owned CMKs
+AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in multiple
+AWS accounts. Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS
+owned CMKs to protect the resources in your account.
+
