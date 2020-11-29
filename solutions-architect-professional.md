@@ -16,6 +16,9 @@
 * [Security](#4)
   * [CloudTrail](#4_1)
   * [KMS](#4_2)
+  * [SSM Parameter Store](#4_3)
+  * [Secrets Manager](#4_4)
+  * [RDS Security](#4_5)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -853,13 +856,18 @@ AWS service that is integrated with AWS KMS. Some AWS services support only an A
 Others use an AWS owned CMK or offer you a choice of CMKs.
 
 <a name="4_2_3_4"></a>
-#### [↖](#4_2)[↑](#4_2_3_3) AWS owned CMKs
+#### [↖](#4_2)[↑](#4_2_3_3)[↓](#4_3) AWS owned CMKs
 AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in multiple
 AWS accounts. Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS
 owned CMKs to protect the resources in your account.
 
-## SSM Parameter Store
-### Overview
+<a name="4_3"></a>
+## [↖](#top)[↑](#4_2_3_4)[↓](#4_3_1) SSM Parameter Store
+<!-- toc_start -->
+* [Overview](#4_3_1)
+<!-- toc_end -->
+<a name="4_3_1"></a>
+### [↖](#4_3)[↑](#4_3)[↓](#4_4) Overview
 AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data
 management and secrets management. You can store data such as passwords, database strings, Amazon
 Machine Image (AMI) IDs, and license codes as parameter values. You can store values as plain text
@@ -877,8 +885,13 @@ when you created the parameter.
 * Can retrieve secrets from Secrets Manager using the SSM Parameter Store API
 * On AWS: <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html" target="_blank">User Guide</a>
 
-## Secrets Manager
-### Overview
+<a name="4_4"></a>
+## [↖](#top)[↑](#4_3_1)[↓](#4_4_1) Secrets Manager
+<!-- toc_start -->
+* [Overview](#4_4_1)
+<!-- toc_end -->
+<a name="4_4_1"></a>
+### [↖](#4_4)[↑](#4_4)[↓](#4_5) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
 resources. The service enables you to easily rotate, manage, and retrieve database credentials,
 API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
@@ -896,3 +909,18 @@ AWS Cloud, third-party services, and on-premises.
 * Secrets are encrypted using KMS
 * Mostly meant for RDS integration
 * On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank">User Guide</a>
+
+<a name="4_5"></a>
+## [↖](#top)[↑](#4_4_1)[↓](#4_5_1) RDS Security
+<!-- toc_start -->
+* [Overview](#4_5_1)
+<!-- toc_end -->
+<a name="4_5_1"></a>
+### [↖](#4_5)[↑](#4_5) Overview
+* KMS encryption at rest for underlying EBS volumes / snapshots
+* Transparent Data Encryption (TDE) for Oracle and SQL Server
+* SSL encryption to RDS is possible for all DB (in-flight)
+* IAM authentication (only) for MySQL and PostgreSQL
+* Authorization still happens within RDS (not in IAM)
+* Can copy an un-encrypted RDS snapshot into an encrypted one
+* CloudTrail cannot be used to track queries made within RDS
