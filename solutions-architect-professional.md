@@ -15,6 +15,7 @@
   * [AWS Single Sign-On](#3_8)
 * [Security](#4)
   * [CloudTrail](#4_1)
+  * [KMS](#4_2)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -733,6 +734,7 @@ and access all their assigned AWS accounts, cloud applications, and custom appli
 * [Concepts](#4_1_2)
   * [Event](#4_1_2_1)
 * [Trail](#4_1_3)
+* [Notification options](#4_1_4)
 <!-- toc_end -->
 
 <a name="4_1_1"></a>
@@ -761,7 +763,7 @@ recorded as CloudTrail events.
 * Stored for 90 days
 
 <a name="4_1_3"></a>
-### [↖](#4_1)[↑](#4_1_2_1) Trail
+### [↖](#4_1)[↑](#4_1_2_1)[↓](#4_1_4) Trail
 * Can configure what type of events to log
 	* Management events
 	* CloudWatch Insights events
@@ -775,7 +777,8 @@ recorded as CloudTrail events.
 * Can deliver trails from multiple accounts into the same bucket
   * Change bucket policy to allow that
 
-### Notification options
+<a name="4_1_4"></a>
+### [↖](#4_1)[↑](#4_1_3)[↓](#4_2) Notification options
 .|.
 -|-
 SNS|Can notify SQS/Lambda from there
@@ -783,8 +786,19 @@ S3|Can use bucket events from there
 Stream into CloudWatch Logs|Can utilize metric filtering and raise alarms
 CloudWatch Events|Fastest way, works for every API call
 
-## KMS
-### Overview
+<a name="4_2"></a>
+## [↖](#top)[↑](#4_1_4)[↓](#4_2_1) KMS
+<!-- toc_start -->
+* [Overview](#4_2_1)
+* [Concepts](#4_2_2)
+* [Keys, ownership and management responsibilities](#4_2_3)
+  * [Customer master keys (CMKs)](#4_2_3_1)
+  * [Customer managed CMKs](#4_2_3_2)
+  * [AWS managed CMKs](#4_2_3_3)
+  * [AWS owned CMKs](#4_2_3_4)
+<!-- toc_end -->
+<a name="4_2_1"></a>
+### [↖](#4_2)[↑](#4_2)[↓](#4_2_2) Overview
 AWS Key Management Service (KMS) makes it easy for you to create and manage cryptographic keys and
 control their use across a wide range of AWS services and in your applications. AWS KMS is a
 secure and resilient service that uses hardware security modules that have been validated under
@@ -801,7 +815,8 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
 * Compliance
 * On AWS: <a href="https://aws.amazon.com/kms/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kms/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" target="_blank">User Guide</a>
 
-### Concepts
+<a name="4_2_2"></a>
+### [↖](#4_2)[↑](#4_2_1)[↓](#4_2_3) Concepts
 * The value in KMS is that the CMK used to encrypt data can never be retrieved by the user, and
   the CMK can be rotated for extra security
 * KMS can only help in encrypting up to 4KB of data per call
@@ -811,8 +826,10 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
   * Make sure the IAM Policy allows the API calls
 * Track API calls made to KMS in CloudTrail
 
-### Keys, ownership and management responsibilities
-#### Customer master keys (CMKs)
+<a name="4_2_3"></a>
+### [↖](#4_2)[↑](#4_2_2)[↓](#4_2_3_1) Keys, ownership and management responsibilities
+<a name="4_2_3_1"></a>
+#### [↖](#4_2)[↑](#4_2_3)[↓](#4_2_3_2) Customer master keys (CMKs)
 * Customer master keys are the primary resources in AWS KMS.
 * A customer master key (CMK) is a logical representation of a master key. The CMK includes
   metadata, such as the key ID, creation date, description, and key state. The CMK also contains
@@ -822,19 +839,60 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
 * Can add a key policy (resource policy)
 * Leverage for envelope encryption
 
-#### Customer managed CMKs
+<a name="4_2_3_2"></a>
+#### [↖](#4_2)[↑](#4_2_3_1)[↓](#4_2_3_3) Customer managed CMKs
 Customer managed CMKs are CMKs in your AWS account that you create, own, and manage. You have full
 control over these CMKs, including establishing and maintaining their key policies, IAM policies,
 and grants, enabling and disabling them, rotating their cryptographic material, adding tags,
 creating aliases that refer to the CMK, and scheduling the CMKs for deletion.
 
-#### AWS managed CMKs
+<a name="4_2_3_3"></a>
+#### [↖](#4_2)[↑](#4_2_3_2)[↓](#4_2_3_4) AWS managed CMKs
 AWS managed CMKs are CMKs in your account that are created, managed, and used on your behalf by an
 AWS service that is integrated with AWS KMS. Some AWS services support only an AWS managed CMK.
 Others use an AWS owned CMK or offer you a choice of CMKs.
 
-#### AWS owned CMKs
+<a name="4_2_3_4"></a>
+#### [↖](#4_2)[↑](#4_2_3_3) AWS owned CMKs
 AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in multiple
 AWS accounts. Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS
 owned CMKs to protect the resources in your account.
 
+## SSM Parameter Store
+### Overview
+AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data
+management and secrets management. You can store data such as passwords, database strings, Amazon
+Machine Image (AMI) IDs, and license codes as parameter values. You can store values as plain text
+or encrypted data. You can reference Systems Manager parameters in your scripts, commands, SSM
+documents, and configuration and automation workflows by using the unique name that you specified
+when you created the parameter.
+
+* Secure storage for configuration and secrets
+* Optional Seamless Encryption using KMS
+* Serverless, scalable, durable, easy SDK, free
+* Version tracking of configurations / secrets
+* Configuration management using path & IAM
+* Notifications with CloudWatch Events
+* Integration with CloudFormation
+* Can retrieve secrets from Secrets Manager using the SSM Parameter Store API
+* On AWS: <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html" target="_blank">User Guide</a>
+
+## Secrets Manager
+### Overview
+AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
+resources. The service enables you to easily rotate, manage, and retrieve database credentials,
+API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
+with a call to Secrets Manager APIs, eliminating the need to hardcode sensitive information in
+plain text. Secrets Manager offers secret rotation with built-in integration for Amazon RDS,
+Amazon Redshift, and Amazon DocumentDB. Also, the service is extensible to other types of secrets,
+including API keys and OAuth tokens. In addition, Secrets Manager enables you to control access to
+secrets using fine-grained permissions and audit secret rotation centrally for resources in the
+AWS Cloud, third-party services, and on-premises.
+
+* Newer service, meant for storing secrets
+* Capability to force rotation of secrets every X days
+* Automate generation of secrets on rotation (uses Lambda)
+* Integration with Amazon RDS (MySQL, PostgreSQL, Aurora)
+* Secrets are encrypted using KMS
+* Mostly meant for RDS integration
+* On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank">User Guide</a>
