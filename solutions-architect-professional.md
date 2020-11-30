@@ -924,3 +924,45 @@ AWS Cloud, third-party services, and on-premises.
 * Authorization still happens within RDS (not in IAM)
 * Can copy an un-encrypted RDS snapshot into an encrypted one
 * CloudTrail cannot be used to track queries made within RDS
+
+## SSL/SNI/MITM/DNSSEC
+
+### SSL Basics
+* SSL refers to Secure Sockets Layer, used to encrypt connections
+* TLS refers to Transport Layer Security, which is a newer version
+* Nowadays, TLS certificates are mainly used, but people still refer as SSL
+* Public SSL certificates are issued by Certificate Authorities (CA)
+  * Comodo, Symantec, GoDaddy, GlobalSign, Digicert, Letsencrypt, etc...
+* SSL certificates have an expiration date (you set) and must be renewed
+
+### SSL Handshake
+Client|Server
+-|-
+Client sends hello, cipher suits & random|.
+.|Server Response with server random & SSL certificate (Public Key)
+Master key (symmetric) generated and sent encrypted using the Public Key|.
+.|Server verifies Client SSL cert (optional)
+.|Master key is decrypted using Private Key
+Secure Symmetric ..|..Communication in Place
+
+* Asymmetric encrytion (expensive) for handshake only, symmetric after that
+* Possibility of client sending an SSL certificate as well (two-way certificate)
+
+### Server Name Indication (SNI)
+* SNI solves the problem of loading multiple SSL certificates onto one web server (to serve multiple websites)
+  * `www.aaa.com`, `www.bbb.com`, ...
+* It’s a “newer” protocol, and requires the client to indicate the hostname of the target server in the initial SSL handshake
+* The server will then find the correct certificate, or return the default one
+  * Has multiple certificates configured
+* Supported by ALB and NLB only, not supported by ELB
+
+### Man-In-The-Middle (MITM)
+* The attacker secretly relays and possibly alters the communications between two parties who believe that they are directly communicating with each other.
+* How to prevent
+  * Don’t use public-facing HTTP, use HTTPS (meaning, use SSL/TLS certicates)
+  * Use a DNS that has DNSSEC
+    * To end send a client to a pirate server, a DNS response needs to be “forged” by a server which intercepts them
+    * It is possible to protect your domain name by configuring DNSSEC
+    * Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.
+    * You could run a custom DNS server on Ama
+
