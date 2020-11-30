@@ -19,6 +19,7 @@
   * [SSM Parameter Store](#4_3)
   * [Secrets Manager](#4_4)
   * [RDS Security](#4_5)
+  * [SSL/SNI/MITM/DNSSEC](#4_6)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -916,7 +917,7 @@ AWS Cloud, third-party services, and on-premises.
 * [Overview](#4_5_1)
 <!-- toc_end -->
 <a name="4_5_1"></a>
-### [↖](#4_5)[↑](#4_5) Overview
+### [↖](#4_5)[↑](#4_5)[↓](#4_6) Overview
 * KMS encryption at rest for underlying EBS volumes / snapshots
 * Transparent Data Encryption (TDE) for Oracle and SQL Server
 * SSL encryption to RDS is possible for all DB (in-flight)
@@ -925,9 +926,17 @@ AWS Cloud, third-party services, and on-premises.
 * Can copy an un-encrypted RDS snapshot into an encrypted one
 * CloudTrail cannot be used to track queries made within RDS
 
-## SSL/SNI/MITM/DNSSEC
+<a name="4_6"></a>
+## [↖](#top)[↑](#4_5_1)[↓](#4_6_1) SSL/SNI/MITM/DNSSEC
+<!-- toc_start -->
+* [SSL Basics](#4_6_1)
+* [SSL Handshake](#4_6_2)
+* [Server Name Indication (SNI)](#4_6_3)
+* [Man-In-The-Middle (MITM)](#4_6_4)
+<!-- toc_end -->
 
-### SSL Basics
+<a name="4_6_1"></a>
+### [↖](#4_6)[↑](#4_6)[↓](#4_6_2) SSL Basics
 * SSL refers to Secure Sockets Layer, used to encrypt connections
 * TLS refers to Transport Layer Security, which is a newer version
 * Nowadays, TLS certificates are mainly used, but people still refer as SSL
@@ -935,7 +944,8 @@ AWS Cloud, third-party services, and on-premises.
   * Comodo, Symantec, GoDaddy, GlobalSign, Digicert, Letsencrypt, etc...
 * SSL certificates have an expiration date (you set) and must be renewed
 
-### SSL Handshake
+<a name="4_6_2"></a>
+### [↖](#4_6)[↑](#4_6_1)[↓](#4_6_3) SSL Handshake
 Client|Server
 -|-
 Client sends hello, cipher suits & random|.
@@ -948,7 +958,8 @@ Secure Symmetric ..|..Communication in Place
 * Asymmetric encrytion (expensive) for handshake only, symmetric after that
 * Possibility of client sending an SSL certificate as well (two-way certificate)
 
-### Server Name Indication (SNI)
+<a name="4_6_3"></a>
+### [↖](#4_6)[↑](#4_6_2)[↓](#4_6_4) Server Name Indication (SNI)
 * SNI solves the problem of loading multiple SSL certificates onto one web server (to serve multiple websites)
   * `www.aaa.com`, `www.bbb.com`, ...
 * It’s a “newer” protocol, and requires the client to indicate the hostname of the target server in the initial SSL handshake
@@ -956,7 +967,8 @@ Secure Symmetric ..|..Communication in Place
   * Has multiple certificates configured
 * Supported by ALB and NLB only, not supported by ELB
 
-### Man-In-The-Middle (MITM)
+<a name="4_6_4"></a>
+### [↖](#4_6)[↑](#4_6_3) Man-In-The-Middle (MITM)
 * The attacker secretly relays and possibly alters the communications between two parties who believe that they are directly communicating with each other.
 * How to prevent
   * Don’t use public-facing HTTP, use HTTPS (meaning, use SSL/TLS certicates)
