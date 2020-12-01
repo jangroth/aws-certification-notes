@@ -20,6 +20,7 @@
   * [Secrets Manager](#4_4)
   * [RDS Security](#4_5)
   * [SSL/SNI/MITM/DNSSEC](#4_6)
+  * [AWS Certificate Manager](#4_7)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -968,7 +969,7 @@ Secure Symmetric ..|..Communication in Place
 * Supported by ALB and NLB only, not supported by ELB
 
 <a name="4_6_4"></a>
-### [↖](#4_6)[↑](#4_6_3) Man-In-The-Middle (MITM)
+### [↖](#4_6)[↑](#4_6_3)[↓](#4_7) Man-In-The-Middle (MITM)
 * The attacker secretly relays and possibly alters the communications between two parties who believe that they are directly communicating with each other.
 * How to prevent
   * Don’t use public-facing HTTP, use HTTPS (meaning, use SSL/TLS certicates)
@@ -978,8 +979,13 @@ Secure Symmetric ..|..Communication in Place
     * Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.
     * You could run a custom DNS server on Ama
 
-## AWS Certificate Manager
-### Overview
+<a name="4_7"></a>
+## [↖](#top)[↑](#4_6_4)[↓](#4_7_1) AWS Certificate Manager
+<!-- toc_start -->
+* [Overview](#4_7_1)
+<!-- toc_end -->
+<a name="4_7_1"></a>
+### [↖](#4_7)[↑](#4_7) Overview
 AWS Certificate Manager is a service that lets you easily provision, manage, and deploy public and
 private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS
 services and your internal connected resources. SSL/TLS certificates are used to secure network
