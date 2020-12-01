@@ -978,3 +978,43 @@ Secure Symmetric ..|..Communication in Place
     * Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.
     * You could run a custom DNS server on Ama
 
+## AWS Certificate Manager
+### Overview
+AWS Certificate Manager is a service that lets you easily provision, manage, and deploy public and
+private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS
+services and your internal connected resources. SSL/TLS certificates are used to secure network
+communications and establish the identity of websites over the Internet as well as resources on
+private networks. AWS Certificate Manager removes the time-consuming manual process of purchasing,
+uploading, and renewing SSL/TLS certificates.
+
+With AWS Certificate Manager, you can quickly request a certificate, deploy it on ACM-integrated
+AWS resources, such as Elastic Load Balancers, Amazon CloudFront distributions, and APIs on API
+Gateway, and let AWS Certificate Manager handle certificate renewals. It also enables you to
+create private certificates for your internal resources and manage the certificate lifecycle
+centrally. Public and private certificates provisioned through AWS Certificate Manager for use
+with ACM-integrated services are free. You pay only for the AWS resources you create to run your
+application. With AWS Certificate Manager Private Certificate Authority, you pay monthly for the
+operation of the private CA and for the private certificates you issue.
+
+* To host public SSL certificates in AWS, you can:
+  * Buy your own and upload them using the CLI
+  * Have ACM provision and renew public SSL certificates for you (free of cost)
+* ACM loads SSL certificates on the following integrations:
+  * Load Balancers (including the ones created by EB)
+  * CloudFront distributions
+  * APIs on API Gateways
+* Possibility of creating public certificates
+  * Must verify public DNS (verify that you own or control all of the domain names that you specified in your request)
+  * Must be issued by a trusted public certificate authority (CA)
+* Possibility of creating private certificates
+  * For your internal applications
+  * You create your own private CA
+  * Your applications must trust your private CA
+* Certificate renewal:
+  * Automatically done if generated provisioned by ACM
+  * Any manually uploaded certificates must be renewed manually and re-uploaded
+* ACM is a regional service
+  * To use with a global application (multiple ALB for example), you need to issue an SSL certificate in each region where you application is deployed.
+  * You cannot copy certs across regions
+
+* On AWS: <a href="https://aws.amazon.com/certificate-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/certificate-manager/faqs/?nc=sn&loc=5" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">User Guide</a>
