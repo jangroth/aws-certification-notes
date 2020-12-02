@@ -1024,3 +1024,39 @@ operation of the private CA and for the private certificates you issue.
   * You cannot copy certs across regions
 
 * On AWS: <a href="https://aws.amazon.com/certificate-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/certificate-manager/faqs/?nc=sn&loc=5" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">User Guide</a>
+
+## CloudHSM
+### Overview
+AWS CloudHSM provides hardware security modules in the AWS Cloud. A hardware security module (HSM)
+is a computing device that processes cryptographic operations and provides secure storage for cryptographic keys.
+
+When you use an HSM from AWS CloudHSM, you can perform a variety of cryptographic tasks:
+* Generate, store, import, export, and manage cryptographic keys, including symmetric keys and asymmetric key pairs.
+* Use symmetric and asymmetric algorithms to encrypt and decrypt data.
+* Use cryptographic hash functions to compute message digests and hash-based message authentication codes (HMACs).
+* Cryptographically sign data (including code signing) and verify signatures.
+* Generate cryptographically secure random data.
+
+If you want a managed service for creating and controlling your encryption keys, but you don't
+want or need to operate your own HSM, consider using AWS KMS.
+
+* You manage your own encryption keys entirely (not AWS)
+* HSM device is tamper resistant, FIPS 140-2 Level 3 compliance
+* Supports both symmetric and asymmetric encryption (SSL/TLS keys)
+* No free tier available
+* Must use the CloudHSM Client Software
+* Redshift supports CloudHSM for database encryption and key management
+* Good option to use with SSE-C encryption
+* Can be deployed into a cluster for HA
+* On AWS: <a href="https://aws.amazon.com/cloudhsm/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudhsm/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank">User Guide</a>
+
+### CloudHSM vs KMS
+
+Feature|KMS|CloudHSM
+-|-|-
+Tenancy|Uses multi-tenant key storage|Single tenant key storage, dedicated to one customer
+Keys|Keys owned and managed by AWS|Customer managed Keys
+Encryption|Symmetric and asymmetric (*new*) encryption|Supports both symmetric and asymmetric encryption
+Cryptographic Acceleration|None|SSL/TLS Acceleration Oracle TDE Acceleration
+Key Storage and Management|Accessible from multiple regions<br/>Centralized management from IAM|Deployed and managed from a customer VPC.<br/>Accessible and can be shared across VPCs using VPC peering
+Free Tier Availability|Yes|No
