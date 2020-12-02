@@ -21,6 +21,7 @@
   * [RDS Security](#4_5)
   * [SSL/SNI/MITM/DNSSEC](#4_6)
   * [AWS Certificate Manager](#4_7)
+  * [CloudHSM](#4_8)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -985,7 +986,7 @@ Secure Symmetric ..|..Communication in Place
 * [Overview](#4_7_1)
 <!-- toc_end -->
 <a name="4_7_1"></a>
-### [↖](#4_7)[↑](#4_7) Overview
+### [↖](#4_7)[↑](#4_7)[↓](#4_8) Overview
 AWS Certificate Manager is a service that lets you easily provision, manage, and deploy public and
 private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS
 services and your internal connected resources. SSL/TLS certificates are used to secure network
@@ -1025,8 +1026,14 @@ operation of the private CA and for the private certificates you issue.
 
 * On AWS: <a href="https://aws.amazon.com/certificate-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/certificate-manager/faqs/?nc=sn&loc=5" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">User Guide</a>
 
-## CloudHSM
-### Overview
+<a name="4_8"></a>
+## [↖](#top)[↑](#4_7_1)[↓](#4_8_1) CloudHSM
+<!-- toc_start -->
+* [Overview](#4_8_1)
+* [CloudHSM vs KMS](#4_8_2)
+<!-- toc_end -->
+<a name="4_8_1"></a>
+### [↖](#4_8)[↑](#4_8)[↓](#4_8_2) Overview
 AWS CloudHSM provides hardware security modules in the AWS Cloud. A hardware security module (HSM)
 is a computing device that processes cryptographic operations and provides secure storage for cryptographic keys.
 
@@ -1050,7 +1057,8 @@ want or need to operate your own HSM, consider using AWS KMS.
 * Can be deployed into a cluster for HA
 * On AWS: <a href="https://aws.amazon.com/cloudhsm/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudhsm/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank">User Guide</a>
 
-### CloudHSM vs KMS
+<a name="4_8_2"></a>
+### [↖](#4_8)[↑](#4_8_1) CloudHSM vs KMS
 
 Feature|KMS|CloudHSM
 -|-|-
