@@ -1055,6 +1055,8 @@ want or need to operate your own HSM, consider using AWS KMS.
 * Redshift supports CloudHSM for database encryption and key management
 * Good option to use with SSE-C encryption
 * Can be deployed into a cluster for HA
+* Can perform SSL offloading, to free up compute on the server
+  * Also, this keeps the private key on CloudHSM
 * On AWS: <a href="https://aws.amazon.com/cloudhsm/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudhsm/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank">User Guide</a>
 
 <a name="4_8_2"></a>
@@ -1068,3 +1070,41 @@ Encryption|Symmetric and asymmetric (*new*) encryption|Supports both symmetric a
 Cryptographic Acceleration|None|SSL/TLS Acceleration Oracle TDE Acceleration
 Key Storage and Management|Accessible from multiple regions<br/>Centralized management from IAM|Deployed and managed from a customer VPC.<br/>Accessible and can be shared across VPCs using VPC peering
 Free Tier Availability|Yes|No
+
+## S3 Security
+
+### S3 Encryption for objects
+* There are 4 methods of encrypting objects in S3
+  * **SSE-S3**: encrypts S3 objects using keys handled & managed by AWS
+  * **SSE-KMS**: leverage AWS Key Management Service to manage encryption keys
+  * **SSE-C**: when you want to manage your own encryption keys
+  * **Client Side Encryption**
+* Glacier
+  * All data is AES-256 encrypted, key under AWS control
+
+### Encryption in transit
+AWS S3 exposes:
+* HTTP endpoint: non encrypted
+* HTTPS endpoint: encryption in flight
+  * Mandatory for SSE-C
+* Encryption in flight is also called SSL / TLS
+
+### Event in S3 buckets
+S3 Access Logs:
+• Detailed records for the requests that are made to a bucket
+• Might take hours to deliver
+• Might be incomplete (best effort)
+
+S3 Events Notifications:
+* Receive notifications when certain events happen in your bucket
+  * E.g.: new objects created, object removal, restore objects, replication events
+  * Destinations: SNS, SQS queue, Lambda
+* Typically delivered in seconds but can take minutes, notification for every object if versioning
+is enabled, else risk of one notification for two same object write done simultaneously
+
+Trusted Advisor:
+* Check the bucket permission (is the bucket public?)
+
+CloudWatch Events:
+* Need to enable CloudTrail object level logging on S3 first
+* Target can be Lambda, SQS, SNS, etc...
