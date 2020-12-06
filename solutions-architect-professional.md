@@ -22,6 +22,7 @@
   * [SSL/SNI/MITM/DNSSEC](#4_6)
   * [AWS Certificate Manager](#4_7)
   * [CloudHSM](#4_8)
+  * [S3 Security](#4_9)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1060,7 +1061,7 @@ want or need to operate your own HSM, consider using AWS KMS.
 * On AWS: <a href="https://aws.amazon.com/cloudhsm/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudhsm/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank">User Guide</a>
 
 <a name="4_8_2"></a>
-### [↖](#4_8)[↑](#4_8_1) CloudHSM vs KMS
+### [↖](#4_8)[↑](#4_8_1)[↓](#4_9) CloudHSM vs KMS
 
 Feature|KMS|CloudHSM
 -|-|-
@@ -1071,9 +1072,16 @@ Cryptographic Acceleration|None|SSL/TLS Acceleration Oracle TDE Acceleration
 Key Storage and Management|Accessible from multiple regions<br/>Centralized management from IAM|Deployed and managed from a customer VPC.<br/>Accessible and can be shared across VPCs using VPC peering
 Free Tier Availability|Yes|No
 
-## S3 Security
+<a name="4_9"></a>
+## [↖](#top)[↑](#4_8_2)[↓](#4_9_1) S3 Security
+<!-- toc_start -->
+* [S3 Encryption for objects](#4_9_1)
+* [Encryption in transit](#4_9_2)
+* [Event in S3 buckets](#4_9_3)
+<!-- toc_end -->
 
-### S3 Encryption for objects
+<a name="4_9_1"></a>
+### [↖](#4_9)[↑](#4_9)[↓](#4_9_2) S3 Encryption for objects
 * There are 4 methods of encrypting objects in S3
   * **SSE-S3**: encrypts S3 objects using keys handled & managed by AWS
   * **SSE-KMS**: leverage AWS Key Management Service to manage encryption keys
@@ -1082,14 +1090,16 @@ Free Tier Availability|Yes|No
 * Glacier
   * All data is AES-256 encrypted, key under AWS control
 
-### Encryption in transit
+<a name="4_9_2"></a>
+### [↖](#4_9)[↑](#4_9_1)[↓](#4_9_3) Encryption in transit
 AWS S3 exposes:
 * HTTP endpoint: non encrypted
 * HTTPS endpoint: encryption in flight
   * Mandatory for SSE-C
 * Encryption in flight is also called SSL / TLS
 
-### Event in S3 buckets
+<a name="4_9_3"></a>
+### [↖](#4_9)[↑](#4_9_2) Event in S3 buckets
 S3 Access Logs:
 • Detailed records for the requests that are made to a bucket
 • Might take hours to deliver
