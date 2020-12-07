@@ -1099,7 +1099,7 @@ AWS S3 exposes:
 * Encryption in flight is also called SSL / TLS
 
 <a name="4_9_3"></a>
-### [↖](#4_9)[↑](#4_9_2) Event in S3 buckets
+### [↖](#4_9)[↑](#4_9_2) Events in S3 buckets
 S3 Access Logs:
 • Detailed records for the requests that are made to a bucket
 • Might take hours to deliver
@@ -1118,3 +1118,58 @@ Trusted Advisor:
 CloudWatch Events:
 * Need to enable CloudTrail object level logging on S3 first
 * Target can be Lambda, SQS, SNS, etc...
+
+### S3 Security
+#### User-based
+**IAM**
+* IAM policies (in general) specify what actions are allowed or denied on what AWS resources
+* Defined as JSON
+* Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
+* Use if you’re more interested in *“What can this user do in AWS?”*
+
+#### Resource-based
+**Bucket policies**
+* Specify what actions are allowed or denied for which principals on the bucket that the policy is attached to
+* Defined as JSON
+* Attached *only* to S3 buckets. Can however effect object in buckets.
+* Contain *principal* element (unnecessary for IAM)
+* Use if you’re more interested in *“Who can access this S3 bucket?”*
+* Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
+* Optional Conditions on:
+  * Public IP or Elastic IP (*not* on Private IP)
+  * Source VPC or Source VPC Endpoint – only works with VPC Endpoints
+  * CloudFront Origin Identity
+  * MFA
+* <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html" target="_blank">On AWS</a>
+
+**ACL**
+* Defined as XML. Legacy, not recomended any more.
+* Can
+	* be attached to individual objects (bucket policies only bucket level)
+	* control access to object uploaded into a bucket from a *different* account.
+* Cannot..
+	* have conditions
+	* cannot explicitely deny actions
+	* grant permission to bucket sub-resources (eg. lifecycle or static website configurations)
+* Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a bucket.
+  * Bucket Policies - bucket wide rules from the S3 console - allows cross account
+
+### S3 pre-signed URLs
+Can generate pre-signed URLs using SDK or CLI
+* For downloads (easy, can use the CLI)
+* For uploads (harder, must use the SDK)
+* Valid for a default of 3600 seconds, can change timeout with `--expires-in [TIME_BY_SECONDS]` argument
+* Users given a pre-signed URL inherit the permissions of the person who generated the URL for GET / PUT
+* Examples
+  * Allow only logged-in users to download a premium video on your S3 bucket
+  * Allow an ever changing list of users to download files by generating URLs dynamically
+  * Allow temporarily a user to upload a file to a precise location in our bucket
+
+### S3 WORM
+**S3 Object Lock**
+* Adopt a WORM (Write Once Read Many) model
+* Block an object version deletion for a specified amount of time Object
+**Glacier Vault Lock**
+* Adopt a WORM (Write Once Read Many) model
+* Lock the policy for future edits (can no longer be changed)
+* Helpful for compliance and data retention
