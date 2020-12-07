@@ -1077,7 +1077,12 @@ Free Tier Availability|Yes|No
 <!-- toc_start -->
 * [S3 Encryption for objects](#4_9_1)
 * [Encryption in transit](#4_9_2)
-* [Event in S3 buckets](#4_9_3)
+* [Events in S3 buckets](#4_9_3)
+* [S3 Security](#4_9_4)
+  * [User-based](#4_9_4_1)
+  * [Resource-based](#4_9_4_2)
+* [S3 pre-signed URLs](#4_9_5)
+* [S3 WORM](#4_9_6)
 <!-- toc_end -->
 
 <a name="4_9_1"></a>
@@ -1099,7 +1104,7 @@ AWS S3 exposes:
 * Encryption in flight is also called SSL / TLS
 
 <a name="4_9_3"></a>
-### [↖](#4_9)[↑](#4_9_2) Events in S3 buckets
+### [↖](#4_9)[↑](#4_9_2)[↓](#4_9_4) Events in S3 buckets
 S3 Access Logs:
 • Detailed records for the requests that are made to a bucket
 • Might take hours to deliver
@@ -1119,15 +1124,18 @@ CloudWatch Events:
 * Need to enable CloudTrail object level logging on S3 first
 * Target can be Lambda, SQS, SNS, etc...
 
-### S3 Security
-#### User-based
+<a name="4_9_4"></a>
+### [↖](#4_9)[↑](#4_9_3)[↓](#4_9_4_1) S3 Security
+<a name="4_9_4_1"></a>
+#### [↖](#4_9)[↑](#4_9_4)[↓](#4_9_4_2) User-based
 **IAM**
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
 
-#### Resource-based
+<a name="4_9_4_2"></a>
+#### [↖](#4_9)[↑](#4_9_4_1)[↓](#4_9_5) Resource-based
 **Bucket policies**
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is attached to
 * Defined as JSON
@@ -1154,7 +1162,8 @@ CloudWatch Events:
 * Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a bucket.
   * Bucket Policies - bucket wide rules from the S3 console - allows cross account
 
-### S3 pre-signed URLs
+<a name="4_9_5"></a>
+### [↖](#4_9)[↑](#4_9_4_2)[↓](#4_9_6) S3 pre-signed URLs
 Can generate pre-signed URLs using SDK or CLI
 * For downloads (easy, can use the CLI)
 * For uploads (harder, must use the SDK)
@@ -1165,7 +1174,8 @@ Can generate pre-signed URLs using SDK or CLI
   * Allow an ever changing list of users to download files by generating URLs dynamically
   * Allow temporarily a user to upload a file to a precise location in our bucket
 
-### S3 WORM
+<a name="4_9_6"></a>
+### [↖](#4_9)[↑](#4_9_5) S3 WORM
 **S3 Object Lock**
 * Adopt a WORM (Write Once Read Many) model
 * Block an object version deletion for a specified amount of time Object
