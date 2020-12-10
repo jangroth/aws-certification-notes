@@ -23,6 +23,7 @@
   * [AWS Certificate Manager](#4_7)
   * [CloudHSM](#4_8)
   * [S3 Security](#4_9)
+  * [Network Security, DDOS, Shield and WAF](#4_10)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1175,7 +1176,7 @@ Can generate pre-signed URLs using SDK or CLI
   * Allow temporarily a user to upload a file to a precise location in our bucket
 
 <a name="4_9_6"></a>
-### [↖](#4_9)[↑](#4_9_5) S3 WORM
+### [↖](#4_9)[↑](#4_9_5)[↓](#4_10) S3 WORM
 **S3 Object Lock**
 * Adopt a WORM (Write Once Read Many) model
 * Block an object version deletion for a specified amount of time Object
@@ -1183,3 +1184,123 @@ Can generate pre-signed URLs using SDK or CLI
 * Adopt a WORM (Write Once Read Many) model
 * Lock the policy for future edits (can no longer be changed)
 * Helpful for compliance and data retention
+
+<a name="4_10"></a>
+## [↖](#top)[↑](#4_9_6)[↓](#4_10_1) Network Security, DDOS, Shield and WAF
+<!-- toc_start -->
+* [Network Security](#4_10_1)
+* [Preventing Infrastructure Attacks](#4_10_2)
+  * [Types of attacks](#4_10_2_1)
+  * [DDOS Protection](#4_10_2_2)
+* [AWS Shield](#4_10_3)
+* [AWS WAF](#4_10_4)
+* [AWS Firewall Manager](#4_10_5)
+<!-- toc_end -->
+<a name="4_10_1"></a>
+### [↖](#4_10)[↑](#4_10)[↓](#4_10_2) Network Security
+**Security Groups**
+* Attached to ENI (Elastic Network Interfaces) – EC2, RDS, Lambda in VPC, etc
+* Are stateful (any traffic in is allowed to go out, any traffic out can go back in)
+* Can reference by CIDR and security group id
+* Supports security group references for VPC peering
+* Default: inbound denied, outbound all allowed
+
+**NACL (Network ACL)**
+* Attached at the subnet level
+* Are stateless (inbound and outbound rules apply for all traffic)
+* Can only reference a CIDR range (no hostname)
+* Default: allow all inbound, allow all outbound
+* New NACL: denies all inbound, denies all outbound
+
+**Host Firewall**
+* Software based, highly customizable
+
+<a name="4_10_2"></a>
+### [↖](#4_10)[↑](#4_10_1)[↓](#4_10_2_1) Preventing Infrastructure Attacks
+
+<a name="4_10_2_1"></a>
+#### [↖](#4_10)[↑](#4_10_2)[↓](#4_10_2_2) Types of attacks
+* DDOS
+  * Flooding - layer 4
+* Application level attacks
+  * E.g. cache burst via http - layer 7
+
+<a name="4_10_2_2"></a>
+#### [↖](#4_10)[↑](#4_10_2_1)[↓](#4_10_3) DDOS Protection
+* AWS Shield Standard: protects against DDoS attack for your website and applications, for all customers at no additional costs
+* AWS Shield Advanced: 24/7 premium DDoS protection
+* AWS WAF: Filter specific requests based on rules
+* CloudFront and Route 53
+  * Availability protection using global edge network
+  * Combined with AWS Shield, provides DDoS attack mitigation at the edge
+* Be ready to scale – leverage AWS Auto Scaling
+* Separate static resources (S3 / CloudFront) from dynamic ones (EC2 / ALB)
+
+<a name="4_10_3"></a>
+### [↖](#4_10)[↑](#4_10_2_2)[↓](#4_10_4) AWS Shield
+You can use AWS WAF web access control lists (web ACLs) to help minimize the effects of a
+distributed denial of service (DDoS) attack. For additional protection against DDoS attacks, AWS
+also provides AWS Shield Standard and AWS Shield Advanced. AWS Shield Standard is automatically
+included at no extra cost beyond what you already pay for AWS WAF and your other AWS services. AWS
+Shield Advanced provides expanded DDoS attack protection for your Amazon EC2 instances, Elastic
+Load Balancing load balancers, CloudFront distributions, Route 53 hosted zones, and AWS Global
+Accelerator accelerators. AWS Shield Advanced incurs additional charges.
+
+* AWS Shield Standard
+  * Free service that is activated for every AWS customer
+  * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks
+* AWS Shield Advanced
+  * Optional DDoS mitigation service ($3,000 per month per organization)
+  * Protect against more sophisticated attack on Amazon EC2, Elastic Load Balancing (ELB), Amazon CloudFront, AWS Global Accelerator, and Route 53
+  * 24/7 access to AWS DDoS response team (DRP)
+  * Protect against higher fees during usage spikes due to DDoS
+* On AWS: <a href="https://aws.amazon.com/shield/" target="_blank">Service</a> - <a href="https://aws.amazon.com/shield/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/shield-chapter.html" target="_blank">User Guide</a>
+
+<a name="4_10_4"></a>
+### [↖](#4_10)[↑](#4_10_3)[↓](#4_10_5) AWS WAF
+AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are
+forwarded to an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application
+Load Balancer, or an AWS AppSync GraphQL API. AWS WAF also lets you control access to your conten
+. Based on conditions that you specify, such as the IP addresses that requests originate from or
+the values of query strings, Amazon CloudFront, Amazon API Gateway, Application Load Balancer, or
+AWS AppSync responds to requests either with the requested content or with an HTTP 403 status code
+(Forbidden). You also can configure CloudFront to return a custom error page when a request is blocked.
+
+* Protects your web applications from common web exploits (Layer 7)
+* Deploy on Application Load Balancer (localized rules)
+* Deploy on API Gateway (rules running at the regional or edge level)
+* Deploy on CloudFront (rules globally on edge locations)
+  * Used to front other solutions: CLB, EC2 instances, custom origins, S3 websites)
+* WAF is not for DDoS protection
+* Define Web ACL (Web Access Control List):
+  * Rules can include: IP addresses, HTTP headers, HTTP body, or URI strings
+  * Protects from common attack - SQL injection and Cross-Site Scripting (XSS)
+  * Size constraints, Geo match
+  * Rate-based rules (to count occurrences of events)
+* On AWS: <a href="https://aws.amazon.com/waf/" target="_blank">Service</a> - <a href="https://aws.amazon.com/waf/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank">User Guide</a>
+
+<a name="4_10_5"></a>
+### [↖](#4_10)[↑](#4_10_4) AWS Firewall Manager
+AWS Firewall Manager simplifies your administration and maintenance tasks across multiple accounts
+and resources for AWS WAF, AWS Shield Advanced, Amazon VPC security groups, and AWS Network
+Firewall. With Firewall Manager, you set up your AWS WAF firewall rules, Shield Advanced
+protections, Amazon VPC security groups, and Network Firewall firewalls just once. The service
+automatically applies the rules and protections across your accounts and resources, even as you
+add new resources.
+
+Firewall Manager provides these benefits:
+* Helps to protect resources across accounts
+* Helps to protect all resources of a particular type, such as all Amazon CloudFront distributions
+* Helps to protect all resources with specific tags
+* Automatically adds protection to resources that are added to your account
+* Allows you to subscribe all member accounts in an AWS Organizations organization to AWS Shield Advanced, and automatically subscribes new in-scope accounts that join the organization
+* Allows you to apply security group rules to all member accounts or specific subsets of accounts in an AWS Organizations organization, and automatically applies the rules to new in-scope accounts that join the organization
+* Lets you use your own rules, or purchase managed rules from AWS Marketplace
+
+Summary
+* Manage rules in all accounts of an AWS Organization
+* Common set of security rules
+* WAF rules (Application Load Balancer, API Gateways, CloudFront)
+* AWS Shield Advanced (ALB, CLB, Elastic IP, CloudFront)
+* Security Groups for EC2 and ENI resources in VPC
+* On AWS: <a href="https://aws.amazon.com/firewall-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/firewall-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/fms-chapter.html" target="_blank">User Guide</a>
