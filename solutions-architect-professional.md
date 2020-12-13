@@ -23,7 +23,7 @@
   * [AWS Certificate Manager](#4_7)
   * [CloudHSM](#4_8)
   * [S3 Security](#4_9)
-  * [Network Security, DDOS, Shield and WAF](#4_10)
+  * [Network Security, DDOS, Shield, WAF and Firewall Manager](#4_10)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1186,7 +1186,7 @@ Can generate pre-signed URLs using SDK or CLI
 * Helpful for compliance and data retention
 
 <a name="4_10"></a>
-## [↖](#top)[↑](#4_9_6)[↓](#4_10_1) Network Security, DDOS, Shield and WAF
+## [↖](#top)[↑](#4_9_6)[↓](#4_10_1) Network Security, DDOS, Shield, WAF and Firewall Manager
 <!-- toc_start -->
 * [Network Security](#4_10_1)
 * [Preventing Infrastructure Attacks](#4_10_2)
@@ -1195,6 +1195,7 @@ Can generate pre-signed URLs using SDK or CLI
 * [AWS Shield](#4_10_3)
 * [AWS WAF](#4_10_4)
 * [AWS Firewall Manager](#4_10_5)
+* [Blocking IP addresses](#4_10_6)
 <!-- toc_end -->
 <a name="4_10_1"></a>
 ### [↖](#4_10)[↑](#4_10)[↓](#4_10_2) Network Security
@@ -1280,7 +1281,7 @@ AWS AppSync responds to requests either with the requested content or with an HT
 * On AWS: <a href="https://aws.amazon.com/waf/" target="_blank">Service</a> - <a href="https://aws.amazon.com/waf/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank">User Guide</a>
 
 <a name="4_10_5"></a>
-### [↖](#4_10)[↑](#4_10_4) AWS Firewall Manager
+### [↖](#4_10)[↑](#4_10_4)[↓](#4_10_6) AWS Firewall Manager
 AWS Firewall Manager simplifies your administration and maintenance tasks across multiple accounts
 and resources for AWS WAF, AWS Shield Advanced, Amazon VPC security groups, and AWS Network
 Firewall. With Firewall Manager, you set up your AWS WAF firewall rules, Shield Advanced
@@ -1304,3 +1305,16 @@ Summary
 * AWS Shield Advanced (ALB, CLB, Elastic IP, CloudFront)
 * Security Groups for EC2 and ENI resources in VPC
 * On AWS: <a href="https://aws.amazon.com/firewall-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/firewall-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/fms-chapter.html" target="_blank">User Guide</a>
+
+<a name="4_10_6"></a>
+### [↖](#4_10)[↑](#4_10_5) Blocking IP addresses
+* `client` -> `vpc` -> `ec2`
+  * Use NACL, firewall on ec2
+* `client` -> `vpc` -> `ALB/ELB` -> `ec2`
+  * Use NACL
+  * Use WAF on ALB/ELB
+* `client` -> `vpc` -> `NLB` -> `ec2`
+  * Use NACL
+* `client` -> `CloudFront` -> `vpc` -> `NLB` -> `ec2`
+  * Can't use NACL as CloudFront forwards from its own IP range
+  * USe WAF on CloudFront
