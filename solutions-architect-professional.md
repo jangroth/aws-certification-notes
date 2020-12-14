@@ -1196,6 +1196,13 @@ Can generate pre-signed URLs using SDK or CLI
 * [AWS WAF](#4_10_4)
 * [AWS Firewall Manager](#4_10_5)
 * [Blocking IP addresses](#4_10_6)
+* [Amazon Inspector](#4_10_7)
+  * [Overview](#4_10_7_1)
+* [Config](#4_10_8)
+  * [Overview](#4_10_8_1)
+  * [Config Rules](#4_10_8_2)
+  * [Automation](#4_10_8_3)
+  * [Aggregation](#4_10_8_4)
 <!-- toc_end -->
 <a name="4_10_1"></a>
 ### [↖](#4_10)[↑](#4_10)[↓](#4_10_2) Network Security
@@ -1307,7 +1314,7 @@ Summary
 * On AWS: <a href="https://aws.amazon.com/firewall-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/firewall-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/fms-chapter.html" target="_blank">User Guide</a>
 
 <a name="4_10_6"></a>
-### [↖](#4_10)[↑](#4_10_5) Blocking IP addresses
+### [↖](#4_10)[↑](#4_10_5)[↓](#4_10_7) Blocking IP addresses
 * `client` -> `vpc` -> `ec2`
   * Use NACL, firewall on ec2
 * `client` -> `vpc` -> `ALB/ELB` -> `ec2`
@@ -1318,3 +1325,79 @@ Summary
 * `client` -> `CloudFront` -> `vpc` -> `NLB` -> `ec2`
   * Can't use NACL as CloudFront forwards from its own IP range
   * USe WAF on CloudFront
+
+<a name="4_10_7"></a>
+### [↖](#4_10)[↑](#4_10_6)[↓](#4_10_7_1) Amazon Inspector
+
+<a name="4_10_7_1"></a>
+#### [↖](#4_10)[↑](#4_10_7)[↓](#4_10_8) Overview
+Amazon Inspector is an automated security assessment service that helps improve the security and
+compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications
+for exposure, vulnerabilities, and deviations from best practices. After performing an assessment,
+Amazon Inspector produces a detailed list of security findings prioritized by level of severity.
+These findings can be reviewed directly or as part of detailed assessment reports which are
+available via the Amazon Inspector console or API.
+
+Amazon Inspector security assessments help you check for unintended network accessibility of your
+Amazon EC2 instances and for vulnerabilities on those EC2 instances. Amazon Inspector assessments
+are offered to you as pre-defined rules packages mapped to common security best practices and
+vulnerability definitions. Examples of built-in rules include checking for access to your EC2
+instances from the internet, remote root login being enabled, or vulnerable software versions
+installed. These rules are regularly updated by AWS security researchers.
+
+* **Network Assessments**
+  * Does not require agent
+* **Host Assessments**
+  * Requires agent
+* Can automate assessments via scheduled CloudWatch Events
+  * Can use tag to find instances to asses
+  * Cannot launch AMI, requires instance
+* Assessment templates can notify SNS
+  * Could trigger Lambda to remediate EC2 findings via SSM documents
+* On AWS: <a href="https://aws.amazon.com/inspector/" target="_blank">Service</a> - <a href="https://aws.amazon.com/inspector/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/inspector/latest/userguide/" target="_blank">User Guide</a>
+
+<a name="4_10_8"></a>
+### [↖](#4_10)[↑](#4_10_7_1)[↓](#4_10_8_1) Config
+
+<a name="4_10_8_1"></a>
+#### [↖](#4_10)[↑](#4_10_8)[↓](#4_10_8_2) Overview
+*AWS Config* is a service that enables you to assess, audit, and evaluate the configurations of your
+AWS resources. Config continuously monitors and records your AWS resource configurations and
+allows you to automate the evaluation of recorded configurations against desired configurations.
+With Config, you can review changes in configurations and relationships between AWS resources,
+dive into detailed resource configuration histories, and determine your overall compliance against
+the configurations specified in your internal guidelines. This enables you to simplify compliance
+auditing, security analysis, change management, and operational troubleshooting.
+
+* Evaluate your AWS resource configurations for desired settings.
+* Get a snapshot of the current configurations of the supported resources that are associated with your AWS account.
+* Retrieve configurations of one or more resources that exist in your account.
+* Retrieve historical configurations of one or more resources.
+* Receive a notification whenever a resource is created, modified, or deleted.
+* View relationships between resources. For example, you might want to find all resources that use a particular security group.
+* On AWS: <a href="https://aws.amazon.com/config/" target="_blank">Service</a> - <a href="https://aws.amazon.com/config/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank">User Guide</a>
+
+<a name="4_10_8_2"></a>
+#### [↖](#4_10)[↑](#4_10_8_1)[↓](#4_10_8_3) Config Rules
+* Evaluate the configuration settings of AWS resources
+* A Config rule represents your ideal configuration settings
+* Predefined rules called *managed rules* to help you get started
+* Can also create *custom rules*
+* AWS Config continuously tracks the configuration changes that occur among your resources
+	* Checks whether these changes violate any of the conditions in your rules.
+	* If a resource violates a rule, AWS Config flags the resource and the rule as *noncompliant*.
+* Can remediate using AWS Systems Manager Automation Documents
+
+<a name="4_10_8_3"></a>
+#### [↖](#4_10)[↑](#4_10_8_2)[↓](#4_10_8_4) Automation
+* SNS notification on *all* Config events (cannot configure which events)
+* CloudWatch Events to observe *specific* events/rules
+
+<a name="4_10_8_4"></a>
+#### [↖](#4_10)[↑](#4_10_8_3) Aggregation
+An aggregator is an AWS Config resource type that collects AWS Config configuration and compliance data from the following:
+* Multiple accounts and multiple regions.
+* Single account and multiple regions.
+* An organization in AWS Organizations and all the accounts in that organization.
+* Is limited to 50 per account
+  * *"We are unable to complete the request at this time. Try again later or contact AWS Support"*
