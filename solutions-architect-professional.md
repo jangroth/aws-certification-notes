@@ -24,6 +24,11 @@
   * [CloudHSM](#4_8)
   * [S3 Security](#4_9)
   * [Network Security, DDOS, Shield, WAF and Firewall Manager](#4_10)
+  * [Blocking IP addresses](#4_11)
+  * [Amazon Inspector](#4_12)
+  * [Config](#4_13)
+  * [AWS Managed Logs](#4_14)
+  * [GuardDuty](#4_15)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1195,17 +1200,6 @@ Can generate pre-signed URLs using SDK or CLI
 * [AWS Shield](#4_10_3)
 * [AWS WAF](#4_10_4)
 * [AWS Firewall Manager](#4_10_5)
-* [Blocking IP addresses](#4_10_6)
-* [Amazon Inspector](#4_10_7)
-  * [Overview](#4_10_7_1)
-* [Config](#4_10_8)
-  * [Overview](#4_10_8_1)
-  * [Config Rules](#4_10_8_2)
-  * [Automation](#4_10_8_3)
-  * [Aggregation](#4_10_8_4)
-* [AWS Managed Logs](#4_10_9)
-* [GuardDuty](#4_10_10)
-  * [Overview](#4_10_10_1)
 <!-- toc_end -->
 <a name="4_10_1"></a>
 ### [↖](#4_10)[↑](#4_10)[↓](#4_10_2) Network Security
@@ -1291,7 +1285,7 @@ AWS AppSync responds to requests either with the requested content or with an HT
 * On AWS: <a href="https://aws.amazon.com/waf/" target="_blank">Service</a> - <a href="https://aws.amazon.com/waf/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank">User Guide</a>
 
 <a name="4_10_5"></a>
-### [↖](#4_10)[↑](#4_10_4)[↓](#4_10_6) AWS Firewall Manager
+### [↖](#4_10)[↑](#4_10_4)[↓](#4_11) AWS Firewall Manager
 AWS Firewall Manager simplifies your administration and maintenance tasks across multiple accounts
 and resources for AWS WAF, AWS Shield Advanced, Amazon VPC security groups, and AWS Network
 Firewall. With Firewall Manager, you set up your AWS WAF firewall rules, Shield Advanced
@@ -1316,8 +1310,8 @@ Summary
 * Security Groups for EC2 and ENI resources in VPC
 * On AWS: <a href="https://aws.amazon.com/firewall-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/firewall-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/fms-chapter.html" target="_blank">User Guide</a>
 
-<a name="4_10_6"></a>
-### [↖](#4_10)[↑](#4_10_5)[↓](#4_10_7) Blocking IP addresses
+<a name="4_11"></a>
+## [↖](#top)[↑](#4_10_5)[↓](#4_12) Blocking IP addresses
 * `client` -> `vpc` -> `ec2`
   * Use NACL, firewall on ec2
 * `client` -> `vpc` -> `ALB/ELB` -> `ec2`
@@ -1329,11 +1323,14 @@ Summary
   * Can't use NACL as CloudFront forwards from its own IP range
   * USe WAF on CloudFront
 
-<a name="4_10_7"></a>
-### [↖](#4_10)[↑](#4_10_6)[↓](#4_10_7_1) Amazon Inspector
+<a name="4_12"></a>
+## [↖](#top)[↑](#4_11)[↓](#4_12_1) Amazon Inspector
+<!-- toc_start -->
+* [Overview](#4_12_1)
+<!-- toc_end -->
 
-<a name="4_10_7_1"></a>
-#### [↖](#4_10)[↑](#4_10_7)[↓](#4_10_8) Overview
+<a name="4_12_1"></a>
+### [↖](#4_12)[↑](#4_12)[↓](#4_13) Overview
 Amazon Inspector is an automated security assessment service that helps improve the security and
 compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications
 for exposure, vulnerabilities, and deviations from best practices. After performing an assessment,
@@ -1359,11 +1356,17 @@ installed. These rules are regularly updated by AWS security researchers.
   * Could trigger Lambda to remediate EC2 findings via SSM documents
 * On AWS: <a href="https://aws.amazon.com/inspector/" target="_blank">Service</a> - <a href="https://aws.amazon.com/inspector/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/inspector/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="4_10_8"></a>
-### [↖](#4_10)[↑](#4_10_7_1)[↓](#4_10_8_1) Config
+<a name="4_13"></a>
+## [↖](#top)[↑](#4_12_1)[↓](#4_13_1) Config
+<!-- toc_start -->
+* [Overview](#4_13_1)
+* [Config Rules](#4_13_2)
+* [Automation](#4_13_3)
+* [Aggregation](#4_13_4)
+<!-- toc_end -->
 
-<a name="4_10_8_1"></a>
-#### [↖](#4_10)[↑](#4_10_8)[↓](#4_10_8_2) Overview
+<a name="4_13_1"></a>
+### [↖](#4_13)[↑](#4_13)[↓](#4_13_2) Overview
 *AWS Config* is a service that enables you to assess, audit, and evaluate the configurations of your
 AWS resources. Config continuously monitors and records your AWS resource configurations and
 allows you to automate the evaluation of recorded configurations against desired configurations.
@@ -1383,8 +1386,8 @@ auditing, security analysis, change management, and operational troubleshooting.
   * Via SSM Automations
 * On AWS: <a href="https://aws.amazon.com/config/" target="_blank">Service</a> - <a href="https://aws.amazon.com/config/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank">User Guide</a>
 
-<a name="4_10_8_2"></a>
-#### [↖](#4_10)[↑](#4_10_8_1)[↓](#4_10_8_3) Config Rules
+<a name="4_13_2"></a>
+### [↖](#4_13)[↑](#4_13_1)[↓](#4_13_3) Config Rules
 * Evaluate the configuration settings of AWS resources
 * A Config rule represents your ideal configuration settings
 * Predefined rules called *managed rules* to help you get started
@@ -1394,13 +1397,13 @@ auditing, security analysis, change management, and operational troubleshooting.
 	* If a resource violates a rule, AWS Config flags the resource and the rule as *noncompliant*.
 * Can remediate using AWS Systems Manager Automation Documents
 
-<a name="4_10_8_3"></a>
-#### [↖](#4_10)[↑](#4_10_8_2)[↓](#4_10_8_4) Automation
+<a name="4_13_3"></a>
+### [↖](#4_13)[↑](#4_13_2)[↓](#4_13_4) Automation
 * SNS notification on *all* Config events (cannot configure which events)
 * CloudWatch Events to observe *specific* events/rules
 
-<a name="4_10_8_4"></a>
-#### [↖](#4_10)[↑](#4_10_8_3)[↓](#4_10_9) Aggregation
+<a name="4_13_4"></a>
+### [↖](#4_13)[↑](#4_13_3)[↓](#4_14) Aggregation
 An aggregator is an AWS Config resource type that collects AWS Config configuration and compliance data from the following:
 * Multiple accounts and multiple regions.
 * Single account and multiple regions.
@@ -1408,8 +1411,8 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * Is limited to 50 per account
   * *"We are unable to complete the request at this time. Try again later or contact AWS Support"*
 
-<a name="4_10_9"></a>
-### [↖](#4_10)[↑](#4_10_8_4)[↓](#4_10_10) AWS Managed Logs
+<a name="4_14"></a>
+## [↖](#top)[↑](#4_13_4)[↓](#4_15) AWS Managed Logs
 * **Load Balancer** Access Logs (ALB, NLB, CLB) => to S3
   * Access logs for your Load Balancers
 * **CloudTrail** Logs => to S3 and CloudWatch Logs
@@ -1424,11 +1427,14 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
   * Detailed information about every user request that CloudFront receives
 * **AWS Config** => to S3
 
-<a name="4_10_10"></a>
-### [↖](#4_10)[↑](#4_10_9)[↓](#4_10_10_1) GuardDuty
+<a name="4_15"></a>
+## [↖](#top)[↑](#4_14)[↓](#4_15_1) GuardDuty
+<!-- toc_start -->
+* [Overview](#4_15_1)
+<!-- toc_end -->
 
-<a name="4_10_10_1"></a>
-#### [↖](#4_10)[↑](#4_10_10) Overview
+<a name="4_15_1"></a>
+### [↖](#4_15)[↑](#4_15) Overview
 Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity
 and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the
 collection and aggregation of account and network activities is simplified, but it can be time
