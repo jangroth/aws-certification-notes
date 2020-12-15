@@ -980,7 +980,7 @@ Secure Symmetric ..|..Communication in Place
     * To end send a client to a pirate server, a DNS response needs to be “forged” by a server which intercepts them
     * It is possible to protect your domain name by configuring DNSSEC
     * Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.
-    * You could run a custom DNS server on Ama
+    * You could run a custom DNS server on EC2
 
 <a name="4_7"></a>
 ## [↖](#top)[↑](#4_6_4)[↓](#4_7_1) AWS Certificate Manager
@@ -1070,7 +1070,7 @@ Tenancy|Uses multi-tenant key storage|Single tenant key storage, dedicated to on
 Keys|Keys owned and managed by AWS|Customer managed Keys
 Encryption|Symmetric and asymmetric (*new*) encryption|Supports both symmetric and asymmetric encryption
 Cryptographic Acceleration|None|SSL/TLS Acceleration Oracle TDE Acceleration
-Key Storage and Management|Accessible from multiple regions<br/>Centralized management from IAM|Deployed and managed from a customer VPC.<br/>Accessible and can be shared across VPCs using VPC peering
+Key Storage and Management|Accessible from multiple regions<br/>Centralized management from IAM|Deployed and managed from a customer VPC.<br/>Accessible and can be shared across VPCs using VPC peering<br/>No IAM integration on user/key level
 Free Tier Availability|Yes|No
 
 <a name="4_9"></a>
@@ -1203,6 +1203,9 @@ Can generate pre-signed URLs using SDK or CLI
   * [Config Rules](#4_10_8_2)
   * [Automation](#4_10_8_3)
   * [Aggregation](#4_10_8_4)
+* [AWS Managed Logs](#4_10_9)
+* [GuardDuty](#4_10_10)
+  * [Overview](#4_10_10_1)
 <!-- toc_end -->
 <a name="4_10_1"></a>
 ### [↖](#4_10)[↑](#4_10)[↓](#4_10_2) Network Security
@@ -1375,6 +1378,9 @@ auditing, security analysis, change management, and operational troubleshooting.
 * Retrieve historical configurations of one or more resources.
 * Receive a notification whenever a resource is created, modified, or deleted.
 * View relationships between resources. For example, you might want to find all resources that use a particular security group.
+* Do not prevent actions from happening (no deny)
+* Can have auto-remediation
+  * Via SSM Automations
 * On AWS: <a href="https://aws.amazon.com/config/" target="_blank">Service</a> - <a href="https://aws.amazon.com/config/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html" target="_blank">User Guide</a>
 
 <a name="4_10_8_2"></a>
@@ -1394,10 +1400,49 @@ auditing, security analysis, change management, and operational troubleshooting.
 * CloudWatch Events to observe *specific* events/rules
 
 <a name="4_10_8_4"></a>
-#### [↖](#4_10)[↑](#4_10_8_3) Aggregation
+#### [↖](#4_10)[↑](#4_10_8_3)[↓](#4_10_9) Aggregation
 An aggregator is an AWS Config resource type that collects AWS Config configuration and compliance data from the following:
 * Multiple accounts and multiple regions.
 * Single account and multiple regions.
 * An organization in AWS Organizations and all the accounts in that organization.
 * Is limited to 50 per account
   * *"We are unable to complete the request at this time. Try again later or contact AWS Support"*
+
+<a name="4_10_9"></a>
+### [↖](#4_10)[↑](#4_10_8_4)[↓](#4_10_10) AWS Managed Logs
+* **Load Balancer** Access Logs (ALB, NLB, CLB) => to S3
+  * Access logs for your Load Balancers
+* **CloudTrail** Logs => to S3 and CloudWatch Logs
+  * Logs for API calls made within your account
+* **VPC Flow Logs** => to S3 and CloudWatch Logs
+  * Information about IP traffic going to and from network interfaces in your VPC
+* **Route 53** Access Logs => to CloudWatch Logs
+  * Log information about the queries that Route 53 receives
+* **S3** Access Logs => to S3
+  * Server access logging provides detailed records for the requests that are made to a bucket
+* **CloudFront** Access Logs => to S3
+  * Detailed information about every user request that CloudFront receives
+* **AWS Config** => to S3
+
+<a name="4_10_10"></a>
+### [↖](#4_10)[↑](#4_10_9)[↓](#4_10_10_1) GuardDuty
+
+<a name="4_10_10_1"></a>
+#### [↖](#4_10)[↑](#4_10_10) Overview
+Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity
+and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the
+collection and aggregation of account and network activities is simplified, but it can be time
+consuming for security teams to continuously analyze event log data for potential threats. With
+GuardDuty, you now have an intelligent and cost-effective option for continuous threat detection
+in the AWS Cloud. The service uses machine learning, anomaly detection, and integrated threat
+intelligence to identify and prioritize potential threats. GuardDuty analyzes tens of billions of
+events across multiple AWS data sources, such as AWS CloudTrail, Amazon VPC Flow Logs, and DNS log.
+With a few clicks in the AWS Management Console, GuardDuty can be enabled with no software or
+hardware to deploy or maintain. By integrating with Amazon CloudWatch Events, GuardDuty alerts are
+actionable, easy to aggregate across multiple accounts, and straightforward to push into existing
+event management and workflow systems.
+
+* Analyses AWS CloudTrail, Amazon VPC Flow Logs, and DNS log
+* Integrates with CloudWatch Events
+* On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target="_blank">AWS Geek 2020</a>
