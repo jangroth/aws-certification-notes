@@ -29,6 +29,8 @@
   * [Config](#4_13)
   * [AWS Managed Logs](#4_14)
   * [GuardDuty](#4_15)
+* [Compute & Load Balancing](#5)
+  * [AWS Solution Architectures](#5_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1434,7 +1436,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 <!-- toc_end -->
 
 <a name="4_15_1"></a>
-### [↖](#4_15)[↑](#4_15) Overview
+### [↖](#4_15)[↑](#4_15)[↓](#5) Overview
 Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity
 and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the
 collection and aggregation of account and network activities is simplified, but it can be time
@@ -1453,23 +1455,33 @@ event management and workflow systems.
 * On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target="_blank">AWS Geek 2020</a>
 
-# Compute & Load Balancing
+<a name="5"></a>
+# [↖](#top)[↑](#4_15_1)[↓](#5_1) Compute & Load Balancing
 
-## AWS Solution Architectures
+<a name="5_1"></a>
+## [↖](#top)[↑](#5)[↓](#5_1_1) AWS Solution Architectures
+<!-- toc_start -->
+* [Web/Internet Layer](#5_1_1)
+* [Computer Layer](#5_1_2)
+* [Backend](#5_1_3)
+<!-- toc_end -->
 
-### Web/Internet Layer
+<a name="5_1_1"></a>
+### [↖](#5_1)[↑](#5_1)[↓](#5_1_2) Web/Internet Layer
 
 DNS|Static Content|Dynamic Contnet
 -|-|-
 Route 53|CloudFront|Elastic LB, API Gateway, Elastic IP
 
-### Computer Layer
+<a name="5_1_2"></a>
+### [↖](#5_1)[↑](#5_1_1)[↓](#5_1_3) Computer Layer
 
 Computer|Serverless|Other
 -|-|-
 EC2, ASG, ECS|Lambda, Fargate|Batch, EMR
 
-### Backend
+<a name="5_1_3"></a>
+### [↖](#5_1)[↑](#5_1_2) Backend
 
 Caching / Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
 -|-|-|-|-
