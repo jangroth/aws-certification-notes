@@ -1452,3 +1452,25 @@ event management and workflow systems.
 * Integrates with CloudWatch Events
 * On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target="_blank">AWS Geek 2020</a>
+
+# Compute & Load Balancing
+
+## AWS Solution Architectures
+
+### Web/Internet Layer
+
+DNS|Static Content|Dynamic Contnet
+-|-|-
+Route 53|CloudFront|Elastic LB, API Gateway, Elastic IP
+
+### Computer Layer
+
+Computer|Serverless|Other
+-|-|-
+EC2, ASG, ECS|Lambda, Fargate|Batch, EMR
+
+### Backend
+
+Caching / Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
+-|-|-|-|-
+ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3, Redshift|SQS, SNS, Kinesis<br/>Amazon MQ, Step Functions|EBS, EFS, Instance Store<br/>CDN Layer|S3, Glacier
