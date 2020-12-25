@@ -1641,16 +1641,20 @@ create the group or at any time thereafter, Amazon EC2 Auto Scaling ensures that
 this many instances. If you specify **scaling policies**, then Amazon EC2 Auto Scaling can launch or
 terminate instances as demand on your application increases or decreases.
 
+* *Spot Fleet* support (mix on Spot and On-Demand instances)
+  * Also configure ratio between these instance options
+* To upgrade an AMI, must update the launch configuration / template
+  * How do you phase out older launch configurations?
+  * How do you test a new launch configuration?
+  * You must terminate instances manually (new feature: *Instance Refresh within Auto Scaling Groups*)
+* Scheduled scaling actions:
+  * Modify the ASG settings (min / max / desired) at pre-defined time
+  * Helpful when patterns are known in advance
 * Auto scaling can play a major role in deployments
-* Need to avoid downtime during deployments
-* How long does it take to deploy code and configure an instance?
-* How do you test a new launch configuration?
-* How do you phase out older launch configurations?
+  * Need to avoid downtime during deployments
+  * How long does it take to deploy code and configure an instance?
 * Use lifecycle hooks for custom actions
-* CloudFormation init scripts
-* Cloud init scripts
 * Scale out/scale in
-* Can launch spot instances as well as on-demand instances (also configure ratio between these instance options)
 * On AWS: <a href="https://aws.amazon.com/autoscaling/" target="_blank">Service</a> - <a href="https://aws.amazon.com/autoscaling/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/autoscaling" target="_blank">User Guide</a>
 
 <a name="5_3_2"></a>
@@ -1704,3 +1708,30 @@ terminate instances as demand on your application increases or decreases.
 5|**OldestLaunchTemplate**|Useful when you're updating a group and phasing out the instances from a previous configuration
 4|**ClosestToNextInstanceHour**|Next billing hour - useful to maximize instance us
 6|**AllocationStrategy**|Useful when preferred instance types have changed
+
+#### Scaling Processes
+You can suspend and then resume one or more of the scaling processes for your Auto Scaling Group.
+This can be useful for investigating a configuration problem or other issues with your web
+application and making changes to your application without invoking the scaling processes.
+
+Process|Impact|On Suspension
+-|-|-
+`Launch`|Add a new EC2 to the group, increasing the capacity|Disrupts other processes as no more scale out
+`Terminate`|Removes an EC2 instance from the group, decreasing its capacity.|Disrupts other processes as no more scale in
+`HealthCheck`|Checks the health of the instances|.
+`ReplaceUnhealthy`|Terminate unhealthy instances and re-create them|.
+`AZRebalance`|Balancer the number of EC2 instances across AZ|.
+`AlarmNotification`|Accept notification from CloudWatch|Suspends actions normally triggered by alarms
+`ScheduledAction`|Performs scheduled actions that you create|.
+`AddToLoadBalancer`|Adds instances to the load balancer or target group|Will *not* automatically add instances later
+
+#### Deploying with ASGs
+
+* `ALB` - `ASG` - `Launch Template v1` **&** `Launch Template v2`
+  * Different application versions in same ASG
+* `ALB` - `ASG 1` - `Launch Template v1` **&** `ASG 2` - `Launch Template v2`
+* `ALB 1` - `ASG 1` - `Launch Template v1` **&** `ALB 2` - `ASG 2` - `Launch Template v2`
+  * Needs DNS (takes time to roll back)
+  * Good for testing v2 before cutting over
+
+
