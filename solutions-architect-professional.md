@@ -1517,7 +1517,7 @@ instances in the cloud.
 * On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
 
 <a name="5_2_2"></a>
-### [↖](#5_2)[↑](#5_2_1)[↓](#5_2_2_1) Payment model
+### [↖](#5_2)[↑](#5_2_1)[↓](#5_2_2_1) Payment Model/Launch Type
 * **On-demand instances**
 	* Pay for compute capacity by the hour, instance can be terminated by Amazon
 * **Reserved instances**
@@ -1571,31 +1571,116 @@ Family|Mnemomic|Description
 <a name="5_2_4"></a>
 ### [↖](#5_2)[↑](#5_2_3) Placement Groups
 * Determine how instances are placed on underlying hardware
-* **Cluster**
-  * Clusters instances into a low-latency group in a single Availability Zone
-  * Oldest/original placement group
-  * Only certain instances can be launched into a clustered placement group
-  * Should use instances with *enhanced networking*
-* **Spread**
-  * Spreads instances across underlying hardware
-  * Minimizes risk as instances are spread
-  * Opposite of clustered placement group
-  * Up to 7 instances per AZ
-* **Partitions**
-  * Spreads instances across many partitions (different sets of racks) within one AZ
-  * Groups of instances in one partition do not share the underlying hardware with groups of instances in different partitions.
-  * Typically used by large distributed and replicated workloads, such as Hadoop, Cassandra, and Kafka. 
 * Recommendation to stick to one instance family
 * Cannot move running instance into placement group
   * First stop, then use CLI (`modify-instance-placement`)
 
 Strategy|Pro|Con|Use case
 -|-|-|-
-**Cluster**|Great network (10 Gbps bandwidth between instances)|If the rack fails, all instances fails at the same time|Big Data job that needs to complete fast<br/>Application that needs extremely low latency and high network throughput
-**Spread**|Can span across Availability Zones (AZ)<br/>Reduced risk is simultaneous failure<br/>EC2 Instances are on different physical hardware|Limited to 7 instances per AZ per placement group|Application that needs to maximize high availability<br/>Critical Applications where each instance must be isolated from failure from each other
-**Partitions**|Increased resilience|./.|Hadoop, Cassandra, and Kafka
+**Cluster**|Oldest/original placement group<br/>Only certain instances can be launched into a clustered placement group<br/>Should use instances with *enhanced networking*|Great network (10 Gbps bandwidth between instances)|If the rack fails, all instances fails at the same time|Big Data job that needs to complete fast<br/>Application that needs extremely low latency and high network throughput
+**Spread**|Spreads instances across underlying hardware<br/>Minimizes risk as instances are spread<br/>Opposite of clustered placement group<br/>Up to 7 instances per AZ|Can span across Availability Zones (AZ)<br/>Reduced risk is simultaneous failure<br/>EC2 Instances are on different physical hardware|Limited to 7 instances per AZ per placement group|Application that needs to maximize high availability<br/>Critical Applications where each instance must be isolated from failure from each other
+**Partitions**|Spreads instances across many partitions (different sets of racks) within one AZ<br/>Groups of instances in one partition do not share the underlying hardware with groups of instances in different partitions.<br/>Typically used by large distributed and replicated workloads, such as Hadoop, Cassandra, and Kafka.|Increased resilience|./.|Hadoop, Cassandra, and Kafka
 
+<a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank">On AWS</a>
 
+### Key metrics for EC2
+* EC2 metrics are based on what is exposed to the hypervisor.
+* *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
+* Can install Cloudwatch agent (new)
+  * Provides access to more metrics
+* Can use Cloudwatch monitoring scripts (old) to provide more metrics
+  * Perl-scripts provided by AWS, need to manually install on instance
+  * Use `cron` to automate sending data to CloudWatch
 
+Metric|Effect
+-|-
+`CPUUtilization`|The total CPU resources utilized within an instance at a given time.
+`DiskReadOps`,`DiskWriteOps`|The number of read (write) operations performed on all instance store volumes. This metric is applicable for instance store-backed AMI instances.
+`DiskReadBytes`,`DiskWriteBytes`|The number of bytes read (written) on all instance store volumes. This metric is applicable for instance store-backed AMI instances.
+`NetworkIn`,`NetworkOut`|The number of bytes received (sent) on all network interfaces by the instance
+`NetworkPacketsIn`,`NetworkPacketsOut`|The number of packets received (sent) on all network interfaces by the instance
+`StatusCheckFailed`,`StatusCheckFailed_Instance`,`StatusCheckFailed_System`|Reports whether the instance has passed both/instance/system status check in the last minute.
 
+* Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
+### EC2 Instance Recovery
+You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically
+recovers the instance if it becomes impaired due to an underlying hardware failure or a problem
+that requires AWS involvement to repair (`StatusCheckFailed_System`). Terminated instances cannot be recovered. A recovered
+instance is identical to the original instance, including the instance ID, private IP addresses,
+Elastic IP addresses, and all instance metadata. If the impaired instance is in a placement group,
+the recovered instance runs in the placement group.
+
+If your instance has a public IPv4 address, it retains the public IPv4 address after recovery.
+
+## Auto Scaling
+
+### Overview
+*Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances
+available to handle the load for your application. You create collections of EC2 instances, called
+*Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group,
+and Amazon EC2 Auto Scaling ensures that your group never goes below this size. You can specify
+the **maximum** number of instances in each Auto Scaling Group, and Amazon EC2 Auto Scaling ensures
+that your group never goes above this size. If you specify the **desired** capacity, either when you
+create the group or at any time thereafter, Amazon EC2 Auto Scaling ensures that your group has
+this many instances. If you specify **scaling policies**, then Amazon EC2 Auto Scaling can launch or
+terminate instances as demand on your application increases or decreases.
+
+* Auto scaling can play a major role in deployments
+* Need to avoid downtime during deployments
+* How long does it take to deploy code and configure an instance?
+* How do you test a new launch configuration?
+* How do you phase out older launch configurations?
+* Use lifecycle hooks for custom actions
+* CloudFormation init scripts
+* Cloud init scripts
+* Scale out/scale in
+* Can launch spot instances as well as on-demand instances (also configure ratio between these instance options)
+* On AWS: <a href="https://aws.amazon.com/autoscaling/" target="_blank">Service</a> - <a href="https://aws.amazon.com/autoscaling/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/autoscaling" target="_blank">User Guide</a>
+
+### [↖](#3_2)[↑](#3_2_3_1)[↓](#3_2_3_2_1) Components
+
+#### Auto Scaling Group
+* Contains a collection of Amazon EC2 instances that are treated as a logical grouping for the purposes of automatic scaling and management
+* To use Amazon EC2 Auto Scaling features such as health check replacements and scaling policies
+
+#### Launch Configuration
+* Instance configuration template that an Auto Scaling Group uses to launch EC2 instances
+* One Launch Configuration per ASG, can be used in many ASGs though
+* Can't be modified, needs to be recreated
+* To change instance type, copy the old Launch Configuration, change instance type, double *max* and *desired*, wait till new values have propagated, revert *max* and *desired*
+
+#### Launch Template
+* Similar to Launch Configuration
+* Launch Templates can be used to launch regular instances as well as Spot Fleets.
+* Allows to have multiple versions of the same template
+* Can source another template to build a hierachy
+* With versioning, you can create a subset of the full set of parameters and then reuse it to create other templates or template versions
+* AWS recommends to use Launch Templates instead of Launch Configurations to ensure that you can use the latest features of Amazon EC2
+
+#### Termination Policy
+* To specify which instances to terminate first during scale in, configure a Termination Policy for the Auto Scaling Group.
+* Policies will be applied to the AZ with the most instances
+* Can be combined with *instance protection* to prevent termination of specific instances, this starts as soon as the instance is *in service*.
+  * Instances can still be terminated manually (unless *termination protection* has been enabled)
+  * Unhealthy instance will still be replaced
+  * Spot instance interuptions can still occur
+	* *Instance protection* can also be applied to an Auto Scaling Group - protecting the whole group: *protect from scale in*
+* Can specify *multiple* policies, will be executed in order until an instance has been found
+* *Default* policy being last in a list of multiple policies is like `catchAll`, will always find an instance
+  * Determine which AZ has most instances and at least one instance that's not protected from scale in
+  * [For ASG with multiple instance types and purchase options]: Try to align remaining instances to allocation strategy
+  * [For ASG that uses Launch Templates]: Terminate one of the instances with the oldest Launch Template
+  * [For ASG that uses Launch Configuration]: Terminate one of the instances with the oldest Launch Configuration
+  * If there are multiple instances to choose from, pick the one nearest to the next billing hour
+  * Choose one at random
+
+.|.|.
+-|-|-
+0|**Default**|Designed to help ensure that your instances span Availability Zones evenly for high availability<br/>`3`->`4`->`random`
+1|**OldestInstance**|Useful when upgrading to a new EC2 instance type
+2|**NewestInstance**|Useful when testing a new launch configuration
+3|**OldestLaunchConfiguration**|Useful when updating a group and phasing out instances
+5|**OldestLaunchTemplate**|Useful when you're updating a group and phasing out the instances from a previous configuration
+4|**ClosestToNextInstanceHour**|Next billing hour - useful to maximize instance us
+6|**AllocationStrategy**|Useful when preferred instance types have changed
