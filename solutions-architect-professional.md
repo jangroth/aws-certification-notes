@@ -32,6 +32,7 @@
 * [Compute & Load Balancing](#5)
   * [AWS Solution Architectures](#5_1)
   * [EC2](#5_2)
+  * [Auto Scaling](#5_3)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1495,10 +1496,12 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 ## [↖](#top)[↑](#5_1_3)[↓](#5_2_1) EC2
 <!-- toc_start -->
 * [Overview](#5_2_1)
-* [Payment model](#5_2_2)
+* [Payment Model/Launch Type](#5_2_2)
   * [Pricing by](#5_2_2_1)
 * [Instance Types](#5_2_3)
 * [Placement Groups](#5_2_4)
+* [Key metrics for EC2](#5_2_5)
+* [EC2 Instance Recovery](#5_2_6)
 <!-- toc_end -->
 <a name="5_2_1"></a>
 ### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
@@ -1569,7 +1572,7 @@ Family|Mnemomic|Description
 (*) - main types
 
 <a name="5_2_4"></a>
-### [↖](#5_2)[↑](#5_2_3) Placement Groups
+### [↖](#5_2)[↑](#5_2_3)[↓](#5_2_5) Placement Groups
 * Determine how instances are placed on underlying hardware
 * Recommendation to stick to one instance family
 * Cannot move running instance into placement group
@@ -1583,7 +1586,8 @@ Strategy|Pro|Con|Use case
 
 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank">On AWS</a>
 
-### Key metrics for EC2
+<a name="5_2_5"></a>
+### [↖](#5_2)[↑](#5_2_4)[↓](#5_2_6) Key metrics for EC2
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
 * Can install Cloudwatch agent (new)
@@ -1603,7 +1607,8 @@ Metric|Effect
 
 * Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
-### EC2 Instance Recovery
+<a name="5_2_6"></a>
+### [↖](#5_2)[↑](#5_2_5)[↓](#5_3) EC2 Instance Recovery
 You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically
 recovers the instance if it becomes impaired due to an underlying hardware failure or a problem
 that requires AWS involvement to repair (`StatusCheckFailed_System`). Terminated instances cannot be recovered. A recovered
@@ -1613,9 +1618,19 @@ the recovered instance runs in the placement group.
 
 If your instance has a public IPv4 address, it retains the public IPv4 address after recovery.
 
-## Auto Scaling
+<a name="5_3"></a>
+## [↖](#top)[↑](#5_2_6)[↓](#5_3_1) Auto Scaling
+<!-- toc_start -->
+* [Overview](#5_3_1)
+* [Components](#5_3_2)
+  * [Auto Scaling Group](#5_3_2_1)
+  * [Launch Configuration](#5_3_2_2)
+  * [Launch Template](#5_3_2_3)
+  * [Termination Policy](#5_3_2_4)
+<!-- toc_end -->
 
-### Overview
+<a name="5_3_1"></a>
+### [↖](#5_3)[↑](#5_3)[↓](#5_3_2) Overview
 *Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances
 available to handle the load for your application. You create collections of EC2 instances, called
 *Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group,
@@ -1638,19 +1653,23 @@ terminate instances as demand on your application increases or decreases.
 * Can launch spot instances as well as on-demand instances (also configure ratio between these instance options)
 * On AWS: <a href="https://aws.amazon.com/autoscaling/" target="_blank">Service</a> - <a href="https://aws.amazon.com/autoscaling/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/autoscaling" target="_blank">User Guide</a>
 
-### [↖](#3_2)[↑](#3_2_3_1)[↓](#3_2_3_2_1) Components
+<a name="5_3_2"></a>
+### [↖](#5_3)[↑](#5_3_1)[↓](#5_3_2_1) Components
 
-#### Auto Scaling Group
+<a name="5_3_2_1"></a>
+#### [↖](#5_3)[↑](#5_3_2)[↓](#5_3_2_2) Auto Scaling Group
 * Contains a collection of Amazon EC2 instances that are treated as a logical grouping for the purposes of automatic scaling and management
 * To use Amazon EC2 Auto Scaling features such as health check replacements and scaling policies
 
-#### Launch Configuration
+<a name="5_3_2_2"></a>
+#### [↖](#5_3)[↑](#5_3_2_1)[↓](#5_3_2_3) Launch Configuration
 * Instance configuration template that an Auto Scaling Group uses to launch EC2 instances
 * One Launch Configuration per ASG, can be used in many ASGs though
 * Can't be modified, needs to be recreated
 * To change instance type, copy the old Launch Configuration, change instance type, double *max* and *desired*, wait till new values have propagated, revert *max* and *desired*
 
-#### Launch Template
+<a name="5_3_2_3"></a>
+#### [↖](#5_3)[↑](#5_3_2_2)[↓](#5_3_2_4) Launch Template
 * Similar to Launch Configuration
 * Launch Templates can be used to launch regular instances as well as Spot Fleets.
 * Allows to have multiple versions of the same template
@@ -1658,7 +1677,8 @@ terminate instances as demand on your application increases or decreases.
 * With versioning, you can create a subset of the full set of parameters and then reuse it to create other templates or template versions
 * AWS recommends to use Launch Templates instead of Launch Configurations to ensure that you can use the latest features of Amazon EC2
 
-#### Termination Policy
+<a name="5_3_2_4"></a>
+#### [↖](#5_3)[↑](#5_3_2_3) Termination Policy
 * To specify which instances to terminate first during scale in, configure a Termination Policy for the Auto Scaling Group.
 * Policies will be applied to the AZ with the most instances
 * Can be combined with *instance protection* to prevent termination of specific instances, this starts as soon as the instance is *in service*.
