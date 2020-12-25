@@ -37,6 +37,9 @@
 # [↖](#top)[↓](#2) Solutions Architect Professional
 
 > 10/2020 -
+
+Following [Ultimate AWS Certified Solutions Architect Professional 2021](https://www.udemy.com/course/aws-solutions-architect-professional).
+
 ---
 
 <a name="2"></a>
@@ -1486,3 +1489,99 @@ EC2, ASG, ECS|Lambda, Fargate|Batch, EMR
 Caching / Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
 -|-|-|-|-
 ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3, Redshift|SQS, SNS, Kinesis<br/>Amazon MQ, Step Functions|EBS, EFS, Instance Store<br/>CDN Layer|S3, Glacier
+
+## EC2
+### Overview
+Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute
+capacity in the cloud. It is designed to make web-scale cloud computing easier for developers.
+Amazon EC2’s simple web service interface allows you to obtain and configure capacity with minimal
+friction. It provides you with complete control of your computing resources and lets you run on
+Amazon’s proven computing environment.
+
+Amazon EC2 offers the broadest and deepest compute platform with choice of processor, storage,
+networking, operating system, and purchase model. We offer the fastest processors in the cloud and
+we are the only cloud with 400 Gbps ethernet networking. We have the most powerful GPU instances
+for machine learning training and graphics workloads, as well as the lowest cost-per-inference
+instances in the cloud.
+
+* On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
+
+### Payment model
+* **On-demand instances**
+	* Pay for compute capacity by the hour, instance can be terminated by Amazon
+* **Reserved instances**
+	* Provide a significant discount compared to On-Demand pricing and provide a capacity reservation
+    when used in a specific Availability Zone
+  * Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a
+    certain usage)
+  * Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to
+    provision instances in that AZ
+  * Can resell reserved capacity on *Reserved Instance Marketplace*
+	* Can transfer between AZs
+  * Types:
+    * *Standard* reserved instances (fixed instance type)
+    * *Convertible* reserved instances (can be exchanged against another convertible instance type)
+    * *Scheduled* reserved instances (purchased by the hour on a set schedule with a set instance type)
+* **Spot instances**
+	* Bid on spare Amazon EC2 computing capacity, not available for all instance types
+* **Dedicated instance**
+  * Run on dedicated hardware, but no need to purchase the whole host
+* **Dedicated hosts**
+	* A physical server with EC2 instance capacity fully dedicated to your use
+
+#### Pricing by
+* Instance Type
+* Compute time
+* Data transfer
+* Storage
+* Elastic IP address
+* Monitoring
+* Elastic load balancer
+
+### Instance Types
+Family|Mnemomic|Description
+-|-|-
+**F**|FPGA|Can be reprogrammed on the fly and be tuned for  specific applications, making them faster than traditional CPU/GPU combinations
+**I**(*)|IOPS|(NVMe) SSD-backed instance storage optimized for low latency
+**G**(*)|Graphics|GPU optimized
+**H**|High disk throughput|HDD-based local storage
+**T**|Cheap general purpose|Balance of computer, memory and networking, bustable
+**D**|Density|Lowest price per disk throughput performance
+**R**(*)|RAM|Lowest prize for *memory* performance
+**M**(*)|Main choice for general purpose apps|Balance of computer, memory and networking (think: medium)
+**C**(*)|Compute|Lowest prize for *compute* performance
+**P**|Graphics (pics)|GPU optimized
+**X**|eXtreme memory|Lowest prize for *memory* performance
+
+(*) - main types
+
+### Placement Groups
+* Determine how instances are placed on underlying hardware
+* **Cluster**
+  * Clusters instances into a low-latency group in a single Availability Zone
+  * Oldest/original placement group
+  * Only certain instances can be launched into a clustered placement group
+  * Should use instances with *enhanced networking*
+* **Spread**
+  * Spreads instances across underlying hardware
+  * Minimizes risk as instances are spread
+  * Opposite of clustered placement group
+  * Up to 7 instances per AZ
+* **Partitions**
+  * Spreads instances across many partitions (different sets of racks) within one AZ
+  * Groups of instances in one partition do not share the underlying hardware with groups of instances in different partitions.
+  * Typically used by large distributed and replicated workloads, such as Hadoop, Cassandra, and Kafka. 
+* Recommendation to stick to one instance family
+* Cannot move running instance into placement group
+  * First stop, then use CLI (`modify-instance-placement`)
+
+Strategy|Pro|Con|Use case
+-|-|-|-
+**Cluster**|Great network (10 Gbps bandwidth between instances)|If the rack fails, all instances fails at the same time|Big Data job that needs to complete fast<br/>Application that needs extremely low latency and high network throughput
+**Spread**|Can span across Availability Zones (AZ)<br/>Reduced risk is simultaneous failure<br/>EC2 Instances are on different physical hardware|Limited to 7 instances per AZ per placement group|Application that needs to maximize high availability<br/>Critical Applications where each instance must be isolated from failure from each other
+**Partitions**|Increased resilience|./.|Hadoop, Cassandra, and Kafka
+
+
+
+
+

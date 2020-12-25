@@ -1,6 +1,6 @@
 # AWS Certification Notes
 
-* [Solutions Architect Professional](solutions-architect-professional.md) (2020)
+* [Solutions Architect Professional](solutions-architect-professional.md) (2020, in progress)
 * [DevOps Engineer Professional](devops-engineer-professional.md) (2020)
 * [Solutions Architect Associate](solutions-architect-associate.md) (2019)
 * [SysOps Administrator Associate](sysops-administrator-associate.md) (2018)
