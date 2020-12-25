@@ -1627,6 +1627,8 @@ If your instance has a public IPv4 address, it retains the public IPv4 address a
   * [Launch Configuration](#5_3_2_2)
   * [Launch Template](#5_3_2_3)
   * [Termination Policy](#5_3_2_4)
+  * [Scaling Processes](#5_3_2_5)
+  * [Deploying with ASGs](#5_3_2_6)
 <!-- toc_end -->
 
 <a name="5_3_1"></a>
@@ -1682,7 +1684,7 @@ terminate instances as demand on your application increases or decreases.
 * AWS recommends to use Launch Templates instead of Launch Configurations to ensure that you can use the latest features of Amazon EC2
 
 <a name="5_3_2_4"></a>
-#### [↖](#5_3)[↑](#5_3_2_3) Termination Policy
+#### [↖](#5_3)[↑](#5_3_2_3)[↓](#5_3_2_5) Termination Policy
 * To specify which instances to terminate first during scale in, configure a Termination Policy for the Auto Scaling Group.
 * Policies will be applied to the AZ with the most instances
 * Can be combined with *instance protection* to prevent termination of specific instances, this starts as soon as the instance is *in service*.
@@ -1709,7 +1711,8 @@ terminate instances as demand on your application increases or decreases.
 4|**ClosestToNextInstanceHour**|Next billing hour - useful to maximize instance us
 6|**AllocationStrategy**|Useful when preferred instance types have changed
 
-#### Scaling Processes
+<a name="5_3_2_5"></a>
+#### [↖](#5_3)[↑](#5_3_2_4)[↓](#5_3_2_6) Scaling Processes
 You can suspend and then resume one or more of the scaling processes for your Auto Scaling Group.
 This can be useful for investigating a configuration problem or other issues with your web
 application and making changes to your application without invoking the scaling processes.
@@ -1725,7 +1728,8 @@ Process|Impact|On Suspension
 `ScheduledAction`|Performs scheduled actions that you create|.
 `AddToLoadBalancer`|Adds instances to the load balancer or target group|Will *not* automatically add instances later
 
-#### Deploying with ASGs
+<a name="5_3_2_6"></a>
+#### [↖](#5_3)[↑](#5_3_2_5) Deploying with ASGs
 
 * `ALB` - `ASG` - `Launch Template v1` **&** `Launch Template v2`
   * Different application versions in same ASG
