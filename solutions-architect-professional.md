@@ -31,6 +31,7 @@
   * [GuardDuty](#4_15)
 * [Compute & Load Balancing](#5)
   * [AWS Solution Architectures](#5_1)
+  * [EC2](#5_2)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1484,14 +1485,23 @@ Computer|Serverless|Other
 EC2, ASG, ECS|Lambda, Fargate|Batch, EMR
 
 <a name="5_1_3"></a>
-### [↖](#5_1)[↑](#5_1_2) Backend
+### [↖](#5_1)[↑](#5_1_2)[↓](#5_2) Backend
 
 Caching / Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
 -|-|-|-|-
 ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3, Redshift|SQS, SNS, Kinesis<br/>Amazon MQ, Step Functions|EBS, EFS, Instance Store<br/>CDN Layer|S3, Glacier
 
-## EC2
-### Overview
+<a name="5_2"></a>
+## [↖](#top)[↑](#5_1_3)[↓](#5_2_1) EC2
+<!-- toc_start -->
+* [Overview](#5_2_1)
+* [Payment model](#5_2_2)
+  * [Pricing by](#5_2_2_1)
+* [Instance Types](#5_2_3)
+* [Placement Groups](#5_2_4)
+<!-- toc_end -->
+<a name="5_2_1"></a>
+### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
 Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute
 capacity in the cloud. It is designed to make web-scale cloud computing easier for developers.
 Amazon EC2’s simple web service interface allows you to obtain and configure capacity with minimal
@@ -1506,7 +1516,8 @@ instances in the cloud.
 
 * On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
 
-### Payment model
+<a name="5_2_2"></a>
+### [↖](#5_2)[↑](#5_2_1)[↓](#5_2_2_1) Payment model
 * **On-demand instances**
 	* Pay for compute capacity by the hour, instance can be terminated by Amazon
 * **Reserved instances**
@@ -1529,7 +1540,8 @@ instances in the cloud.
 * **Dedicated hosts**
 	* A physical server with EC2 instance capacity fully dedicated to your use
 
-#### Pricing by
+<a name="5_2_2_1"></a>
+#### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_3) Pricing by
 * Instance Type
 * Compute time
 * Data transfer
@@ -1538,7 +1550,8 @@ instances in the cloud.
 * Monitoring
 * Elastic load balancer
 
-### Instance Types
+<a name="5_2_3"></a>
+### [↖](#5_2)[↑](#5_2_2_1)[↓](#5_2_4) Instance Types
 Family|Mnemomic|Description
 -|-|-
 **F**|FPGA|Can be reprogrammed on the fly and be tuned for  specific applications, making them faster than traditional CPU/GPU combinations
@@ -1555,7 +1568,8 @@ Family|Mnemomic|Description
 
 (*) - main types
 
-### Placement Groups
+<a name="5_2_4"></a>
+### [↖](#5_2)[↑](#5_2_3) Placement Groups
 * Determine how instances are placed on underlying hardware
 * **Cluster**
   * Clusters instances into a low-latency group in a single Availability Zone
