@@ -33,6 +33,7 @@
   * [AWS Solution Architectures](#5_1)
   * [EC2](#5_2)
   * [Auto Scaling](#5_3)
+  * [ECS](#5_4)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1497,7 +1498,9 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 <!-- toc_start -->
 * [Overview](#5_2_1)
 * [Payment Model/Launch Type](#5_2_2)
-  * [Pricing by](#5_2_2_1)
+  * [Spot Instances](#5_2_2_1)
+  * [Spot Fleets](#5_2_2_2)
+  * [Pricing by](#5_2_2_3)
 * [Instance Types](#5_2_3)
 * [Placement Groups](#5_2_4)
 * [Key metrics for EC2](#5_2_5)
@@ -1543,7 +1546,8 @@ instances in the cloud.
 * **Dedicated hosts**
 	* A physical server with EC2 instance capacity fully dedicated to your use
 
-#### Spot Instances
+<a name="5_2_2_1"></a>
+#### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_2_2) Spot Instances
 * Can get a discount of up to 90% compared to On-demand
 * Define max spot price and get the instance while current `spot price < max`
   * The hourly spot price varies based on offer and capacity
@@ -1552,7 +1556,8 @@ instances in the cloud.
   * “block” spot instance during a specified time frame (1 to 6 hours) without interruptions
 * In rare situations, the instance may be reclaimed
 
-#### Spot Fleets
+<a name="5_2_2_2"></a>
+#### [↖](#5_2)[↑](#5_2_2_1)[↓](#5_2_2_3) Spot Fleets
 * Collection (Fleet) of Spot Instances and optionally on-demand instances
   * Set a maximum price you’re willing to pay per Spot Instances or all
   * Can have a mix of instance types (M5.large, M5.xlarge, C5.2xlarge, etc..)
@@ -1561,8 +1566,8 @@ instances in the cloud.
   * Target capacity per Spot Fleet or EC2 fleet: 10,000
   * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
 
-<a name="5_2_2_1"></a>
-#### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_3) Pricing by
+<a name="5_2_2_3"></a>
+#### [↖](#5_2)[↑](#5_2_2_2)[↓](#5_2_3) Pricing by
 * Instance Type
 * Compute time
 * Data transfer
@@ -1572,7 +1577,7 @@ instances in the cloud.
 * Elastic load balancer
 
 <a name="5_2_3"></a>
-### [↖](#5_2)[↑](#5_2_2_1)[↓](#5_2_4) Instance Types
+### [↖](#5_2)[↑](#5_2_2_3)[↓](#5_2_4) Instance Types
 Family|Mnemomic|Description
 -|-|-
 **F**|FPGA|Can be reprogrammed on the fly and be tuned for  specific applications, making them faster than traditional CPU/GPU combinations
@@ -1747,7 +1752,7 @@ Process|Impact|On Suspension
 `AddToLoadBalancer`|Adds instances to the load balancer or target group|Will *not* automatically add instances later
 
 <a name="5_3_2_6"></a>
-#### [↖](#5_3)[↑](#5_3_2_5) Deploying with ASGs
+#### [↖](#5_3)[↑](#5_3_2_5)[↓](#5_4) Deploying with ASGs
 
 * `ALB` - `ASG` - `Launch Template v1` **&** `Launch Template v2`
   * Different application versions in same ASG
@@ -1756,8 +1761,19 @@ Process|Impact|On Suspension
   * Needs DNS (takes time to roll back)
   * Good for testing v2 before cutting over
 
-## ECS
-### Overview
+<a name="5_4"></a>
+## [↖](#top)[↑](#5_3_2_6)[↓](#5_4_1) ECS
+<!-- toc_start -->
+* [Overview](#5_4_1)
+  * [Benefits](#5_4_1_1)
+* [Components](#5_4_2)
+* [Auto Scaling](#5_4_3)
+* [Logging](#5_4_4)
+* [Load Balancing](#5_4_5)
+* [Security ](#5_4_6)
+<!-- toc_end -->
+<a name="5_4_1"></a>
+### [↖](#5_4)[↑](#5_4)[↓](#5_4_1_1) Overview
 *Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management
 service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host
 your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your
@@ -1770,14 +1786,16 @@ launch type.
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2017/Container-Networking-Deep-Dive-with-Amazon-ECS/Container-Networking-Deep-Dive-with-Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-ECS/Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
 
-#### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_2) Benefits
+<a name="5_4_1_1"></a>
+#### [↖](#5_4)[↑](#5_4_1)[↓](#5_4_2) Benefits
 * Containers without servers
 * Containerize Everything
 * Secure
 * Performance at Scale
 * AWS Integration
 
-### [↖](#4_17)[↑](#4_17_1_1)[↓](#4_17_3) Components
+<a name="5_4_2"></a>
+### [↖](#5_4)[↑](#5_4_1_1)[↓](#5_4_3) Components
 ```
 [Cluster
   [Services
@@ -1846,8 +1864,8 @@ launch type.
   * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
   * Tasks can have individual IAM roles
 
-<a name="4_17_3"></a>
-### [↖](#4_17)[↑](#4_17_2)[↓](#4_17_4) Auto Scaling
+<a name="5_4_3"></a>
+### [↖](#5_4)[↑](#5_4_2)[↓](#5_4_4) Auto Scaling
 * Use *Service Auto Scaling* for
   * Target Tracking Scaling Poilicy
   * Step Scaling Policy
@@ -1858,8 +1876,8 @@ launch type.
   * Could use Fargate, obviously
   * Or even Elastic Beanstalk
 
-<a name="4_17_4"></a>
-### [↖](#4_17)[↑](#4_17_3)[↓](#4_17_5) Logging
+<a name="5_4_4"></a>
+### [↖](#5_4)[↑](#5_4_3)[↓](#5_4_5) Logging
 * For tasks, configure logging agent with task definition
   * Typically CloudWatch, also supports Splunk
 * For cluster instances, install CloudWatch Agent
@@ -1868,7 +1886,8 @@ launch type.
 * Can enable CloudWatch Container Insights
   * Sends per-container metrics into CloudWatch metrics
 
-### Load Balancing
+<a name="5_4_5"></a>
+### [↖](#5_4)[↑](#5_4_4)[↓](#5_4_6) Load Balancing
 Application Load Balancer (ALB) has a direct integration feature with ECS called “port mapping”
 * This allows you to run multiple instances of the same application on the same EC2 machine
 Use Cases:
@@ -1876,7 +1895,8 @@ Use Cases:
 * Maximize utilization of CPU / cores
 * Ability to perform rolling upgrades without impacting application uptime
 
-### Security 
+<a name="5_4_6"></a>
+### [↖](#5_4)[↑](#5_4_5) Security 
 * IAM security
   * EC2 Instance Role must have basic ECS permissions
   * ECS Task level should have an IAM Task Role (maximum security)
