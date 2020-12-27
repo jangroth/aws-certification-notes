@@ -1543,6 +1543,24 @@ instances in the cloud.
 * **Dedicated hosts**
 	* A physical server with EC2 instance capacity fully dedicated to your use
 
+#### Spot Instances
+* Can get a discount of up to 90% compared to On-demand
+* Define max spot price and get the instance while current `spot price < max`
+  * The hourly spot price varies based on offer and capacity
+  * If the current spot price > your max price you can choose to stop or terminate your instance with a 2 minutes grace period.
+* Other strategy: Spot Block
+  * “block” spot instance during a specified time frame (1 to 6 hours) without interruptions
+* In rare situations, the instance may be reclaimed
+
+#### Spot Fleets
+* Collection (Fleet) of Spot Instances and optionally on-demand instances
+  * Set a maximum price you’re willing to pay per Spot Instances or all
+  * Can have a mix of instance types (M5.large, M5.xlarge, C5.2xlarge, etc..)
+* Supports: EC2 standalone, Auto Scaling Groups (launch template), ECS (underlying ASG), AWS Batch (Managed Compute Environment)
+* Soft limits:
+  * Target capacity per Spot Fleet or EC2 fleet: 10,000
+  * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
+
 <a name="5_2_2_1"></a>
 #### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_3) Pricing by
 * Instance Type
@@ -1738,4 +1756,129 @@ Process|Impact|On Suspension
   * Needs DNS (takes time to roll back)
   * Good for testing v2 before cutting over
 
+## ECS
+### Overview
+*Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management
+service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host
+your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your
+services or tasks using the Fargate launch type. For more control you can host your tasks on a
+cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2
+launch type.
 
+* On AWS: <a href="https://aws.amazon.com/ecs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ecs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ecs/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2019/CI-CD-with-Fargate-ECS/CI-CD-with-Fargate-ECS.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2017/Container-Networking-Deep-Dive-with-Amazon-ECS/Container-Networking-Deep-Dive-with-Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-ECS/Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
+
+#### [↖](#4_17)[↑](#4_17_1)[↓](#4_17_2) Benefits
+* Containers without servers
+* Containerize Everything
+* Secure
+* Performance at Scale
+* AWS Integration
+
+### [↖](#4_17)[↑](#4_17_1_1)[↓](#4_17_3) Components
+```
+[Cluster
+  [Services
+    [Task Definitions
+      [Family]
+      [Task role/execution role]
+      [Network mode]
+      [Container Definitions
+        [Name/Image]
+        [Memory/Port Mappings]
+        [Health Check]
+        [Environment]
+        [Network Settings]
+        [Storage and Logging]
+        [Security]
+        [Resource Limit]
+        [Docker labels]
+      ]
+    ]
+  ]
+]
+```
+
+* **Cluster**
+  * Logical grouping of EC2 instances that you can place tasks on
+  * Instances run ECS agent as a Docker container
+  * Cluster is an *Auto Scaling Group* with a Launch Configuration using a special ECS AMI
+* **Service**
+  * Runs and maintains a specified number of tasks simultaneously
+  * Created on cluster-level, launch type EC2 or Fargate
+  * Can be linked to ALB/NLB/ELB
+  * *Service type*
+    * *Replica* - places and maintains the desired number of tasks across your cluster
+    * *Demon* - deploys exactly one task on each active container instance that meets all of the task placement constraints
+      * Good for e.g. *monitoring* that should run on every container instance
+  * *Deployment type*
+    * *Rolling*
+      * Controlled by Amazon ECS
+      * Service scheduler replacing the current running version of the container with the latest version
+    * *Blue/Green*
+      * Controlled by CodeDeploy
+      * Allows to verify a new deployment of a service before sending production traffic to it
+* **Task Definition**
+  * ECS allows to run and maintain a specified number containers in a task definition
+    * Group by responsility, e.g. separate task definitions for frontend and backend
+  * The task definition is a text file, in JSON format, that describes one or more *containers*, up to a maximum of ten, that form your application
+  * Specify various parameters, eg:
+    * Container image to use
+    * Data volumes
+    * Port to be opened & networking
+      * **none**: no network connectivity, no port mappings
+      * **bridge**: uses Docker’s virtual container-based network
+      * **host**: bypass Docker’s network, uses the underlying host network interface
+      * **awsvpc**:
+          * Every tasks launched on the instance gets its own ENI and a private IP address
+          * Simplified networking, enhanced security, security groups, monitoring, VPC flow logs
+          * Default mode for Fargate
+  * Either for ECS or Fargate
+* **Container Definitions**
+  * Can mark container as *essential* - if that container fails or stops for any reason, all other containers that are part of the task are stopped
+* **Task**
+  * A *task* is the instantiation of a *task definition* within a cluster
+  * If a task should fail or stop, the ECS scheduler launches another instance of the task
+    definition to replace it and to maintain the desired count of tasks in service
+  * Static host port mapping: Only one task per container instance allowed, e.g. mapping host port 80 to container port
+  * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
+  * Tasks can have individual IAM roles
+
+<a name="4_17_3"></a>
+### [↖](#4_17)[↑](#4_17_2)[↓](#4_17_4) Auto Scaling
+* Use *Service Auto Scaling* for
+  * Target Tracking Scaling Poilicy
+  * Step Scaling Policy
+  * Sdcheduled Scaling
+
+* For ECS, we also need to scale the cluster
+  * This is really tricky, but in essence there's an ASG around the EC2 instances that form the cluster
+  * Could use Fargate, obviously
+  * Or even Elastic Beanstalk
+
+<a name="4_17_4"></a>
+### [↖](#4_17)[↑](#4_17_3)[↓](#4_17_5) Logging
+* For tasks, configure logging agent with task definition
+  * Typically CloudWatch, also supports Splunk
+* For cluster instances, install CloudWatch Agent
+* Various ECS-specific CloudWatch metrics available
+* Various ECS-specific CloudWatch Events available
+* Can enable CloudWatch Container Insights
+  * Sends per-container metrics into CloudWatch metrics
+
+### Load Balancing
+Application Load Balancer (ALB) has a direct integration feature with ECS called “port mapping”
+* This allows you to run multiple instances of the same application on the same EC2 machine
+Use Cases:
+* Increased resiliency even if running on one EC2 instance
+* Maximize utilization of CPU / cores
+* Ability to perform rolling upgrades without impacting application uptime
+
+### Security 
+* IAM security
+  * EC2 Instance Role must have basic ECS permissions
+  * ECS Task level should have an IAM Task Role (maximum security)
+* Secrets and Configuration injection into parameters, environment variables:
+  * Integration with SSM Parameter Store & Secrets Manager
