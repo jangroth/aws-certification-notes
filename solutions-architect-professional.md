@@ -34,6 +34,8 @@
   * [EC2](#5_2)
   * [Auto Scaling](#5_3)
   * [ECS](#5_4)
+  * [Fargate](#5_5)
+  * [Lambda](#5_6)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -98,6 +100,8 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 * Determine a strategy to improve the securityof an existing solution
 * Determine how to improve the deployment of an existing solution
 
+---
+
 <a name="3"></a>
 # [↖](#top)[↑](#2_1_5)[↓](#3_1) Identity and Federation
 
@@ -115,6 +119,8 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
   * AD Connector: proxy requests to on-premise
   * Simple AD: standalone & cheap AD-compatible with no MFA, no advanced capabilities
   * Single Sign On to connect to multiple AWS Accounts (Organization) and SAML apps
+
+---
 
 <a name="3_2"></a>
 ## [↖](#top)[↑](#3_1)[↓](#3_2_1) Identity and Access Management (IAM)
@@ -339,6 +345,8 @@ AWS IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Fin
 exported as a report for auditing purposes. IAM Access Analyzer findings provide definitive
 answers of who has public and cross-account access to AWS resources from outside an account.
 
+---
+
 <a name="3_3"></a>
 ## [↖](#top)[↑](#3_2_6_2)[↓](#3_3_1) STS (Security Token Service)
 <!-- toc_start -->
@@ -399,6 +407,8 @@ STS on AWS:
   ```
 * *Confused Deputy* refers to the fact that *without* `externalId`, it wouldn't be possible for
 service providers to make sure that they are accessing the right account (as role ARNs are guessable)
+
+---
 
 <a name="3_4"></a>
 ## [↖](#top)[↑](#3_3_3)[↓](#3_4_1) Identity Federation
@@ -492,6 +502,8 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
   * Supports data syncronization
 * Amazon Connect replaces old service called Token Vending Machine
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_cognito.html" target="_blank">Documentation On AWS</a>
+
+---
 
 <a name="3_5"></a>
 ## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services
@@ -596,6 +608,8 @@ services, such as Amazon WorkSpaces, with AD users and groups.
 * Lower cost, low scale, basic AD compatible, or LDAP compatibility
 * No trust relationship to on-premises Microsoft AD
 
+---
+
 <a name="3_6"></a>
 ## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Organization
 <!-- toc_start -->
@@ -693,6 +707,8 @@ organization's accounts. In a tag policy, you specify tagging rules applicable t
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
+---
+
 <a name="3_7"></a>
 ## [↖](#top)[↑](#3_6_4)[↓](#3_7_1) AWS Resource Access Manager
 <!-- toc_start -->
@@ -716,6 +732,8 @@ resources with other accounts.
   * Route53 Resolver Rules
   * License Manager Configurations
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
+
+---
 
 <a name="3_8"></a>
 ## [↖](#top)[↑](#3_7_1)[↓](#3_8_1) AWS Single Sign-On
@@ -744,6 +762,8 @@ and access all their assigned AWS accounts, cloud applications, and custom appli
 * Centralized permission management
 * Centralized auditing with CloudTrail
 * On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
+
+---
 
 <a name="4"></a>
 # [↖](#top)[↑](#3_8_1)[↓](#4_1) Security
@@ -806,6 +826,8 @@ SNS|Can notify SQS/Lambda from there
 S3|Can use bucket events from there
 Stream into CloudWatch Logs|Can utilize metric filtering and raise alarms
 CloudWatch Events|Fastest way, works for every API call
+
+---
 
 <a name="4_2"></a>
 ## [↖](#top)[↑](#4_1_4)[↓](#4_2_1) KMS
@@ -879,6 +901,8 @@ AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for
 AWS accounts. Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS
 owned CMKs to protect the resources in your account.
 
+---
+
 <a name="4_3"></a>
 ## [↖](#top)[↑](#4_2_3_4)[↓](#4_3_1) SSM Parameter Store
 <!-- toc_start -->
@@ -902,6 +926,8 @@ when you created the parameter.
 * Integration with CloudFormation
 * Can retrieve secrets from Secrets Manager using the SSM Parameter Store API
 * On AWS: <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html" target="_blank">User Guide</a>
+
+---
 
 <a name="4_4"></a>
 ## [↖](#top)[↑](#4_3_1)[↓](#4_4_1) Secrets Manager
@@ -928,6 +954,8 @@ AWS Cloud, third-party services, and on-premises.
 * Mostly meant for RDS integration
 * On AWS: <a href="https://aws.amazon.com/secrets-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/secrets-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html" target="_blank">User Guide</a>
 
+---
+
 <a name="4_5"></a>
 ## [↖](#top)[↑](#4_4_1)[↓](#4_5_1) RDS Security
 <!-- toc_start -->
@@ -942,6 +970,8 @@ AWS Cloud, third-party services, and on-premises.
 * Authorization still happens within RDS (not in IAM)
 * Can copy an un-encrypted RDS snapshot into an encrypted one
 * CloudTrail cannot be used to track queries made within RDS
+
+---
 
 <a name="4_6"></a>
 ## [↖](#top)[↑](#4_5_1)[↓](#4_6_1) SSL/SNI/MITM/DNSSEC
@@ -995,6 +1025,8 @@ Secure Symmetric ..|..Communication in Place
     * Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.
     * You could run a custom DNS server on EC2
 
+---
+
 <a name="4_7"></a>
 ## [↖](#top)[↑](#4_6_4)[↓](#4_7_1) AWS Certificate Manager
 <!-- toc_start -->
@@ -1041,6 +1073,8 @@ operation of the private CA and for the private certificates you issue.
 
 * On AWS: <a href="https://aws.amazon.com/certificate-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/certificate-manager/faqs/?nc=sn&loc=5" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">User Guide</a>
 
+---
+
 <a name="4_8"></a>
 ## [↖](#top)[↑](#4_7_1)[↓](#4_8_1) CloudHSM
 <!-- toc_start -->
@@ -1085,6 +1119,8 @@ Encryption|Symmetric and asymmetric (*new*) encryption|Supports both symmetric a
 Cryptographic Acceleration|None|SSL/TLS Acceleration Oracle TDE Acceleration
 Key Storage and Management|Accessible from multiple regions<br/>Centralized management from IAM|Deployed and managed from a customer VPC.<br/>Accessible and can be shared across VPCs using VPC peering<br/>No IAM integration on user/key level
 Free Tier Availability|Yes|No
+
+---
 
 <a name="4_9"></a>
 ## [↖](#top)[↑](#4_8_2)[↓](#4_9_1) S3 Security
@@ -1197,6 +1233,8 @@ Can generate pre-signed URLs using SDK or CLI
 * Adopt a WORM (Write Once Read Many) model
 * Lock the policy for future edits (can no longer be changed)
 * Helpful for compliance and data retention
+
+---
 
 <a name="4_10"></a>
 ## [↖](#top)[↑](#4_9_6)[↓](#4_10_1) Network Security, DDOS, Shield, WAF and Firewall Manager
@@ -1318,6 +1356,8 @@ Summary
 * Security Groups for EC2 and ENI resources in VPC
 * On AWS: <a href="https://aws.amazon.com/firewall-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/firewall-manager/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/fms-chapter.html" target="_blank">User Guide</a>
 
+---
+
 <a name="4_11"></a>
 ## [↖](#top)[↑](#4_10_5)[↓](#4_12) Blocking IP addresses
 * `client` -> `vpc` -> `ec2`
@@ -1330,6 +1370,8 @@ Summary
 * `client` -> `CloudFront` -> `vpc` -> `NLB` -> `ec2`
   * Can't use NACL as CloudFront forwards from its own IP range
   * USe WAF on CloudFront
+
+---
 
 <a name="4_12"></a>
 ## [↖](#top)[↑](#4_11)[↓](#4_12_1) Amazon Inspector
@@ -1363,6 +1405,8 @@ installed. These rules are regularly updated by AWS security researchers.
 * Assessment templates can notify SNS
   * Could trigger Lambda to remediate EC2 findings via SSM documents
 * On AWS: <a href="https://aws.amazon.com/inspector/" target="_blank">Service</a> - <a href="https://aws.amazon.com/inspector/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/inspector/latest/userguide/" target="_blank">User Guide</a>
+
+---
 
 <a name="4_13"></a>
 ## [↖](#top)[↑](#4_12_1)[↓](#4_13_1) Config
@@ -1419,6 +1463,8 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * Is limited to 50 per account
   * *"We are unable to complete the request at this time. Try again later or contact AWS Support"*
 
+---
+
 <a name="4_14"></a>
 ## [↖](#top)[↑](#4_13_4)[↓](#4_15) AWS Managed Logs
 * **Load Balancer** Access Logs (ALB, NLB, CLB) => to S3
@@ -1434,6 +1480,8 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 * **CloudFront** Access Logs => to S3
   * Detailed information about every user request that CloudFront receives
 * **AWS Config** => to S3
+
+---
 
 <a name="4_15"></a>
 ## [↖](#top)[↑](#4_14)[↓](#4_15_1) GuardDuty
@@ -1461,9 +1509,10 @@ event management and workflow systems.
 * On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/Amazon-GuardDuty/Amazon-GuardDuty.jpg" target="_blank">AWS Geek 2020</a>
 
+---
+
 <a name="5"></a>
 # [↖](#top)[↑](#4_15_1)[↓](#5_1) Compute & Load Balancing
-
 <a name="5_1"></a>
 ## [↖](#top)[↑](#5)[↓](#5_1_1) AWS Solution Architectures
 <!-- toc_start -->
@@ -1492,6 +1541,8 @@ EC2, ASG, ECS|Lambda, Fargate|Batch, EMR
 Caching / Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
 -|-|-|-|-
 ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3, Redshift|SQS, SNS, Kinesis<br/>Amazon MQ, Step Functions|EBS, EFS, Instance Store<br/>CDN Layer|S3, Glacier
+
+---
 
 <a name="5_2"></a>
 ## [↖](#top)[↑](#5_1_3)[↓](#5_2_1) EC2
@@ -1641,6 +1692,8 @@ the recovered instance runs in the placement group.
 
 If your instance has a public IPv4 address, it retains the public IPv4 address after recovery.
 
+---
+
 <a name="5_3"></a>
 ## [↖](#top)[↑](#5_2_6)[↓](#5_3_1) Auto Scaling
 <!-- toc_start -->
@@ -1761,6 +1814,8 @@ Process|Impact|On Suspension
   * Needs DNS (takes time to roll back)
   * Good for testing v2 before cutting over
 
+---
+
 <a name="5_4"></a>
 ## [↖](#top)[↑](#5_3_2_6)[↓](#5_4_1) ECS
 <!-- toc_start -->
@@ -1770,7 +1825,7 @@ Process|Impact|On Suspension
 * [Auto Scaling](#5_4_3)
 * [Logging](#5_4_4)
 * [Load Balancing](#5_4_5)
-* [Security ](#5_4_6)
+* [Security](#5_4_6)
 <!-- toc_end -->
 <a name="5_4_1"></a>
 ### [↖](#5_4)[↑](#5_4)[↓](#5_4_1_1) Overview
@@ -1896,9 +1951,185 @@ Use Cases:
 * Ability to perform rolling upgrades without impacting application uptime
 
 <a name="5_4_6"></a>
-### [↖](#5_4)[↑](#5_4_5) Security 
+### [↖](#5_4)[↑](#5_4_5)[↓](#5_5) Security
 * IAM security
   * EC2 Instance Role must have basic ECS permissions
   * ECS Task level should have an IAM Task Role (maximum security)
 * Secrets and Configuration injection into parameters, environment variables:
   * Integration with SSM Parameter Store & Secrets Manager
+
+---
+
+<a name="5_5"></a>
+## [↖](#top)[↑](#5_4_6)[↓](#5_5_1) Fargate
+<!-- toc_start -->
+* [Overview](#5_5_1)
+<!-- toc_end -->
+<a name="5_5_1"></a>
+### [↖](#5_5)[↑](#5_5)[↓](#5_6) Overview
+AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic
+Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate makes it easy for you
+to focus on building your applications. Fargate removes the need to provision and manage servers,
+lets you specify and pay for resources per application, and improves security through application
+isolation by design.
+
+Fargate allocates the right amount of compute, eliminating the need to choose instances and scale
+cluster capacity. You only pay for the resources required to run your containers, so there is no
+over-provisioning and paying for additional servers. Fargate runs each task or pod in its own
+kernel providing the tasks and pods their own isolated compute environment. This enables your
+application to have workload isolation and improved security by design. This is why customers such
+as Vanguard, Accenture, Foursquare, and Ancestry have chosen to run their mission critical applications on Fargate.
+
+* Don't need to provision cluster
+  * Does not need EC2 instance roles to create cluster
+* Requires VPC
+* On AWS: <a href="https://aws.amazon.com/fargate/" target="_blank">Service</a> - <a href="https://aws.amazon.com/fargate/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html" target="_blank">User Guide</a
+
+---
+
+<a name="5_6"></a>
+## [↖](#top)[↑](#5_5_1)[↓](#5_6_1) Lambda
+<!-- toc_start -->
+* [Overview](#5_6_1)
+* [Managing Functions](#5_6_2)
+  * [Versions](#5_6_2_1)
+  * [Aliases](#5_6_2_2)
+  * [Layers](#5_6_2_3)
+  * [Network](#5_6_2_4)
+  * [Database](#5_6_2_5)
+* [Invoking Functions](#5_6_3)
+  * [Synchronous/Asynchronous/Event Source Invocation](#5_6_3_1)
+  * [Function Scaling](#5_6_3_2)
+  * [Monitoring and troubleshooting](#5_6_3_3)
+* [Limits and Latencies](#5_6_4)
+<!-- toc_end -->
+<a name="5_6_1"></a>
+### [↖](#5_6)[↑](#5_6)[↓](#5_6_2) Overview
+*AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the
+compute time you consume - there is no charge when your code is not running. With Lambda, you can
+run code for virtually any type of application or backend service - all with zero administration.
+Just upload your code and Lambda takes care of everything required to run and scale your code with
+high availability. You can set up your code to automatically trigger from other AWS services or
+call it directly from any web or mobile app.
+
+* Features
+  * No servers
+  * Continuous scaling
+    * Cold Start - if no idle container is available to run the Lambda
+  * Very cheap
+  * Can give more RAM which will proportionaly increase CPU as well
+* Supported languages
+  * `nodejs`, `Java`, `C#/PowerShell`, `C#/.NET`, `Python`, `Golang`, `Ruby`
+  * Any programming language via custom runtime
+* Can pass in *environment variables*
+  * These can be KMS-encrypted as well (need SDK to decrypt)
+* On AWS: <a href="https://aws.amazon.com/lambda/" target="_blank">Service</a> - <a href="https://aws.amazon.com/lambda/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/lambda/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
+
+<a name="5_6_2"></a>
+### [↖](#5_6)[↑](#5_6_1)[↓](#5_6_2_1) Managing Functions
+`triggers` -> `function & layers` -> `destinations`
+
+<a name="5_6_2_1"></a>
+#### [↖](#5_6)[↑](#5_6_2)[↓](#5_6_2_2) Versions
+* If you work on a Lambda function, you work on `$LATEST`
+* The system creates a new version of your Lambda function each time that you publish the function.
+  The new version is a copy of the unpublished version of the function.
+* Version is code *and* configuration
+* Versions are immutable, you can change the function code and settings only on the unpublished
+  version of a function.
+* Each version gets its own ARN
+
+<a name="5_6_2_2"></a>
+#### [↖](#5_6)[↑](#5_6_2_1)[↓](#5_6_2_3) Aliases
+* You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
+to a specific Lambda function *version*.
+* Aliases are mutable
+* Users can access the function version using the alias ARN.
+* Can create e.g. `dev`, `test` and `prod`.
+  * Aliases can point to multiple versions with a *weight* - for canary-style deployments
+
+<a name="5_6_2_3"></a>
+#### [↖](#5_6)[↑](#5_6_2_2)[↓](#5_6_2_4) Layers
+* You can configure your Lambda function to pull in additional code and content in the form of layers.
+* A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
+* With layers, you can use libraries in your function without needing to include them in your deployment package.
+
+<a name="5_6_2_4"></a>
+#### [↖](#5_6)[↑](#5_6_2_3)[↓](#5_6_2_5) Network
+* You can configure a function to connect to private subnets in a VPC in your account.
+* Use VPC to create a private network for resources such as databases, cache instances, or internal services.
+* Connect your function to the VPC to access private resources during execution.
+* Provisioning process for Lambda takes longer
+
+<a name="5_6_2_5"></a>
+#### [↖](#5_6)[↑](#5_6_2_4)[↓](#5_6_3) Database
+* You can use the Lambda console to create an RDS database proxy for your function.
+* A database proxy manages a pool of database connections and relays queries from a function.
+* This enables a function to reach high concurrency levels without exhausting database connections.
+
+<a name="5_6_3"></a>
+### [↖](#5_6)[↑](#5_6_2_5)[↓](#5_6_3_1) Invoking Functions
+
+<a name="5_6_3_1"></a>
+#### [↖](#5_6)[↑](#5_6_3)[↓](#5_6_3_2) Synchronous/Asynchronous/Event Source Invocation
+* When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
+  * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
+* When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
+process reads events from the queue and runs your function.
+  * Lambda manages the function's asynchronous invocation queue and attempts to retry failed
+  events automatically. If the function returns an error, Lambda attempts to run it two more times
+  * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an
+  Amazon SQS queue or an Amazon SNS topic.
+  * -> S3, SNS, SES, CloudFormation, CloudWatch Logs & Events, CodeCommit, Config
+* An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
+  * -> Kinesis, DynamoDB, SQS
+
+<a name="5_6_3_2"></a>
+#### [↖](#5_6)[↑](#5_6_3_1)[↓](#5_6_3_3) Function Scaling
+* The first time you invoke your function, AWS Lambda creates an instance of the function and runs
+its handler method to process the event.
+  * When the function returns a response, it sticks around to process additional events.
+  * If you invoke the function again while the first event is being processed, Lambda creates another instance.
+  * This continues until there are enough instances to serve all requests, or a concurrency limit is reached.
+  * When the number of requests decreases, Lambda stops unused instances to free up scaling capacity for other functions.
+* **Concurrency** is `invocations/s * runtime` (eg. 10/s * 4s = 40)
+  * Can configure *reservered concurrency*
+    * No other function can use that concurrency
+  * Can configure *provisioned concurrency* before an increase in invocations
+    * Can ensure that all requests are served by initialized instances with very low latency.
+* Default Burst concurrency limits
+    * `3000` – US West (Oregon), US East (N. Virginia), Europe (Ireland)
+    * `1000` – Asia Pacific (Tokyo), Europe (Frankfurt)
+    * `500` – Other Regions
+
+<a name="5_6_3_3"></a>
+#### [↖](#5_6)[↑](#5_6_3_2)[↓](#5_6_4) Monitoring and troubleshooting
+* AWS Lambda automatically monitors Lambda functions on your behalf and reports metrics through
+  Amazon CloudWatch. To help you monitor your code as it executes, Lambda automatically tracks the
+  *number of requests*, the *execution duration per request*, and the *number of requests that result in an error*.
+* It also publishes the associated CloudWatch metrics.
+* Need *custom metric* for memory usage
+
+<a name="5_6_4"></a>
+### [↖](#5_6)[↑](#5_6_3_3) Limits and Latencies
+
+.|Limit
+-|-
+RAM|128 MB to 10GB
+CPU|Linked to RAM (cannot be set manually)<br/>2 vCPU are allocated after 1.5G of RAM
+Timeout|Up to 15 minutes
+/tmp storage|512 MB (can’t process BIG files)
+Deployment package limit|250 MB including layers
+Concurrency execution|1000 – soft limit that can be increased
+
+.|Latency
+-|-
+Cold Lambda Invocation|~100ms<br/>New feature of “provisioned concurrency” (Dec 2019) to reduce # of cold starts
+Warm Lambda Invocation|~ms
+API Gateway invocation|100 ms
+CloudFront invocation|100 ms
+
+* If you chain with other services (API Gateway, CloudFront, ALB, Lambda, SQS, Step Functions...), add their latencies as well
+* X-Ray can help visualize the end-to-end latency
