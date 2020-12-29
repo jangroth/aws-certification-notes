@@ -2027,6 +2027,12 @@ call it directly from any web or mobile app.
 * See also: <a href="https://www.awsgeek.com/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
 * See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
 
+### Security/IAM
+* IAM Roles for Lambda to grant access to other AWS services
+* Resource-based Policies for Lambda (similar to S3 bucket policies):
+  * Allow other accounts to invoke or manage Lambda
+  * Allow other services to invoke or manage Lambda
+
 <a name="5_6_2"></a>
 ### [↖](#5_6)[↑](#5_6_1)[↓](#5_6_2_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
@@ -2080,11 +2086,26 @@ to a specific Lambda function *version*.
 process reads events from the queue and runs your function.
   * Lambda manages the function's asynchronous invocation queue and attempts to retry failed
   events automatically. If the function returns an error, Lambda attempts to run it two more times
-  * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an
-  Amazon SQS queue or an Amazon SNS topic.
+  * For retries, Lambda needs to be idempotent
+  * You can also configure Lambda to send an invocation record to another service.
+    * Lambda supports the following **destinations** for asynchronous invocation: SQS, SNS, AWS Lambda, EventBridge
+    * The invocation record contains details about the request and response in JSON format. You can
+      configure separate destinations for events that are processed successfully, and events that fail
+      all processing attempts. Alternatively, you can configure an SQS queue or SNS topic as a dead
+      letter queue for discarded events. For dead-letter queues, Lambda only sends the content of the
+      event, without details about the response.
+  * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an Amazon SQS queue or an Amazon SNS topic (DLQ).
+    * Less information than *destinations*, not recommended any more by AWS
   * -> S3, SNS, SES, CloudFormation, CloudWatch Logs & Events, CodeCommit, Config
 * An **event source mapping** is an AWS Lambda resource that reads from an event source and invokes a Lambda function.
-  * -> Kinesis, DynamoDB, SQS
+  * -> Kinesis Data Streams, DynamoDB Streams, SQS, SQS FIFO
+  * Common denominator: records need to be polled from the source
+  * All records are respect ordering properties except for SQS standard
+  * If your function returns an error, the entire batch is reprocessed until success
+    * Kinesis, DynamoDB Stream: stop shard processing
+    * SQS FIFO: stop, unless a SQS DLQ has been defined
+    * Need to make sure your Lambda function is idempotent
+  * Supports SQS and SNS as *destination* for  discarded event batches
 
 <a name="5_6_3_2"></a>
 #### [↖](#5_6)[↑](#5_6_3_1)[↓](#5_6_3_3) Function Scaling
@@ -2105,7 +2126,16 @@ its handler method to process the event.
     * `500` – Other Regions
 
 <a name="5_6_3_3"></a>
-#### [↖](#5_6)[↑](#5_6_3_2)[↓](#5_6_4) Monitoring and troubleshooting
+#### [↖](#5_6)[↑](#5_6_3_2)[↓](#5_6_4) Logging, Monitoring and Troubleshooting
+* **CloudWatch**
+  * AWS Lambda execution logs are stored in AWS CloudWatch Logs
+  * AWS Lambda metrics are displayed in AWS CloudWatch Metrics (successful invocations, error rates, latency, timeouts, etc...)
+  * Make sure your AWS Lambda function has an execution role with an IAM policy that authorizes writes to CloudWatch Logs
+* **X-Ray**
+  * It’s possible to trace Lambda with X-Ray
+  * Enable in Lambda configuration (runs the X-Ray daemon for you)
+  * Use AWS SDK in Code
+  * Ensure Lambda Function has correct IAM Execution Role
 * AWS Lambda automatically monitors Lambda functions on your behalf and reports metrics through
   Amazon CloudWatch. To help you monitor your code as it executes, Lambda automatically tracks the
   *number of requests*, the *execution duration per request*, and the *number of requests that result in an error*.
