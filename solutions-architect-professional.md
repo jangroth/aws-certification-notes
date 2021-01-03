@@ -1991,17 +1991,18 @@ as Vanguard, Accenture, Foursquare, and Ancestry have chosen to run their missio
 ## [↖](#top)[↑](#5_5_1)[↓](#5_6_1) Lambda
 <!-- toc_start -->
 * [Overview](#5_6_1)
-* [Managing Functions](#5_6_2)
-  * [Versions](#5_6_2_1)
-  * [Aliases](#5_6_2_2)
-  * [Layers](#5_6_2_3)
-  * [Network](#5_6_2_4)
-  * [Database](#5_6_2_5)
-* [Invoking Functions](#5_6_3)
-  * [Synchronous/Asynchronous/Event Source Invocation](#5_6_3_1)
-  * [Function Scaling](#5_6_3_2)
-  * [Monitoring and troubleshooting](#5_6_3_3)
-* [Limits and Latencies](#5_6_4)
+* [Security/IAM](#5_6_2)
+* [Managing Functions](#5_6_3)
+  * [Versions](#5_6_3_1)
+  * [Aliases](#5_6_3_2)
+  * [Layers](#5_6_3_3)
+  * [Network](#5_6_3_4)
+  * [Database](#5_6_3_5)
+* [Invoking Functions](#5_6_4)
+  * [Synchronous/Asynchronous/Event Source Invocation](#5_6_4_1)
+  * [Function Scaling](#5_6_4_2)
+  * [Logging, Monitoring and Troubleshooting](#5_6_4_3)
+* [Limits and Latencies](#5_6_5)
 <!-- toc_end -->
 <a name="5_6_1"></a>
 ### [↖](#5_6)[↑](#5_6)[↓](#5_6_2) Overview
@@ -2027,59 +2028,67 @@ call it directly from any web or mobile app.
 * See also: <a href="https://www.awsgeek.com/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
 * See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/AWS-Lambda/AWS-Lambda.jpg" target="_blank">AWS Geek 2020</a>
 
-### Security/IAM
+<a name="5_6_2"></a>
+### [↖](#5_6)[↑](#5_6_1)[↓](#5_6_3) Security/IAM
 * IAM Roles for Lambda to grant access to other AWS services
 * Resource-based Policies for Lambda (similar to S3 bucket policies):
   * Allow other accounts to invoke or manage Lambda
   * Allow other services to invoke or manage Lambda
 
-<a name="5_6_2"></a>
-### [↖](#5_6)[↑](#5_6_1)[↓](#5_6_2_1) Managing Functions
+<a name="5_6_3"></a>
+### [↖](#5_6)[↑](#5_6_2)[↓](#5_6_3_1) Managing Functions
 `triggers` -> `function & layers` -> `destinations`
 
-<a name="5_6_2_1"></a>
-#### [↖](#5_6)[↑](#5_6_2)[↓](#5_6_2_2) Versions
+<a name="5_6_3_1"></a>
+#### [↖](#5_6)[↑](#5_6_3)[↓](#5_6_3_2) Versions
 * If you work on a Lambda function, you work on `$LATEST`
-* The system creates a new version of your Lambda function each time that you publish the function.
-  The new version is a copy of the unpublished version of the function.
+* The system creates a new version of your Lambda function each time that you *publish* the function.
+  The new version is a copy of the *unpublished* version of the function.
 * Version is code *and* configuration
-* Versions are immutable, you can change the function code and settings only on the unpublished
-  version of a function.
+* Versions are immutable, you can change the function code and settings (including environment variables) only on the unpublished version of a function.
 * Each version gets its own ARN
 
-<a name="5_6_2_2"></a>
-#### [↖](#5_6)[↑](#5_6_2_1)[↓](#5_6_2_3) Aliases
-* You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer
-to a specific Lambda function *version*.
+<a name="5_6_3_2"></a>
+#### [↖](#5_6)[↑](#5_6_3_1)[↓](#5_6_3_3) Aliases
+* You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a *pointer* to a specific Lambda function *version*.
 * Aliases are mutable
 * Users can access the function version using the alias ARN.
 * Can create e.g. `dev`, `test` and `prod`.
   * Aliases can point to multiple versions with a *weight* - for canary-style deployments
+* Can use *alias routing*, where weights are assigned to up to two published Lambda function versions that the alias points to
+  * This allows to canary/blue-green deploy
+* Aliases integrate well with **API Gateway**, where gateway *stages* point to Lambda aliases
+* **CodeDeploy** allow to automate the traffic shift between aliases
+  * Lambda deploys a new version under an alias, and traffic is shifted between old and new version
+    * `LambdaCanary10Percent5Minutes/10/15/30`
+    * `LambdaLinear10PercentEvery1Minute/2/3/10`
+    * `LambdaAllAtOnce`
+  * Pre/post traffic hooks allow to invoke funcitons for health checking etc
 
-<a name="5_6_2_3"></a>
-#### [↖](#5_6)[↑](#5_6_2_2)[↓](#5_6_2_4) Layers
+<a name="5_6_3_3"></a>
+#### [↖](#5_6)[↑](#5_6_3_2)[↓](#5_6_3_4) Layers
 * You can configure your Lambda function to pull in additional code and content in the form of layers.
 * A layer is a ZIP archive that contains libraries, a custom runtime, or other dependencies.
 * With layers, you can use libraries in your function without needing to include them in your deployment package.
 
-<a name="5_6_2_4"></a>
-#### [↖](#5_6)[↑](#5_6_2_3)[↓](#5_6_2_5) Network
+<a name="5_6_3_4"></a>
+#### [↖](#5_6)[↑](#5_6_3_3)[↓](#5_6_3_5) Network
 * You can configure a function to connect to private subnets in a VPC in your account.
 * Use VPC to create a private network for resources such as databases, cache instances, or internal services.
 * Connect your function to the VPC to access private resources during execution.
 * Provisioning process for Lambda takes longer
 
-<a name="5_6_2_5"></a>
-#### [↖](#5_6)[↑](#5_6_2_4)[↓](#5_6_3) Database
+<a name="5_6_3_5"></a>
+#### [↖](#5_6)[↑](#5_6_3_4)[↓](#5_6_4) Database
 * You can use the Lambda console to create an RDS database proxy for your function.
 * A database proxy manages a pool of database connections and relays queries from a function.
 * This enables a function to reach high concurrency levels without exhausting database connections.
 
-<a name="5_6_3"></a>
-### [↖](#5_6)[↑](#5_6_2_5)[↓](#5_6_3_1) Invoking Functions
+<a name="5_6_4"></a>
+### [↖](#5_6)[↑](#5_6_3_5)[↓](#5_6_4_1) Invoking Functions
 
-<a name="5_6_3_1"></a>
-#### [↖](#5_6)[↑](#5_6_3)[↓](#5_6_3_2) Synchronous/Asynchronous/Event Source Invocation
+<a name="5_6_4_1"></a>
+#### [↖](#5_6)[↑](#5_6_4)[↓](#5_6_4_2) Synchronous/Asynchronous/Event Source Invocation
 * When you invoke a function **synchronously**, Lambda runs the function and waits for a response.
   * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
@@ -2088,7 +2097,7 @@ process reads events from the queue and runs your function.
   events automatically. If the function returns an error, Lambda attempts to run it two more times
   * For retries, Lambda needs to be idempotent
   * You can also configure Lambda to send an invocation record to another service.
-    * Lambda supports the following **destinations** for asynchronous invocation: SQS, SNS, AWS Lambda, EventBridge
+    * Lambda supports the following **destinations** for asynchronous invocation recordings: SQS, SNS, AWS Lambda, EventBridge
     * The invocation record contains details about the request and response in JSON format. You can
       configure separate destinations for events that are processed successfully, and events that fail
       all processing attempts. Alternatively, you can configure an SQS queue or SNS topic as a dead
@@ -2107,8 +2116,8 @@ process reads events from the queue and runs your function.
     * Need to make sure your Lambda function is idempotent
   * Supports SQS and SNS as *destination* for  discarded event batches
 
-<a name="5_6_3_2"></a>
-#### [↖](#5_6)[↑](#5_6_3_1)[↓](#5_6_3_3) Function Scaling
+<a name="5_6_4_2"></a>
+#### [↖](#5_6)[↑](#5_6_4_1)[↓](#5_6_4_3) Function Scaling
 * The first time you invoke your function, AWS Lambda creates an instance of the function and runs
 its handler method to process the event.
   * When the function returns a response, it sticks around to process additional events.
@@ -2125,8 +2134,8 @@ its handler method to process the event.
     * `1000` – Asia Pacific (Tokyo), Europe (Frankfurt)
     * `500` – Other Regions
 
-<a name="5_6_3_3"></a>
-#### [↖](#5_6)[↑](#5_6_3_2)[↓](#5_6_4) Logging, Monitoring and Troubleshooting
+<a name="5_6_4_3"></a>
+#### [↖](#5_6)[↑](#5_6_4_2)[↓](#5_6_5) Logging, Monitoring and Troubleshooting
 * **CloudWatch**
   * AWS Lambda execution logs are stored in AWS CloudWatch Logs
   * AWS Lambda metrics are displayed in AWS CloudWatch Metrics (successful invocations, error rates, latency, timeouts, etc...)
@@ -2142,8 +2151,8 @@ its handler method to process the event.
 * It also publishes the associated CloudWatch metrics.
 * Need *custom metric* for memory usage
 
-<a name="5_6_4"></a>
-### [↖](#5_6)[↑](#5_6_3_3) Limits and Latencies
+<a name="5_6_5"></a>
+### [↖](#5_6)[↑](#5_6_4_3) Limits and Latencies
 
 .|Limit
 -|-
