@@ -36,6 +36,7 @@
   * [ECS](#5_4)
   * [Fargate](#5_5)
   * [Lambda](#5_6)
+  * [Load Balancers](#5_7)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -2152,7 +2153,7 @@ its handler method to process the event.
 * Need *custom metric* for memory usage
 
 <a name="5_6_5"></a>
-### [↖](#5_6)[↑](#5_6_4_3) Limits and Latencies
+### [↖](#5_6)[↑](#5_6_4_3)[↓](#5_7) Limits and Latencies
 
 .|Limit
 -|-
@@ -2172,3 +2173,20 @@ CloudFront invocation|100 ms
 
 * If you chain with other services (API Gateway, CloudFront, ALB, Lambda, SQS, Step Functions...), add their latencies as well
 * X-Ray can help visualize the end-to-end latency
+
+---
+
+<a name="5_7"></a>
+## [↖](#top)[↑](#5_6_5) Load Balancers
+
+.|**ALB**|**NLB**|**ELB**
+-|-|-|-
+.|Active Load Balancer|Network Load Balancer|Classic Load Balancer
+Layer|7 (application layer)|4 (transport layer)|EC2-classic network (deprecated)
+Protocoll|HTTP, HTTPS|TCP|TCP, SSL, HTTP, HTTPS
+
+* `x-forwarder-for` header has IP address of end user
+* ELBs don't have ipv4 address, need to be resolved by DNS name
+* ALBs now supports host-based and path-based routing
+  * `api.example.com/production`, `mobile.example.com/test`
+
