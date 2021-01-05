@@ -2209,13 +2209,6 @@ Protocoll|HTTP, HTTPS|TCP, TLS (secure TCP), UDP|TCP, SSL, HTTP, HTTPS
 ### [↖](#5_7)[↑](#5_7_1) ELB
 
 * `Client` -> [listener] -> `CLB` -> [internal] -> EC2
-* Before you start using Elastic Load Balancing, you must configure one or more *listeners* for your Classic Load Balancer. A listener is a process that checks for connection requests. It is configured with a protocol and a port for front-end (client to load balancer) connections, and a protocol and a port for back-end (load balancer to back-end instance) connections.
-* When you use TCP (layer 4) for both front-end and back-end connections, your load balancer forwards the request to the back-end instances without modifying the headers. After your load balancer receives the request, it attempts to open a TCP connection to the back-end instance on the port specified in the listener configuration.
-  * Because load balancers intercept traffic between clients and your back-end instances, the access logs for your back-end instance contain the IP address of the load balancer instead of the originating client.
-  * You can enable proxy protocol, which adds a header with the connection information of the client, such as the source IP address, destination IP address, and port numbers
-* When you use HTTP (layer 7) for both front-end and back-end connections, your load balancer parses the headers in the request and terminates the connection before sending the request to the back-end instances.
-  * The HTTP requests and HTTP responses use header fields to send information about HTTP messages. Elastic Load Balancing supports X-Forwarded-For headers.
-  * Because load balancers intercept traffic between clients and servers, your server access logs contain only the IP address of the load balancer. To see the IP address of the client, use the X-Forwarded-For request header.
 
 Listener|Internal
 -|-
@@ -2224,6 +2217,13 @@ HTTPS (L7)<br/>SSL termination<br/>Must install certificate on CLB|HTTP<br/>HTTP
 TCP (L4)|TCP<br/>SSL (must install certificate on EC2)
 SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must install certificate on EC2)
 
+* Before you start using Elastic Load Balancing, you must configure one or more *listeners* for your Classic Load Balancer. A listener is a process that checks for connection requests. It is configured with a protocol and a port for front-end (client to load balancer) connections, and a protocol and a port for back-end (load balancer to back-end instance) connections.
+* When you use TCP (layer 4) for both front-end and back-end connections, your load balancer forwards the request to the back-end instances without modifying the headers. After your load balancer receives the request, it attempts to open a TCP connection to the back-end instance on the port specified in the listener configuration.
+  * Because load balancers intercept traffic between clients and your back-end instances, the access logs for your back-end instance contain the IP address of the load balancer instead of the originating client.
+  * You can enable proxy protocol, which adds a header with the connection information of the client, such as the source IP address, destination IP address, and port numbers
+* When you use HTTP (layer 7) for both front-end and back-end connections, your load balancer parses the headers in the request and terminates the connection before sending the request to the back-end instances.
+  * The HTTP requests and HTTP responses use header fields to send information about HTTP messages. Elastic Load Balancing supports X-Forwarded-For headers.
+  * Because load balancers intercept traffic between clients and servers, your server access logs contain only the IP address of the load balancer. To see the IP address of the client, use the X-Forwarded-For request header.
 * Health Checks can be HTTP (L7) or TCP (L4) based
 * Supports only one SSL certificate
   * The SSL certificate can have many SAN (Subject Alternate Name), but the SSL certificate must be changed anytime a SAN is added / edited / removed
