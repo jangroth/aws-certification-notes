@@ -2180,7 +2180,11 @@ CloudFront invocation|100 ms
 ## [↖](#top)[↑](#5_6_5)[↓](#5_7_1) Load Balancers
 <!-- toc_start -->
 * [Overview](#5_7_1)
-* [ELB](#5_7_2)
+* [ELB (Classic Load Balancer)](#5_7_2)
+* [ALB](#5_7_3)
+  * [Routing](#5_7_3_1)
+  * [Target Groups](#5_7_3_2)
+  * [SSL Certificates](#5_7_3_3)
 <!-- toc_end -->
 
 <a name="5_7_1"></a>
@@ -2206,7 +2210,7 @@ Protocoll|HTTP, HTTPS|TCP, TLS (secure TCP), UDP|TCP, SSL, HTTP, HTTPS
   * `api.example.com/production`, `mobile.example.com/test`
 
 <a name="5_7_2"></a>
-### [↖](#5_7)[↑](#5_7_1) ELB
+### [↖](#5_7)[↑](#5_7_1)[↓](#5_7_3) ELB (Classic Load Balancer)
 
 * `Client` -> [listener] -> `CLB` -> [internal] -> EC2
 
@@ -2232,4 +2236,36 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
 * TCP => TCP passes all the traffic to the EC2 instance
   * Only way to use 2-way SSL authentication (*client-authenticated TLS handshake*)
 
+<a name="5_7_3"></a>
+### [↖](#5_7)[↑](#5_7_2)[↓](#5_7_3_1) ALB
+* Application load balancers is Layer 7 (HTTP)
+* Load balancing to multiple HTTP applications *across machines*
+  * **Target group** represents an application
+* Load balancing to multiple applications *on the same machine*
+  * Example: containers
+* Support for HTTP/2 and WebSocket
+* Support redirects (from HTTP to HTTPS for example)
+* ALB are a great fit for micro services & container-based application (example: Docker & Amazon ECS)
+* Has a port mapping feature to redirect to a dynamic port in ECS
+* In comparison, we would need multiple Classic Load Balancer per application
 
+<a name="5_7_3_1"></a>
+#### [↖](#5_7)[↑](#5_7_3)[↓](#5_7_3_2) Routing
+* Routing tables to different target groups:
+  * Routing based on path in URL (example.com/users & example.com/posts)
+  * Routing based on hostname in URL (one.example.com & other.example.com)
+  * Routing based on Query String, Headers (example.com/users?id=123&order=false)
+
+<a name="5_7_3_2"></a>
+#### [↖](#5_7)[↑](#5_7_3_1)[↓](#5_7_3_3) Target Groups
+* EC2 instances (can be managed by an ASG) – HTTP
+* ECS tasks (managed by ECS itself) – HTTP
+* Lambda functions – HTTP request is translated into a JSON event
+* IP Addresses – must be private IPs (example: instances in peered VPC, on-premise)
+* ALB can route to multiple target groups
+* Health checks are at the target group level
+
+<a name="5_7_3_3"></a>
+#### [↖](#5_7)[↑](#5_7_3_2) SSL Certificates
+* Supports multiple listeners
+* Supports SNI - Server Name Indication
