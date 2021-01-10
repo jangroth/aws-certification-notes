@@ -2182,9 +2182,16 @@ CloudFront invocation|100 ms
 * [Overview](#5_7_1)
 * [ELB (Classic Load Balancer)](#5_7_2)
 * [ALB](#5_7_3)
-  * [Routing](#5_7_3_1)
-  * [Target Groups](#5_7_3_2)
-  * [SSL Certificates](#5_7_3_3)
+  * [Overview](#5_7_3_1)
+  * [Routing](#5_7_3_2)
+  * [Target Groups](#5_7_3_3)
+  * [SSL Certificates](#5_7_3_4)
+* [NLB](#5_7_4)
+  * [Overview](#5_7_4_1)
+  * [Target Groups](#5_7_4_2)
+  * [Proxy protocol](#5_7_4_3)
+* [Cross-Zone Load Balancing](#5_7_5)
+* [Load Balancer Stickiness](#5_7_6)
 <!-- toc_end -->
 
 <a name="5_7_1"></a>
@@ -2238,6 +2245,17 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
 
 <a name="5_7_3"></a>
 ### [↖](#5_7)[↑](#5_7_2)[↓](#5_7_3_1) ALB
+<a name="5_7_3_1"></a>
+#### [↖](#5_7)[↑](#5_7_3)[↓](#5_7_3_2) Overview
+An Application Load Balancer functions at the application layer, the seventh layer of the Open
+Systems Interconnection (OSI) model. After the load balancer receives a request, it evaluates the
+listener rules in priority order to determine which rule to apply, and then selects a target from
+the target group for the rule action. You can configure listener rules to route requests to
+different target groups based on the content of the application traffic. Routing is performed
+independently for each target group, even when a target is registered with multiple target groups.
+You can configure the routing algorithm used at the target group level. The default routing
+algorithm is round robin; alternatively, you can specify the least outstanding requests routing algorithm.
+
 * Application load balancers is Layer 7 (HTTP)
 * Load balancing to multiple HTTP applications *across machines*
   * **Target group** represents an application
@@ -2248,16 +2266,17 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
 * ALB are a great fit for micro services & container-based application (example: Docker & Amazon ECS)
 * Has a port mapping feature to redirect to a dynamic port in ECS
 * In comparison, we would need multiple Classic Load Balancer per application
+* <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html" target="_blank">On AWS</a>
 
-<a name="5_7_3_1"></a>
-#### [↖](#5_7)[↑](#5_7_3)[↓](#5_7_3_2) Routing
+<a name="5_7_3_2"></a>
+#### [↖](#5_7)[↑](#5_7_3_1)[↓](#5_7_3_3) Routing
 * Routing tables to different target groups:
   * Routing based on path in URL (example.com/users & example.com/posts)
   * Routing based on hostname in URL (one.example.com & other.example.com)
   * Routing based on Query String, Headers (example.com/users?id=123&order=false)
 
-<a name="5_7_3_2"></a>
-#### [↖](#5_7)[↑](#5_7_3_1)[↓](#5_7_3_3) Target Groups
+<a name="5_7_3_3"></a>
+#### [↖](#5_7)[↑](#5_7_3_2)[↓](#5_7_3_4) Target Groups
 * EC2 instances (can be managed by an ASG) – HTTP
 * ECS tasks (managed by ECS itself) – HTTP
 * Lambda functions – HTTP request is translated into a JSON event
@@ -2265,7 +2284,87 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
 * ALB can route to multiple target groups
 * Health checks are at the target group level
 
-<a name="5_7_3_3"></a>
-#### [↖](#5_7)[↑](#5_7_3_2) SSL Certificates
+<a name="5_7_3_4"></a>
+#### [↖](#5_7)[↑](#5_7_3_3)[↓](#5_7_4) SSL Certificates
 * Supports multiple listeners
 * Supports SNI - Server Name Indication
+
+<a name="5_7_4"></a>
+### [↖](#5_7)[↑](#5_7_3_4)[↓](#5_7_4_1) NLB
+<a name="5_7_4_1"></a>
+#### [↖](#5_7)[↑](#5_7_4)[↓](#5_7_4_2) Overview
+A Network Load Balancer functions at the fourth layer of the Open Systems Interconnection (OSI)
+model. It can handle millions of requests per second. After the load balancer receives a
+connection request, it selects a target from the target group for the default rule. It attempts to
+open a TCP connection to the selected target on the port specified in the listener configuration.
+
+When you enable an Availability Zone for the load balancer, Elastic Load Balancing creates a load
+balancer node in the Availability Zone. By default, each load balancer node distributes traffic
+across the registered targets in its Availability Zone only. If you enable cross-zone load
+balancing, each load balancer node distributes traffic across the registered targets in all
+enabled Availability Zones.
+
+* Network load balancers (Layer 4) allow to do:
+  * Forward TCP and/or UDP traffic to your instances
+  * Handle millions of request per seconds
+  * NLB has one static IP per AZ, and supports assigning Elastic IP (helpful for whitelisting specific IP)
+  * Less latency ~100 ms (vs 400 ms for ALB)
+  * Support for TLS
+  * Support for WebSockets
+* Network Load Balancers are mostly used:
+  * for extreme performance, TCP or UDP traffic
+  * with AWS Private Link to expose a service internally
+* <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html" target="_blank">On AWS</a>
+
+<a name="5_7_4_2"></a>
+#### [↖](#5_7)[↑](#5_7_4_1)[↓](#5_7_4_3) Target Groups
+Each target group is used to route requests to one or more registered targets. When you create a
+listener, you specify a target group for its default action. Traffic is forwarded to the target
+group specified in the listener rule. You can create different target groups for different types
+of requests. For example, create one target group for general requests and other target groups for
+requests to the microservices for your application.
+
+You define health check settings for your load balancer on a per target group basis. Each target
+group uses the default health check settings, unless you override them when you create the target
+group or modify them later on. After you specify a target group in a rule for a listener, the load
+balancer continually monitors the health of all targets registered with the target group that are
+in an Availability Zone enabled for the load balancer. The load balancer routes requests to the
+registered targets that are healthy.
+* EC2 instances (can be managed by an ASG) – TCP
+* ECS tasks (managed by ECS itself) – TCP
+* IP addresses – Private IP only, even outside your VPC
+
+<a name="5_7_4_3"></a>
+#### [↖](#5_7)[↑](#5_7_4_2)[↓](#5_7_5) Proxy protocol
+Network Load Balancers use proxy protocol version 2 to send additional connection information such
+as the source and destination. Proxy protocol version 2 provides a binary encoding of the proxy
+protocol header. The load balancer prepends a proxy protocol header to the TCP data. It does not
+discard or overwrite any existing data, including any proxy protocol headers sent by the client or
+any other proxies, load balancers, or servers in the network path. Therefore, it is possible to
+receive more than one proxy protocol header. Also, if there is another network path to your
+targets outside of your Network Load Balancer, the first proxy protocol header might not be the
+one from your Network Load Balancer.
+* Send additional connection information such as the source and destination
+* The load balancer prepends a proxy protocol header to the TCP data
+* Helpful when you have the “IP addresses” target group type
+  * You can retrieve the source IP address of the originating client
+
+<a name="5_7_5"></a>
+### [↖](#5_7)[↑](#5_7_4_3)[↓](#5_7_6) Cross-Zone Load Balancing
+* With Cross Zone Load Balancing: each load balancer instance distributes evenly across all registered instances in all AZ
+* Otherwise, each load balancer node distributes requests evenly across the registered instances in its Availability Zone only.
+
+Type|Default|Costs
+-|-|-
+Classic|Disabled|No charges for inter-AZ data
+ALB|Always on|No charges for inter-AZ data
+NLB|Disabled|Charges for inter-AZ data
+
+<a name="5_7_6"></a>
+### [↖](#5_7)[↑](#5_7_5) Load Balancer Stickiness
+* It is possible to implement stickiness so that the same client is always redirected to the same instance behind a load balancer
+* This works for Classic Load Balancers & Application Load Balancers
+* The “cookie” used for stickiness has an expiration date you control
+* Use case: make sure the user doesn’t lose his session data
+* Enabling stickiness may bring imbalance to the load over the backend EC2 instances
+* Alternative is to cache session data in ElastiCache, DynamoDB, etc
