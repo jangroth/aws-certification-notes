@@ -37,6 +37,8 @@
   * [Fargate](#5_5)
   * [Lambda](#5_6)
   * [Load Balancers](#5_7)
+* [Caching](#6)
+  * [CloudFront](#6_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -2361,10 +2363,46 @@ ALB|Always on|No charges for inter-AZ data
 NLB|Disabled|Charges for inter-AZ data
 
 <a name="5_7_6"></a>
-### [↖](#5_7)[↑](#5_7_5) Load Balancer Stickiness
+### [↖](#5_7)[↑](#5_7_5)[↓](#6) Load Balancer Stickiness
 * It is possible to implement stickiness so that the same client is always redirected to the same instance behind a load balancer
 * This works for Classic Load Balancers & Application Load Balancers
 * The “cookie” used for stickiness has an expiration date you control
 * Use case: make sure the user doesn’t lose his session data
 * Enabling stickiness may bring imbalance to the load over the backend EC2 instances
 * Alternative is to cache session data in ElastiCache, DynamoDB, etc
+
+<a name="6"></a>
+# [↖](#top)[↑](#5_7_6)[↓](#6_1) Caching
+<a name="6_1"></a>
+## [↖](#top)[↑](#6)[↓](#6_1_1) CloudFront
+<!-- toc_start -->
+* [Overview](#6_1_1)
+<!-- toc_end -->
+<a name="6_1_1"></a>
+### [↖](#6_1)[↑](#6_1) Overview
+Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web
+content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your
+content through a worldwide network of data centers called edge locations. When a user requests
+content that you're serving with CloudFront, the request is routed to the edge location that
+provides the lowest latency (time delay), so that content is delivered with the best possible performance.
+
+* If the content is already in the edge location with the lowest latency, CloudFront delivers it immediately.
+* If the content is not in that edge location, CloudFront retrieves it from an origin that you've defined—such as an Amazon S3 bucket, a MediaPackage channel, or an HTTP server (for example, a web server) that you have identified as the source for the definitive version of your content.
+
+As an example, suppose that you're serving an image from a traditional web server, not from
+CloudFront. For example, you might serve an image, sunsetphoto.png, using the URL http://example.com/sunsetphoto.png.
+
+Your users can easily navigate to this URL and see the image. But they probably don't know that
+their request was routed from one network to another—through the complex collection of
+interconnected networks that comprise the internet—until the image was found.
+
+CloudFront speeds up the distribution of your content by routing each user request through the AWS
+backbone network to the edge location that can best serve your content. Typically, this is a
+CloudFront edge server that provides the fastest delivery to the viewer. Using the AWS network
+dramatically reduces the number of networks that your users' requests must pass through, which
+improves performance. Users get lower latency—the time it takes to load the first byte of the file
+and higher data transfer rates.
+
+You also get increased reliability and availability because copies of your files (also known as
+objects) are now held (or cached) in multiple edge locations around the world.
+* <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
