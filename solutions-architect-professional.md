@@ -2371,6 +2371,120 @@ NLB|Disabled|Charges for inter-AZ data
 * Enabling stickiness may bring imbalance to the load over the backend EC2 instances
 * Alternative is to cache session data in ElastiCache, DynamoDB, etc
 
+---
+
+## API-Gateway
+TODO
+
+---
+
+## Route 53
+### Overview
+Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can
+use Route 53 to perform three main functions in any combination: domain registration, DNS routing,
+and health checking. If you choose to use Route 53 for all three functions, perform the steps in this order:
+* Register domain names
+  * Your website needs a name, such as example.com. Route 53 lets you register a name for your
+    website or web application, known as a domain name.
+* Route internet traffic to the resources for your domain
+  * When a user opens a web browser and enters your domain name (example.com) or subdomain name
+    acme.example.com) in the address bar, Route 53 helps connect the browser with your website or web application
+* Check the health of your resources
+  * Route 53 sends automated requests over the internet to a resource, such as a web server, to
+    verify that it's reachable, available, and functional. You also can choose to receive
+    notifications when a resource becomes unavailable and choose to route internet traffic away
+    from unhealthy resources.
+* <a href="https://aws.amazon.com/route53/" target="_blank">Service</a> - <a href="https://aws.amazon.com/route53/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html" target="_blank">User Guide</a>
+
+<a name="4_32_1_1"></a>
+#### [↖](#4_32)[↑](#4_32_1)[↓](#4_32_2) Terminology
+* **Hosts** - Computers or services accessible within a domain
+* **Name Server** - Translates domain names into IP addresses
+* **Zone File** - Text file that contains mappings between domain names and IP addresses
+* **Records** - Entries in zone file, mappings beween resources and names
+
+<a name="4_32_2"></a>
+### [↖](#4_32)[↑](#4_32_1_1)[↓](#4_32_2_1)  How it works
+
+<a name="4_32_2_1"></a>
+#### [↖](#4_32)[↑](#4_32_2)[↓](#4_32_2_2) Basic Flow
+* `Root Server` -> `TLD Server` -> `Domain-Level Name Server` -> `Zone File`
+* Client requests Route 53, receives A record (host name to ip4) and TTL, client requests IP address from A record
+
+<a name="4_32_2_2"></a>
+#### [↖](#4_32)[↑](#4_32_2_1)[↓](#4_32_2_3) Zone File & Records
+Zone file stores records. Various records exists:
+
+Type|Definition|Example
+-|-|-
+**A**|Map host name to ip4 address|`px01.vc.example.com.  198.51.100.40`
+**AAAA**|Map host name to ip6 address|`px01.vc.example.com.  2a00:1450:4014:80c:0:0:0:2004`
+**CNAME**|Defines alias for host name<br/>(maps one domain name to another)|`www.dnsimple.com. dnsimple.com.`
+**SOA**|State of Authority - Mandatory first entry, defines various things,<br/>eg name servers & admin contact|`ns1.dnsimple.com admin.dnsimple.com 2013022001 86400 7200 604800 300`
+**MX**|Defines mail exchange|`example.com.  1800  MX  mail1.example.com.  10`
+**PTR**|Maps ip4 address to host name (inverse to A record)|`10.27/1.168.192.in-addr.arpa.  1800  PTR mail.example.com.`
+**SVR**|Points one domain to another domain name using a specific destination port|`_sip._tcp.example.com. 86400 IN SRV 0 5 5060 sipserver.example.com.`
+
+Route53 specific:
+* **Alias** record
+  * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality.
+  Alias records let you route traffic to selected AWS resources, such as CloudFront distributions
+  and Amazon S3 bucket. They also let you route traffic from one record in a hosted zone to another record.
+  * Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also
+  known as the *zone apex*. For example, if you register the DNS name example.com, the zone apex is
+  example.com. You can't create a CNAME record for example.com, but you can create an alias record
+  for example.com that routes traffic to www.example.com
+  * Preferred choice over CNAME (TODO: why?)
+
+#### [↖](#4_32)[↑](#4_32_2_2)[↓](#4_33) Route53 Routing Policies
+  * **Simple**
+    * Default policy, typically used if only a single resource performs functionality
+    * If multiple values are returned, one is picked at random *by the client*
+    * Can't attach health checks
+  * **Weighted**
+    * Control distribution of traffic with DNS entries
+      * This can be based on a certain percentage
+      * Set *routing policy* to weighted (instead of failover)
+      * Can attach health checks
+    * Helpful to split traffic between regions
+  * **Latency**
+    * Control distribution of traffic based on latency.
+    * Has a failover capability if you enable health checks
+  * **Failover**
+    * Setup *primary* route with mandatory health check
+    * Setup *secondary* route with optional health check
+      * Good for disaster recovery
+    * Can set up *health checks* for endpoints or domains from within *Route53*
+      * Route 53 has health checkers in locations around the world. When you create a health check that
+        monitors an endpoint, health checkers start to send requests to the endpoint that you specify
+        to determine whether the endpoint is healthy.
+      * `evaluate target health`
+    * DNS entries are then being associated with health checks and can be configured to failover as
+      well (1 primary and n secondary recordsets)
+  * **Geo location**
+    * Geolocation routing lets you choose the resources that serve your traffic based on the geographic
+      location of your users, meaning the location that DNS queries originate from. For example, you
+      might want all queries from Europe to be routed to an ELB load balancer in the Frankfurt region.
+    * Should create a “default” policy (in case there’s no match on location)
+  * **Geo proximity Routing (Traffic Flow Only)**
+    * Geoproximity routing lets Amazon Route 53 route traffic to your resources based on the geographic
+      location of your users and your resources. You can also optionally choose to route more traffic or
+      less to a given resource by specifying a value, known as a bias. A bias expands or shrinks the
+      size of the geographic region from which traffic is routed to a resource.
+  * **Multivalue Answer Routing**
+    * Multivalue answer routing lets you configure Amazon Route 53 to return multiple values, such as
+      IP addresses for your web servers, in response to DNS queries. You can specify multiple values for
+      almost any record, but multivalue answer routing also lets you check the health of each resource,
+      so Route 53 returns only values for healthy resources. It's not a substitute for a load balancer,
+      but the ability to return multiple health-checkable IP addresses is a way to use DNS to improve
+      availability and load balancing.
+  * **Complex/Nested records**
+    * Can combine different routing policies by routing to alias records that point to route 53 again.
+      * E.g. can use *latency* policy to route into certain region
+      * From there (in the regions) a *weighted* routing policy distributes traffic further
+
+---
+
 <a name="6"></a>
 # [↖](#top)[↑](#5_7_6)[↓](#6_1) Caching
 <a name="6_1"></a>
