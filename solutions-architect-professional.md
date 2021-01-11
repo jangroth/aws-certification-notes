@@ -2389,13 +2389,6 @@ provides the lowest latency (time delay), so that content is delivered with the 
 * If the content is already in the edge location with the lowest latency, CloudFront delivers it immediately.
 * If the content is not in that edge location, CloudFront retrieves it from an origin that you've defined—such as an Amazon S3 bucket, a MediaPackage channel, or an HTTP server (for example, a web server) that you have identified as the source for the definitive version of your content.
 
-As an example, suppose that you're serving an image from a traditional web server, not from
-CloudFront. For example, you might serve an image, sunsetphoto.png, using the URL http://example.com/sunsetphoto.png.
-
-Your users can easily navigate to this URL and see the image. But they probably don't know that
-their request was routed from one network to another—through the complex collection of
-interconnected networks that comprise the internet—until the image was found.
-
 CloudFront speeds up the distribution of your content by routing each user request through the AWS
 backbone network to the edge location that can best serve your content. Typically, this is a
 CloudFront edge server that provides the fastest delivery to the viewer. Using the AWS network
@@ -2405,4 +2398,182 @@ and higher data transfer rates.
 
 You also get increased reliability and availability because copies of your files (also known as
 objects) are now held (or cached) in multiple edge locations around the world.
+* Content Delivery Network (CDN)
+* Improves read performance, content is cached at the edge
+* 225 Point of Presence globally (edge locations)
+* DDoS protection, integration with Shield, AWS Web Application Firewall
+* Can expose external HTTPS and can talk to internal HTTPS backends
 * <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
+
+### Basic workflow
+* You specify origin servers, like an Amazon S3 bucket or your own HTTP server, from which CloudFront gets your files which will then be distributed from CloudFront edge locations all over the world.
+* An origin server stores the original, definitive version of your objects.
+* You upload your files to your origin servers.
+* If you're using an Amazon S3 bucket as an origin server, you can make the objects in your bucket publicly readable, so that anyone who knows the CloudFront URLs for your objects can access them. You also have the option of keeping objects private and controlling who accesses them. See Serving private content with signed URLs and signed cookies.
+* You create a CloudFront distribution, which tells CloudFront which origin servers to get your files
+* CloudFront assigns a domain name to your new distribution
+* CloudFront sends your distribution's configuration (but not your content) to all of its edge locations
+
+### Origin
+An origin is the location where content is stored, and from which CloudFront gets content to serve to viewers. To specify an origin:
+* An Amazon S3 bucket that is configured with static website hosting
+* An Amazon S3 bucket that is not configured with static website hosting
+* An Elastic Load Balancing load balancer
+* An AWS Elemental MediaPackage endpoint
+* An AWS Elemental MediaStore container
+* Any other HTTP server, running on an Amazon EC2 instance or any other kind of host
+
+Can have primary and secondary origin (HA - Failover)
+
+Origin|How content is accessed
+-|-
+S3|CloudFront assumes Origin Access Identity<br/>S3 Bucket Policy
+EC2|Must have public IPs
+ALB (-> EC2)|ALB must have public IP, EC2 can be private
+
+### CloudFront vs S3 Cross Region Replication
+* **CloudFront**
+  * Global Edge network
+  * Files are cached for a TTL (maybe a day)
+  * Great for static content that must be available everywhere
+* **S3 Cross Region Replication**
+  * Must be setup for each region you want replication to happen
+  * Files are updated in near real-time
+  * Read only
+  * Great for dynamic content that needs to be available at low-latency in few regions
+
+### CloudFront Geo Restriction
+* You can restrict who can access your distribution
+  * Whitelist: Allow your users to access your content only if they're in one of the countries on a list of approved countries.
+  * Blacklist: Prevent your users from accessing your content if they're in one of the countries on a blacklist of banned countries.
+* The “country” is determined using a 3 rd party Geo-IP database
+* Use case: Copyright Laws to control access to content
+
+### Signed URL/Signed Cookies
+* You want to distribute paid shared content to premium users over the world
+* We can use CloudFront Signed URL/Cookie. We attach a policy with:
+  * Includes URL expiration
+  * Includes IP ranges to access the data from
+  * Trusted signers (which AWS accounts can create signed URLs)
+* How long should the URL be valid for?
+  * Shared content (movie, music): make it short (a few minutes)
+  * Private content (private to the user): you can make it last for years
+* Signed URL = access to *individual* files (one signed URL per file)
+* Signed Cookies = access to *multiple* files (one signed cookie for many files)
+* Need to implement logic to sign URLs ourselves!
+
+Signed URL/Cookie|S3 Pre-Signed URL
+-|-
+Allow access to a path, no matter the origin|Issue a request as the person who pre-signed the URL
+Account wide key-pair, only the root can manage it|Uses the IAM key of the signing IAM principal
+Can filter by IP, path, date, expiration|Limited lifetime
+Can leverage caching features|.
+
+### Caching
+* Cache based on
+  * Headers
+      * Strategy: Whitelist headers that should be cached on, ignore others
+  * Session Cookies
+  * Query String Parameters
+* The cache lives at each CloudFront Edge Location
+* You want to maximize the cache hit rate to minimize requests on the origin
+* Control the TTL (0 seconds to 1 year), can be set by the origin using the Cache-Control header, Expires header...
+* Maximize cache hits by separating static and dynamic distributions
+  * Static distribution doesn't need complicated configuration
+  * Dynamic distributions caches based on correct headers and cookies
+
+#### CloudFront Caching vs API Gateway Caching
+API Gateway now has two different kinds of endpoints. The original design is now called *edge
+optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services
+from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region.
+All existing endpoints were categorized as edge-optimized when the new regional capability was
+rolled out. With a regional endpoint, the CloudFront-* headers are not present in the request,
+unless you use your own CloudFront distribution and whitelist those headers for forwarding to the origin.
+
+* Can deploy API Gateway in *regional mode* (comes with its own cache), *and* deploy a CloudFront distribution at the edge, that can have a cache too.
+  * Allows for fine-grained control of caching
+  * Many different options from here, could e.g. also disable API-Gateway cache
+
+### Lambda@Edge
+* You have deployed a CDN using CloudFront
+* What if you wanted to run a global AWS Lambda alongside?
+* Or how to implement request filtering before reaching your application?
+* For this, you can use Lambda@Edge: deploy Lambda functions alongside your CloudFront CDN
+  * Build more responsive applications
+  * You don’t manage servers, Lambda is deployed globally
+  * Customize the CDN content
+  * Pay only for what you use
+
+**Scenarios**
+* You can use Lambda to change CloudFront requests and responses:
+  * After CloudFront receives a request from a viewer (viewer request)
+  * Before CloudFront forwards the request to the origin (origin request)
+  * After CloudFront receives the response from the origin (origin response)
+  * Before CloudFront forwards the response to the viewer (viewer response)
+* You can also generate responses to viewers without ever sending the request to the origin.
+* Lambda@Edge does not have any cache. It’s only to change requests/responses
+* Examples
+  * Website Security and Privacy
+    * Can e.g. use Lambda@Edge to validate authentication & authorization
+  * Dynamic Web Application at the Edge
+  * Search Engine Optimization (SEO)
+  * Intelligently Route Across Origins and Data Centers
+  * Bot Mitigation at the Edge
+  * Real-time Image Transformation
+  * A/B Testing
+  * User Authentication and Authorization
+  * User Prioritization, User Tracking and Analytics
+  * Increasing the cache hit ratio (by modifying headers, normalize user-agent...)
+
+### https
+* A viewer submits an HTTPS request to CloudFront. There's some SSL/TLS negotiation here between the viewer and CloudFront. In the end, the viewer submits the request in an encrypted format.
+* If the object is in the CloudFront edge cache, CloudFront encrypts the response and returns it to the viewer, and the viewer decrypts it.
+* If the object is not in the CloudFront cache, CloudFront performs SSL/TLS negotiation with your origin and, when the negotiation is complete, forwards the request to your origin in an encrypted format.
+* Your origin decrypts the request, encrypts the requested object, and returns the object to CloudFront.
+* CloudFront decrypts the response, re-encrypts it, and forwards the object to the viewer. CloudFront also saves the object in the edge cache so that the object is available the next time it's requested.
+* The viewer decrypts the response.
+
+#### Scenario 1 (requires 2 certs)
+
+.|CloudFront|ALB
+-|-|-
+hostname|www.example.com|origin.example.com
+ssl cert|www.example.com|origin.example.com
+origin|origin.example.com|.
+
+If Host header is forwarded:
+- www.example.com won’t match origin.example.com
+- CloudFront will refuse the request
+
+If Host header is *not* forwarded:
+- CloudFront will add a Host header value of the origin: origin.example.com
+- Requests & Responses will work
+
+#### Scenario 2 (doesn't work)
+
+.|CloudFront|ALB
+-|-|-
+hostname|www.example.com|www.example.com
+ssl cert|www.example.com|www.example.com
+origin|www.example.com|.
+
+Impossible, as CloudFront distribution will loop over itself!
+
+#### Scenario 2 (requires 1 certs)
+
+.|CloudFront|ALB
+-|-|-
+hostname|www.example.com|origin.example.com
+ssl cert|www.example.com|www.example.com
+origin|origin.example.com|.
+
+If Host header is forwarded:
+- Host: www.example.com will match the www.example.com SSL certificate
+- CloudFront will accept
+- The correct Host value could be set by Lambda@Edge
+
+If Host header is *not* forwarded:
+- CloudFront will add a Host header value of the origin: origin.example.com
+- origin.example.com will not match the SSL cert www.example.com
+- The request will fail
+
