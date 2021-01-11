@@ -2377,9 +2377,21 @@ NLB|Disabled|Charges for inter-AZ data
 ## [↖](#top)[↑](#6)[↓](#6_1_1) CloudFront
 <!-- toc_start -->
 * [Overview](#6_1_1)
+* [Basic workflow](#6_1_2)
+* [Origin](#6_1_3)
+* [CloudFront vs S3 Cross Region Replication](#6_1_4)
+* [CloudFront Geo Restriction](#6_1_5)
+* [Signed URL/Signed Cookies](#6_1_6)
+* [Caching](#6_1_7)
+  * [CloudFront Caching vs API Gateway Caching](#6_1_7_1)
+* [Lambda@Edge](#6_1_8)
+* [https](#6_1_9)
+  * [Scenario 1 (requires 2 certs)](#6_1_9_1)
+  * [Scenario 2 (doesn't work)](#6_1_9_2)
+  * [Scenario 2 (requires 1 certs)](#6_1_9_3)
 <!-- toc_end -->
 <a name="6_1_1"></a>
-### [↖](#6_1)[↑](#6_1) Overview
+### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Overview
 Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web
 content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your
 content through a worldwide network of data centers called edge locations. When a user requests
@@ -2405,7 +2417,8 @@ objects) are now held (or cached) in multiple edge locations around the world.
 * Can expose external HTTPS and can talk to internal HTTPS backends
 * <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
 
-### Basic workflow
+<a name="6_1_2"></a>
+### [↖](#6_1)[↑](#6_1_1)[↓](#6_1_3) Basic workflow
 * You specify origin servers, like an Amazon S3 bucket or your own HTTP server, from which CloudFront gets your files which will then be distributed from CloudFront edge locations all over the world.
 * An origin server stores the original, definitive version of your objects.
 * You upload your files to your origin servers.
@@ -2414,7 +2427,8 @@ objects) are now held (or cached) in multiple edge locations around the world.
 * CloudFront assigns a domain name to your new distribution
 * CloudFront sends your distribution's configuration (but not your content) to all of its edge locations
 
-### Origin
+<a name="6_1_3"></a>
+### [↖](#6_1)[↑](#6_1_2)[↓](#6_1_4) Origin
 An origin is the location where content is stored, and from which CloudFront gets content to serve to viewers. To specify an origin:
 * An Amazon S3 bucket that is configured with static website hosting
 * An Amazon S3 bucket that is not configured with static website hosting
@@ -2431,7 +2445,8 @@ S3|CloudFront assumes Origin Access Identity<br/>S3 Bucket Policy
 EC2|Must have public IPs
 ALB (-> EC2)|ALB must have public IP, EC2 can be private
 
-### CloudFront vs S3 Cross Region Replication
+<a name="6_1_4"></a>
+### [↖](#6_1)[↑](#6_1_3)[↓](#6_1_5) CloudFront vs S3 Cross Region Replication
 * **CloudFront**
   * Global Edge network
   * Files are cached for a TTL (maybe a day)
@@ -2442,14 +2457,16 @@ ALB (-> EC2)|ALB must have public IP, EC2 can be private
   * Read only
   * Great for dynamic content that needs to be available at low-latency in few regions
 
-### CloudFront Geo Restriction
+<a name="6_1_5"></a>
+### [↖](#6_1)[↑](#6_1_4)[↓](#6_1_6) CloudFront Geo Restriction
 * You can restrict who can access your distribution
   * Whitelist: Allow your users to access your content only if they're in one of the countries on a list of approved countries.
   * Blacklist: Prevent your users from accessing your content if they're in one of the countries on a blacklist of banned countries.
 * The “country” is determined using a 3 rd party Geo-IP database
 * Use case: Copyright Laws to control access to content
 
-### Signed URL/Signed Cookies
+<a name="6_1_6"></a>
+### [↖](#6_1)[↑](#6_1_5)[↓](#6_1_7) Signed URL/Signed Cookies
 * You want to distribute paid shared content to premium users over the world
 * We can use CloudFront Signed URL/Cookie. We attach a policy with:
   * Includes URL expiration
@@ -2469,7 +2486,8 @@ Account wide key-pair, only the root can manage it|Uses the IAM key of the signi
 Can filter by IP, path, date, expiration|Limited lifetime
 Can leverage caching features|.
 
-### Caching
+<a name="6_1_7"></a>
+### [↖](#6_1)[↑](#6_1_6)[↓](#6_1_7_1) Caching
 * Cache based on
   * Headers
       * Strategy: Whitelist headers that should be cached on, ignore others
@@ -2482,7 +2500,8 @@ Can leverage caching features|.
   * Static distribution doesn't need complicated configuration
   * Dynamic distributions caches based on correct headers and cookies
 
-#### CloudFront Caching vs API Gateway Caching
+<a name="6_1_7_1"></a>
+#### [↖](#6_1)[↑](#6_1_7)[↓](#6_1_8) CloudFront Caching vs API Gateway Caching
 API Gateway now has two different kinds of endpoints. The original design is now called *edge
 optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services
 from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region.
@@ -2494,7 +2513,8 @@ unless you use your own CloudFront distribution and whitelist those headers for 
   * Allows for fine-grained control of caching
   * Many different options from here, could e.g. also disable API-Gateway cache
 
-### Lambda@Edge
+<a name="6_1_8"></a>
+### [↖](#6_1)[↑](#6_1_7_1)[↓](#6_1_9) Lambda@Edge
 * You have deployed a CDN using CloudFront
 * What if you wanted to run a global AWS Lambda alongside?
 * Or how to implement request filtering before reaching your application?
@@ -2525,7 +2545,8 @@ unless you use your own CloudFront distribution and whitelist those headers for 
   * User Prioritization, User Tracking and Analytics
   * Increasing the cache hit ratio (by modifying headers, normalize user-agent...)
 
-### https
+<a name="6_1_9"></a>
+### [↖](#6_1)[↑](#6_1_8)[↓](#6_1_9_1) https
 * A viewer submits an HTTPS request to CloudFront. There's some SSL/TLS negotiation here between the viewer and CloudFront. In the end, the viewer submits the request in an encrypted format.
 * If the object is in the CloudFront edge cache, CloudFront encrypts the response and returns it to the viewer, and the viewer decrypts it.
 * If the object is not in the CloudFront cache, CloudFront performs SSL/TLS negotiation with your origin and, when the negotiation is complete, forwards the request to your origin in an encrypted format.
@@ -2533,7 +2554,8 @@ unless you use your own CloudFront distribution and whitelist those headers for 
 * CloudFront decrypts the response, re-encrypts it, and forwards the object to the viewer. CloudFront also saves the object in the edge cache so that the object is available the next time it's requested.
 * The viewer decrypts the response.
 
-#### Scenario 1 (requires 2 certs)
+<a name="6_1_9_1"></a>
+#### [↖](#6_1)[↑](#6_1_9)[↓](#6_1_9_2) Scenario 1 (requires 2 certs)
 
 .|CloudFront|ALB
 -|-|-
@@ -2549,7 +2571,8 @@ If Host header is *not* forwarded:
 - CloudFront will add a Host header value of the origin: origin.example.com
 - Requests & Responses will work
 
-#### Scenario 2 (doesn't work)
+<a name="6_1_9_2"></a>
+#### [↖](#6_1)[↑](#6_1_9_1)[↓](#6_1_9_3) Scenario 2 (doesn't work)
 
 .|CloudFront|ALB
 -|-|-
@@ -2559,7 +2582,8 @@ origin|www.example.com|.
 
 Impossible, as CloudFront distribution will loop over itself!
 
-#### Scenario 2 (requires 1 certs)
+<a name="6_1_9_3"></a>
+#### [↖](#6_1)[↑](#6_1_9_2) Scenario 2 (requires 1 cert)
 
 .|CloudFront|ALB
 -|-|-
