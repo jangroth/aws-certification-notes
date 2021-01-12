@@ -2389,7 +2389,12 @@ TODO
 * [ How it works](#5_9_2)
   * [Basic Flow](#5_9_2_1)
   * [Zone File & Records](#5_9_2_2)
-  * [Route53 Routing Policies](#5_9_2_3)
+  * [Route 53 Routing Policies](#5_9_2_3)
+* [Health Checks with Route 53](#5_9_3)
+  * [Trigger automated DNS failover](#5_9_3_1)
+  * [Setup](#5_9_3_2)
+  * [Private Hosted Zones](#5_9_3_3)
+* [Sharing a Private Zone across multiple VPCs](#5_9_4)
 <!-- toc_end -->
 <a name="5_9_1"></a>
 ### [↖](#5_9)[↑](#5_9)[↓](#5_9_1_1) Overview
@@ -2460,7 +2465,7 @@ Route 53 specific:
   * Preferred choice over CNAME (TODO: why?)
 
 <a name="5_9_2_3"></a>
-#### [↖](#5_9)[↑](#5_9_2_2)[↓](#6) Route 53 Routing Policies
+#### [↖](#5_9)[↑](#5_9_2_2)[↓](#5_9_3) Route 53 Routing Policies
   * **Simple**
     * Default policy, typically used if only a single resource performs functionality
     * If multiple values are returned, one is picked at random *by the client*
@@ -2507,14 +2512,17 @@ Route 53 specific:
       * E.g. can use *latency* policy to route into certain region
       * From there (in the regions) a *weighted* routing policy distributes traffic further
 
-### Health Checks with Route 53
-#### Trigger automated DNS failover
+<a name="5_9_3"></a>
+### [↖](#5_9)[↑](#5_9_2_3)[↓](#5_9_3_1) Health Checks with Route 53
+<a name="5_9_3_1"></a>
+#### [↖](#5_9)[↑](#5_9_3)[↓](#5_9_3_2) Trigger automated DNS failover
 * Monitor an **endpoint** (application, server, other AWS resource)
 * Monitor other **health checks** (calculated health checks)
 * Monitor **CloudWatch alarms** (full control !!) – e.g. throttles of DynamoDB, alarms on RDS, custom metrics, etc
 * Health Checks are integrated with CW metric
 
-#### Setup
+<a name="5_9_3_2"></a>
+#### [↖](#5_9)[↑](#5_9_3_1)[↓](#5_9_3_3) Setup
 * Health Checks can be setup to pass / fail based on text in the first 5120 bytes of the response
 * Health Checks pass only with the 2xx and 3xx status response
 * Calculated health checks
@@ -2522,7 +2530,8 @@ Route 53 specific:
   * Specify how many of the health checks need to pass to make the parent pass
 * Health Checks can trigger CW Alarms
 
-#### Private Hosted Zones
+<a name="5_9_3_3"></a>
+#### [↖](#5_9)[↑](#5_9_3_2)[↓](#5_9_4) Private Hosted Zones
 * Route 53 health checkers are outside the VPC
 * They can’t access private endpoints (private VPC or on-premise resource)
 
@@ -2531,7 +2540,8 @@ Options:
 * You can configure the health checker to check the health of an external resource the instance relies on, for example a database server.
 * You can create a CloudWatch metric and associate an alarm. You then create a health check that checks the alarm itself.
 
-### Sharing a Private Zone across multiple VPCs
+<a name="5_9_4"></a>
+### [↖](#5_9)[↑](#5_9_3_3)[↓](#6) Sharing a Private Zone across multiple VPCs
 * Having a central private “Shared Services” DNS can ease management
 * Oher accounts may want to access the central private DNS records
   * Connectivity between VPC must be established (VPC peering, TGW)
@@ -2541,7 +2551,7 @@ Options:
 ---
 
 <a name="6"></a>
-# [↖](#top)[↑](#5_9_2_3)[↓](#6_1) Caching
+# [↖](#top)[↑](#5_9_4)[↓](#6_1) Caching
 <a name="6_1"></a>
 ## [↖](#top)[↑](#6)[↓](#6_1_1) CloudFront
 <!-- toc_start -->
