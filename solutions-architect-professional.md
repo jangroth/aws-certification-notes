@@ -37,6 +37,8 @@
   * [Fargate](#5_5)
   * [Lambda](#5_6)
   * [Load Balancers](#5_7)
+  * [API-Gateway](#5_8)
+  * [Route 53](#5_9)
 * [Caching](#6)
   * [CloudFront](#6_1)
 ---
@@ -732,7 +734,7 @@ resources with other accounts.
     * Participants can manage their own resources in there
     * Participants can't view, modify, delete resources that belong to other participants or the owner
   * AWS Transit Gateway
-  * Route53 Resolver Rules
+  * Route 53 Resolver Rules
   * License Manager Configurations
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
@@ -2363,7 +2365,7 @@ ALB|Always on|No charges for inter-AZ data
 NLB|Disabled|Charges for inter-AZ data
 
 <a name="5_7_6"></a>
-### [↖](#5_7)[↑](#5_7_5)[↓](#6) Load Balancer Stickiness
+### [↖](#5_7)[↑](#5_7_5)[↓](#5_8) Load Balancer Stickiness
 * It is possible to implement stickiness so that the same client is always redirected to the same instance behind a load balancer
 * This works for Classic Load Balancers & Application Load Balancers
 * The “cookie” used for stickiness has an expiration date you control
@@ -2373,13 +2375,24 @@ NLB|Disabled|Charges for inter-AZ data
 
 ---
 
-## API-Gateway
+<a name="5_8"></a>
+## [↖](#top)[↑](#5_7_6)[↓](#5_9) API-Gateway
 TODO
 
 ---
 
-## Route 53
-### Overview
+<a name="5_9"></a>
+## [↖](#top)[↑](#5_8)[↓](#5_9_1) Route 53
+<!-- toc_start -->
+* [Overview](#5_9_1)
+  * [Terminology](#5_9_1_1)
+* [ How it works](#5_9_2)
+  * [Basic Flow](#5_9_2_1)
+  * [Zone File & Records](#5_9_2_2)
+  * [Route53 Routing Policies](#5_9_2_3)
+<!-- toc_end -->
+<a name="5_9_1"></a>
+### [↖](#5_9)[↑](#5_9)[↓](#5_9_1_1) Overview
 Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can
 use Route 53 to perform three main functions in any combination: domain registration, DNS routing,
 and health checking. If you choose to use Route 53 for all three functions, perform the steps in this order:
@@ -2394,25 +2407,35 @@ and health checking. If you choose to use Route 53 for all three functions, perf
     verify that it's reachable, available, and functional. You also can choose to receive
     notifications when a resource becomes unavailable and choose to route internet traffic away
     from unhealthy resources.
+* Private DNS:
+  * Can use Route 53 for internal private DNS
+  * Must enable the VPC settings enableDnsHostNames and enableDnsSupport
+* DNSSEC (protect against Man In the Middle attack):
+  * Amazon Route 53 supports DNSSEC for domain registration
+  * ~~Route 53 does not support DNSSEC for DNS service~~ 
+  * ~~To configure DNSSEC for a Route 53 domain, use another DNS provider or custom DNS server on Amazon EC2 (Bind, dnsmasq, KnotDNS, PowerDNS)~~
+* 3rd party registrar:
+  * You can buy the domain out of AWS and use Route 53 as your DNS provider
+    * Update the NS records on the 3rd party registrar
 * <a href="https://aws.amazon.com/route53/" target="_blank">Service</a> - <a href="https://aws.amazon.com/route53/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html" target="_blank">User Guide</a>
 
-<a name="4_32_1_1"></a>
-#### [↖](#4_32)[↑](#4_32_1)[↓](#4_32_2) Terminology
+<a name="5_9_1_1"></a>
+#### [↖](#5_9)[↑](#5_9_1)[↓](#5_9_2) Terminology
 * **Hosts** - Computers or services accessible within a domain
 * **Name Server** - Translates domain names into IP addresses
 * **Zone File** - Text file that contains mappings between domain names and IP addresses
 * **Records** - Entries in zone file, mappings beween resources and names
 
-<a name="4_32_2"></a>
-### [↖](#4_32)[↑](#4_32_1_1)[↓](#4_32_2_1)  How it works
+<a name="5_9_2"></a>
+### [↖](#5_9)[↑](#5_9_1_1)[↓](#5_9_2_1)  How it works
 
-<a name="4_32_2_1"></a>
-#### [↖](#4_32)[↑](#4_32_2)[↓](#4_32_2_2) Basic Flow
+<a name="5_9_2_1"></a>
+#### [↖](#5_9)[↑](#5_9_2)[↓](#5_9_2_2) Basic Flow
 * `Root Server` -> `TLD Server` -> `Domain-Level Name Server` -> `Zone File`
 * Client requests Route 53, receives A record (host name to ip4) and TTL, client requests IP address from A record
 
-<a name="4_32_2_2"></a>
-#### [↖](#4_32)[↑](#4_32_2_1)[↓](#4_32_2_3) Zone File & Records
+<a name="5_9_2_2"></a>
+#### [↖](#5_9)[↑](#5_9_2_1)[↓](#5_9_2_3) Zone File & Records
 Zone file stores records. Various records exists:
 
 Type|Definition|Example
@@ -2425,7 +2448,7 @@ Type|Definition|Example
 **PTR**|Maps ip4 address to host name (inverse to A record)|`10.27/1.168.192.in-addr.arpa.  1800  PTR mail.example.com.`
 **SVR**|Points one domain to another domain name using a specific destination port|`_sip._tcp.example.com. 86400 IN SRV 0 5 5060 sipserver.example.com.`
 
-Route53 specific:
+Route 53 specific:
 * **Alias** record
   * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality.
   Alias records let you route traffic to selected AWS resources, such as CloudFront distributions
@@ -2436,7 +2459,8 @@ Route53 specific:
   for example.com that routes traffic to www.example.com
   * Preferred choice over CNAME (TODO: why?)
 
-#### [↖](#4_32)[↑](#4_32_2_2)[↓](#4_33) Route53 Routing Policies
+<a name="5_9_2_3"></a>
+#### [↖](#5_9)[↑](#5_9_2_2)[↓](#6) Route 53 Routing Policies
   * **Simple**
     * Default policy, typically used if only a single resource performs functionality
     * If multiple values are returned, one is picked at random *by the client*
@@ -2454,7 +2478,7 @@ Route53 specific:
     * Setup *primary* route with mandatory health check
     * Setup *secondary* route with optional health check
       * Good for disaster recovery
-    * Can set up *health checks* for endpoints or domains from within *Route53*
+    * Can set up *health checks* for endpoints or domains from within *Route 53*
       * Route 53 has health checkers in locations around the world. When you create a health check that
         monitors an endpoint, health checkers start to send requests to the endpoint that you specify
         to determine whether the endpoint is healthy.
@@ -2483,10 +2507,41 @@ Route53 specific:
       * E.g. can use *latency* policy to route into certain region
       * From there (in the regions) a *weighted* routing policy distributes traffic further
 
+### Health Checks with Route 53
+#### Trigger automated DNS failover
+* Monitor an **endpoint** (application, server, other AWS resource)
+* Monitor other **health checks** (calculated health checks)
+* Monitor **CloudWatch alarms** (full control !!) – e.g. throttles of DynamoDB, alarms on RDS, custom metrics, etc
+* Health Checks are integrated with CW metric
+
+#### Setup
+* Health Checks can be setup to pass / fail based on text in the first 5120 bytes of the response
+* Health Checks pass only with the 2xx and 3xx status response
+* Calculated health checks
+  * Create separate individual health checks
+  * Specify how many of the health checks need to pass to make the parent pass
+* Health Checks can trigger CW Alarms
+
+#### Private Hosted Zones
+* Route 53 health checkers are outside the VPC
+* They can’t access private endpoints (private VPC or on-premise resource)
+
+Options:
+* To check a resource within a VPC, you must assign a public IP address.
+* You can configure the health checker to check the health of an external resource the instance relies on, for example a database server.
+* You can create a CloudWatch metric and associate an alarm. You then create a health check that checks the alarm itself.
+
+### Sharing a Private Zone across multiple VPCs
+* Having a central private “Shared Services” DNS can ease management
+* Oher accounts may want to access the central private DNS records
+  * Connectivity between VPC must be established (VPC peering, TGW)
+  * Must programmatically (CLI) *associate the VPC* with the central hosted zone
+* One association must be created for each new account
+
 ---
 
 <a name="6"></a>
-# [↖](#top)[↑](#5_7_6)[↓](#6_1) Caching
+# [↖](#top)[↑](#5_9_2_3)[↓](#6_1) Caching
 <a name="6_1"></a>
 ## [↖](#top)[↑](#6)[↓](#6_1_1) CloudFront
 <!-- toc_start -->
@@ -2502,7 +2557,7 @@ Route53 specific:
 * [https](#6_1_9)
   * [Scenario 1 (requires 2 certs)](#6_1_9_1)
   * [Scenario 2 (doesn't work)](#6_1_9_2)
-  * [Scenario 2 (requires 1 certs)](#6_1_9_3)
+  * [Scenario 2 (requires 1 cert)](#6_1_9_3)
 <!-- toc_end -->
 <a name="6_1_1"></a>
 ### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Overview
