@@ -37,7 +37,7 @@
   * [Fargate](#5_5)
   * [Lambda](#5_6)
   * [Load Balancers](#5_7)
-  * [API-Gateway](#5_8)
+  * [API Gateway](#5_8)
   * [Route 53](#5_9)
 * [Caching](#6)
   * [CloudFront](#6_1)
@@ -2376,13 +2376,129 @@ NLB|Disabled|Charges for inter-AZ data
 ---
 
 <a name="5_8"></a>
-## [↖](#top)[↑](#5_7_6)[↓](#5_9) API-Gateway
-TODO
+## [↖](#top)[↑](#5_7_6)[↓](#5_8_1) API Gateway
+<!-- toc_start -->
+* [Overview](#5_8_1)
+* [Concepts](#5_8_2)
+  * [Endpoint](#5_8_2_1)
+  * [Stage](#5_8_2_2)
+  * [Deployment](#5_8_2_3)
+  * [Canary Deployments](#5_8_2_4)
+  * [Integration](#5_8_2_5)
+  * [Mapping Template](#5_8_2_6)
+  * [Model](#5_8_2_7)
+  * [Throttling](#5_8_2_8)
+<!-- toc_end -->
+
+<a name="5_8_1"></a>
+### [↖](#5_8)[↑](#5_8)[↓](#5_8_2) Overview
+*Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish,
+maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console,
+you can create *REST* and *WebSocket* APIs that act as a “front door” for applications to access data,
+business logic, or functionality from your backend services, such as workloads running on Amazon
+Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time
+communication applications.
+
+* On AWS: <a href="https://aws.amazon.com/api-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/api-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2018</a>
+* **Benefits**
+  * **RESTful** (stateless) or **Websocket** (stateful) APIs
+  * Powerful, flexible **authentication** mechanisms, such as AWS IAM policies, Lambda authorizer functions, and Amazon Cognito user pools.
+  * API **versioning**
+  * **Developer portal** for publishing your APIs.
+  * **Canary release deployments** for safely rolling out changes.
+  * *CloudTrail* logging and monitoring of API usage and API changes.
+  * *CloudWatch* access logging and execution logging, including the ability to set alarms.
+  * Ability to use *AWS CloudFormation* templates to enable API creation
+  * Support for custom domain names.
+  * Integration with *AWS WAF* for protecting your APIs against common web exploits.
+  * Integration with *AWS X-Ray* for understanding and triaging performance latencies.
+* **Limits**
+  * 29 seconds timeout
+  * 10 MB max payload size
+
+<a name="5_8_2"></a>
+### [↖](#5_8)[↑](#5_8_1)[↓](#5_8_2_1) Concepts
+
+<a name="5_8_2_1"></a>
+#### [↖](#5_8)[↑](#5_8_2)[↓](#5_8_2_2) Endpoint
+A hostname for an API in API Gateway that is deployed to a specific region. The hostname is of the
+form `{api-id}.execute-api.{region}.amazonaws.com`.
+
+The following types of API endpoints are supported:
+* *Regional* - deployed to the specified region and intended to serve clients in the same AWS region.
+* *Edge Optimized* - deployed to the specified region while using a *CloudFront distribution* to facilitate client access typically from across AWS regions
+* *Private* - exposed through interface VPC endpoints
+
+<a name="5_8_2_2"></a>
+#### [↖](#5_8)[↑](#5_8_2_1)[↓](#5_8_2_3) Stage
+A logical reference to a lifecycle state of your REST or WebSocket API (for example, `dev`, `prod`,
+`beta`, `v2`).
+* API stages are identified by API ID and stage name.
+* Each stage has its own configuration parameters.
+* Can be rolled back in history.
+* Have *stage variables*, that are like environment variables for API Gateway.
+  * Can be used to configure enpoints that the stage talks to.
+  * Accessible from Lambda context as well.
+* Can enable *canary deployments* for a stage (usually `PROD`)
+  * Canaray releases attaches a new version to an existing stage deployment and randomly shift traffic over
+  * Logs and metrics are generated separately for all canary requests
+  * This is blue/green for API Gateway/Lambda
+
+<a name="5_8_2_3"></a>
+#### [↖](#5_8)[↑](#5_8_2_2)[↓](#5_8_2_4) Deployment
+After creating your API, you *must* deploy it to make it callable by your users. To deploy an API,
+you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API
+and is made available for client apps to call.
+
+<a name="5_8_2_4"></a>
+#### [↖](#5_8)[↑](#5_8_2_3)[↓](#5_8_2_5) Canary Deployments
+* Use stage variables for canary deployments
+  * Integrate Lambda via alias: `GetStartedLambdaProxyIntegration:${stageVariables.lambdaAlias}`
+  * Overwrite stage variable in canary deployment
+* Could also use Lambda's canary functionality with weighted aliases
+
+<a name="5_8_2_5"></a>
+#### [↖](#5_8)[↑](#5_8_2_4)[↓](#5_8_2_6) Integration
+* HTTP
+  * Expose HTTP endpoints in the backend
+  * Example: internal HTTP API on premise, Application Load Balancer...
+  * Why? Add rate limiting, caching, user authentications, API keys, etc...
+* *Lambda Proxy* - request is passed through straight to a Lambda
+  * Proxy Lambda deals with complete `http` request
+* *Lambda Non-Proxy/Custom*
+  * Allows integration of *mapping template*
+  * Can transform request as well as response
+  * Allows to evolve the API while keeping Lambda function static
+* *Any service*
+  * **All** AWS services support dedicated APIs to expose their features. However, the application
+  protocols or programming interfaces are likely to differ from service to service. An API Gateway
+  API with the AWS integration has the advantage of providing a consistent application protocol
+  for your client to access different AWS services.
+
+<a name="5_8_2_6"></a>
+#### [↖](#5_8)[↑](#5_8_2_5)[↓](#5_8_2_7) Mapping Template
+* A scripts in Velocity Template Language (VTL) that transforms a request body from the frontend
+data format to the backend data format.
+* Cannot add default values to fields, only add new static fields
+
+<a name="5_8_2_7"></a>
+#### [↖](#5_8)[↑](#5_8_2_6)[↓](#5_8_2_8) Model
+A data schema specifying the data structure of a request or response payload.
+
+<a name="5_8_2_8"></a>
+#### [↖](#5_8)[↑](#5_8_2_7)[↓](#5_9) Throttling
+* Account-wide limit of 10,000 requests per second.
+  * Applies at service/account level
+* Can create *usage plan*:
+  * *Rate*, *burst*, *quota*
+  * Can assoicate with stage/method/API key (to limit certain clients)
 
 ---
 
 <a name="5_9"></a>
-## [↖](#top)[↑](#5_8)[↓](#5_9_1) Route 53
+## [↖](#top)[↑](#5_8_2_8)[↓](#5_9_1) Route 53
 <!-- toc_start -->
 * [Overview](#5_9_1)
   * [Terminology](#5_9_1_1)
@@ -2417,7 +2533,7 @@ and health checking. If you choose to use Route 53 for all three functions, perf
   * Must enable the VPC settings enableDnsHostNames and enableDnsSupport
 * DNSSEC (protect against Man In the Middle attack):
   * Amazon Route 53 supports DNSSEC for domain registration
-  * ~~Route 53 does not support DNSSEC for DNS service~~ 
+  * ~~Route 53 does not support DNSSEC for DNS service~~
   * ~~To configure DNSSEC for a Route 53 domain, use another DNS provider or custom DNS server on Amazon EC2 (Bind, dnsmasq, KnotDNS, PowerDNS)~~
 * 3rd party registrar:
   * You can buy the domain out of AWS and use Route 53 as your DNS provider
@@ -2779,4 +2895,138 @@ If Host header is *not* forwarded:
 - CloudFront will add a Host header value of the origin: origin.example.com
 - origin.example.com will not match the SSL cert www.example.com
 - The request will fail
+
+---
+
+# Databases
+## DynamoDB
+
+Todo
+
+---
+
+## ElasticSearch
+
+Todo
+
+---
+
+## RDS
+### Overview
+Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a
+relational database in the cloud. It provides cost-efficient and resizable capacity while
+automating time-consuming administration tasks such as hardware provisioning, database setup,
+patching and backups. It frees you to focus on your applications so you can give them the fast
+performance, high availability, security and compatibility they need
+
+Amazon RDS is available on several database instance types - optimized for memory, performance or I/O -
+and provides you with six familiar database engines to choose from, including Amazon Aurora,
+PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database
+Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
+
+* <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
+* Set up, operate, and scale a **relational database** in the cloud
+* Supports
+	* Amazon Aurora
+	* MySQL
+	* MariaDB
+	* Oracle
+	* SQL Server
+	* PostgreSQL
+	* MS SQL-Server
+* Supports *encryption at rest* for all database engines
+  * Can only be applied to a *new* instance
+  * This could be created from an existing snapshot
+* **DB instance**
+	* Database environment in the cloud with specified *compute* and *storage* resources
+* **Multi-AZ deployments**
+	* Provide enhanced availability and durability for DB Instances, making them a natural fit for
+	production database workloads
+* **DB subnet group**
+	* Collection of subnets that you are designated for the RDS DB Instances in a VPC
+* **Maintenance window**
+	* Needs to be specified (or defaults to weekly) for maintenance events like scaling and patching
+* **DB Parameter group**
+	* Acts as a “container” for engine configuration values that can be applied to one or more DB
+	Instances
+
+### [↖](#top)[↑](#17)[↓](#17_2) RDS Backup
+* Two types of backups
+  * Automated backups
+    * Enabled by default
+    * Allow to recover database within a *retention period* (1d - 35d)
+      * *Transactional* storage engine recommended as DB engine
+      * Will take daily snapshot and use transaction logs
+      * PITR down to 1 second (within retention period)
+    * Backups are taken within defined window
+      * Degrades performance if *multi-AZ* is not enabled!
+      * Taken from slave if *multi-AZ* is enabled
+    * Backups are stored internaly on S3
+      * Free storage space equal to DB size
+      * Deleting an instance deletes all *automated* backups
+  * Database Snapshots
+    * Only manually, always user initiated
+    * Won't be deleted with DB instance
+* Restoring
+  * When restoring, only default parameters and security groups are associated with instance
+  * Can change to different storage engine if closely related and enough space available
+  * Restored version will always be a *new* RDS instance with a *new* DNS endpoint
+
+### [↖](#top)[↑](#17_1)[↓](#17_3) Multi-AZ deployments
+Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a
+single AWS Region.
+
+* Meant for *disaster recover*, not for performance improvement (-> Read Replica)
+* Configure RDS for **multi-AZ-deployments** and turn replication on
+  * Keeps a **synchronous** standby replica in a different AZ
+    * Recommendation is use of Provisioned IOPS
+  * Automatic failover in case of planned or unplanned outage of the first AZ
+    * Most likely still has downtime
+    * Can *force* failover by *rebooting*
+  * Other benefits
+    * Patching
+    * Backups
+  * *Aurora* can replicate accross 3 AZs
+
+### [↖](#top)[↑](#17_2)[↓](#17_4) Replicating RDS
+* Using **read replicas**
+  * Read queries are routed to *read replicas*, reducing load on primary db instance
+    (*source instance*)
+    * Table indexes can be created on read replicas directly (and not on the master)
+    * Some use cases (e.g. data analytics) can be performed exclusively against read replicas
+  * To create read replicas, AWS initally creates a snapshot of the source instance
+    * Multi-AZ failover instance (if enabled) is used for snapshotting
+    * After that all read queries are then **asynchronously** copied to read replica
+    * Implies data latency, which typically is acceptable.
+      * `ReplicaLag` can be monitored and *Cloudwatch* alarms can be configured
+    * No AWS charges for data replication
+  * A single master can have **up to 5** read replicas
+    * Can be in different regions
+    * Can have Multi-AZ enabled themselves
+  * *Read replicas* are **not** the same as *multi-AZ failover* instances which
+    * are *synchronously* updated
+    * are designed to handle failover
+    * don't receive any load unless failover actually happens
+  * Often it is beneficial to have both read replicas and multi-AZ failover instances
+* Setting up a read replica
+  * Configure from master instance or other read replica
+    * Requires 'automated backups' to be enabled on source instance
+  * Choice of db engine matters, because internal engine features are being used
+  * Usually pick same database instance type as source instance uses
+  * AWS provisiones different *endpoint* for read replica
+  * Configure use of endpoint on application level
+* Read replicas can be promoted to normal instances
+  * E.g. use read replica to implement bigger changes on db level, after these have been finished
+  promote to master instance
+  * This will break replication
+  * Useful for database sharding, could create replicas for each shard
+
+### [↖](#top)[↑](#17_3)[↓](#18) Etc
+* *DB security groups* are used with DB instances that are not in a VPC and on the EC2-Classic platform.
+  * Don't need to specify a destination port number when you create DB security group rules
+* *RDS Reserved instances* are available for multi-AZ deployments.
+* Cannot SSH into an RDS instance
+
+---
+
 
