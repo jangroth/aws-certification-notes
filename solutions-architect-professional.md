@@ -2397,8 +2397,8 @@ NLB|Disabled|Charges for inter-AZ data
   * [Errors](#5_8_2_10)
 * [Security & Authentication](#5_8_3)
   * [Security](#5_8_3_1)
-* [Authentication](#5_8_4)
-* [Logging, Monitoring, Tracing](#5_8_5)
+  * [Authentication](#5_8_3_2)
+* [Logging, Monitoring, Tracing](#5_8_4)
 <!-- toc_end -->
 
 <a name="5_8_1"></a>
@@ -2538,7 +2538,7 @@ Client-side|Server-side|.
 <a name="5_8_3"></a>
 ### [↖](#5_8)[↑](#5_8_2_10)[↓](#5_8_3_1) Security & Authentication
 <a name="5_8_3_1"></a>
-#### [↖](#5_8)[↑](#5_8_3)[↓](#5_8_4) Security
+#### [↖](#5_8)[↑](#5_8_3)[↓](#5_8_3_2) Security
 * Load SSL certificates and use Route53 to define a CNAME
 * Resource Policy (~S3 Bucket Policy):
   * Control who can access the API
@@ -2549,8 +2549,8 @@ Client-side|Server-side|.
   * Browser based security
   * Control which domains can call your API
 
-<a name="5_8_4"></a>
-### [↖](#5_8)[↑](#5_8_3_1)[↓](#5_8_5) Authentication
+<a name="5_8_3_2"></a>
+#### [↖](#5_8)[↑](#5_8_3_1)[↓](#5_8_4) Authentication
 * IAM based access
   * Good for providing access within your own infrastructure
   * Pass IAM credentials in headers through Sig V4
@@ -2561,8 +2561,8 @@ Client-side|Server-side|.
   * Client passes the token to API Gateway
   * API Gateway knows out-of-the-box how to verify to token
 
-<a name="5_8_5"></a>
-### [↖](#5_8)[↑](#5_8_4)[↓](#5_9) Logging, Monitoring, Tracing
+<a name="5_8_4"></a>
+### [↖](#5_8)[↑](#5_8_3_2)[↓](#5_9) Logging, Monitoring, Tracing
 * CloudWatch Logs
   * Enable CloudWatch logging at the Stage level (with Log Level – ERROR, INFO)
   * Can log full requests / responses data
@@ -2578,7 +2578,7 @@ Client-side|Server-side|.
 ---
 
 <a name="5_9"></a>
-## [↖](#top)[↑](#5_8_5)[↓](#5_9_1) Route 53
+## [↖](#top)[↑](#5_8_4)[↓](#5_9_1) Route 53
 <!-- toc_start -->
 * [Overview](#5_9_1)
   * [Terminology](#5_9_1_1)
