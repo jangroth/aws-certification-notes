@@ -41,6 +41,10 @@
   * [Route 53](#5_9)
 * [Caching](#6)
   * [CloudFront](#6_1)
+* [Databases](#7)
+  * [DynamoDB](#7_1)
+  * [ElasticSearch](#7_2)
+  * [RDS](#7_3)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -2379,6 +2383,7 @@ NLB|Disabled|Charges for inter-AZ data
 ## [↖](#top)[↑](#5_7_6)[↓](#5_8_1) API Gateway
 <!-- toc_start -->
 * [Overview](#5_8_1)
+  * [Limits](#5_8_1_1)
 * [Concepts](#5_8_2)
   * [Endpoint](#5_8_2_1)
   * [Stage](#5_8_2_2)
@@ -2388,10 +2393,16 @@ NLB|Disabled|Charges for inter-AZ data
   * [Mapping Template](#5_8_2_6)
   * [Model](#5_8_2_7)
   * [Throttling](#5_8_2_8)
+  * [Caching API responses](#5_8_2_9)
+  * [Errors](#5_8_2_10)
+* [Security & Authentication](#5_8_3)
+  * [Security](#5_8_3_1)
+* [Authentication](#5_8_4)
+* [Logging, Monitoring, Tracing](#5_8_5)
 <!-- toc_end -->
 
 <a name="5_8_1"></a>
-### [↖](#5_8)[↑](#5_8)[↓](#5_8_2) Overview
+### [↖](#5_8)[↑](#5_8)[↓](#5_8_1_1) Overview
 *Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish,
 maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console,
 you can create *REST* and *WebSocket* APIs that act as a “front door” for applications to access data,
@@ -2399,13 +2410,11 @@ business logic, or functionality from your backend services, such as workloads r
 Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time
 communication applications.
 
-* On AWS: <a href="https://aws.amazon.com/api-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/api-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank">User Guide</a>
-* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2020</a>
-* See also: <a href="https://www.awsgeek.com/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2018</a>
 * **Benefits**
   * **RESTful** (stateless) or **Websocket** (stateful) APIs
   * Powerful, flexible **authentication** mechanisms, such as AWS IAM policies, Lambda authorizer functions, and Amazon Cognito user pools.
   * API **versioning**
+  * Traffic management (API Keys, throtteling)
   * **Developer portal** for publishing your APIs.
   * **Canary release deployments** for safely rolling out changes.
   * *CloudTrail* logging and monitoring of API usage and API changes.
@@ -2414,12 +2423,19 @@ communication applications.
   * Support for custom domain names.
   * Integration with *AWS WAF* for protecting your APIs against common web exploits.
   * Integration with *AWS X-Ray* for understanding and triaging performance latencies.
-* **Limits**
-  * 29 seconds timeout
-  * 10 MB max payload size
+* On AWS: <a href="https://aws.amazon.com/api-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/api-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Modern-App-Series/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2020</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-API-Gateway/Amazon-API-Gateway.jpg" target="_blank">AWS Geek 2018</a>
+
+<a name="5_8_1_1"></a>
+#### [↖](#5_8)[↑](#5_8_1)[↓](#5_8_2) Limits
+.|.
+-|-
+Timeout|29 sec
+Max payload size|10 MB
 
 <a name="5_8_2"></a>
-### [↖](#5_8)[↑](#5_8_1)[↓](#5_8_2_1) Concepts
+### [↖](#5_8)[↑](#5_8_1_1)[↓](#5_8_2_1) Concepts
 
 <a name="5_8_2_1"></a>
 #### [↖](#5_8)[↑](#5_8_2)[↓](#5_8_2_2) Endpoint
@@ -2428,13 +2444,15 @@ form `{api-id}.execute-api.{region}.amazonaws.com`.
 
 The following types of API endpoints are supported:
 * *Regional* - deployed to the specified region and intended to serve clients in the same AWS region.
+  * Can be combined with CloudFront (caching, distributions, ...)
 * *Edge Optimized* - deployed to the specified region while using a *CloudFront distribution* to facilitate client access typically from across AWS regions
+  * API Gateway still lives in one region
 * *Private* - exposed through interface VPC endpoints
+  * Create resource policy to define access
 
 <a name="5_8_2_2"></a>
 #### [↖](#5_8)[↑](#5_8_2_1)[↓](#5_8_2_3) Stage
-A logical reference to a lifecycle state of your REST or WebSocket API (for example, `dev`, `prod`,
-`beta`, `v2`).
+A logical reference to a lifecycle state of your REST or WebSocket API (for example, `dev`, `prod`, `beta`, `v2`). API changes are deployed to stages.
 * API stages are identified by API ID and stage name.
 * Each stage has its own configuration parameters.
 * Can be rolled back in history.
@@ -2463,7 +2481,7 @@ and is made available for client apps to call.
 #### [↖](#5_8)[↑](#5_8_2_4)[↓](#5_8_2_6) Integration
 * HTTP
   * Expose HTTP endpoints in the backend
-  * Example: internal HTTP API on premise, Application Load Balancer...
+  * Example: Internal HTTP API on premises, Application Load Balancer...
   * Why? Add rate limiting, caching, user authentications, API keys, etc...
 * *Lambda Proxy* - request is passed through straight to a Lambda
   * Proxy Lambda deals with complete `http` request
@@ -2488,17 +2506,79 @@ data format to the backend data format.
 A data schema specifying the data structure of a request or response payload.
 
 <a name="5_8_2_8"></a>
-#### [↖](#5_8)[↑](#5_8_2_7)[↓](#5_9) Throttling
+#### [↖](#5_8)[↑](#5_8_2_7)[↓](#5_8_2_9) Throttling
 * Account-wide limit of 10,000 requests per second.
   * Applies at service/account level
 * Can create *usage plan*:
   * *Rate*, *burst*, *quota*
   * Can assoicate with stage/method/API key (to limit certain clients)
 
+<a name="5_8_2_9"></a>
+#### [↖](#5_8)[↑](#5_8_2_8)[↓](#5_8_2_10) Caching API responses
+* Caching reduces the number of calls made to the backend
+* Default TTL (time to live) is 300 seconds (min: 0s, max: 3600s)
+* Caches are defined per stage
+* Possible to override cache settings per method
+* Clients can invalidate the cache with header: `Cache-Control: max-age=0` (with proper IAM authorization)
+* Able to flush the entire cache (invalidate it) immediately
+* Cache encryption option
+* Cache capacity between 0.5GB to 237GB
+
+<a name="5_8_2_10"></a>
+#### [↖](#5_8)[↑](#5_8_2_9)[↓](#5_8_3) Errors
+Client-side|Server-side|.
+-|-|-
+400|.|Bad Request
+403|.|Access Denied, WAF filtered
+429|.|Quota exceeded, Throttle
+|.|502|Bad Gateway Exception<br/>usually for an incompatible output returned from a Lambda proxy integration backend and occasionally for out-of-order invocations due to heavy loads.
+|.|503|Service Unavailable Exception
+|.|504|Integration Failure<br/>Eg Endpoint Request Timed-out Exception API Gateway requests time out after 29 second maximum
+
+<a name="5_8_3"></a>
+### [↖](#5_8)[↑](#5_8_2_10)[↓](#5_8_3_1) Security & Authentication
+<a name="5_8_3_1"></a>
+#### [↖](#5_8)[↑](#5_8_3)[↓](#5_8_4) Security
+* Load SSL certificates and use Route53 to define a CNAME
+* Resource Policy (~S3 Bucket Policy):
+  * Control who can access the API
+  * Users from AWS accounts, IP or CIDR blocks, VPC or VPC Endpoints
+* IAM Execution Roles for API Gateway at the API level
+  * To invoke a Lambda Function, an AWS service...
+* CORS (Cross-origin resource sharing):
+  * Browser based security
+  * Control which domains can call your API
+
+<a name="5_8_4"></a>
+### [↖](#5_8)[↑](#5_8_3_1)[↓](#5_8_5) Authentication
+* IAM based access
+  * Good for providing access within your own infrastructure
+  * Pass IAM credentials in headers through Sig V4
+* Lambda Authorizer (formerly Custom Authorizer)
+  * Use Lambda to verify a custom OAuth / SAML / 3rd party authentication
+* Cognito User Pools
+  * Client authenticates with Cognito
+  * Client passes the token to API Gateway
+  * API Gateway knows out-of-the-box how to verify to token
+
+<a name="5_8_5"></a>
+### [↖](#5_8)[↑](#5_8_4)[↓](#5_9) Logging, Monitoring, Tracing
+* CloudWatch Logs
+  * Enable CloudWatch logging at the Stage level (with Log Level – ERROR, INFO)
+  * Can log full requests / responses data
+  * Can send API Gateway Access Logs (customizable)
+  * Can send logs directly into Kinesis Data Firehose (as an alternative to CW logs)
+* CloudWatch Metrics
+  * Metrics are by stage, possibility to enable detailed metrics
+  * IntegrationLatency, Latency, CacheHitCount, CacheMissCount
+* X-Ray
+  * Enable tracing to get extra information about requests in API Gateway
+  * X-Ray API Gateway + AWS Lambda gives you the full picture
+
 ---
 
 <a name="5_9"></a>
-## [↖](#top)[↑](#5_8_2_8)[↓](#5_9_1) Route 53
+## [↖](#top)[↑](#5_8_5)[↓](#5_9_1) Route 53
 <!-- toc_start -->
 * [Overview](#5_9_1)
   * [Terminology](#5_9_1_1)
@@ -2878,7 +2958,7 @@ origin|www.example.com|.
 Impossible, as CloudFront distribution will loop over itself!
 
 <a name="6_1_9_3"></a>
-#### [↖](#6_1)[↑](#6_1_9_2) Scenario 2 (requires 1 cert)
+#### [↖](#6_1)[↑](#6_1_9_2)[↓](#7) Scenario 2 (requires 1 cert)
 
 .|CloudFront|ALB
 -|-|-
@@ -2898,21 +2978,34 @@ If Host header is *not* forwarded:
 
 ---
 
-# Databases
-## DynamoDB
+<a name="7"></a>
+# [↖](#top)[↑](#6_1_9_3)[↓](#7_1) Databases
+<a name="7_1"></a>
+## [↖](#top)[↑](#7)[↓](#7_2) DynamoDB
 
 Todo
 
 ---
 
-## ElasticSearch
+<a name="7_2"></a>
+## [↖](#top)[↑](#7_1)[↓](#7_3) ElasticSearch
 
 Todo
 
 ---
 
-## RDS
-### Overview
+<a name="7_3"></a>
+## [↖](#top)[↑](#7_2)[↓](#7_3_1) RDS
+<!-- toc_start -->
+* [Overview](#7_3_1)
+* [Security](#7_3_2)
+* [RDS Backup](#7_3_3)
+* [Multi-AZ deployments](#7_3_4)
+* [Replicating RDS](#7_3_5)
+* [Etc](#7_3_6)
+<!-- toc_end -->
+<a name="7_3_1"></a>
+### [↖](#7_3)[↑](#7_3)[↓](#7_3_2) Overview
 Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a
 relational database in the cloud. It provides cost-efficient and resizable capacity while
 automating time-consuming administration tasks such as hardware provisioning, database setup,
@@ -2924,33 +3017,44 @@ and provides you with six familiar database engines to choose from, including Am
 PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database
 Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
 
-* <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
 * Set up, operate, and scale a **relational database** in the cloud
+  * Provisioning, backups, patching, monitoring
 * Supports
 	* Amazon Aurora
 	* MySQL
 	* MariaDB
 	* Oracle
-	* SQL Server
 	* PostgreSQL
-	* MS SQL-Server
+	* MS SQL Server
 * Supports *encryption at rest* for all database engines
   * Can only be applied to a *new* instance
   * This could be created from an existing snapshot
+* **RDS Events**: get notified via SNS for events (operations, outages...)
 * **DB instance**
 	* Database environment in the cloud with specified *compute* and *storage* resources
 * **Multi-AZ deployments**
-	* Provide enhanced availability and durability for DB Instances, making them a natural fit for
-	production database workloads
+	* Provide enhanced availability and durability for DB Instances, making them a natural fit for production database workloads
 * **DB subnet group**
 	* Collection of subnets that you are designated for the RDS DB Instances in a VPC
 * **Maintenance window**
 	* Needs to be specified (or defaults to weekly) for maintenance events like scaling and patching
 * **DB Parameter group**
-	* Acts as a “container” for engine configuration values that can be applied to one or more DB
-	Instances
+	* Acts as a “container” for engine configuration values that can be applied to one or more DB Instances
+* **RDS Events**: get notified via SNS for events (operations, outages...)
+* <a href="https://aws.amazon.com/rds/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rds/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rds/index.html" target="_blank">User Guide</a>
 
-### [↖](#top)[↑](#17)[↓](#17_2) RDS Backup
+<a name="7_3_2"></a>
+### [↖](#7_3)[↑](#7_3_1)[↓](#7_3_3) Security
+* KMS encryption at rest for underlying EBS volumes / snapshots
+* Transparent Data Encryption (TDE) for Oracle and SQL Server
+* SSL encryption to RDS is possible for all DB (in-flight)
+* IAM authentication for MySQL and PostgreSQL
+* Authorization still happens within RDS (not in IAM)
+* Can copy an un-encrypted RDS snapshot into an encrypted one
+* CloudTrail cannot be used to track queries made within RDS
+
+<a name="7_3_3"></a>
+### [↖](#7_3)[↑](#7_3_2)[↓](#7_3_4) RDS Backup
 * Two types of backups
   * Automated backups
     * Enabled by default
@@ -2972,7 +3076,8 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
   * Can change to different storage engine if closely related and enough space available
   * Restored version will always be a *new* RDS instance with a *new* DNS endpoint
 
-### [↖](#top)[↑](#17_1)[↓](#17_3) Multi-AZ deployments
+<a name="7_3_4"></a>
+### [↖](#7_3)[↑](#7_3_3)[↓](#7_3_5) Multi-AZ deployments
 Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a
 single AWS Region.
 
@@ -2988,7 +3093,8 @@ single AWS Region.
     * Backups
   * *Aurora* can replicate accross 3 AZs
 
-### [↖](#top)[↑](#17_2)[↓](#17_4) Replicating RDS
+<a name="7_3_5"></a>
+### [↖](#7_3)[↑](#7_3_4)[↓](#7_3_6) Replicating RDS
 * Using **read replicas**
   * Read queries are routed to *read replicas*, reducing load on primary db instance
     (*source instance*)
@@ -3021,7 +3127,8 @@ single AWS Region.
   * This will break replication
   * Useful for database sharding, could create replicas for each shard
 
-### [↖](#top)[↑](#17_3)[↓](#18) Etc
+<a name="7_3_6"></a>
+### [↖](#7_3)[↑](#7_3_5) Etc
 * *DB security groups* are used with DB instances that are not in a VPC and on the EC2-Classic platform.
   * Don't need to specify a destination port number when you create DB security group rules
 * *RDS Reserved instances* are available for multi-AZ deployments.
