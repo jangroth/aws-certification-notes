@@ -2559,7 +2559,7 @@ Client-side|Server-side|.
 * Cognito User Pools
   * Client authenticates with Cognito
   * Client passes the token to API Gateway
-  * API Gateway knows out-of-the-box how to verify to token
+  * API Gateway knows out-of-the-box how to verify the token
 
 <a name="5_8_4"></a>
 ### [↖](#5_8)[↑](#5_8_3_2)[↓](#5_9) Logging, Monitoring, Tracing
@@ -2743,6 +2743,138 @@ Options:
   * Connectivity between VPC must be established (VPC peering, TGW)
   * Must programmatically (CLI) *associate the VPC* with the central hosted zone
 * One association must be created for each new account
+
+## Solution Architeture Comparision
+### EC2 on its own with Elastic IP
+* Quick failover
+* The client should not see the change happen
+* Helpful if the client needs to resolve by static Public IP address
+* Does not scale
+* Cheap
+
+### EC2 with Route53
+* “DNS-based load balancing”
+* Ability to use multiple instances
+* Route53 TTL implies client may get outdated information
+* Clients must have logic to deal with hostname resolution failures
+* Adding an instance may not receive full traffic right away due to DNS TTL
+
+### ALB + ASG
+* Scales well, classic architecture
+* New instances are in service right away.
+* Users are not sent to instances that are out-of-service
+* Time to scale is slow (EC2 instance startup + bootstrap) – AMI can help
+* ALB is elastic but can’t handle sudden, huge peak of demand (pre-warm)
+* Could lose a few requests if instances are overloaded
+* CloudWatch used for scaling
+* Cross-Zone balancing for even traffic distribution
+* Target utilization should be between 40% and 70%
+
+### ALB + ECS on EC2
+* Same properties as ALB + ASG
+* Application is run on Docker
+* ASG + ECS allows to have dynamic port mappings
+* Tough to orchestrate ECS service auto-scaling + ASG auto-scaling
+
+### ALB + ECS on Fargate
+* Application is run on Docker
+* Service Auto Scaling is easy
+* Time to be in-service is quick (no need to launch an EC2 instance in advance)
+* Still limited by the ALB in case of sudden peaks
+* “serverless” application tier
+* “managed” load balancer
+
+### ALB + Lambda
+* Limited to Lambda’s runtimes
+* Seamless scaling thanks to Lambda
+* Simple way to expose Lambda functions as HTTP/S without all the features from API Gateway
+* Can combine with WAF (Web Application Firewall)
+* Good for hybrid microservices
+* Example: use ECS for some requests, use Lambda for others
+
+### API Gateway + Lambda
+* Pay per request, seamless scaling, fully serverless
+* Soft limits: 10000/s API Gateway, 1000 concurrent Lambda
+* API Gateway features: authentication, rate limiting, caching, etc...
+* Lambda Cold Start time may increase latency for some requests
+* Fully integrated with X-Ray
+
+### API Gateway + AWS Service
+* Lower latency, cheaper
+* Not using Lambda concurrent capacity, no custom code
+* Expose AWS APIs securely through API Gateway
+* SQS, SNS, Step Functions...
+* Remember API Gateway has a payload limit of 10 MB (can be a problem for S3 proxy)
+
+### API Gateway + HTTP backend (ex: ALB)
+* Use API Gateway features on top of custom HTTP backend (authentication, rate control, API keys, caching...)
+* Can connect to...
+  * On-premises service
+  * Application Load Balancer
+  * 3rd party HTTP service
+
+---
+
+# Storage
+## EBS & Local instance store
+* **Permanent block storage**, independent to instance
+* Attachable to running EC2 instances (same AZ)
+* Only accessible by a *single instance*
+* Can be resized
+* Can be encrypted
+* Can be stopped, data will persist
+* Stores redundantly in *single* AZ
+* Only root volumes are terminated if instance gets terminate
+* Can be striped together to RAID
+* Pick instance type that's *EBS-optimized*
+### [↖](#top)[↑](#12)[↓](#12_1_1) Volume options
+.|.|.|.
+-|-|-|-
+**General purpose SSD** (cheap)|gp2|`100 IOPS >= x <= 16,000 IOPS`|1 GiB - 16 TiB<br/>+1 TiB = 3,000 IOPS
+**Provisioned IOPS** (expensive)|io1|`100 IOPS >= x <= 32,000 IOPS (other) <= 64,000 IOPS (Nitro)`|4 GiB - 16 TiB<br/>Size of volume and IOPS are independent
+**Magnetic volumes, throughput optimized**|st1, hs1|* Frequently accessed workload<br/>* Cannot be boot volume|500 GiB – 16 TiB<br/>500 MiB/s throughput
+**Magnetic volumes, cold**|sc1|* Less frequently accessed workload<br/>* Cannot be boot volume|250 GiB – 16 TiB<br/>250 MiB/s throughput
+**Magnetic volumes, standard**|.|Can be boot volume|.
+
+* Can change volume size on the fly, also storage type
+
+### Snaphosts
+* Stored incrementally on S3
+* Should stop instance if taking a snapshot of root volume
+  * Or detach volume (recommended)
+* Snaphots of encrypted volumes are encrypted automatically
+* Snapshots can be shared with other account or made public - only if unencrypted
+  * Can copy snapshots across region (for DR)
+* Can create AMIs from EBS-backed instances and snapshots
+* In order to take snapshots from RAID arrays, make sure all applications are stopped and caches are flushed to disk
+* EBS volumes restored by snapshots need to be pre-warmed
+  * Using `fio` or `dd` command to read the entire volume
+* Lifecycle policies have been introduced for snapshots
+* Snapshots can be automated using Amazon Data Lifecycle Manager
+
+### Moving Instances/Volumes To A Different AZ/Region
+* Create snapshot in AZ1
+* Use that to create volume in AZ2
+* Also could have *copied* snapshot into different region
+
+* TODO: Look into moving instances into different regions / AZs
+
+### Encrypting root volumes
+* Stop instance
+* Create snapshot
+* Copy to different region
+  * Can encrypt while copying, resulting in an encrypted snapshot in the target region
+* Create image from snapshot
+* Launch instance from that image
+
+## EFS
+
+## Amazon S3
+
+## S3 Solution Architecture
+
+## S3 vs EFS vs EBS Comparison
+TODO: get from associate content
 
 ---
 
