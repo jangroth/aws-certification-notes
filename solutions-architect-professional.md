@@ -41,11 +41,12 @@
   * [Route 53](#5_9)
   * [Solution Architeture Comparision](#5_10)
 * [Storage](#6)
-  * [EBS & Local instance store](#6_1)
-  * [EFS](#6_2)
-  * [Amazon S3](#6_3)
-  * [S3 Solution Architecture](#6_4)
-  * [S3 vs EFS vs EBS Comparison](#6_5)
+  * [EBS](#6_1)
+  * [Local Instance Store](#6_2)
+  * [EFS](#6_3)
+  * [Amazon S3](#6_4)
+  * [S3 Solution Architecture](#6_5)
+  * [S3 vs EFS vs EBS Comparison](#6_6)
 * [Caching](#7)
   * [CloudFront](#7_1)
 * [Databases](#8)
@@ -2846,13 +2847,33 @@ Options:
 <a name="6"></a>
 # [↖](#top)[↑](#5_10_9)[↓](#6_1) Storage
 <a name="6_1"></a>
-## [↖](#top)[↑](#6)[↓](#6_1_1) EBS & Local instance store
+## [↖](#top)[↑](#6)[↓](#6_1_1) EBS
 <!-- toc_start -->
-* [Volume options](#6_1_1)
-* [Snaphosts](#6_1_2)
-* [Moving Instances/Volumes To A Different AZ/Region](#6_1_3)
-* [Encrypting root volumes](#6_1_4)
+* [Overview](#6_1_1)
+* [Volume options](#6_1_2)
+* [Snaphosts](#6_1_3)
+* [Moving Instances/Volumes To A Different AZ/Region](#6_1_4)
+* [Encrypting root volumes](#6_1_5)
 <!-- toc_end -->
+
+<a name="6_1_1"></a>
+### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Overview
+Amazon Elastic Block Store (EBS) is an easy to use, high-performance, block-storage service
+designed for use with Amazon Elastic Compute Cloud (EC2) for both throughput and transaction
+intensive workloads at any scale. A broad range of workloads, such as relational and non-relational
+databases, enterprise applications, containerized applications, big data analytics engines, file
+systems, and media workflows are widely deployed on Amazon EBS.
+
+You can choose from six different volume types to balance optimal price and performance. You can
+achieve single-digit-millisecond latency for high-performance database workloads such as SAP HANA
+or gigabyte per second throughput for large, sequential workloads such as Hadoop. You can change
+volume types, tune performance, or increase volume size without disrupting your critical
+applications, so you have cost-effective storage when you need it.
+
+Designed for mission-critical systems, EBS volumes are replicated within an Availability Zone (AZ)
+and can easily scale to petabytes of data. Also, you can use EBS Snapshots with automated
+lifecycle policies to back up your volumes in Amazon S3, while ensuring geographic protection of your data and business continuity.
+
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
 * Only accessible by a *single instance*
@@ -2863,8 +2884,11 @@ Options:
 * Only root volumes are terminated if instance gets terminate
 * Can be striped together to RAID
 * Pick instance type that's *EBS-optimized*
-<a name="6_1_1"></a>
-### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Volume options
+* On AWS
+  * <a href="https://aws.amazon.com/ebs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ebs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank">User Guide</a>
+
+<a name="6_1_2"></a>
+### [↖](#6_1)[↑](#6_1_1)[↓](#6_1_3) Volume options
 .|.|.|.
 -|-|-|-
 **General purpose SSD** (cheap)|gp2|`100 IOPS >= x <= 16,000 IOPS`|1 GiB - 16 TiB<br/>+1 TiB = 3,000 IOPS
@@ -2875,8 +2899,8 @@ Options:
 
 * Can change volume size on the fly, also storage type
 
-<a name="6_1_2"></a>
-### [↖](#6_1)[↑](#6_1_1)[↓](#6_1_3) Snaphosts
+<a name="6_1_3"></a>
+### [↖](#6_1)[↑](#6_1_2)[↓](#6_1_4) Snaphosts
 * Stored incrementally on S3
 * Should stop instance if taking a snapshot of root volume
   * Or detach volume (recommended)
@@ -2890,16 +2914,16 @@ Options:
 * Lifecycle policies have been introduced for snapshots
 * Snapshots can be automated using Amazon Data Lifecycle Manager
 
-<a name="6_1_3"></a>
-### [↖](#6_1)[↑](#6_1_2)[↓](#6_1_4) Moving Instances/Volumes To A Different AZ/Region
+<a name="6_1_4"></a>
+### [↖](#6_1)[↑](#6_1_3)[↓](#6_1_5) Moving Instances/Volumes To A Different AZ/Region
 * Create snapshot in AZ1
 * Use that to create volume in AZ2
 * Also could have *copied* snapshot into different region
 
 * TODO: Look into moving instances into different regions / AZs
 
-<a name="6_1_4"></a>
-### [↖](#6_1)[↑](#6_1_3)[↓](#6_2) Encrypting root volumes
+<a name="6_1_5"></a>
+### [↖](#6_1)[↑](#6_1_4)[↓](#6_2) Encrypting root volumes
 * Stop instance
 * Create snapshot
 * Copy to different region
@@ -2908,22 +2932,109 @@ Options:
 * Launch instance from that image
 
 <a name="6_2"></a>
-## [↖](#top)[↑](#6_1_4)[↓](#6_3) EFS
+## [↖](#top)[↑](#6_1_5)[↓](#6_2_1) Local Instance Store
+<!-- toc_start -->
+* [EBS vs Instance Store](#6_2_1)
+<!-- toc_end -->
+* Physical disk attached to the physical server where your EC2 is
+* Very High IOPS (because physical)
+* Disks up to 7.5 TiB (can change over time), striped (RAID 0) to reach 30 TiB (can change over time...)
+* Block Storage (just like EBS)
+* Cannot be increased in size
+* Risk of data loss if hardware fails
+
+<a name="6_2_1"></a>
+### [↖](#6_2)[↑](#6_2)[↓](#6_3) EBS vs Instance Store
+* Some instance do not come with Root EBS volumes
+* Instead, they come with “Instance Store” (= ephemeral storage)
+* Instance store is physically attached to the machine (EBS is a network drive)
+* Pros:
+  * Better I/O performance (EBS gp2 has an max IOPS of 16000, io1 of 64000)
+  * Good for buffer / cache / scratch data / temporary content
+  * Data survives reboots
+* Cons:
+  * On stop or termination, the instance store is lost
+  * You can’t resize the instance store
+  * Backups must be operated by the user
 
 <a name="6_3"></a>
-## [↖](#top)[↑](#6_2)[↓](#6_4) Amazon S3
+## [↖](#top)[↑](#6_2_1)[↓](#6_3_1) EFS
+<!-- toc_start -->
+* [Overview](#6_3_1)
+* [Performance & Storage Classes](#6_3_2)
+<!-- toc_end -->
+<a name="6_3_1"></a>
+### [↖](#6_3)[↑](#6_3)[↓](#6_3_2) Overview
+Amazon Elastic File System (Amazon EFS) provides a simple, scalable, fully managed elastic NFS
+file system for use with AWS Cloud services and on-premises resources. It is built to scale on
+demand to petabytes without disrupting applications, growing and shrinking automatically as you
+add and remove files, eliminating the need to provision and manage capacity to accommodate growth.
+
+Amazon EFS offers two storage classes: the Standard storage class, and the Infrequent Access
+storage class (EFS IA). EFS IA provides price/performance that's cost-optimized for files not
+accessed every day. By simply enabling EFS Lifecycle Management on your file system, files not
+accessed according to the lifecycle policy you choose will be automatically and transparently
+moved into EFS IA. The EFS IA storage class costs only $0.025/GB-month*.
+
+While workload patterns vary, customers typically find that 80% of files are infrequently accessed
+(and suitable for EFS IA), and 20% are actively used (suitable for EFS Standard), resulting in an
+effective storage cost as low as $0.08/GB-month*. Amazon EFS transparently serves files from both
+storage classes in a common file system namespace.
+
+Amazon EFS is designed to provide massively parallel shared access to thousands of Amazon EC2
+instances, enabling your applications to achieve high levels of aggregate throughput and IOPS with consistent low latencies.
+
+Amazon EFS is well suited to support a broad spectrum of use cases from home directories to
+business-critical applications. Customers can use EFS to lift-and-shift existing enterprise
+applications to the AWS Cloud. Other use cases include: big data analytics, web serving and
+content management, application development and testing, media and entertainment workflows, database backups, and container storage.
+
+Amazon EFS is a regional service storing data within and across multiple Availability Zones (AZs)
+for high availability and durability. Amazon EC2 instances can access your file system across AZs,
+regions, and VPCs, while on-premises servers can access using AWS Direct Connect or AWS VPN.
+
+* Managed NFS (network file system) that can be mounted on many EC2
+* EFS works with EC2 instances in multi-AZ, & on–premises (via Direct Connect or Site-To-Site VPN)
+* Highly available, scalable, expensive (3x gp2), pay per GB used
+* Use cases: content management, web serving, data sharing, Wordpress
+* Compatible with Linux based AMI (not Windows), POSIX-compliant
+* Uses NFSv4.1 protocol
+* Uses security group to control access to EFS
+* Encryption at rest using KMS
+* Can only attach to one VPC, create *one ENI per AZ* (mount target)
+  * Other VPC can access EFS via VPC peering
+* On AWS
+  * <a href="https://aws.amazon.com/efs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/efs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html" target="_blank">User Guide</a>
+
+<a name="6_3_2"></a>
+### [↖](#6_3)[↑](#6_3_1)[↓](#6_4) Performance & Storage Classes
+* EFS Scale
+  * 1000s of concurrent NFS clients, 10 GB+ /s throughput
+  * Grow to Petabyte-scale network file system
+* Performance mode (set at EFS creation time)
+  * *General purpose* (default): latency-sensitive use cases (web server, CMS, etc...)
+  * *Max I/O* – higher latency, higher throughput, highly parallel (big data, media processing)
+* Throughput Mode
+  * *Bursting Mode*: common for filesystems (intensive work, then almost nothing), linked to FS size
+  * *Provisioned IO Mode*: high throughput to storage ratio (if burst is not enough) – expensive
+* Storage Tiers (lifecycle management feature – move file after N days)
+  * *Standard*: for frequently accessed file
+  * *Infrequent access*: higher cost to retrieve the file, lower price point to store the file
 
 <a name="6_4"></a>
-## [↖](#top)[↑](#6_3)[↓](#6_5) S3 Solution Architecture
+## [↖](#top)[↑](#6_3_2)[↓](#6_5) Amazon S3
 
 <a name="6_5"></a>
-## [↖](#top)[↑](#6_4)[↓](#7) S3 vs EFS vs EBS Comparison
+## [↖](#top)[↑](#6_4)[↓](#6_6) S3 Solution Architecture
+
+<a name="6_6"></a>
+## [↖](#top)[↑](#6_5)[↓](#7) S3 vs EFS vs EBS Comparison
 TODO: get from associate content
 
 ---
 
 <a name="7"></a>
-# [↖](#top)[↑](#6_5)[↓](#7_1) Caching
+# [↖](#top)[↑](#6_6)[↓](#7_1) Caching
 <a name="7_1"></a>
 ## [↖](#top)[↑](#7)[↓](#7_1_1) CloudFront
 <!-- toc_start -->
