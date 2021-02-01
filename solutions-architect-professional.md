@@ -39,12 +39,19 @@
   * [Load Balancers](#5_7)
   * [API Gateway](#5_8)
   * [Route 53](#5_9)
-* [Caching](#6)
-  * [CloudFront](#6_1)
-* [Databases](#7)
-  * [DynamoDB](#7_1)
-  * [ElasticSearch](#7_2)
-  * [RDS](#7_3)
+  * [Solution Architeture Comparision](#5_10)
+* [Storage](#6)
+  * [EBS & Local instance store](#6_1)
+  * [EFS](#6_2)
+  * [Amazon S3](#6_3)
+  * [S3 Solution Architecture](#6_4)
+  * [S3 vs EFS vs EBS Comparison](#6_5)
+* [Caching](#7)
+  * [CloudFront](#7_1)
+* [Databases](#8)
+  * [DynamoDB](#8_1)
+  * [ElasticSearch](#8_2)
+  * [RDS](#8_3)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -2737,29 +2744,44 @@ Options:
 * You can create a CloudWatch metric and associate an alarm. You then create a health check that checks the alarm itself.
 
 <a name="5_9_4"></a>
-### [↖](#5_9)[↑](#5_9_3_3)[↓](#6) Sharing a Private Zone across multiple VPCs
+### [↖](#5_9)[↑](#5_9_3_3)[↓](#5_10) Sharing a Private Zone across multiple VPCs
 * Having a central private “Shared Services” DNS can ease management
 * Oher accounts may want to access the central private DNS records
   * Connectivity between VPC must be established (VPC peering, TGW)
   * Must programmatically (CLI) *associate the VPC* with the central hosted zone
 * One association must be created for each new account
 
-## Solution Architeture Comparision
-### EC2 on its own with Elastic IP
+<a name="5_10"></a>
+## [↖](#top)[↑](#5_9_4)[↓](#5_10_1) Solution Architeture Comparision
+<!-- toc_start -->
+* [EC2 on its own with Elastic IP](#5_10_1)
+* [EC2 with Route53](#5_10_2)
+* [ALB + ASG](#5_10_3)
+* [ALB + ECS on EC2](#5_10_4)
+* [ALB + ECS on Fargate](#5_10_5)
+* [ALB + Lambda](#5_10_6)
+* [API Gateway + Lambda](#5_10_7)
+* [API Gateway + AWS Service](#5_10_8)
+* [API Gateway + HTTP backend (ex: ALB)](#5_10_9)
+<!-- toc_end -->
+<a name="5_10_1"></a>
+### [↖](#5_10)[↑](#5_10)[↓](#5_10_2) EC2 on its own with Elastic IP
 * Quick failover
 * The client should not see the change happen
 * Helpful if the client needs to resolve by static Public IP address
 * Does not scale
 * Cheap
 
-### EC2 with Route53
+<a name="5_10_2"></a>
+### [↖](#5_10)[↑](#5_10_1)[↓](#5_10_3) EC2 with Route53
 * “DNS-based load balancing”
 * Ability to use multiple instances
 * Route53 TTL implies client may get outdated information
 * Clients must have logic to deal with hostname resolution failures
 * Adding an instance may not receive full traffic right away due to DNS TTL
 
-### ALB + ASG
+<a name="5_10_3"></a>
+### [↖](#5_10)[↑](#5_10_2)[↓](#5_10_4) ALB + ASG
 * Scales well, classic architecture
 * New instances are in service right away.
 * Users are not sent to instances that are out-of-service
@@ -2770,13 +2792,15 @@ Options:
 * Cross-Zone balancing for even traffic distribution
 * Target utilization should be between 40% and 70%
 
-### ALB + ECS on EC2
+<a name="5_10_4"></a>
+### [↖](#5_10)[↑](#5_10_3)[↓](#5_10_5) ALB + ECS on EC2
 * Same properties as ALB + ASG
 * Application is run on Docker
 * ASG + ECS allows to have dynamic port mappings
 * Tough to orchestrate ECS service auto-scaling + ASG auto-scaling
 
-### ALB + ECS on Fargate
+<a name="5_10_5"></a>
+### [↖](#5_10)[↑](#5_10_4)[↓](#5_10_6) ALB + ECS on Fargate
 * Application is run on Docker
 * Service Auto Scaling is easy
 * Time to be in-service is quick (no need to launch an EC2 instance in advance)
@@ -2784,7 +2808,8 @@ Options:
 * “serverless” application tier
 * “managed” load balancer
 
-### ALB + Lambda
+<a name="5_10_6"></a>
+### [↖](#5_10)[↑](#5_10_5)[↓](#5_10_7) ALB + Lambda
 * Limited to Lambda’s runtimes
 * Seamless scaling thanks to Lambda
 * Simple way to expose Lambda functions as HTTP/S without all the features from API Gateway
@@ -2792,21 +2817,24 @@ Options:
 * Good for hybrid microservices
 * Example: use ECS for some requests, use Lambda for others
 
-### API Gateway + Lambda
+<a name="5_10_7"></a>
+### [↖](#5_10)[↑](#5_10_6)[↓](#5_10_8) API Gateway + Lambda
 * Pay per request, seamless scaling, fully serverless
 * Soft limits: 10000/s API Gateway, 1000 concurrent Lambda
 * API Gateway features: authentication, rate limiting, caching, etc...
 * Lambda Cold Start time may increase latency for some requests
 * Fully integrated with X-Ray
 
-### API Gateway + AWS Service
+<a name="5_10_8"></a>
+### [↖](#5_10)[↑](#5_10_7)[↓](#5_10_9) API Gateway + AWS Service
 * Lower latency, cheaper
 * Not using Lambda concurrent capacity, no custom code
 * Expose AWS APIs securely through API Gateway
 * SQS, SNS, Step Functions...
 * Remember API Gateway has a payload limit of 10 MB (can be a problem for S3 proxy)
 
-### API Gateway + HTTP backend (ex: ALB)
+<a name="5_10_9"></a>
+### [↖](#5_10)[↑](#5_10_8)[↓](#6) API Gateway + HTTP backend (ex: ALB)
 * Use API Gateway features on top of custom HTTP backend (authentication, rate control, API keys, caching...)
 * Can connect to...
   * On-premises service
@@ -2815,8 +2843,16 @@ Options:
 
 ---
 
-# Storage
-## EBS & Local instance store
+<a name="6"></a>
+# [↖](#top)[↑](#5_10_9)[↓](#6_1) Storage
+<a name="6_1"></a>
+## [↖](#top)[↑](#6)[↓](#6_1_1) EBS & Local instance store
+<!-- toc_start -->
+* [Volume options](#6_1_1)
+* [Snaphosts](#6_1_2)
+* [Moving Instances/Volumes To A Different AZ/Region](#6_1_3)
+* [Encrypting root volumes](#6_1_4)
+<!-- toc_end -->
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
 * Only accessible by a *single instance*
@@ -2827,7 +2863,8 @@ Options:
 * Only root volumes are terminated if instance gets terminate
 * Can be striped together to RAID
 * Pick instance type that's *EBS-optimized*
-### [↖](#top)[↑](#12)[↓](#12_1_1) Volume options
+<a name="6_1_1"></a>
+### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Volume options
 .|.|.|.
 -|-|-|-
 **General purpose SSD** (cheap)|gp2|`100 IOPS >= x <= 16,000 IOPS`|1 GiB - 16 TiB<br/>+1 TiB = 3,000 IOPS
@@ -2838,7 +2875,8 @@ Options:
 
 * Can change volume size on the fly, also storage type
 
-### Snaphosts
+<a name="6_1_2"></a>
+### [↖](#6_1)[↑](#6_1_1)[↓](#6_1_3) Snaphosts
 * Stored incrementally on S3
 * Should stop instance if taking a snapshot of root volume
   * Or detach volume (recommended)
@@ -2852,14 +2890,16 @@ Options:
 * Lifecycle policies have been introduced for snapshots
 * Snapshots can be automated using Amazon Data Lifecycle Manager
 
-### Moving Instances/Volumes To A Different AZ/Region
+<a name="6_1_3"></a>
+### [↖](#6_1)[↑](#6_1_2)[↓](#6_1_4) Moving Instances/Volumes To A Different AZ/Region
 * Create snapshot in AZ1
 * Use that to create volume in AZ2
 * Also could have *copied* snapshot into different region
 
 * TODO: Look into moving instances into different regions / AZs
 
-### Encrypting root volumes
+<a name="6_1_4"></a>
+### [↖](#6_1)[↑](#6_1_3)[↓](#6_2) Encrypting root volumes
 * Stop instance
 * Create snapshot
 * Copy to different region
@@ -2867,38 +2907,42 @@ Options:
 * Create image from snapshot
 * Launch instance from that image
 
-## EFS
+<a name="6_2"></a>
+## [↖](#top)[↑](#6_1_4)[↓](#6_3) EFS
 
-## Amazon S3
+<a name="6_3"></a>
+## [↖](#top)[↑](#6_2)[↓](#6_4) Amazon S3
 
-## S3 Solution Architecture
+<a name="6_4"></a>
+## [↖](#top)[↑](#6_3)[↓](#6_5) S3 Solution Architecture
 
-## S3 vs EFS vs EBS Comparison
+<a name="6_5"></a>
+## [↖](#top)[↑](#6_4)[↓](#7) S3 vs EFS vs EBS Comparison
 TODO: get from associate content
 
 ---
 
-<a name="6"></a>
-# [↖](#top)[↑](#5_9_4)[↓](#6_1) Caching
-<a name="6_1"></a>
-## [↖](#top)[↑](#6)[↓](#6_1_1) CloudFront
+<a name="7"></a>
+# [↖](#top)[↑](#6_5)[↓](#7_1) Caching
+<a name="7_1"></a>
+## [↖](#top)[↑](#7)[↓](#7_1_1) CloudFront
 <!-- toc_start -->
-* [Overview](#6_1_1)
-* [Basic workflow](#6_1_2)
-* [Origin](#6_1_3)
-* [CloudFront vs S3 Cross Region Replication](#6_1_4)
-* [CloudFront Geo Restriction](#6_1_5)
-* [Signed URL/Signed Cookies](#6_1_6)
-* [Caching](#6_1_7)
-  * [CloudFront Caching vs API Gateway Caching](#6_1_7_1)
-* [Lambda@Edge](#6_1_8)
-* [https](#6_1_9)
-  * [Scenario 1 (requires 2 certs)](#6_1_9_1)
-  * [Scenario 2 (doesn't work)](#6_1_9_2)
-  * [Scenario 2 (requires 1 cert)](#6_1_9_3)
+* [Overview](#7_1_1)
+* [Basic workflow](#7_1_2)
+* [Origin](#7_1_3)
+* [CloudFront vs S3 Cross Region Replication](#7_1_4)
+* [CloudFront Geo Restriction](#7_1_5)
+* [Signed URL/Signed Cookies](#7_1_6)
+* [Caching](#7_1_7)
+  * [CloudFront Caching vs API Gateway Caching](#7_1_7_1)
+* [Lambda@Edge](#7_1_8)
+* [https](#7_1_9)
+  * [Scenario 1 (requires 2 certs)](#7_1_9_1)
+  * [Scenario 2 (doesn't work)](#7_1_9_2)
+  * [Scenario 2 (requires 1 cert)](#7_1_9_3)
 <!-- toc_end -->
-<a name="6_1_1"></a>
-### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Overview
+<a name="7_1_1"></a>
+### [↖](#7_1)[↑](#7_1)[↓](#7_1_2) Overview
 Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web
 content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your
 content through a worldwide network of data centers called edge locations. When a user requests
@@ -2924,8 +2968,8 @@ objects) are now held (or cached) in multiple edge locations around the world.
 * Can expose external HTTPS and can talk to internal HTTPS backends
 * <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
 
-<a name="6_1_2"></a>
-### [↖](#6_1)[↑](#6_1_1)[↓](#6_1_3) Basic workflow
+<a name="7_1_2"></a>
+### [↖](#7_1)[↑](#7_1_1)[↓](#7_1_3) Basic workflow
 * You specify origin servers, like an Amazon S3 bucket or your own HTTP server, from which CloudFront gets your files which will then be distributed from CloudFront edge locations all over the world.
 * An origin server stores the original, definitive version of your objects.
 * You upload your files to your origin servers.
@@ -2934,8 +2978,8 @@ objects) are now held (or cached) in multiple edge locations around the world.
 * CloudFront assigns a domain name to your new distribution
 * CloudFront sends your distribution's configuration (but not your content) to all of its edge locations
 
-<a name="6_1_3"></a>
-### [↖](#6_1)[↑](#6_1_2)[↓](#6_1_4) Origin
+<a name="7_1_3"></a>
+### [↖](#7_1)[↑](#7_1_2)[↓](#7_1_4) Origin
 An origin is the location where content is stored, and from which CloudFront gets content to serve to viewers. To specify an origin:
 * An Amazon S3 bucket that is configured with static website hosting
 * An Amazon S3 bucket that is not configured with static website hosting
@@ -2952,8 +2996,8 @@ S3|CloudFront assumes Origin Access Identity<br/>S3 Bucket Policy
 EC2|Must have public IPs
 ALB (-> EC2)|ALB must have public IP, EC2 can be private
 
-<a name="6_1_4"></a>
-### [↖](#6_1)[↑](#6_1_3)[↓](#6_1_5) CloudFront vs S3 Cross Region Replication
+<a name="7_1_4"></a>
+### [↖](#7_1)[↑](#7_1_3)[↓](#7_1_5) CloudFront vs S3 Cross Region Replication
 * **CloudFront**
   * Global Edge network
   * Files are cached for a TTL (maybe a day)
@@ -2964,16 +3008,16 @@ ALB (-> EC2)|ALB must have public IP, EC2 can be private
   * Read only
   * Great for dynamic content that needs to be available at low-latency in few regions
 
-<a name="6_1_5"></a>
-### [↖](#6_1)[↑](#6_1_4)[↓](#6_1_6) CloudFront Geo Restriction
+<a name="7_1_5"></a>
+### [↖](#7_1)[↑](#7_1_4)[↓](#7_1_6) CloudFront Geo Restriction
 * You can restrict who can access your distribution
   * Whitelist: Allow your users to access your content only if they're in one of the countries on a list of approved countries.
   * Blacklist: Prevent your users from accessing your content if they're in one of the countries on a blacklist of banned countries.
 * The “country” is determined using a 3 rd party Geo-IP database
 * Use case: Copyright Laws to control access to content
 
-<a name="6_1_6"></a>
-### [↖](#6_1)[↑](#6_1_5)[↓](#6_1_7) Signed URL/Signed Cookies
+<a name="7_1_6"></a>
+### [↖](#7_1)[↑](#7_1_5)[↓](#7_1_7) Signed URL/Signed Cookies
 * You want to distribute paid shared content to premium users over the world
 * We can use CloudFront Signed URL/Cookie. We attach a policy with:
   * Includes URL expiration
@@ -2993,8 +3037,8 @@ Account wide key-pair, only the root can manage it|Uses the IAM key of the signi
 Can filter by IP, path, date, expiration|Limited lifetime
 Can leverage caching features|.
 
-<a name="6_1_7"></a>
-### [↖](#6_1)[↑](#6_1_6)[↓](#6_1_7_1) Caching
+<a name="7_1_7"></a>
+### [↖](#7_1)[↑](#7_1_6)[↓](#7_1_7_1) Caching
 * Cache based on
   * Headers
       * Strategy: Whitelist headers that should be cached on, ignore others
@@ -3007,8 +3051,8 @@ Can leverage caching features|.
   * Static distribution doesn't need complicated configuration
   * Dynamic distributions caches based on correct headers and cookies
 
-<a name="6_1_7_1"></a>
-#### [↖](#6_1)[↑](#6_1_7)[↓](#6_1_8) CloudFront Caching vs API Gateway Caching
+<a name="7_1_7_1"></a>
+#### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8) CloudFront Caching vs API Gateway Caching
 API Gateway now has two different kinds of endpoints. The original design is now called *edge
 optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services
 from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region.
@@ -3020,8 +3064,8 @@ unless you use your own CloudFront distribution and whitelist those headers for 
   * Allows for fine-grained control of caching
   * Many different options from here, could e.g. also disable API-Gateway cache
 
-<a name="6_1_8"></a>
-### [↖](#6_1)[↑](#6_1_7_1)[↓](#6_1_9) Lambda@Edge
+<a name="7_1_8"></a>
+### [↖](#7_1)[↑](#7_1_7_1)[↓](#7_1_9) Lambda@Edge
 * You have deployed a CDN using CloudFront
 * What if you wanted to run a global AWS Lambda alongside?
 * Or how to implement request filtering before reaching your application?
@@ -3052,8 +3096,8 @@ unless you use your own CloudFront distribution and whitelist those headers for 
   * User Prioritization, User Tracking and Analytics
   * Increasing the cache hit ratio (by modifying headers, normalize user-agent...)
 
-<a name="6_1_9"></a>
-### [↖](#6_1)[↑](#6_1_8)[↓](#6_1_9_1) https
+<a name="7_1_9"></a>
+### [↖](#7_1)[↑](#7_1_8)[↓](#7_1_9_1) https
 * A viewer submits an HTTPS request to CloudFront. There's some SSL/TLS negotiation here between the viewer and CloudFront. In the end, the viewer submits the request in an encrypted format.
 * If the object is in the CloudFront edge cache, CloudFront encrypts the response and returns it to the viewer, and the viewer decrypts it.
 * If the object is not in the CloudFront cache, CloudFront performs SSL/TLS negotiation with your origin and, when the negotiation is complete, forwards the request to your origin in an encrypted format.
@@ -3061,8 +3105,8 @@ unless you use your own CloudFront distribution and whitelist those headers for 
 * CloudFront decrypts the response, re-encrypts it, and forwards the object to the viewer. CloudFront also saves the object in the edge cache so that the object is available the next time it's requested.
 * The viewer decrypts the response.
 
-<a name="6_1_9_1"></a>
-#### [↖](#6_1)[↑](#6_1_9)[↓](#6_1_9_2) Scenario 1 (requires 2 certs)
+<a name="7_1_9_1"></a>
+#### [↖](#7_1)[↑](#7_1_9)[↓](#7_1_9_2) Scenario 1 (requires 2 certs)
 
 .|CloudFront|ALB
 -|-|-
@@ -3078,8 +3122,8 @@ If Host header is *not* forwarded:
 - CloudFront will add a Host header value of the origin: origin.example.com
 - Requests & Responses will work
 
-<a name="6_1_9_2"></a>
-#### [↖](#6_1)[↑](#6_1_9_1)[↓](#6_1_9_3) Scenario 2 (doesn't work)
+<a name="7_1_9_2"></a>
+#### [↖](#7_1)[↑](#7_1_9_1)[↓](#7_1_9_3) Scenario 2 (doesn't work)
 
 .|CloudFront|ALB
 -|-|-
@@ -3089,8 +3133,8 @@ origin|www.example.com|.
 
 Impossible, as CloudFront distribution will loop over itself!
 
-<a name="6_1_9_3"></a>
-#### [↖](#6_1)[↑](#6_1_9_2)[↓](#7) Scenario 2 (requires 1 cert)
+<a name="7_1_9_3"></a>
+#### [↖](#7_1)[↑](#7_1_9_2)[↓](#8) Scenario 2 (requires 1 cert)
 
 .|CloudFront|ALB
 -|-|-
@@ -3110,34 +3154,34 @@ If Host header is *not* forwarded:
 
 ---
 
-<a name="7"></a>
-# [↖](#top)[↑](#6_1_9_3)[↓](#7_1) Databases
-<a name="7_1"></a>
-## [↖](#top)[↑](#7)[↓](#7_2) DynamoDB
+<a name="8"></a>
+# [↖](#top)[↑](#7_1_9_3)[↓](#8_1) Databases
+<a name="8_1"></a>
+## [↖](#top)[↑](#8)[↓](#8_2) DynamoDB
 
 Todo
 
 ---
 
-<a name="7_2"></a>
-## [↖](#top)[↑](#7_1)[↓](#7_3) ElasticSearch
+<a name="8_2"></a>
+## [↖](#top)[↑](#8_1)[↓](#8_3) ElasticSearch
 
 Todo
 
 ---
 
-<a name="7_3"></a>
-## [↖](#top)[↑](#7_2)[↓](#7_3_1) RDS
+<a name="8_3"></a>
+## [↖](#top)[↑](#8_2)[↓](#8_3_1) RDS
 <!-- toc_start -->
-* [Overview](#7_3_1)
-* [Security](#7_3_2)
-* [RDS Backup](#7_3_3)
-* [Multi-AZ deployments](#7_3_4)
-* [Replicating RDS](#7_3_5)
-* [Etc](#7_3_6)
+* [Overview](#8_3_1)
+* [Security](#8_3_2)
+* [RDS Backup](#8_3_3)
+* [Multi-AZ deployments](#8_3_4)
+* [Replicating RDS](#8_3_5)
+* [Etc](#8_3_6)
 <!-- toc_end -->
-<a name="7_3_1"></a>
-### [↖](#7_3)[↑](#7_3)[↓](#7_3_2) Overview
+<a name="8_3_1"></a>
+### [↖](#8_3)[↑](#8_3)[↓](#8_3_2) Overview
 Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a
 relational database in the cloud. It provides cost-efficient and resizable capacity while
 automating time-consuming administration tasks such as hardware provisioning, database setup,
@@ -3175,8 +3219,8 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
 * **RDS Events**: get notified via SNS for events (operations, outages...)
 * <a href="https://aws.amazon.com/rds/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rds/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rds/index.html" target="_blank">User Guide</a>
 
-<a name="7_3_2"></a>
-### [↖](#7_3)[↑](#7_3_1)[↓](#7_3_3) Security
+<a name="8_3_2"></a>
+### [↖](#8_3)[↑](#8_3_1)[↓](#8_3_3) Security
 * KMS encryption at rest for underlying EBS volumes / snapshots
 * Transparent Data Encryption (TDE) for Oracle and SQL Server
 * SSL encryption to RDS is possible for all DB (in-flight)
@@ -3185,8 +3229,8 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
 * Can copy an un-encrypted RDS snapshot into an encrypted one
 * CloudTrail cannot be used to track queries made within RDS
 
-<a name="7_3_3"></a>
-### [↖](#7_3)[↑](#7_3_2)[↓](#7_3_4) RDS Backup
+<a name="8_3_3"></a>
+### [↖](#8_3)[↑](#8_3_2)[↓](#8_3_4) RDS Backup
 * Two types of backups
   * Automated backups
     * Enabled by default
@@ -3208,8 +3252,8 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
   * Can change to different storage engine if closely related and enough space available
   * Restored version will always be a *new* RDS instance with a *new* DNS endpoint
 
-<a name="7_3_4"></a>
-### [↖](#7_3)[↑](#7_3_3)[↓](#7_3_5) Multi-AZ deployments
+<a name="8_3_4"></a>
+### [↖](#8_3)[↑](#8_3_3)[↓](#8_3_5) Multi-AZ deployments
 Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a
 single AWS Region.
 
@@ -3225,8 +3269,8 @@ single AWS Region.
     * Backups
   * *Aurora* can replicate accross 3 AZs
 
-<a name="7_3_5"></a>
-### [↖](#7_3)[↑](#7_3_4)[↓](#7_3_6) Replicating RDS
+<a name="8_3_5"></a>
+### [↖](#8_3)[↑](#8_3_4)[↓](#8_3_6) Replicating RDS
 * Using **read replicas**
   * Read queries are routed to *read replicas*, reducing load on primary db instance
     (*source instance*)
@@ -3259,8 +3303,8 @@ single AWS Region.
   * This will break replication
   * Useful for database sharding, could create replicas for each shard
 
-<a name="7_3_6"></a>
-### [↖](#7_3)[↑](#7_3_5) Etc
+<a name="8_3_6"></a>
+### [↖](#8_3)[↑](#8_3_5) Etc
 * *DB security groups* are used with DB instances that are not in a VPC and on the EC2-Classic platform.
   * Don't need to specify a destination port number when you create DB security group rules
 * *RDS Reserved instances* are available for multi-AZ deployments.
