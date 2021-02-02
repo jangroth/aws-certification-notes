@@ -3024,6 +3024,239 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
 <a name="6_4"></a>
 ## [↖](#top)[↑](#6_3_2)[↓](#6_5) Amazon S3
 
+### [↖](#top)[↑](#6)[↓](#6_2) Overview
+Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
+retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
+scale past trillions of objects worldwide.
+
+* **Key**-**value** storage (folder-like structure is only a UI representation)
+* **Bucket** size is unlimited. Objects from 0B to 5TB.
+* HA and scalable, transparent data partitioning
+  * Data is automatically replicated to at least 3 separate data centers in the same region
+* Bucket lifecycle events can trigger *SNS*, *SQS* or *AWS Lambda*
+	* New *object created* events
+	* *Object removal* events
+	* Reduced Redundancy Storage (RRS) *object lost* event
+* Buckets are *per region*, but AWS console is *global* (displaying all bucket for that account)
+* Bucket names have to be *globally* unique, should comply with DNS naming conventions.
+  * Virtual-hosted-style:
+    * `http://<bucket-name>.s3.amazonaws.com`
+    * `http://<bucket-name>.s3-<aws-region>.amazonaws.com`
+  * Path-style:
+    * `http://s3.amazonaws.com/<bucket-name>`
+    * `http://s3-<aws-region>.amazonaws.com/<bucket-name>`
+
+<a name="6_2"></a>
+### [↖](#top)[↑](#6_1)[↓](#6_2_1) Getting Data In And Out
+
+<a name="6_2_1"></a>
+#### Perfomance & Consistency
+* Bucket operations **get** - **list** - **put** - **delete** - **head**
+	* Implemented through *http* operations: `GET` - `PUT` - `DELETE` - `HEAD`
+	* *Read-after-write consistency* for `PUT` of *new* objects.
+	* *Eventual consistency* for *overwrite* `PUT` and `DELETE` (stale reads but low latency).
+* Can only delete a bucket that is empty.
+* *Scales* automatically, up to a certain limit:
+	* Consistent:
+		* `>3500 PUT/LIST/DELETE/s`
+		* `>5500 GET/s`
+* Key names are used to determine which partition to store the object in.
+	* Make sure keys are spread out (not sequential)
+		* E.g. by adding a random prefix to the key name
+* For `GET` requests put *AWS CloudFront* in front of S3 bucket
+	* Internal caching
+	* Reduced latency - objects are physically closer to the consumer.
+* **Multipart upload**
+	* Recommended for objects >=100MB, mandatory for >=5GB
+	* Supports parallel uploads
+	* Can pause & resume
+	* Can upload file while it's being created
+
+<a name="6_2_2"></a>
+#### Versioning
+* Works on bucket level (for *all* objects)
+* Versioning can either be *unversioned* (default), *enabled* or *suspended*
+* **Version ids** are automatically assigned to objects
+	* Ids cannot changed.
+	* As long as versioning is *disabled*, id is set to `null`
+	* Once enabled, versioning can only be suspended (but not disabled)
+	* `PUT` creates a new version, `GET` returns the latest version. Specific versions can be requested.
+	* `DELETE` (without version) marks latest version as deleted and returns a `404` for subsequent `GET`s.
+		* Older versions (pre-delete) can still be requested.
+		* Restore old version by deleting the new version or by copying the old version on top of the bucket.
+	* `DELETE` (with a version) permanently deletes that version.
+	* If versioning is *suspendend*, S3 automatically adds a `null` version ID to every subsequent
+    object stored thereafter
+* *Lifecycle Management policies* can automatically handle old versions, e.g. permanently delete or
+  move to *AWS Glacier*.
+* Different versions of the same object can have different permissions.
+* Can enable *MFA delete* for an extra layer of security.
+* Versioning integrates with lifecycle rules.
+
+<a name="6_2_3"></a>
+#### Logging
+* *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
+  stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
+  specific events.
+* *S3 Server Access Logs* log on object level.
+  * Provide detailed records for the requests that are made to a bucket
+  * Needs to be enabled on bucket level
+
+<a name="6_2_4"></a>
+#### Transfer Acceleration
+*Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers of files over long distances
+between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally
+distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an
+optimized network path.
+* File upload through an Edge location via a dedicated CloudFront endpoint
+
+<a name="6_2_5"></a>
+#### Cross-Region Replication
+* Buckets *must* be in different regions
+  * Can replicate cross-account
+* *Must* have versioning enabled
+* Only new / changed objects will be replicated
+* Cannot chain replications
+* Can replicate complete buckets or subfolder ('prefix')
+* Deleting of individual versions or delete markers is *not* replicated
+* Best way to copy existing objects over is using AWS CLI
+
+<a name="6_2_6"></a>
+#### Hosting Static Websites
+`<bucket-name>.s3-website-<AWS-Region>.amazonaws.com`
+* Bucket name *must* match domain name. Every hosted bucket recieves its own URL
+* Use *AWS Route 53* to integrate custom domains (also to automatically fail-over from dynamic website)
+* Specify `index` & `error` documents
+* In *AWS Route 53*: create hosted zone & record set
+* Might need to add CORS configuration to bucket (cross origin resource sharing)
+
+<a name="6_2_7"></a>
+#### Storage classes
+.|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
+-|-|-|-|-|-|-
+S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
+S3 Intelligent Tiering|**11x9**|3x9|**>=3**|$0.023|**No**|Automatically moves objects between two access tiers based on changing access patterns
+S3 IA (infrequent access)|**11x9**|3x9|**>=3**|$0.0125|Yes|For data that is accessed less frequently, but requires rapid access when needed
+S3 One Zone IA (infrequent access)|**11x9**|99.5|1|**$0.01**|Yes|For data that is accessed less frequently, but requires rapid access when needed
+Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *standard* or *bulk*
+Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
+~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
+
+<a name="6_3"></a>
+### [↖](#top)[↑](#6_2_7)[↓](#6_3_1) Access Control
+* **Effect** – This can be either allow or deny
+* **Principal** – Account or user who is allowed access to the actions and resources in the statement
+* **Actions** – For each resource, S3 supports a set of operations
+* **Resources** – Buckets and objects are the resources
+* Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
+<a name="6_3_1"></a>
+#### Defaults
+* Bucket is *owned* by the AWS account that created it
+  * Ownership refers to the identity and email address used to create the account
+	* Bucket ownership is not transferable
+* Bucket owner gets full permission (ACL)
+* The person paying the bills always has full control.
+* A person uploading an object into a bucket owns it by default.
+<a name="6_3_2"></a>
+#### IAM
+* IAM policies (in general) specify what actions are allowed or denied on what AWS resources
+* Defined as JSON
+* Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
+* Use if you’re more interested in *“What can this user do in AWS?”*
+<a name="6_3_3"></a>
+#### Bucket policies
+* Specify what actions are allowed or denied for which principals on the bucket that the policy is
+attached to
+* Defined as JSON
+* Attached *only* to S3 buckets. Can however effect object in buckets.
+* Contain *principal* element (unnecessary for IAM)
+* Use if you’re more interested in *“Who can access this S3 bucket?”*
+* Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
+<a name="6_3_4"></a>
+#### ACLs
+* Defined as XML. Legacy, not recomended any more.
+* Can
+	* be attached to individual objects (bucket policies only bucket level)
+	* control access to object uploaded into a bucket from a *different* account.
+* Cannot..
+	* have conditions
+	* cannot explicitely deny actions
+	* grant permission to bucket sub-resources (eg. lifecycle or static website configurations)
+* Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a
+bucket.
+<a name="6_3_5"></a>
+#### How to specify resources in a policy:
+.|.
+-|-
+`arn:partition:service:region:namespace:relative-id`|`arn:aws:s3:::mybucket`
+`arn:aws:s3:::*`|All buckets and objects in account
+`arn:aws:s3:::mybucket`|`mybucket`
+`arn:aws:s3:::mybucket/*`|All objects in `mybucket`
+`arn:aws:s3:::mybucket/mykey`|`mykey` in `mybucket`
+`arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
+<a name="6_3_6"></a>
+### Pre-signed URLs
+All objects are private by default. Only the object owner has permission to access these objects.
+However, the object owner can optionally share objects with others by creating a **pre-signed URL**,
+using their own security credentials, to grant time-limited permission to download the objects.
+
+<a name="6_4"></a>
+### [↖](#top)[↑](#6_3_6)[↓](#6_4_1) Encryption
+
+<a name="6_4_1"></a>
+#### Protecting data in transit
+* Using an AWS KMS–Managed Customer Master Key (CMK)
+	* Before *uploading* to S3, Client makes request to KMS, receives plain text encryption key and
+	cypher blob, to upload to S3 as object metadata. Decrypt by sending cypher blob to KMS, retrieving
+	plain text back, use for decryption.
+	* Before *downloading* from S3, The client first downloads the encrypted object from Amazon S3 along
+	with the cipher blob version of the data encryption key stored as object metadata. The client then
+	sends the cipher blob to AWS KMS to get the plain text version of the same, so that it can decrypt
+	the object data.
+* Using a client-Side Master Key
+	* Clients provides a master key, S3 client generates random data
+	key and encrypts with client's master key.
+	* *Uploads* material description as part of the object metadata.
+	* On *download* S3 client uses metadata to determine the right master key to use for decryption.
+* Use *SSL encryption*
+<a name="6_4_2"></a>
+#### Protecting data at rest
+* Uses *AES-256* (or others)
+* Encryption can be enforced via bucket policy.
+* Enable server-side encryption by adding specific header to request (`x-amz-server-side-encryption`).
+* Server-Side Encryption with *Amazon S3-Managed Keys* (SSE-S3)
+	* Each object is encrypted with a unique key employing strong multi-factor encryption
+	* Furthermore it encrypts the key itself with a master key that is rotated regularly
+* Server-Side Encryption with *AWS KMS-Managed Keys* (SSE-KMS)
+	* Similar to SSE-S3, with extra benefits
+	* Separate permissions for the use of an envelope key
+	* Has audit trail
+* Server-Side Encryption with *Customer-Provided Keys* (SSE-C)
+	* Key is not stored with AWS (stores salted HMAC valued instead)
+
+<a name="6_5"></a>
+### [↖](#top)[↑](#6_4_2)[↓](#6_5_1) Etc
+
+<a name="6_5_1"></a>
+#### Pricing
+Charged by
+  * Storage
+  * Requests
+  * Storage management pricing
+    * Tags
+  * Data transfer
+    * For cross-region transfers only
+  * Transfer acceleration (feature)
+
+<a name="6_5_2"></a>
+#### Limits
+.|.
+-|-
+Buckets per account|100
+Bucket policy max size|20KB
+Object size|0B to 5TB
+Object size in a single `PUT`|5GB
+
 <a name="6_5"></a>
 ## [↖](#top)[↑](#6_4)[↓](#6_6) S3 Solution Architecture
 
