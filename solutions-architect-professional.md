@@ -3022,9 +3022,35 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
   * *Infrequent access*: higher cost to retrieve the file, lower price point to store the file
 
 <a name="6_4"></a>
-## [↖](#top)[↑](#6_3_2)[↓](#6_5) Amazon S3
+## [↖](#top)[↑](#6_3_2)[↓](#6_4_1) Amazon S3
+<!-- toc_start -->
+* [Overview](#6_4_1)
+* [Getting Data In And Out](#6_4_2)
+  * [Perfomance & Consistency](#6_4_2_1)
+  * [Versioning](#6_4_2_2)
+  * [S3 Events Notifications](#6_4_2_3)
+  * [Logging](#6_4_2_4)
+  * [Perfomance](#6_4_2_5)
+  * [Cross Region Replication/Same Region Replication](#6_4_2_6)
+  * [Hosting Static Websites](#6_4_2_7)
+  * [Storage classes](#6_4_2_8)
+* [Access Control](#6_4_3)
+  * [Defaults](#6_4_3_1)
+  * [IAM](#6_4_3_2)
+  * [Bucket policies](#6_4_3_3)
+  * [ACLs](#6_4_3_4)
+  * [How to specify resources in a policy:](#6_4_3_5)
+* [Pre-signed URLs](#6_4_4)
+* [Encryption](#6_4_5)
+  * [Protecting data in transit](#6_4_5_1)
+  * [Protecting data at rest](#6_4_5_2)
+* [Etc](#6_4_6)
+  * [Pricing](#6_4_6_1)
+  * [Limits](#6_4_6_2)
+<!-- toc_end -->
 
-### [↖](#top)[↑](#6)[↓](#6_2) Overview
+<a name="6_4_1"></a>
+### [↖](#6_4)[↑](#6_4)[↓](#6_4_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
 retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
 scale past trillions of objects worldwide.
@@ -3045,12 +3071,18 @@ scale past trillions of objects worldwide.
   * Path-style:
     * `http://s3.amazonaws.com/<bucket-name>`
     * `http://s3-<aws-region>.amazonaws.com/<bucket-name>`
+* Anti patterns:
+  * Lots of small files
+  * POSIX file system (use EFS instead), file locks
+  * Search features, queries, rapidly changing data
+  * Website with dynamic content
+* On AWS
+  * <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank">User Guide</a>
+<a name="6_4_2"></a>
+### [↖](#6_4)[↑](#6_4_1)[↓](#6_4_2_1) Getting Data In And Out
 
-<a name="6_2"></a>
-### [↖](#top)[↑](#6_1)[↓](#6_2_1) Getting Data In And Out
-
-<a name="6_2_1"></a>
-#### Perfomance & Consistency
+<a name="6_4_2_1"></a>
+#### [↖](#6_4)[↑](#6_4_2)[↓](#6_4_2_2) Perfomance & Consistency
 * Bucket operations **get** - **list** - **put** - **delete** - **head**
 	* Implemented through *http* operations: `GET` - `PUT` - `DELETE` - `HEAD`
 	* *Read-after-write consistency* for `PUT` of *new* objects.
@@ -3072,8 +3104,8 @@ scale past trillions of objects worldwide.
 	* Can pause & resume
 	* Can upload file while it's being created
 
-<a name="6_2_2"></a>
-#### Versioning
+<a name="6_4_2_2"></a>
+#### [↖](#6_4)[↑](#6_4_2_1)[↓](#6_4_2_3) Versioning
 * Works on bucket level (for *all* objects)
 * Versioning can either be *unversioned* (default), *enabled* or *suspended*
 * **Version ids** are automatically assigned to objects
@@ -3093,36 +3125,69 @@ scale past trillions of objects worldwide.
 * Can enable *MFA delete* for an extra layer of security.
 * Versioning integrates with lifecycle rules.
 
-<a name="6_2_3"></a>
-#### Logging
-* *AWS CloudTrail* logs S3-API calls for bucket-level operations (and many other information) and
-  stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for
-  specific events.
-* *S3 Server Access Logs* log on object level.
+<a name="6_4_2_3"></a>
+#### [↖](#6_4)[↑](#6_4_2_2)[↓](#6_4_2_4) S3 Events Notifications
+* `S3:ObjectCreated`, `S3:ObjectRemoved`, `S3:ObjectRestore`, `S3:Replication`...
+* Object name filtering possible (`*.jpg`)
+* Use case: generate thumbnails of images uploaded to S3
+* S3 event notifications typically deliver events in seconds but can sometimes take a minute or longer
+* If two writes are made to a single non- versioned object at the same time, it is possible that only a single event notification will be sent
+* If you want to ensure that an event notification is sent for every successful write, you can enable versioning on your bucket.
+
+<a name="6_4_2_4"></a>
+#### [↖](#6_4)[↑](#6_4_2_3)[↓](#6_4_2_5) Logging
+* *AWS CloudTrail* logs S3-API calls for *bucket-level* operations (and many other information) and
+  stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for specific events.
+* You can also get *AWS CloudTrail* logs for *object-level* Amazon S3 actions. To do this, enable data events for your S3 bucket or all buckets in your account.
+* *S3 Server Access Logs* log on *object-level*.
   * Provide detailed records for the requests that are made to a bucket
   * Needs to be enabled on bucket level
 
-<a name="6_2_4"></a>
-#### Transfer Acceleration
-*Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers of files over long distances
-between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally
-distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an
-optimized network path.
-* File upload through an Edge location via a dedicated CloudFront endpoint
+<a name="6_4_2_5"></a>
+#### [↖](#6_4)[↑](#6_4_2_4)[↓](#6_4_2_6) Perfomance
+* Amazon S3 automatically scales to high request rates, latency 100-200 ms
+* Your application can achieve at least 3,500 PUT/COPY/POST/DELETE and 5,500 GET/HEAD requests per second per prefix in a bucket.
+* There are no limits to the number of prefixes in a bucket.
+* Example (object path => prefix):
+  * `bucket/folder1/sub1/file` => `/folder1/sub1/`
+  * `bucket/folder1/sub2/file` => `/folder1/sub2/`
+  * `bucket/1/file` => `/1/`
+  * `bucket/2/file` => `/2/`
+* If you spread reads across all four prefixes evenly, you can achieve 22,000 requests per second for GET and HEAD
+* **Multi-part upload**
+  * recommended for files > 100MB, must use for files > 5GB
+  * Can help parallelize uploads (speed up transfers)
+* **Transfer Acceleration**
+  * *Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers (upload & download) of files over long distances
+  between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally
+  distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an optimized network path.
+  * File upload through an Edge location via a dedicated CloudFront endpoint
+* **S3 Byte-Range Fetches**
+  * Parallelize GETs by requesting specific byte ranges
+  * Better resilience in case of failures
+  * Can be used to speed up downloads
+  * Can be used to retrieve only partial data (for example the head of a file)
 
-<a name="6_2_5"></a>
-#### Cross-Region Replication
-* Buckets *must* be in different regions
-  * Can replicate cross-account
-* *Must* have versioning enabled
+<a name="6_4_2_6"></a>
+#### [↖](#6_4)[↑](#6_4_2_5)[↓](#6_4_2_7) Cross Region Replication/Same Region Replication
+Replication enables automatic, asynchronous copying of objects across Amazon S3 buckets. Buckets
+that are configured for object replication can be owned by the same AWS account or by different
+accounts. Object may be replicated to a single destination bucket or multiple destination buckets.
+Destination buckets can be in different AWS Regions or within the same Region as the source bucket.
+
+* Use cases
+  * Reduce latency
+  * Disaster recovery
+  * Helpful for security
 * Only new / changed objects will be replicated
 * Cannot chain replications
 * Can replicate complete buckets or subfolder ('prefix')
+* Can be combined with Lifecycle Policies
 * Deleting of individual versions or delete markers is *not* replicated
 * Best way to copy existing objects over is using AWS CLI
 
-<a name="6_2_6"></a>
-#### Hosting Static Websites
+<a name="6_4_2_7"></a>
+#### [↖](#6_4)[↑](#6_4_2_6)[↓](#6_4_2_8) Hosting Static Websites
 `<bucket-name>.s3-website-<AWS-Region>.amazonaws.com`
 * Bucket name *must* match domain name. Every hosted bucket recieves its own URL
 * Use *AWS Route 53* to integrate custom domains (also to automatically fail-over from dynamic website)
@@ -3130,8 +3195,8 @@ optimized network path.
 * In *AWS Route 53*: create hosted zone & record set
 * Might need to add CORS configuration to bucket (cross origin resource sharing)
 
-<a name="6_2_7"></a>
-#### Storage classes
+<a name="6_4_2_8"></a>
+#### [↖](#6_4)[↑](#6_4_2_7)[↓](#6_4_3) Storage classes
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
 S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
@@ -3142,29 +3207,31 @@ Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *stand
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-<a name="6_3"></a>
-### [↖](#top)[↑](#6_2_7)[↓](#6_3_1) Access Control
+* Can transition objects between tiers (or delete) using S3 Lifecycle Policies
+
+<a name="6_4_3"></a>
+### [↖](#6_4)[↑](#6_4_2_8)[↓](#6_4_3_1) Access Control
 * **Effect** – This can be either allow or deny
 * **Principal** – Account or user who is allowed access to the actions and resources in the statement
 * **Actions** – For each resource, S3 supports a set of operations
 * **Resources** – Buckets and objects are the resources
 * Authorization works as a *union* of **IAM** & **bucket policies** and **bucket ACLs**
-<a name="6_3_1"></a>
-#### Defaults
+<a name="6_4_3_1"></a>
+#### [↖](#6_4)[↑](#6_4_3)[↓](#6_4_3_2) Defaults
 * Bucket is *owned* by the AWS account that created it
   * Ownership refers to the identity and email address used to create the account
 	* Bucket ownership is not transferable
 * Bucket owner gets full permission (ACL)
 * The person paying the bills always has full control.
 * A person uploading an object into a bucket owns it by default.
-<a name="6_3_2"></a>
-#### IAM
+<a name="6_4_3_2"></a>
+#### [↖](#6_4)[↑](#6_4_3_1)[↓](#6_4_3_3) IAM
 * IAM policies (in general) specify what actions are allowed or denied on what AWS resources
 * Defined as JSON
 * Attached to IAM users, groups, or roles (so they cannot grant access to anonymous users)
 * Use if you’re more interested in *“What can this user do in AWS?”*
-<a name="6_3_3"></a>
-#### Bucket policies
+<a name="6_4_3_3"></a>
+#### [↖](#6_4)[↑](#6_4_3_2)[↓](#6_4_3_4) Bucket policies
 * Specify what actions are allowed or denied for which principals on the bucket that the policy is
 attached to
 * Defined as JSON
@@ -3172,8 +3239,8 @@ attached to
 * Contain *principal* element (unnecessary for IAM)
 * Use if you’re more interested in *“Who can access this S3 bucket?”*
 * Easiest way to grant *cross-account permissions* for all `s3:*` permission. (Cannot do this with ACLs.)
-<a name="6_3_4"></a>
-#### ACLs
+<a name="6_4_3_4"></a>
+#### [↖](#6_4)[↑](#6_4_3_3)[↓](#6_4_3_5) ACLs
 * Defined as XML. Legacy, not recomended any more.
 * Can
 	* be attached to individual objects (bucket policies only bucket level)
@@ -3184,8 +3251,8 @@ attached to
 	* grant permission to bucket sub-resources (eg. lifecycle or static website configurations)
 * Other than *object ACL*s there are *bucket ACL*s as well - only for writing access log objects to a
 bucket.
-<a name="6_3_5"></a>
-#### How to specify resources in a policy:
+<a name="6_4_3_5"></a>
+#### [↖](#6_4)[↑](#6_4_3_4)[↓](#6_4_4) How to specify resources in a policy:
 .|.
 -|-
 `arn:partition:service:region:namespace:relative-id`|`arn:aws:s3:::mybucket`
@@ -3194,17 +3261,17 @@ bucket.
 `arn:aws:s3:::mybucket/*`|All objects in `mybucket`
 `arn:aws:s3:::mybucket/mykey`|`mykey` in `mybucket`
 `arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
-<a name="6_3_6"></a>
-### Pre-signed URLs
+<a name="6_4_4"></a>
+### [↖](#6_4)[↑](#6_4_3_5)[↓](#6_4_5) Pre-signed URLs
 All objects are private by default. Only the object owner has permission to access these objects.
 However, the object owner can optionally share objects with others by creating a **pre-signed URL**,
 using their own security credentials, to grant time-limited permission to download the objects.
 
-<a name="6_4"></a>
-### [↖](#top)[↑](#6_3_6)[↓](#6_4_1) Encryption
+<a name="6_4_5"></a>
+### [↖](#6_4)[↑](#6_4_4)[↓](#6_4_5_1) Encryption
 
-<a name="6_4_1"></a>
-#### Protecting data in transit
+<a name="6_4_5_1"></a>
+#### [↖](#6_4)[↑](#6_4_5)[↓](#6_4_5_2) Protecting data in transit
 * Using an AWS KMS–Managed Customer Master Key (CMK)
 	* Before *uploading* to S3, Client makes request to KMS, receives plain text encryption key and
 	cypher blob, to upload to S3 as object metadata. Decrypt by sending cypher blob to KMS, retrieving
@@ -3219,8 +3286,8 @@ using their own security credentials, to grant time-limited permission to downlo
 	* *Uploads* material description as part of the object metadata.
 	* On *download* S3 client uses metadata to determine the right master key to use for decryption.
 * Use *SSL encryption*
-<a name="6_4_2"></a>
-#### Protecting data at rest
+<a name="6_4_5_2"></a>
+#### [↖](#6_4)[↑](#6_4_5_1)[↓](#6_4_6) Protecting data at rest
 * Uses *AES-256* (or others)
 * Encryption can be enforced via bucket policy.
 * Enable server-side encryption by adding specific header to request (`x-amz-server-side-encryption`).
@@ -3234,11 +3301,11 @@ using their own security credentials, to grant time-limited permission to downlo
 * Server-Side Encryption with *Customer-Provided Keys* (SSE-C)
 	* Key is not stored with AWS (stores salted HMAC valued instead)
 
-<a name="6_5"></a>
-### [↖](#top)[↑](#6_4_2)[↓](#6_5_1) Etc
+<a name="6_4_6"></a>
+### [↖](#6_4)[↑](#6_4_5_2)[↓](#6_4_6_1) Etc
 
-<a name="6_5_1"></a>
-#### Pricing
+<a name="6_4_6_1"></a>
+#### [↖](#6_4)[↑](#6_4_6)[↓](#6_4_6_2) Pricing
 Charged by
   * Storage
   * Requests
@@ -3248,8 +3315,8 @@ Charged by
     * For cross-region transfers only
   * Transfer acceleration (feature)
 
-<a name="6_5_2"></a>
-#### Limits
+<a name="6_4_6_2"></a>
+#### [↖](#6_4)[↑](#6_4_6_1)[↓](#6_5) Limits
 .|.
 -|-
 Buckets per account|100
@@ -3258,7 +3325,7 @@ Object size|0B to 5TB
 Object size in a single `PUT`|5GB
 
 <a name="6_5"></a>
-## [↖](#top)[↑](#6_4)[↓](#6_6) S3 Solution Architecture
+## [↖](#top)[↑](#6_4_6_2)[↓](#6_6) S3 Solution Architecture
 
 <a name="6_6"></a>
 ## [↖](#top)[↑](#6_5)[↓](#7) S3 vs EFS vs EBS Comparison
