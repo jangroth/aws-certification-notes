@@ -3161,12 +3161,18 @@ scale past trillions of objects worldwide.
   * *Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers (upload & download) of files over long distances
   between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally
   distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an optimized network path.
-  * File upload through an Edge location via a dedicated CloudFront endpoint
+  * File upload/downloads through an Edge location via a dedicated CloudFront endpoint
+  * Compatible with multi-part upload
 * **S3 Byte-Range Fetches**
   * Parallelize GETs by requesting specific byte ranges
   * Better resilience in case of failures
   * Can be used to speed up downloads
   * Can be used to retrieve only partial data (for example the head of a file)
+* **S3 Select & Glacier Select**
+  * Retrieve less data using SQL by performing *server side filtering*
+  * Works on objects stored in CSV, JSON, or Apache Parquet format
+  * Can filter by rows & columns (simple SQL statements)
+  * Less network transfer, less CPU cost client-side
 
 <a name="6_4_2_6"></a>
 #### [↖](#6_4)[↑](#6_4_2_5)[↓](#6_4_2_7) Cross Region Replication/Same Region Replication
@@ -3325,10 +3331,32 @@ Object size|0B to 5TB
 Object size in a single `PUT`|5GB
 
 <a name="6_5"></a>
-## [↖](#top)[↑](#6_4_6_2)[↓](#6_6) S3 Solution Architecture
+## [↖](#top)[↑](#6_4_6_2)[↓](#6_5_1) S3 Solution Architecture
+<!-- toc_start -->
+* [Exposing Static Objects](#6_5_1)
+* [Indexing objects in DynamoDB](#6_5_2)
+<!-- toc_end -->
+
+<a name="6_5_1"></a>
+### [↖](#6_5)[↑](#6_5)[↓](#6_5_2) Exposing Static Objects
+* `->` - `EC2 instance storage`
+* `->` - `CloudFront` - `EC2` - `EBS`
+* `->` - `CloudFront` - `ALB` - `ASG` - `EFS`
+  * Requires Linux for EFS
+* `->` - `CloudFront` - `S3`
+
+<a name="6_5_2"></a>
+### [↖](#6_5)[↑](#6_5_1)[↓](#6_6) Indexing objects in DynamoDB
+* `->` - `S3` - `Lambda` - `DynamoDB`
+* Problem: No indexing facility in S3, cannot search
+  * API for object metadata in DynamoDB:
+    * Search by date
+    * Total storage used by a customer
+    * List of all objects with certain attributes
+    * Find all objects uploaded within a date range
 
 <a name="6_6"></a>
-## [↖](#top)[↑](#6_5)[↓](#7) S3 vs EFS vs EBS Comparison
+## [↖](#top)[↑](#6_5_2)[↓](#7) S3 vs EFS vs EBS Comparison
 TODO: get from associate content
 
 ---
