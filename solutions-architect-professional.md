@@ -49,6 +49,8 @@
   * [S3 vs EFS vs EBS Comparison](#6_6)
 * [Caching](#7)
   * [CloudFront](#7_1)
+  * [ElastiCache](#7_2)
+  * [Overview](#7_3)
 * [Databases](#8)
   * [DynamoDB](#8_1)
   * [ElasticSearch](#8_2)
@@ -3339,15 +3341,15 @@ Object size in a single `PUT`|5GB
 
 <a name="6_5_1"></a>
 ### [↖](#6_5)[↑](#6_5)[↓](#6_5_2) Exposing Static Objects
-* `->` - `EC2 instance storage`
-* `->` - `CloudFront` - `EC2` - `EBS`
-* `->` - `CloudFront` - `ALB` - `ASG` - `EFS`
+* -> `EC2 instance storage`
+* -> `CloudFront` - `EC2` - `EBS`
+* -> `CloudFront` - `ALB` - `ASG` - `EFS`
   * Requires Linux for EFS
-* `->` - `CloudFront` - `S3`
+* -> `CloudFront` - `S3`
 
 <a name="6_5_2"></a>
 ### [↖](#6_5)[↑](#6_5_1)[↓](#6_6) Indexing objects in DynamoDB
-* `->` - `S3` - `Lambda` - `DynamoDB`
+* -> `S3` - `Lambda` - `DynamoDB`
 * Problem: No indexing facility in S3, cannot search
   * API for object metadata in DynamoDB:
     * Search by date
@@ -3357,7 +3359,15 @@ Object size in a single `PUT`|5GB
 
 <a name="6_6"></a>
 ## [↖](#top)[↑](#6_5_2)[↓](#7) S3 vs EFS vs EBS Comparison
-TODO: get from associate content
+Amazon S3|Amazon EBS|Amazon EFS
+-|-|-
+Can be publicly accessible|Accessible only via the given EC2 Machine|Accessible via several EC2 machines and AWS services
+Web interface|File system interface|Web and file system interface
+Object Storage|Block storage|Object storage
+Scalable|Hardly scalable|Scalable
+Slowest|Fastest|Faster than S3, slower than EBS
+Good for storing backups|Is meant to be EC2 drive|Good for shareable applications and workloads
+Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, only pay for used storage
 
 ---
 
@@ -3573,7 +3583,7 @@ origin|www.example.com|.
 Impossible, as CloudFront distribution will loop over itself!
 
 <a name="7_1_9_3"></a>
-#### [↖](#7_1)[↑](#7_1_9_2)[↓](#8) Scenario 2 (requires 1 cert)
+#### [↖](#7_1)[↑](#7_1_9_2)[↓](#7_2) Scenario 2 (requires 1 cert)
 
 .|CloudFront|ALB
 -|-|-
@@ -3593,8 +3603,62 @@ If Host header is *not* forwarded:
 
 ---
 
+<a name="7_2"></a>
+## [↖](#top)[↑](#7_1_9_3)[↓](#7_3) ElastiCache
+
+<a name="7_3"></a>
+## [↖](#top)[↑](#7_2)[↓](#7_3_1) Overview
+<!-- toc_start -->
+* [Scenarios](#7_3_1)
+* [Memcached](#7_3_2)
+* [Redis](#7_3_3)
+<!-- toc_end -->
+* Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible
+in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your
+existing databases by retrieving data from high throughput and low latency in-memory data stores.
+* Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gamin, Geospatial Services, Real-Time Analytics, and Queuing.
+* Amazon ElastiCache offers fully managed Redis and Memcached for your most demanding applications that require sub-millisecond response times.
+
+• Caches are in-memory databases with really high performance, low latency
+• Helps reduce load off of databases for read intensive workloads
+• Helps make your application stateless
+• AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
+• Using ElastiCache involves heavy application code changes
+* ElastiCache is a good choice if database is read-heavy and not prone to frequent changing.
+* <a href="https://aws.amazon.com/elasticache/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticache/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticache/index.html" target="_blank">User Guide</a>
+
+<a name="7_3_1"></a>
+### [↖](#7_3)[↑](#7_3)[↓](#7_3_2) Scenarios
+* Use as DB cache
+  * `->` `application` - `Elasticache` - `RDS`
+* User-session store
+  * `->` `user` - `application` (x `n`)  - `Elasticache`
+
+<a name="7_3_2"></a>
+### [↖](#7_3)[↑](#7_3_1)[↓](#7_3_3) Memcached
+* A widely adopted memory object caching system. ElastiCache is protocol compliant with Memcached,
+  so popular tools that you use today with existing Memchached environments willwork seamlessly with
+  the service.
+* Multi-node for partitioning of data (sharding)
+* Non persistent
+* No backup and restore
+* Multi-threaded architecture
+
+<a name="7_3_3"></a>
+### [↖](#7_3)[↑](#7_3_2)[↓](#8) Redis
+* A popular open-source in-memory key-value store that supports data structures such as sorted sets
+  and lists. ElastiCache supports master/slave replication and multi-AZ which can be used to achieve cross-AZ-redundancy.
+* Also offers Pub/Sub, Sorted Sets and In-Memory Data Store
+* Multi AZ with Auto-Failover
+* Read Replicas to scale reads and have high availability
+* Persistent, Data Durability:
+  * Read Only File Feature (AOF),
+  * backup and restore features
+
+---
+
 <a name="8"></a>
-# [↖](#top)[↑](#7_1_9_3)[↓](#8_1) Databases
+# [↖](#top)[↑](#7_3_3)[↓](#8_1) Databases
 <a name="8_1"></a>
 ## [↖](#top)[↑](#8)[↓](#8_2) DynamoDB
 
