@@ -50,7 +50,7 @@
 * [Caching](#7)
   * [CloudFront](#7_1)
   * [ElastiCache](#7_2)
-  * [Overview](#7_3)
+  * [ Handling Extreme Rates](#7_3)
 * [Databases](#8)
   * [DynamoDB](#8_1)
   * [ElasticSearch](#8_2)
@@ -3604,15 +3604,16 @@ If Host header is *not* forwarded:
 ---
 
 <a name="7_2"></a>
-## [↖](#top)[↑](#7_1_9_3)[↓](#7_3) ElastiCache
-
-<a name="7_3"></a>
-## [↖](#top)[↑](#7_2)[↓](#7_3_1) Overview
+## [↖](#top)[↑](#7_1_9_3)[↓](#7_2_1) ElastiCache
 <!-- toc_start -->
-* [Scenarios](#7_3_1)
-* [Memcached](#7_3_2)
-* [Redis](#7_3_3)
+* [Overview](#7_2_1)
+* [Scenarios](#7_2_2)
+* [Memcached](#7_2_3)
+* [Redis](#7_2_4)
 <!-- toc_end -->
+
+<a name="7_2_1"></a>
+### [↖](#7_2)[↑](#7_2)[↓](#7_2_2) Overview
 * Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible
 in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your
 existing databases by retrieving data from high throughput and low latency in-memory data stores.
@@ -3627,15 +3628,15 @@ existing databases by retrieving data from high throughput and low latency in-me
 * ElastiCache is a good choice if database is read-heavy and not prone to frequent changing.
 * <a href="https://aws.amazon.com/elasticache/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticache/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticache/index.html" target="_blank">User Guide</a>
 
-<a name="7_3_1"></a>
-### [↖](#7_3)[↑](#7_3)[↓](#7_3_2) Scenarios
+<a name="7_2_2"></a>
+### [↖](#7_2)[↑](#7_2_1)[↓](#7_2_3) Scenarios
 * Use as DB cache
   * `->` `application` - `Elasticache` - `RDS`
 * User-session store
   * `->` `user` - `application` (x `n`)  - `Elasticache`
 
-<a name="7_3_2"></a>
-### [↖](#7_3)[↑](#7_3_1)[↓](#7_3_3) Memcached
+<a name="7_2_3"></a>
+### [↖](#7_2)[↑](#7_2_2)[↓](#7_2_4) Memcached
 * A widely adopted memory object caching system. ElastiCache is protocol compliant with Memcached,
   so popular tools that you use today with existing Memchached environments willwork seamlessly with
   the service.
@@ -3644,8 +3645,8 @@ existing databases by retrieving data from high throughput and low latency in-me
 * No backup and restore
 * Multi-threaded architecture
 
-<a name="7_3_3"></a>
-### [↖](#7_3)[↑](#7_3_2)[↓](#8) Redis
+<a name="7_2_4"></a>
+### [↖](#7_2)[↑](#7_2_3)[↓](#7_3) Redis
 * A popular open-source in-memory key-value store that supports data structures such as sorted sets
   and lists. ElastiCache supports master/slave replication and multi-AZ which can be used to achieve cross-AZ-redundancy.
 * Also offers Pub/Sub, Sorted Sets and In-Memory Data Store
@@ -3657,8 +3658,60 @@ existing databases by retrieving data from high throughput and low latency in-me
 
 ---
 
+<a name="7_3"></a>
+## [↖](#top)[↑](#7_2_4)[↓](#7_3_1)  Handling Extreme Rates
+<!-- toc_start -->
+* [Traffic Management](#7_3_1)
+* [Compute](#7_3_2)
+* [Storage](#7_3_3)
+* [Others](#7_3_4)
+<!-- toc_end -->
+
+<a name="7_3_1"></a>
+### [↖](#7_3)[↑](#7_3)[↓](#7_3_2) Traffic Management
+
+|Service|Rate|Comment
+|-|-|-|
+Route53|.|Handles extreme rates without problems
+CloudFront|100,000 requests/second|.|
+ALB|.|Can scale to extreme rates, needs warmup though
+
+
+<a name="7_3_2"></a>
+### [↖](#7_3)[↑](#7_3_1)[↓](#7_3_3) Compute
+
+|Service|Rate|Comment
+|-|-|-|
+ASG, ECS|.|Scales well, but slowly, requires bootstrap
+Fargate|.|Faster than ECS
+Lambda|1,000 concurrent executions|Soft limit per region
+
+<a name="7_3_3"></a>
+### [↖](#7_3)[↑](#7_3_2)[↓](#7_3_4) Storage
+
+|Service|Rate|Comment
+|-|-|-|
+|S3|3,500 PUT, 5,550 GET per prefix /s|.|
+|RDS, Aurora, ElasticSearch|.|provisioned
+|DynamoDB|.|Autoscaling on demand
+|EBS|16k IOPS (gp2), 64k IOPS (io1)|.|
+|Instance Store|~M IOPS|.
+|EFS|.|Performance modes *General*, *Max IO*|
+|Redis|<200 nodes|(replica+sharding)
+|Memcached|20 nodes|(sharding)
+|DAX|10 nodes|(primary + replicas)
+
+<a name="7_3_4"></a>
+### [↖](#7_3)[↑](#7_3_3)[↓](#8) Others
+
+|Service|Rate|Comment
+|-|-|-|
+|SQS, SNS|.|unlimited
+|SQS FIFO|3,000 RPS|(with batching)
+|Kinesis|1 MB/s in, 2 MB/s out|per shard
+
 <a name="8"></a>
-# [↖](#top)[↑](#7_3_3)[↓](#8_1) Databases
+# [↖](#top)[↑](#7_3_4)[↓](#8_1) Databases
 <a name="8_1"></a>
 ## [↖](#top)[↑](#8)[↓](#8_2) DynamoDB
 
