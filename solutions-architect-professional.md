@@ -3713,14 +3713,175 @@ Lambda|1,000 concurrent executions|Soft limit per region
 <a name="8"></a>
 # [↖](#top)[↑](#7_3_4)[↓](#8_1) Databases
 <a name="8_1"></a>
-## [↖](#top)[↑](#8)[↓](#8_2) DynamoDB
+## [↖](#top)[↑](#8)[↓](#8_1_1) DynamoDB
+<!-- toc_start -->
+* [Overview](#8_1_1)
+* [Basics](#8_1_2)
+* [Important features](#8_1_3)
+* [Keys and indexes](#8_1_4)
+  * [Partion Key](#8_1_4_1)
+  * [Partition Key & Sort Key](#8_1_4_2)
+* [Secondary indexes](#8_1_5)
+  * [Projected attributes](#8_1_5_1)
+  * [Local secondary index](#8_1_5_2)
+  * [Global secondary index](#8_1_5_3)
+* [DynamoDB DAX](#8_1_6)
+  * [DAX vs ElastiCache](#8_1_6_1)
+* [Solution Architecture](#8_1_7)
+  * [Use DDB to index objext in S3](#8_1_7_1)
+<!-- toc_end -->
 
-Todo
+<a name="8_1_1"></a>
+### [↖](#8_1)[↑](#8_1)[↓](#8_1_2) Overview
+Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond
+performance at any scale. It's a fully managed, multi-region, multi-active, durable database with
+built-in security, backup and restore, and in-memory caching for internet-scale applications.
+DynamoDB can handle more than 10 trillion requests per day and can support peaks of more than 20
+million requests per second.
+* NoSQL database, fully managed, massive scale (1,000,000 rps)
+* Similar to Apache Cassandra (can migrate to DynamoDB)
+* No disk space to provision, max object size is 400 KB
+* Capacity: *provisioned* (WCU, RCU, & Auto Scaling) or *on-demand*
+* Supports CRUD (Create Read Update Delete)
+* Read: *eventually* or *strong consistency*
+* Supports transactions across multiple tables (ACID support)
+* Backups available, point in time recovery
+* Integrated with IAM for security
+* On AWS
+  * <a href="https://aws.amazon.com/dynamodb/" target="_blank">Service</a> - <a href="https://aws.amazon.com/dynamodb/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/dynamodb/index.html" target="_blank">User Guide</a>
+
+<a name="8_1_2"></a>
+### [↖](#8_1)[↑](#8_1_1)[↓](#8_1_3) Basics
+* DynamoDB is made of tables
+* Each table has a primary key (must be decided at creation time)
+* Each table can have an infinite number of items (= rows)
+* Each item has attributes (can be added over time – can be null)
+* Maximum size of a item is 400KB
+* Data types supported are:
+  * Scalar Types: String, Number, Binary, Boolean, Null
+  * Document Types: List, Map
+  * Set Types: String Set, Number Set, Binary Set
+* In DynamoDB, you need to know your queries when you design the database
+  * Must have right PK, SK & indexes in place
+  * Unlike RDS
+
+<a name="8_1_3"></a>
+### [↖](#8_1)[↑](#8_1_2)[↓](#8_1_4) Important features
+* **TTL**
+  * automatically expire row after a specified epoch date
+* **DynamoDB Streams**
+  * react to changes to DynamoDB tables in real time
+  * Can be read by AWS Lambda, EC2...
+  * 24 hours retention of data
+  * Common pattern:
+    * `CRUD on DDB table` -> `Lambda` -> `Amazon ES ElasticSearch`, or `Kinesis`
+* **Global Tables** (cross region replication)
+  * Active Active replication, many regions
+  * Must enable DynamoDB Streams
+  * Useful for low latency, DR purposes
+  * Common pattern:
+    * Two tables in two regions
+    * Replicate all CRUD changes into each other
+
+<a name="8_1_4"></a>
+### [↖](#8_1)[↑](#8_1_3)[↓](#8_1_4_1) Keys and indexes
+
+<a name="8_1_4_1"></a>
+#### [↖](#8_1)[↑](#8_1_4)[↓](#8_1_4_2) Partion Key
+* **Partition key** (PK) is also called **hash attribute** or **primary key**
+* Must be decided at creation time
+* Must be unique, used for internal hash function (*unordered*)
+* Used to retrieve data
+* You should design your application for uniform activity across all logical partition keys in the Table and its secondary indexes.
+* Example
+  * `user_id` for a users table
+
+<a name="8_1_4_2"></a>
+#### [↖](#8_1)[↑](#8_1_4_1)[↓](#8_1_5) Partition Key & Sort Key
+* **Composite PK**: *index* composed of hashed PK (*unordered*) and Sort Key (SK, *ordered*)
+* **Sort key** is also called **range attribute** or **range key**
+* Data is grouped by partition key
+* Combination of *PK* and *SK* must be unique
+  * Different items can have the same *PK*, must have different *SK*
+* Example
+  * `users-games` table
+    * `user_id` for the partition key
+    * `game_id` for the sort key
+  * good sort key: `timestamp`
+
+<a name="8_1_5"></a>
+### [↖](#8_1)[↑](#8_1_4_2)[↓](#8_1_5_1) Secondary indexes
+* Associated with exactly one table, from which it obtains its data
+* Allows to query or scan data by an *alternate key* (other than PK/SK)
+* Only for `read` operations, `write` is not supported.
+
+<a name="8_1_5_1"></a>
+#### [↖](#8_1)[↑](#8_1_5)[↓](#8_1_5_2) Projected attributes
+* Attributes copied from the base table into an *index*
+* Makes them queryable
+* Different projection types
+	* *KEYS_ONLY* - Only the index and primary keys are projected into the index
+	* *INCLUDE* - Only the specified table attributes are projected into the index
+	* *ALL* - All of the table attributes are projected into the index
+
+<a name="8_1_5_2"></a>
+#### [↖](#8_1)[↑](#8_1_5_1)[↓](#8_1_5_3) Local secondary index
+* Uses the *same PK*, but offers different *SK*
+* Must be defined at table creation time
+* Every partition of a local secondary index is scoped to a base table partition that has the same partition key value
+* Local secondary indexes are extra tables that dynamo keeps in the background
+* Can choose *eventual consistency* or *strong consistency* at *creation* time
+* *Local* as in "co-located on the same partition"
+* Can request *not-projected* attributes for query or scan operation
+* Consumes read/write throughput from the original table.
+
+<a name="8_1_5_3"></a>
+#### [↖](#8_1)[↑](#8_1_5_2)[↓](#8_1_6) Global secondary index
+* Uses *different PK* and offers additional *SK* (or none).
+* Can be created after the base table has already been created.
+* *PK* does not have to be unique (unlike base table)
+* Queries on the global index can span all of the data in the base table, across all partitions
+* Only support *eventual consistency*
+* Have their own provisioned read/write throughput
+* Global secondary keys are distributed transactions across multiple partitions
+* Global as in "over many partitions"
+* Cannot request not-projected attributes for query or scan operation
+
+<a name="8_1_6"></a>
+### [↖](#8_1)[↑](#8_1_5_3)[↓](#8_1_6_1) DynamoDB DAX
+* DAX = DynamoDB Accelerator
+* *Seamless* cache for DynamoDB, no application re-write
+* Writes go through DAX to DynamoDB
+* Micro second latency for cached reads & queries
+* Solves the Hot Key problem
+  * too many reads on a particular row can cause throtteling
+* 5 minutes TTL for cache by default
+* Up to 10 nodes in the cluster
+* Multi AZ
+  * 3 nodes minimum recommended for production
+* Secure
+  * Encryption at rest with KMS, VPC, IAM, CloudTrail...
+
+<a name="8_1_6_1"></a>
+#### [↖](#8_1)[↑](#8_1_6)[↓](#8_1_7) DAX vs ElastiCache
+* Use DAX if DynamoDB is what the client already interacts with
+* Use ElastiCache if you want to speed up a whole computation process
+  * E.g. also store compuational results in a cache
+
+<a name="8_1_7"></a>
+### [↖](#8_1)[↑](#8_1_6_1)[↓](#8_1_7_1) Solution Architecture
+<a name="8_1_7_1"></a>
+#### [↖](#8_1)[↑](#8_1_7)[↓](#8_2) Use DDB to index objext in S3
+*  `S3` -> `Lambda` to store metadata in -> `DynamoDB`, provide API for object metada
+  * Search by date
+  * Total storage used by a customer
+  * List of all objects with certain attributes
+  * Find all objects uploaded within a date range
 
 ---
 
 <a name="8_2"></a>
-## [↖](#top)[↑](#8_1)[↓](#8_3) ElasticSearch
+## [↖](#top)[↑](#8_1_7_1)[↓](#8_3) ElasticSearch
 
 Todo
 
