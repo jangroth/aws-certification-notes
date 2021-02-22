@@ -56,6 +56,8 @@
   * [ElasticSearch](#8_2)
   * [RDS](#8_3)
   * [Aurora](#8_4)
+* [Service Communication](#9)
+  * [Step Functions](#9_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -4149,7 +4151,7 @@ cloud-native, usually preferred over RDS
   * Promoting another region (for disaster recovery) has an RTO of < 1 minute
 
 <a name="8_4_6"></a>
-### [↖](#8_4)[↑](#8_4_5) Multi Master
+### [↖](#8_4)[↑](#8_4_5)[↓](#9) Multi Master
 * Is a new feature of the Aurora MySQL-compatible edition that adds the ability to scale out write performance across multiple Availability Zones.
 * In case you want immediate failover for write node (HA)
 * *Every* node does R/W
@@ -4157,3 +4159,54 @@ cloud-native, usually preferred over RDS
 
 ---
 
+<a name="9"></a>
+# [↖](#top)[↑](#8_4_6)[↓](#9_1) Service Communication
+<a name="9_1"></a>
+## [↖](#top)[↑](#9)[↓](#9_1_1) Step Functions
+<!-- toc_start -->
+* [Overview](#9_1_1)
+* [Tasks](#9_1_2)
+* [Integration](#9_1_3)
+<!-- toc_end -->
+<a name="9_1_1"></a>
+### [↖](#9_1)[↑](#9_1)[↓](#9_1_2) Overview
+AWS Step Functions is a serverless function orchestrator that makes it easy to sequence AWS Lambda
+functions and multiple AWS services into business-critical applications. Through its visual
+interface, you can create and run a series of checkpointed and event-driven workflows that
+maintain the application state. The output of one step acts as an input to the next. Each step in
+your application executes in order, as defined by your business logic.
+
+Orchestrating a series of individual serverless applications, managing retries, and debugging
+failures can be challenging. As your distributed applications become more complex, the complexity
+of managing them also grows. With its built-in operational controls, Step Functions manages
+sequencing, error handling, retry logic, and state, removing a significant operational burden from your team.
+
+* Build serverless visual workflow to orchestrate your Lambda functions
+* Represent flow as a JSON state machine/YAML via SAM
+* Features: sequence, parallel, conditions, timeouts, error handling...
+* Can also integrate with EC2, ECS, On-premises servers, API Gateway
+* Maximum execution time of 1 year
+* Possibility to implement human approval feature
+* If you chain Lambda functions using Step Functions, be mindful of the added latency to pass the calls.
+* On AWS: <a href="https://aws.amazon.com/step-functions" target="_blank">Service</a> - <a href="https://aws.amazon.com/step-functions/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/step-functions/" target="_blank">User Guide</a>
+
+<a name="9_1_2"></a>
+### [↖](#9_1)[↑](#9_1_1)[↓](#9_1_3) Tasks
+* Lambda Tasks
+  * Invoke a Lambda function
+* Activity Tasks
+  * Activity worker (HTTP), EC2 Instances, mobile device, on premise DC
+  * They poll the Step functions service
+* Service Tasks
+  * Connect to a supported AWS service
+  * Lambda function, ECS Task, Fargate, DynamoDB, Batch job, SNS topic, SQS queue
+* Wait Task
+  * To wait for a duration or until a timestamp
+* Step Functions does not integrate natively with AWS Mechanical Turk
+  * Use SWF to integrate with Mechanical Turk
+
+<a name="9_1_3"></a>
+### [↖](#9_1)[↑](#9_1_2) Integration
+* API-Gateway - via service proxy
+* CloudWatch Evnets - via trigger
+* AWS SDK/CLI - via API call
