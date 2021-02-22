@@ -50,11 +50,12 @@
 * [Caching](#7)
   * [CloudFront](#7_1)
   * [ElastiCache](#7_2)
-  * [ Handling Extreme Rates](#7_3)
+  * [Handling Extreme Rates](#7_3)
 * [Databases](#8)
   * [DynamoDB](#8_1)
-  * [Amazon ElasticSearch](#8_2)
+  * [ElasticSearch](#8_2)
   * [RDS](#8_3)
+  * [Aurora](#8_4)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -181,8 +182,7 @@ Best practices:
 * Use policy conditions for extra security
 * Monitor activity in your AWS account
 
-IAM on AWS:
-* <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
+IAM on AWS: <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
 
 <a name="3_2_2"></a>
 ### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Users
@@ -289,7 +289,7 @@ Properties:
     user's identity-based policies grant to the session. Session policies limit permissions for a
     created session, but do not grant permissions. For more information, see Session Policies.
 * An **AWS managed policy** is a standalone policy that is created and administered by AWS. Standalone policy means that the policy has its own Amazon Resource Name (ARN) that includes the policy name.
-* <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_examples.html" target="_blank">Policy Examples</a>
+* On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_examples.html" target="_blank">Policy Examples</a>
 
 ```
 Type: AWS::IAM::Policy
@@ -2628,7 +2628,7 @@ and health checking. If you choose to use Route 53 for all three functions, perf
 * 3rd party registrar:
   * You can buy the domain out of AWS and use Route 53 as your DNS provider
     * Update the NS records on the 3rd party registrar
-* <a href="https://aws.amazon.com/route53/" target="_blank">Service</a> - <a href="https://aws.amazon.com/route53/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/route53/" target="_blank">Service</a> - <a href="https://aws.amazon.com/route53/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html" target="_blank">User Guide</a>
 
 <a name="5_9_1_1"></a>
 #### [↖](#5_9)[↑](#5_9_1)[↓](#5_9_2) Terminology
@@ -2886,8 +2886,7 @@ lifecycle policies to back up your volumes in Amazon S3, while ensuring geograph
 * Only root volumes are terminated if instance gets terminate
 * Can be striped together to RAID
 * Pick instance type that's *EBS-optimized*
-* On AWS
-  * <a href="https://aws.amazon.com/ebs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ebs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/ebs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ebs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank">User Guide</a>
 
 <a name="6_1_2"></a>
 ### [↖](#6_1)[↑](#6_1_1)[↓](#6_1_3) Volume options
@@ -3005,8 +3004,7 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
 * Encryption at rest using KMS
 * Can only attach to one VPC, create *one ENI per AZ* (mount target)
   * Other VPC can access EFS via VPC peering
-* On AWS
-  * <a href="https://aws.amazon.com/efs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/efs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/efs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/efs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html" target="_blank">User Guide</a>
 
 <a name="6_3_2"></a>
 ### [↖](#6_3)[↑](#6_3_1)[↓](#6_4) Performance & Storage Classes
@@ -3078,8 +3076,7 @@ scale past trillions of objects worldwide.
   * POSIX file system (use EFS instead), file locks
   * Search features, queries, rapidly changing data
   * Website with dynamic content
-* On AWS
-  * <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/s3/" target="_blank">Service</a> - <a href="https://aws.amazon.com/s3/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank">User Guide</a>
 <a name="6_4_2"></a>
 ### [↖](#6_4)[↑](#6_4_1)[↓](#6_4_2_1) Getting Data In And Out
 
@@ -3415,7 +3412,7 @@ objects) are now held (or cached) in multiple edge locations around the world.
 * 225 Point of Presence globally (edge locations)
 * DDoS protection, integration with Shield, AWS Web Application Firewall
 * Can expose external HTTPS and can talk to internal HTTPS backends
-* <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
 
 <a name="7_1_2"></a>
 ### [↖](#7_1)[↑](#7_1_1)[↓](#7_1_3) Basic workflow
@@ -3626,7 +3623,7 @@ existing databases by retrieving data from high throughput and low latency in-me
 • AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
 • Using ElastiCache involves heavy application code changes
 * ElastiCache is a good choice if database is read-heavy and not prone to frequent changing.
-* <a href="https://aws.amazon.com/elasticache/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticache/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticache/index.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/elasticache/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticache/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticache/index.html" target="_blank">User Guide</a>
 
 <a name="7_2_2"></a>
 ### [↖](#7_2)[↑](#7_2_1)[↓](#7_2_3) Scenarios
@@ -3659,7 +3656,7 @@ existing databases by retrieving data from high throughput and low latency in-me
 ---
 
 <a name="7_3"></a>
-## [↖](#top)[↑](#7_2_4)[↓](#7_3_1)  Handling Extreme Rates
+## [↖](#top)[↑](#7_2_4)[↓](#7_3_1) Handling Extreme Rates
 <!-- toc_start -->
 * [Traffic Management](#7_3_1)
 * [Compute](#7_3_2)
@@ -3747,8 +3744,7 @@ million requests per second.
 * Supports transactions across multiple tables (ACID support)
 * Backups available, point in time recovery
 * Integrated with IAM for security
-* On AWS
-  * <a href="https://aws.amazon.com/dynamodb/" target="_blank">Service</a> - <a href="https://aws.amazon.com/dynamodb/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/dynamodb/index.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/dynamodb/" target="_blank">Service</a> - <a href="https://aws.amazon.com/dynamodb/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/dynamodb/index.html" target="_blank">User Guide</a>
 
 <a name="8_1_2"></a>
 ### [↖](#8_1)[↑](#8_1_1)[↓](#8_1_3) Basics
@@ -3881,7 +3877,7 @@ million requests per second.
 ---
 
 <a name="8_2"></a>
-## [↖](#top)[↑](#8_1_7_1)[↓](#8_2_1) Amazon ElasticSearch
+## [↖](#top)[↑](#8_1_7_1)[↓](#8_2_1) ElasticSearch
 <!-- toc_start -->
 * [Overview](#8_2_1)
 * [ELK](#8_2_2)
@@ -3909,7 +3905,7 @@ Service, you get the ELK stack you need, without the operational overhead.
   * Indexing
 * *Not* a good choice for record *processing*
 * May be called Amazon ES at the exam
-* On AWS: <a href="https://aws.amazon.com/elasticsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticsearch/latest/userguide/" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/elasticsearch-service/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticsearch-service/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticsearch-service/index.html" target="_blank">User Guide</a>
 
 <a name="8_2_2"></a>
 ### [↖](#8_2)[↑](#8_2_1)[↓](#8_2_3) ELK
@@ -3976,7 +3972,7 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
 * **DB Parameter group**
 	* Acts as a “container” for engine configuration values that can be applied to one or more DB Instances
 * **RDS Events**: get notified via SNS for events (operations, outages...)
-* <a href="https://aws.amazon.com/rds/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rds/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rds/index.html" target="_blank">User Guide</a>
+* On AWS: <a href="https://aws.amazon.com/rds/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rds/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rds/index.html" target="_blank">User Guide</a>
 
 <a name="8_3_2"></a>
 ### [↖](#8_3)[↑](#8_3_1)[↓](#8_3_3) Security
@@ -4063,11 +4059,106 @@ single AWS Region.
   * Useful for database sharding, could create replicas for each shard
 
 <a name="8_3_6"></a>
-### [↖](#8_3)[↑](#8_3_5) Etc
+### [↖](#8_3)[↑](#8_3_5)[↓](#8_4) Etc
 * *DB security groups* are used with DB instances that are not in a VPC and on the EC2-Classic platform.
   * Don't need to specify a destination port number when you create DB security group rules
 * *RDS Reserved instances* are available for multi-AZ deployments.
 * Cannot SSH into an RDS instance
+
+---
+
+<a name="8_4"></a>
+## [↖](#top)[↑](#8_3_6)[↓](#8_4_1) Aurora
+<!-- toc_start -->
+* [Overview](#8_4_1)
+* [High Availability and Read Scaling](#8_4_2)
+* [Scaling](#8_4_3)
+* [Replicas](#8_4_4)
+* [Aurora Serverless](#8_4_5)
+* [Global Aurora](#8_4_6)
+* [Multi Master](#8_4_7)
+<!-- toc_end -->
+<a name="8_4_1"></a>
+### [↖](#8_4)[↑](#8_4)[↓](#8_4_2) Overview
+Amazon Aurora (Aurora) is a fully managed relational database engine that's compatible with MySQL
+and PostgreSQL. You already know how MySQL and PostgreSQL combine the speed and reliability of high-end
+commercial databases with the simplicity and cost-effectiveness of open-source databases. The
+code, tools, and applications you use today with your existing MySQL and PostgreSQL databases can
+be used with Aurora. With some workloads, Aurora can deliver up to five times the throughput of
+MySQL and up to three times the throughput of PostgreSQL without requiring changes to most of your existing applications.
+
+Aurora includes a high-performance storage subsystem. Its MySQL- and PostgreSQL-compatible
+database engines are customized to take advantage of that fast distributed storage. The underlying
+storage grows automatically as needed. An Aurora cluster volume can grow to a maximum size of 128 tebibytes (TiB).
+Aurora also automates and standardizes database clustering and replication, which are typically
+among the most challenging aspects of database configuration and administration.
+
+Aurora is part of the managed database service Amazon Relational Database Service (Amazon RDS). More
+cloud-native, usually preferred over RDS
+
+* DB Engines: PostgreSQL-compatible & MySQL-compatible
+* Storage: *automatically* grows up to 128 TB, 6 copies of data, multi-AZ
+* Read Replicas: up to 15 RR
+  * Single reader endpoint to access them all
+* Cross Region RR: entire database is copied (not select tables)
+* Load/Offload data directly from/to S3:
+  * Efficient use of resources
+  * No need for client application to talk to S3
+* Backup, Snapshots & Restore: same as RDS
+  * Backups are continuous and incremental so you can quickly restore to any point within the backup retention period.
+* On AWS: <a href="https://aws.amazon.com/aurora/" target="_blank">Service</a> - <a href="https://aws.amazon.com/aurora/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html" target="_blank">User Guide</a>
+
+<a name="8_4_2"></a>
+### [↖](#8_4)[↑](#8_4_1)[↓](#8_4_3) High Availability and Read Scaling
+* 6 copies of your data across 3 AZ:
+  * 4 copies out of 6 needed for writes
+  * 3 copies out of 6 need for reads
+  * Self healing with peer-to-peer replication
+  * Storage is striped across 100s of volumes
+* Automated failover for master in less than 30 seconds
+* Master + up to 15 Aurora Read Replicas serve reads
+* Support for Cross Region Replication
+
+<a name="8_4_3"></a>
+### [↖](#8_4)[↑](#8_4_2)[↓](#8_4_4) Scaling
+* Starts with 10GB, automatically scales in 10GB increments (storage scaling)
+* Compute resources scale up to 32vCPUs and 244GB of memory
+* Two of data is contained in each AZ, with a minimum of 3 AZs (6 copies of data in total)
+  * Designed to transparently handle the loss of up to 2 copies without affecting *write*
+  * Up to 3 copies without affecting *read*
+  * (this is storage only, it still has the DB engine has a single point of failure)
+
+<a name="8_4_4"></a>
+### [↖](#8_4)[↑](#8_4_3)[↓](#8_4_5) Replicas
+* Two types
+  * Up to 15 *Aurora replicas*
+  * Up to 5 *MySQL read replicas*
+
+<a name="8_4_5"></a>
+### [↖](#8_4)[↑](#8_4_4)[↓](#8_4_6) Aurora Serverless
+* Automated database instantiation and auto-scaling based on actual usage
+* Good for infrequent, intermittent or unpredictable workloads
+* No capacity planning needed
+* Pay per second, can be more cost-effective
+
+<a name="8_4_6"></a>
+### [↖](#8_4)[↑](#8_4_5)[↓](#8_4_7) Global Aurora
+* Aurora Cross Region Read Replicas:
+  * Useful for disaster recovery
+  * Simple to put in place
+* Aurora Global Database (recommended):
+  * One primary Region (read/write)
+  * Up to 5 secondary (read-only) regions, replication lag is less than 1 second
+  * Up to 16 Read Replicas per secondary region
+  * Helps for decreasing latency
+  * Promoting another region (for disaster recovery) has an RTO of < 1 minute
+
+<a name="8_4_7"></a>
+### [↖](#8_4)[↑](#8_4_6) Multi Master
+* Is a new feature of the Aurora MySQL-compatible edition that adds the ability to scale out write performance across multiple Availability Zones.
+* In case you want immediate failover for write node (HA)
+* *Every* node does R/W
+  * Faster than promoting a RR as new master
 
 ---
 
