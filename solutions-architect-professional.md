@@ -62,6 +62,8 @@
   * [Simple Queue Service (SQS)](#9_3)
   * [Amazon MQ](#9_4)
   * [Simple Notification Service (SNS)](#9_5)
+* [Data Engineering](#10)
+  * [Kinesis](#10_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -4406,10 +4408,95 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
 * On AWS: <a href="https://aws.amazon.com/sns" target="_blank">Service</a> - <a href="https://aws.amazon.com/sns/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/sns" target="_blank">User Guide</a>
 
 <a name="9_5_2"></a>
-### [↖](#9_5)[↑](#9_5_1) Scenarios
+### [↖](#9_5)[↑](#9_5_1)[↓](#10) Scenarios
 * SNS + SQS: Fan Out
   * `Producer` -> `SNS` -> per consumer: `SQS` - `Consumer`
     * Push once in SNS, receive in many SQS queues
     * Fully decoupled, no data loss, ability to add receivers of data later
     * SQS allows for delayed processing, retries of work
     * May have many workers on one queue and one worker on the other queue
+
+<a name="10"></a>
+# [↖](#top)[↑](#9_5_2)[↓](#10_1) Data Engineering
+
+<a name="10_1"></a>
+## [↖](#top)[↑](#10)[↓](#10_1_1) Kinesis
+<!-- toc_start -->
+* [Overview](#10_1_1)
+* [Kinesis Data Streams](#10_1_2)
+  * [Overview](#10_1_2_1)
+  * [Kinesis Streams Shards](#10_1_2_2)
+  * [Getting Data in and out](#10_1_2_3)
+  * [Limits](#10_1_2_4)
+<!-- toc_end -->
+<a name="10_1_1"></a>
+### [↖](#10_1)[↑](#10_1)[↓](#10_1_2) Overview
+Amazon Kinesis makes it easy to collect, process, and analyze real-time, streaming data so you can get timely insights and react quickly to new information. Amazon Kinesis offers key capabilities to cost-effectively process streaming data at any scale, along with the flexibility to choose the tools that best suit the requirements of your application. With Amazon Kinesis, you can ingest real-time data such as video, audio, application logs, website clickstreams, and IoT telemetry data for machine learning, analytics, and other applications. Amazon Kinesis enables you to process and analyze data as it arrives and respond instantly instead of having to wait until all your data is collected before the processing can begin.
+* Kinesis is a managed “data streaming” service
+* Great for application logs, metrics, IoT, clickstreams
+* Great for “real-time” big data
+* Great for streaming processing frameworks (Spark, NiFi, etc...)
+* Data is automatically replicated synchronously to 3 AZ
+* **Kinesis**
+  * **Kinesis Streams**: low latency streaming ingest at scale
+  * **Kinesis Analytics**: perform real-time analytics on streams using SQL
+  * **Kinesis Firehose**: load streams into S3, Redshift, ElasticSearch & Splunk
+* High level
+  * `data producers`(Click streams, IoT, metrics & logs, ...) -> `Kinesis Streams` -> `Kinesis Analytics` -> `Kinesis Firehose` -> `storage` (S3, Redshift)
+* On AWS: <a href="https://aws.amazon.com/kinesis" target="_blank">Service</a>
+
+<a name="10_1_2"></a>
+### [↖](#10_1)[↑](#10_1_1)[↓](#10_1_2_1) Kinesis Data Streams
+<a name="10_1_2_1"></a>
+#### [↖](#10_1)[↑](#10_1_2)[↓](#10_1_2_2) Overview
+Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time data streaming service. KDS can continuously capture gigabytes of data per second from hundreds of thousands of sources such as website clickstreams, database event streams, financial transactions, social media feeds, IT logs, and location-tracking events. The data collected is available in milliseconds to enable real-time analytics use cases such as real-time dashboards, real-time anomaly detection, dynamic pricing, and more.
+
+* Streams are divided in ordered *Shards*/partitions
+* Data retention is 24 hours by default, can go up to 365 days (previously: 7 days)
+* Ability to reprocess/replay data
+* Multiple applications can consume the same stream
+  * This is not possible with e.g. SQS
+* Real-time processing with scale of throughput
+  * The more Shards, the more scale
+* Once data is inserted in Kinesis, it can’t be deleted (immutability)
+  * Another difference to SQS
+* On AWS: <a href="https://aws.amazon.com/kinesis/data-streams" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-streams/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
+
+<a name="10_1_2_2"></a>
+#### [↖](#10_1)[↑](#10_1_2_1)[↓](#10_1_2_3) Kinesis Streams Shards
+* One stream is made of many different shards
+* Billing is per shard provisioned, can have as many shards as you want
+* Batching available or per message calls.
+* The number of shards can evolve over time (reshard / merge)
+* Records are ordered per Shard
+
+<a name="10_1_2_3"></a>
+#### [↖](#10_1)[↑](#10_1_2_2)[↓](#10_1_2_4) Getting Data in and out
+* **Producers**
+  * AWS SDK
+    * Simple producer
+  * Kinesis Producer Library (KPL):
+    * Batch, compression, retries
+    * C++, Java
+    * Best choice when writing own application
+  * Kinesis Agent (based on KPL)
+    * Monitor log files and sends them to Kinesis directly
+    * Can write to Kinesis Data Streams AND Kinesis Data Firehose
+    * Best choice when e.g. getting data out of EC2
+* **Producers**
+  * AWS SDK:
+    * Simple consumer
+  * Lambda: (through Event source mapping)
+  * Kinesis Client Library (KCL):
+    * checkpointing, coordinated reads
+
+<a name="10_1_2_4"></a>
+#### [↖](#10_1)[↑](#10_1_2_3) Limits
+
+.|.
+-|-
+Producer|1MB/s or 1000 messages/s at write PER SHARD<br/>“ProvisionedThroughputException” otherwise
+Consumer Classic|2MB/s at read PER SHARD across all consumers<br/>5 API calls per second PER SHARD across all consumers
+Consumer Enhanced Fan-Out|2MB/s at read PER SHARD, PER ENHANCED CONSUMER<br/>No API calls needed (push model)
+Data Retention|24 hours data retention by default<br/>Can be extended to 365 (was: 7) days
+
