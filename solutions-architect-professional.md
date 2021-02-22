@@ -4072,11 +4072,10 @@ single AWS Region.
 <!-- toc_start -->
 * [Overview](#8_4_1)
 * [High Availability and Read Scaling](#8_4_2)
-* [Scaling](#8_4_3)
-* [Replicas](#8_4_4)
-* [Aurora Serverless](#8_4_5)
-* [Global Aurora](#8_4_6)
-* [Multi Master](#8_4_7)
+* [Replicas](#8_4_3)
+* [Aurora Serverless](#8_4_4)
+* [Global Aurora](#8_4_5)
+* [Multi Master](#8_4_6)
 <!-- toc_end -->
 <a name="8_4_1"></a>
 ### [↖](#8_4)[↑](#8_4)[↓](#8_4_2) Overview
@@ -4110,39 +4109,35 @@ cloud-native, usually preferred over RDS
 
 <a name="8_4_2"></a>
 ### [↖](#8_4)[↑](#8_4_1)[↓](#8_4_3) High Availability and Read Scaling
+* Starts with 10GB, automatically scales in 10GB increments (storage scaling)
+* Compute resources scale up to 32vCPUs and 244GB of memory
 * 6 copies of your data across 3 AZ:
   * 4 copies out of 6 needed for writes
   * 3 copies out of 6 need for reads
   * Self healing with peer-to-peer replication
-  * Storage is striped across 100s of volumes
+    * Storage is striped across 100s of volumes
+    * Designed to transparently handle the loss of up to 2 copies without affecting *write*
+    * Up to 3 copies without affecting *read*
+    * (this is storage only, it still has the DB engine has a single point of failure)
 * Automated failover for master in less than 30 seconds
 * Master + up to 15 Aurora Read Replicas serve reads
 * Support for Cross Region Replication
 
 <a name="8_4_3"></a>
-### [↖](#8_4)[↑](#8_4_2)[↓](#8_4_4) Scaling
-* Starts with 10GB, automatically scales in 10GB increments (storage scaling)
-* Compute resources scale up to 32vCPUs and 244GB of memory
-* Two of data is contained in each AZ, with a minimum of 3 AZs (6 copies of data in total)
-  * Designed to transparently handle the loss of up to 2 copies without affecting *write*
-  * Up to 3 copies without affecting *read*
-  * (this is storage only, it still has the DB engine has a single point of failure)
-
-<a name="8_4_4"></a>
-### [↖](#8_4)[↑](#8_4_3)[↓](#8_4_5) Replicas
+### [↖](#8_4)[↑](#8_4_2)[↓](#8_4_4) Replicas
 * Two types
   * Up to 15 *Aurora replicas*
   * Up to 5 *MySQL read replicas*
 
-<a name="8_4_5"></a>
-### [↖](#8_4)[↑](#8_4_4)[↓](#8_4_6) Aurora Serverless
+<a name="8_4_4"></a>
+### [↖](#8_4)[↑](#8_4_3)[↓](#8_4_5) Aurora Serverless
 * Automated database instantiation and auto-scaling based on actual usage
 * Good for infrequent, intermittent or unpredictable workloads
 * No capacity planning needed
 * Pay per second, can be more cost-effective
 
-<a name="8_4_6"></a>
-### [↖](#8_4)[↑](#8_4_5)[↓](#8_4_7) Global Aurora
+<a name="8_4_5"></a>
+### [↖](#8_4)[↑](#8_4_4)[↓](#8_4_6) Global Aurora
 * Aurora Cross Region Read Replicas:
   * Useful for disaster recovery
   * Simple to put in place
@@ -4153,8 +4148,8 @@ cloud-native, usually preferred over RDS
   * Helps for decreasing latency
   * Promoting another region (for disaster recovery) has an RTO of < 1 minute
 
-<a name="8_4_7"></a>
-### [↖](#8_4)[↑](#8_4_6) Multi Master
+<a name="8_4_6"></a>
+### [↖](#8_4)[↑](#8_4_5) Multi Master
 * Is a new feature of the Aurora MySQL-compatible edition that adds the ability to scale out write performance across multiple Availability Zones.
 * In case you want immediate failover for write node (HA)
 * *Every* node does R/W
