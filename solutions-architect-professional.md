@@ -5,7 +5,7 @@
 * [Exam Objectives](#2)
   * [Content](#2_1)
 * [Identity and Federation](#3)
-  * [Summary](#3_1)
+  * [Overview - possible ways to manager Identity in Federation in AWS](#3_1)
   * [Identity and Access Management (IAM)](#3_2)
   * [STS (Security Token Service)](#3_3)
   * [Identity Federation](#3_4)
@@ -58,6 +58,10 @@
   * [Aurora](#8_4)
 * [Service Communication](#9)
   * [Step Functions](#9_1)
+  * [Simple Workflow Service (SWF)](#9_2)
+  * [Simple Queue Service (SQS)](#9_3)
+  * [Amazon MQ](#9_4)
+  * [Simple Notification Service (SNS)](#9_5)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -128,19 +132,23 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 # [↖](#top)[↑](#2_1_5)[↓](#3_1) Identity and Federation
 
 <a name="3_1"></a>
-## [↖](#top)[↑](#3)[↓](#3_2) Summary
+## [↖](#top)[↑](#3)[↓](#3_2) Overview - possible ways to manager Identity in Federation in AWS
 * Users and Accounts all in AWS
+  * Simplest way
 * AWS Organizations
-* Federation with SAML
-* Federation without SAML with a custom IdP (GetFederationToken)
-* Federation with SSO for multiple accounts with AWS Organizations
-* Web Identity Federation (not recommended)
-* Cognito for most web and mobile applications (has anonymous mode, MFA)
+  * In case we have multiple accounts
+  * Adds consolidated billing and compliance
+* Federation
+  * With SAML
+  * Without SAML with a custom IdP (GetFederationToken)
+  * With SSO for multiple accounts with AWS Organizations
+  * Web Identity Federation (not recommended, use Cognito)
+  * Cognito for most web and mobile applications (has anonymous mode, MFA)
 * Active Directory on AWS:
-  * Microsoft AD: standalone or setup trust AD with on-premise, has MFA, seamless join, RDS integration
-  * AD Connector: proxy requests to on-premise
+  * Microsoft AD: standalone or setup trust AD with on-premises, has MFA, seamless join, RDS integration
+  * AD Connector: proxy requests to on-premises
   * Simple AD: standalone & cheap AD-compatible with no MFA, no advanced capabilities
-  * Single Sign On to connect to multiple AWS Accounts (Organization) and SAML apps
+* Single Sign On to connect to multiple AWS Accounts (Organization) and SAML apps
 
 ---
 
@@ -2493,7 +2501,7 @@ and is made available for client apps to call.
 #### [↖](#5_8)[↑](#5_8_2_4)[↓](#5_8_2_6) Integration
 * HTTP
   * Expose HTTP endpoints in the backend
-  * Example: Internal HTTP API on premises, Application Load Balancer...
+  * Example: Internal HTTP API on-premises, Application Load Balancer...
   * Why? Add rate limiting, caching, user authentications, API keys, etc...
 * *Lambda Proxy* - request is passed through straight to a Lambda
   * Proxy Lambda deals with complete `http` request
@@ -4170,16 +4178,9 @@ cloud-native, usually preferred over RDS
 <!-- toc_end -->
 <a name="9_1_1"></a>
 ### [↖](#9_1)[↑](#9_1)[↓](#9_1_2) Overview
-AWS Step Functions is a serverless function orchestrator that makes it easy to sequence AWS Lambda
-functions and multiple AWS services into business-critical applications. Through its visual
-interface, you can create and run a series of checkpointed and event-driven workflows that
-maintain the application state. The output of one step acts as an input to the next. Each step in
-your application executes in order, as defined by your business logic.
+AWS Step Functions is a serverless function orchestrator that makes it easy to sequence AWS Lambda functions and multiple AWS services into business-critical applications. Through its visual interface, you can create and run a series of checkpointed and event-driven workflows that maintain the application state. The output of one step acts as an input to the next. Each step in your application executes in order, as defined by your business logic.
 
-Orchestrating a series of individual serverless applications, managing retries, and debugging
-failures can be challenging. As your distributed applications become more complex, the complexity
-of managing them also grows. With its built-in operational controls, Step Functions manages
-sequencing, error handling, retry logic, and state, removing a significant operational burden from your team.
+Orchestrating a series of individual serverless applications, managing retries, and debugging failures can be challenging. As your distributed applications become more complex, the complexity of managing them also grows. With its built-in operational controls, Step Functions manages sequencing, error handling, retry logic, and state, removing a significant operational burden from your team.
 
 * Build serverless visual workflow to orchestrate your Lambda functions
 * Represent flow as a JSON state machine/YAML via SAM
@@ -4195,7 +4196,7 @@ sequencing, error handling, retry logic, and state, removing a significant opera
 * Lambda Tasks
   * Invoke a Lambda function
 * Activity Tasks
-  * Activity worker (HTTP), EC2 Instances, mobile device, on premise DC
+  * Activity worker (HTTP), EC2 Instances, mobile device, on-premises DC
   * They poll the Step functions service
 * Service Tasks
   * Connect to a supported AWS service
@@ -4206,7 +4207,209 @@ sequencing, error handling, retry logic, and state, removing a significant opera
   * Use SWF to integrate with Mechanical Turk
 
 <a name="9_1_3"></a>
-### [↖](#9_1)[↑](#9_1_2) Integration
+### [↖](#9_1)[↑](#9_1_2)[↓](#9_2) Integration
 * API-Gateway - via service proxy
 * CloudWatch Evnets - via trigger
 * AWS SDK/CLI - via API call
+
+---
+
+<a name="9_2"></a>
+## [↖](#top)[↑](#9_1_3)[↓](#9_2_1) Simple Workflow Service (SWF)
+<!-- toc_start -->
+* [Overview](#9_2_1)
+* [Core components](#9_2_2)
+<!-- toc_end -->
+
+<a name="9_2_1"></a>
+### [↖](#9_2)[↑](#9_2)[↓](#9_2_2) Overview
+The Amazon Simple Workflow Service (Amazon SWF) makes it easy to build applications that coordinate work across distributed components. In Amazon SWF, a task represents a logical unit of work that is performed by a component of your application. Coordinating tasks across the application involves managing intertask dependencies, scheduling, and concurrency in accordance with the logical flow of the application. Amazon SWF gives you full control over implementing tasks and coordinating them without worrying about underlying complexities such as tracking their progress and maintaining their state.
+
+When using Amazon SWF, you implement workers to perform tasks. These workers can run either on cloud infrastructure, such as Amazon Elastic Compute Cloud (Amazon EC2), or on your own premises. You can create tasks that are long-running, or that may fail, time out, or require restarts—or that may complete with varying throughput and latency. Amazon SWF stores tasks and assigns them to workers when they are ready, tracks their progress, and maintains their state, including details on their completion. To coordinate tasks, you write a program that gets the latest state of each task from Amazon SWF and uses it to initiate subsequent tasks. Amazon SWF maintains an application's execution state durably so that the application is resilient to failures in individual components. With Amazon SWF, you can implement, deploy, scale, and modify these application components independently.
+
+Amazon SWF offers capabilities to support a variety of application requirements. It is suitable for a range of use cases that require coordination of tasks, including media processing, web application back-ends, business process workflows, and analytics pipelines.
+
+* **Task coordination** and **state management** service
+* Code runs on EC2 (not serverless)
+* Distributed, scales up and down depending on task
+* Works with *on-premises* and *cloud* apps
+* Allows for *synchronous* or *asynchronous* processing
+* Can contain human events
+* Guaranteed order of execution
+* Tasks can live up to one year (`31,536,000 seconds`)
+* SWF is an older service, it's recommended to use Step Functions for new applications, except:
+  * If you need external signals to intervene in the processes
+  * If you need child processes that return values to parent processes
+  * If you need to use Amazon Mechanical Turk
+* On AWS: <a href="https://aws.amazon.com/swf" target="_blank">Service</a> - <a href="https://aws.amazon.com/swf/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-welcome.html" target="_blank">User Guide</a>
+
+<a name="9_2_2"></a>
+### [↖](#9_2)[↑](#9_2_1)[↓](#9_3) Core components
+* **Workflow**
+	* A workflow is a set of *activities* that carry out some objective, together with logic that coordinates the activities.
+* **Domain**
+	* Scope of a *workflow*
+	* An account can have multiple *domains*, each of which can contain multiple *workflows*
+	* *Workflows* in different *domains* cannot interact
+* **Activity**
+	* Things carried out by a *workflow*
+* **Activity Task**
+	* Represents one invocation of an *activity*
+	* Can run synchronously or asynchronously
+	* Gets assigned to worker
+  * Guaranteed to be assigned only once and to never be duplicated
+	* *Decision task* tells decider that state of workflow has changed
+* **Actors**
+  * **Workflow Starter**
+    * Any application that can initiate workflow executions
+  * **Activity Worker**
+    * Is a program that receives *activity tasks*, performs them, and provides results back
+    * Might be used by a person
+    * Can live on *EC2* or on-premise
+  * **Decider**
+    * Coordination logic in a *workflow*
+    * Schedules *activity tasks*, provides input data to the *activity workers*, processes events that arrive while the *workflow* is in progress, and ultimately ends (or closes) the *workflow* when the objective has been completed.
+
+---
+
+<a name="9_3"></a>
+## [↖](#top)[↑](#9_2_2)[↓](#9_3_1) Simple Queue Service (SQS)
+<!-- toc_start -->
+* [Overview](#9_3_1)
+* [Core features](#9_3_2)
+* [Scenarios](#9_3_3)
+* [Limits:](#9_3_4)
+<!-- toc_end -->
+
+<a name="9_3_1"></a>
+### [↖](#9_3)[↑](#9_3)[↓](#9_3_2) Overview
+Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications. SQS eliminates the complexity and overhead associated with managing and operating message oriented middleware, and empowers developers to focus on differentiating work. Using SQS, you can send, store, and receive messages between software components at any volume, without losing messages or requiring other services to be available. Get started with SQS in minutes using the AWS console, Command Line Interface or SDK of your choice, and three simple commands.
+
+SQS offers two types of message queues. Standard queues offer maximum throughput, best-effort ordering, and at-least-once delivery. SQS FIFO queues are designed to guarantee that messages are processed exactly once, in the exact order that they are sent.
+
+* Oldest AWS service
+* Scalable **message queue** service
+* Allows *loose coupling* and *asynchronous processing*
+* **Pull** from *SQS* (*Push* to *SNS*)
+* Can handle extreme scale, no provisioning required
+* PCI compliant
+* Protection against data loss on application failure
+* Message size of max 256 KB
+  * Use a pointer to S3 for large messages
+  * Up to 2GB with Extended Client Library
+* Can be read from EC2 (optional ASG), Lambda (event source mapping)
+* On AWS: <a href="https://aws.amazon.com/sqs" target="_blank">Service</a> - <a href="https://aws.amazon.com/sqs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html" target="_blank">User Guide</a>
+
+<a name="9_3_2"></a>
+### [↖](#9_3)[↑](#9_3_1)[↓](#9_3_3) Core features
+* Redundant infrastructure
+* Multiple readers / writers at the same time
+* Access control via *SQS policies* (similar to *IAM*)
+* **Standard queue**
+  * Default queue
+	* Guarantees message delivery *at least once*
+	* *No guarantee on message order*
+	* No guarantee on not receiving duplicates (app has to deal with it -> implement *idempotent* processing)
+* **FIFO queue**
+	* Guaranteed order
+	* Exactly-once processing
+	* *Message groups* - multiple ordered message groups within a single queue
+	* Name ends in `.fifo`
+  * 300 messages/s without batching, 3000 /s with batching
+* **Delay queues**
+	* Controls when a message becomes available
+	* Between 0s and 15min, default 0s
+* **Visibility timeout**
+	* Controls when a polled message becomes visible again
+	* Configurable and extendable for individual messages
+	* Between 0s and 12h, default 30s
+  * Recommendation: 6 times the timeout of the consumer (e.g. Lambda)
+* **Message retention period**
+	* Amount of time a message will live in the queue if it's not deleted
+	* Between 1min and 14d, default 4d
+* **In flight message**
+	* Sent to a client but have not yet been deleted or have not yet reached the end of their visibility window
+* **Deadletter queue**
+	* Queue that other queues can send messages to when these were not successfully processed.
+  * Configure on SQS-queue level
+  * If client is Lambda: Can also use Lambda Destination for failure
+* **Receive message wait time**
+	* Value >0 enables *long polling*
+	* Between 0s and 20s, default 0s (*short polling*)
+
+<a name="9_3_3"></a>
+### [↖](#9_3)[↑](#9_3_2)[↓](#9_3_4) Scenarios
+* Lambda – Event Source Mapping - SQS & SQS FIFO
+  * `Lambda Event Source Mapping` -> (poll batch) -> `SQS` -> (return batch) -> `Lambda Event Source Mapping` -> (invoke with batch) -> `Lambda function`
+* Request / Response queue (async)
+  * `Client` push -> `SQS Request Queue` -> `Worker` poll -> (process) -> push -> `SQS Response Queue` -> `Worker` poll
+    * Decoupling
+    * Fault-Tolerance
+    * Load Balancing
+
+<a name="9_3_4"></a>
+### [↖](#9_3)[↑](#9_3_3)[↓](#9_4) Limits:
+.|.
+-|-
+Max message size|256KB (2GB with Extended Client Library)
+Max inflight messages|120,000
+
+---
+
+<a name="9_4"></a>
+## [↖](#top)[↑](#9_3_4)[↓](#9_4_1) Amazon MQ
+<!-- toc_start -->
+* [Overview](#9_4_1)
+<!-- toc_end -->
+
+<a name="9_4_1"></a>
+### [↖](#9_4)[↑](#9_4)[↓](#9_5) Overview
+Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ that makes it easy to set up and operate message brokers on AWS. Amazon MQ reduces your operational responsibilities by managing the provisioning, setup, and maintenance of message brokers for you. Because Amazon MQ connects to your current applications with industry-standard APIs and protocols, you can easily migrate to AWS without having to rewrite code.
+
+* Amazon MQ = managed Apache ActiveMQ
+  * Doesn’t “scale” as much as SQS / SNS
+  * Runs on a dedicated machine, can run in HA with failover
+  * Has both queue feature (~SQS) and topic features (~SNS)
+* SQS, SNS are “cloud-native” services, and they’re using proprietary protocols from AWS.
+* Traditional applications running from on-premises may use open protocols such as: MQTT, AMQP, STOMP, Openwire, WSS
+* When migrating to the cloud, instead of re-engineering the application to use SQS and SNS, we can use Amazon MQ
+  * IBM MQ, TIBCO EMS, Rabbit MQ, and Apache ActiveMQ can be migrated to Amazon MQ
+* On AWS: <a href="https://aws.amazon.com/amazon-mq" target="_blank">Service</a> - <a href="https://aws.amazon.com/amazon-mq/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/amazon-mq/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="9_5"></a>
+## [↖](#top)[↑](#9_4_1)[↓](#9_5_1) Simple Notification Service (SNS)
+<!-- toc_start -->
+* [Overview](#9_5_1)
+* [Scenarios](#9_5_2)
+<!-- toc_end -->
+
+<a name="9_5_1"></a>
+### [↖](#9_5)[↑](#9_5)[↓](#9_5_2) Overview
+Amazon Simple Notification Service (Amazon SNS) is a fully managed messaging service for both application-to-application (A2A) and application-to-person (A2P) communication.
+
+The A2A pub/sub functionality provides topics for high-throughput, push-based, many-to-many messaging between distributed systems, microservices, and event-driven serverless applications. Using Amazon SNS topics, your publisher systems can fanout messages to a large number of subscriber systems including Amazon SQS queues, AWS Lambda functions and HTTPS endpoints, for parallel processing, and Amazon Kinesis Data Firehose. The A2P functionality enables you to send messages to users at scale via SMS, mobile push, and email.
+
+* The *event producer* (publisher) only sends message to one SNS topic
+* As many *event receivers* (subscriptions) as we want to listen to the SNS topic notifications
+* Each subscriber to the topic will get all the messages (note: new feature to filter messages)
+* Up to 10,000,000 subscriptions per topic
+* 100,000 topics limit
+* Subscribers can be:
+  * QS
+  * TTP / HTTPS (with delivery retries – how many times)
+  * Lambda
+  * Emails
+  * SMS messages
+  * Mobile Notifications (SNS Mobile Push - Android, Apple, Fire OS, Windows...)
+* On AWS: <a href="https://aws.amazon.com/sns" target="_blank">Service</a> - <a href="https://aws.amazon.com/sns/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/sns" target="_blank">User Guide</a>
+
+<a name="9_5_2"></a>
+### [↖](#9_5)[↑](#9_5_1) Scenarios
+* SNS + SQS: Fan Out
+  * `Producer` -> `SNS` -> per consumer: `SQS` - `Consumer`
+    * Push once in SNS, receive in many SQS queues
+    * Fully decoupled, no data loss, ability to add receivers of data later
+    * SQS allows for delayed processing, retries of work
+    * May have many workers on one queue and one worker on the other queue
