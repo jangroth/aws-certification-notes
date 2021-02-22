@@ -53,7 +53,7 @@
   * [ Handling Extreme Rates](#7_3)
 * [Databases](#8)
   * [DynamoDB](#8_1)
-  * [ElasticSearch](#8_2)
+  * [Amazon ElasticSearch](#8_2)
   * [RDS](#8_3)
 ---
 <!-- toc_end -->
@@ -3881,14 +3881,56 @@ million requests per second.
 ---
 
 <a name="8_2"></a>
-## [↖](#top)[↑](#8_1_7_1)[↓](#8_3) ElasticSearch
+## [↖](#top)[↑](#8_1_7_1)[↓](#8_2_1) Amazon ElasticSearch
+<!-- toc_start -->
+* [Overview](#8_2_1)
+* [ELK](#8_2_2)
+* [ElasticSearch Patterns](#8_2_3)
+<!-- toc_end -->
 
-Todo
+<a name="8_2_1"></a>
+### [↖](#8_2)[↑](#8_2)[↓](#8_2_2) Overview
+Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy,
+secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot
+your applications using the tools you love, at the scale you need. The service provides support
+for open source Elasticsearch APIs, managed Kibana, integration with Logstash and other AWS
+services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only
+for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch
+Service, you get the ELK stack you need, without the operational overhead.
+
+* Managed version of Elasticsearch (open source project)
+* Runs on servers (not a serverless offering)
+* Use cases:
+  * Log Analytics
+  * Real-time application monitoring
+  * Security analysis
+  * Full text search
+  * Clickstream analytics
+  * Indexing
+* *Not* a good choice for record *processing*
+* May be called Amazon ES at the exam
+* On AWS: <a href="https://aws.amazon.com/elasticsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticsearch/latest/userguide/" target="_blank">User Guide</a>
+
+<a name="8_2_2"></a>
+### [↖](#8_2)[↑](#8_2_1)[↓](#8_2_3) ELK
+* Elasticsearch
+  * Provides search and indexing capabilities
+* Logstash
+  * Log ingestion mechanism
+  * Agent-based
+* Kibana
+  * Provides real-time dashboards on top of data in ES
+
+<a name="8_2_3"></a>
+### [↖](#8_2)[↑](#8_2_2)[↓](#8_3) ElasticSearch Patterns
+* `DynamoDB Table` -> `DynamoDB Stream` -> `Lambda` -> `AWS ES`
+* `CloudWatch Logs` -> `Subscription Filter` -> `Lambda` -> `AWS ES` (real time)
+* `CloudWatch Logs` -> `Subscription Filter` -> `Kinesis Firehose` -> `AWS ES` (near real time)
 
 ---
 
 <a name="8_3"></a>
-## [↖](#top)[↑](#8_2)[↓](#8_3_1) RDS
+## [↖](#top)[↑](#8_2_3)[↓](#8_3_1) RDS
 <!-- toc_start -->
 * [Overview](#8_3_1)
 * [Security](#8_3_2)
@@ -4028,5 +4070,4 @@ single AWS Region.
 * Cannot SSH into an RDS instance
 
 ---
-
 
