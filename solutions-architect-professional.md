@@ -5,7 +5,7 @@
 * [Exam Objectives](#2)
   * [Content](#2_1)
 * [Identity and Federation](#3)
-  * [Overview - possible ways to manager Identity in Federation in AWS](#3_1)
+  * [Overview - possible ways to manage Identity and Federation in AWS](#3_1)
   * [Identity and Access Management (IAM)](#3_2)
   * [STS (Security Token Service)](#3_3)
   * [Identity Federation](#3_4)
@@ -141,11 +141,11 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 **Identity only in AWS**|Users and Accounts all in AWS|Simplest setup
 .|AWS Organizations|In case we have multiple accounts<br/>Adds consolidated billing and compliance
 **Federation**|With SAML|.
-.|Without SAML|with a custom IdP (`GetFederationToken`)
-.|With SSO|for multiple accounts within AWS Organizations
-.|Web Identity Federation|not recommended, use Cognito
-.|Cognito|For most web and mobile applications<br/>has anonymous mode, MFA
-**Active Directory on AWS**|Microsoft AD|Standalone or setup trust AD with on-premises<br/>has MFA<br/>Seamless join<br/>RDS integration
+.|Without SAML|With a custom IdP (`GetFederationToken`)
+.|With SSO|For multiple accounts within AWS Organizations
+.|Web Identity Federation|Not recommended, use Cognito
+.|Cognito|For most web and mobile applications<br/>Has anonymous mode & MFA
+**Active Directory on AWS**|Microsoft AD|Standalone or setup trust AD with on-premises<br/>Has MFA<br/>Seamless join<br/>RDS integration
 .|AD Connector|Proxy requests to on-premises
 .|Simple AD|Standalone & cheap AD-compatible with no MFA, no advanced capabilities
 
@@ -398,7 +398,7 @@ Federations can have many flavors:
 <a name="3_4_2"></a>
 ### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) SAML 2.0
 * Overview
-  * To integrate Active Directory / ADFS with AWS (or any SAML 2.0)
+  * To integrate Active Directory/ADFS with AWS (or any SAML 2.0)
   * Access through console or CI
   * Client app authenticates against IdP, receives *SAML assertion* back
   * SAML assertion is exchanged with STS to reveive temporary credentials
@@ -620,7 +620,7 @@ no additional charge.
 
 <a name="3_6_1_2"></a>
 #### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_2) Multi-account strategies
-• Create accounts per department, per cost center, per dev / test / prod, based on regulatory
+• Create accounts per department, per cost center, per dev/test/prod, based on regulatory
   restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account
   service limits, isolated account for logging,
 • Multi account vs one account multi vPC
@@ -880,7 +880,7 @@ when you created the parameter.
 * Secure storage for configuration and secrets
 * Optional Seamless Encryption using KMS
 * Serverless, scalable, durable, easy SDK, free
-* Version tracking of configurations / secrets
+* Version tracking of configuration/secrets
 * Configuration management using path & IAM
 * Notifications with CloudWatch Events
 * Integration with CloudFormation
@@ -923,7 +923,7 @@ AWS Cloud, third-party services, and on-premises.
 <!-- toc_end -->
 <a name="4_5_1"></a>
 ### [↖](#4_5)[↑](#4_5)[↓](#4_6) Overview
-* KMS encryption at rest for underlying EBS volumes / snapshots
+* KMS encryption at rest for underlying EBS volumes/snapshots
 * Transparent Data Encryption (TDE) for Oracle and SQL Server
 * SSL encryption to RDS is possible for all DB (in-flight)
 * IAM authentication (only) for MySQL and PostgreSQL
@@ -1111,7 +1111,7 @@ AWS S3 exposes:
 * HTTP endpoint: non encrypted
 * HTTPS endpoint: encryption in flight
   * Mandatory for SSE-C
-* Encryption in flight is also called SSL / TLS
+* Encryption in flight is also called SSL/TLS
 
 <a name="4_9_3"></a>
 ### [↖](#4_9)[↑](#4_9_2)[↓](#4_9_4) Events in S3 buckets
@@ -1178,7 +1178,7 @@ Can generate pre-signed URLs using SDK or CLI
 * For downloads (easy, can use the CLI)
 * For uploads (harder, must use the SDK)
 * Valid for a default of 3600 seconds, can change timeout with `--expires-in [TIME_BY_SECONDS]` argument
-* Users given a pre-signed URL inherit the permissions of the person who generated the URL for GET / PUT
+* Users given a pre-signed URL inherit the permissions of the person who generated the URL for GET/PUT
 * Examples
   * Allow only logged-in users to download a premium video on your S3 bucket
   * Allow an ever changing list of users to download files by generating URLs dynamically
@@ -1245,7 +1245,7 @@ Can generate pre-signed URLs using SDK or CLI
   * Availability protection using global edge network
   * Combined with AWS Shield, provides DDoS attack mitigation at the edge
 * Be ready to scale – leverage AWS Auto Scaling
-* Separate static resources (S3 / CloudFront) from dynamic ones (EC2 / ALB)
+* Separate static resources (S3/CloudFront) from dynamic ones (EC2/ALB)
 
 <a name="4_10_3"></a>
 ### [↖](#4_10)[↑](#4_10_2_2)[↓](#4_10_4) AWS Shield
@@ -1498,7 +1498,7 @@ EC2, ASG, ECS|Lambda, Fargate|Batch, EMR
 <a name="5_1_3"></a>
 ### [↖](#5_1)[↑](#5_1_2)[↓](#5_2) Backend
 
-Caching / Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
+Caching/Session Layer|Database Layer|Decoupling Orchestration Layer|Storage Layer|Static Assets Layer (storage)
 -|-|-|-|-
 ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3, Redshift|SQS, SNS, Kinesis<br/>Amazon MQ, Step Functions|EBS, EFS, Instance Store<br/>CDN Layer|S3, Glacier
 
@@ -1681,12 +1681,12 @@ terminate instances as demand on your application increases or decreases.
 
 * *Spot Fleet* support (mix on Spot and On-Demand instances)
   * Also configure ratio between these instance options
-* To upgrade an AMI, must update the launch configuration / template
+* To upgrade an AMI, must update the launch configuration/template
   * How do you phase out older launch configurations?
   * How do you test a new launch configuration?
   * You must terminate instances manually (new feature: *Instance Refresh within Auto Scaling Groups*)
 * Scheduled scaling actions:
-  * Modify the ASG settings (min / max / desired) at pre-defined time
+  * Modify the ASG settings (min/max/desired) at pre-defined time
   * Helpful when patterns are known in advance
 * Auto scaling can play a major role in deployments
   * Need to avoid downtime during deployments
@@ -1907,7 +1907,7 @@ Application Load Balancer (ALB) has a direct integration feature with ECS called
 * This allows you to run multiple instances of the same application on the same EC2 machine
 Use Cases:
 * Increased resiliency even if running on one EC2 instance
-* Maximize utilization of CPU / cores
+* Maximize utilization of CPU/cores
 * Ability to perform rolling upgrades without impacting application uptime
 
 <a name="5_4_6"></a>
@@ -2196,7 +2196,7 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
   * Because load balancers intercept traffic between clients and servers, your server access logs contain only the IP address of the load balancer. To see the IP address of the client, use the X-Forwarded-For request header.
 * Health Checks can be HTTP (L7) or TCP (L4) based
 * Supports only one SSL certificate
-  * The SSL certificate can have many SAN (Subject Alternate Name), but the SSL certificate must be changed anytime a SAN is added / edited / removed
+  * The SSL certificate can have many SAN (Subject Alternate Name), but the SSL certificate must be changed anytime a SAN is added/edited/removed
   * Better to use ALB with SNI (Server Name Indication) if possible
   * Can use multiple CLB if you want distinct SSL certificates
 * TCP => TCP passes all the traffic to the EC2 instance
@@ -2506,7 +2506,7 @@ Client-side|Server-side|.
   * Good for providing access within your own infrastructure
   * Pass IAM credentials in headers through Sig V4
 * Lambda Authorizer (formerly Custom Authorizer)
-  * Use Lambda to verify a custom OAuth / SAML / 3rd party authentication
+  * Use Lambda to verify a custom OAuth/SAML/3rd party authentication
 * Cognito User Pools
   * Client authenticates with Cognito
   * Client passes the token to API Gateway
@@ -2516,7 +2516,7 @@ Client-side|Server-side|.
 ### [↖](#5_8)[↑](#5_8_3_2)[↓](#5_9) Logging, Monitoring, Tracing
 * CloudWatch Logs
   * Enable CloudWatch logging at the Stage level (with Log Level – ERROR, INFO)
-  * Can log full requests / responses data
+  * Can log full requests/responses data
   * Can send API Gateway Access Logs (customizable)
   * Can send logs directly into Kinesis Data Firehose (as an alternative to CW logs)
 * CloudWatch Metrics
@@ -2670,7 +2670,7 @@ Route 53 specific:
 
 <a name="5_9_3_2"></a>
 #### [↖](#5_9)[↑](#5_9_3_1)[↓](#5_9_3_3) Setup
-* Health Checks can be setup to pass / fail based on text in the first 5120 bytes of the response
+* Health Checks can be setup to pass/fail based on text in the first 5120 bytes of the response
 * Health Checks pass only with the 2xx and 3xx status response
 * Calculated health checks
   * Create separate individual health checks
@@ -2862,7 +2862,7 @@ lifecycle policies to back up your volumes in Amazon S3, while ensuring geograph
 * Use that to create volume in AZ2
 * Also could have *copied* snapshot into different region
 
-* TODO: Look into moving instances into different regions / AZs
+* TODO: Look into moving instances into different regions/AZs
 
 <a name="6_1_5"></a>
 ### [↖](#6_1)[↑](#6_1_4)[↓](#6_2) Encrypting root volumes
@@ -2892,7 +2892,7 @@ lifecycle policies to back up your volumes in Amazon S3, while ensuring geograph
 * Instance store is physically attached to the machine (EBS is a network drive)
 * Pros:
   * Better I/O performance (EBS gp2 has an max IOPS of 16000, io1 of 64000)
-  * Good for buffer / cache / scratch data / temporary content
+  * Good for buffer/cache/scratch data/temporary content
   * Data survives reboots
 * Cons:
   * On stop or termination, the instance store is lost
@@ -2951,7 +2951,7 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
 <a name="6_3_2"></a>
 ### [↖](#6_3)[↑](#6_3_1)[↓](#6_4) Performance & Storage Classes
 * EFS Scale
-  * 1000s of concurrent NFS clients, 10 GB+ /s throughput
+  * 1000s of concurrent NFS clients, 10 GB+/s throughput
   * Grow to Petabyte-scale network file system
 * Performance mode (set at EFS creation time)
   * *General purpose* (default): latency-sensitive use cases (web server, CMS, etc...)
@@ -3126,7 +3126,7 @@ Destination buckets can be in different AWS Regions or within the same Region as
   * Reduce latency
   * Disaster recovery
   * Helpful for security
-* Only new / changed objects will be replicated
+* Only new/changed objects will be replicated
 * Cannot chain replications
 * Can replicate complete buckets or subfolder ('prefix')
 * Can be combined with Lifecycle Policies
@@ -3562,7 +3562,7 @@ existing databases by retrieving data from high throughput and low latency in-me
 • Caches are in-memory databases with really high performance, low latency
 • Helps reduce load off of databases for read intensive workloads
 • Helps make your application stateless
-• AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
+• AWS takes care of OS maintenance/patching, optimizations, setup, configuration, monitoring, failure recovery and backups
 • Using ElastiCache involves heavy application code changes
 * ElastiCache is a good choice if database is read-heavy and not prone to frequent changing.
 * On AWS: <a href="https://aws.amazon.com/elasticache/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticache/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticache/index.html" target="_blank">User Guide</a>
@@ -3630,7 +3630,7 @@ Lambda|1,000 concurrent executions|Soft limit per region
 
 |Service|Rate|Comment
 |-|-|-|
-|S3|3,500 PUT, 5,550 GET per prefix /s|.|
+|S3|3,500 PUT, 5,550 GET per prefix/s|.|
 |RDS, Aurora, ElasticSearch|.|provisioned
 |DynamoDB|.|Autoscaling on demand
 |EBS|16k IOPS (gp2), 64k IOPS (io1)|.|
@@ -3918,7 +3918,7 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
 
 <a name="8_3_2"></a>
 ### [↖](#8_3)[↑](#8_3_1)[↓](#8_3_3) Security
-* KMS encryption at rest for underlying EBS volumes / snapshots
+* KMS encryption at rest for underlying EBS volumes/snapshots
 * Transparent Data Encryption (TDE) for Oracle and SQL Server
 * SSL encryption to RDS is possible for all DB (in-flight)
 * IAM authentication for MySQL and PostgreSQL
@@ -4236,7 +4236,7 @@ SQS offers two types of message queues. Standard queues offer maximum throughput
 <a name="9_3_2"></a>
 ### [↖](#9_3)[↑](#9_3_1)[↓](#9_3_3) Core features
 * Redundant infrastructure
-* Multiple readers / writers at the same time
+* Multiple readers/writers at the same time
 * Access control via *SQS policies* (similar to *IAM*)
 * **Standard queue**
   * Default queue
@@ -4248,7 +4248,7 @@ SQS offers two types of message queues. Standard queues offer maximum throughput
 	* Exactly-once processing
 	* *Message groups* - multiple ordered message groups within a single queue
 	* Name ends in `.fifo`
-  * 300 messages/s without batching, 3000 /s with batching
+  * 300 messages/s without batching, 3000/s with batching
 * **Delay queues**
 	* Controls when a message becomes available
 	* Between 0s and 15min, default 0s
@@ -4274,7 +4274,7 @@ SQS offers two types of message queues. Standard queues offer maximum throughput
 ### [↖](#9_3)[↑](#9_3_2)[↓](#9_3_4) Scenarios
 * Lambda – Event Source Mapping - SQS & SQS FIFO
   * `Lambda Event Source Mapping` -> (poll batch) -> `SQS` -> (return batch) -> `Lambda Event Source Mapping` -> (invoke with batch) -> `Lambda function`
-* Request / Response queue (async)
+* Request/Response queue (async)
   * `Client` push -> `SQS Request Queue` -> `Worker` poll -> (process) -> push -> `SQS Response Queue` -> `Worker` poll
     * Decoupling
     * Fault-Tolerance
@@ -4300,7 +4300,7 @@ Max inflight messages|120,000
 Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ that makes it easy to set up and operate message brokers on AWS. Amazon MQ reduces your operational responsibilities by managing the provisioning, setup, and maintenance of message brokers for you. Because Amazon MQ connects to your current applications with industry-standard APIs and protocols, you can easily migrate to AWS without having to rewrite code.
 
 * Amazon MQ = managed Apache ActiveMQ
-  * Doesn’t “scale” as much as SQS / SNS
+  * Doesn’t “scale” as much as SQS/SNS
   * Runs on a dedicated machine, can run in HA with failover
   * Has both queue feature (~SQS) and topic features (~SNS)
 * SQS, SNS are “cloud-native” services, and they’re using proprietary protocols from AWS.
@@ -4331,7 +4331,7 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
 * 100,000 topics limit
 * Subscribers can be:
   * QS
-  * TTP / HTTPS (with delivery retries – how many times)
+  * TTP/HTTPS (with delivery retries – how many times)
   * Lambda
   * Emails
   * SMS messages
@@ -4359,6 +4359,11 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
   * [Kinesis Streams Shards](#10_1_2_2)
   * [Getting Data in and out](#10_1_2_3)
   * [Limits](#10_1_2_4)
+* [Kinesis Data Firehose](#10_1_3)
+  * [Overview](#10_1_3_1)
+  * [Firehose Buffer Sizing](#10_1_3_2)
+* [Data Streams vs Firehose](#10_1_4)
+* [Kinesis Data Analytics](#10_1_5)
 <!-- toc_end -->
 <a name="10_1_1"></a>
 ### [↖](#10_1)[↑](#10_1)[↓](#10_1_2) Overview
@@ -4372,8 +4377,12 @@ Amazon Kinesis makes it easy to collect, process, and analyze real-time, streami
   * **Kinesis Streams**: low latency streaming ingest at scale
   * **Kinesis Analytics**: perform real-time analytics on streams using SQL
   * **Kinesis Firehose**: load streams into S3, Redshift, ElasticSearch & Splunk
-* High level
-  * `data producers`(Click streams, IoT, metrics & logs, ...) -> `Kinesis Streams` -> `Kinesis Analytics` -> `Kinesis Firehose` -> `storage` (S3, Redshift, splunk, Elasticsearch, ...)
+* High level picture
+  * -> `data producers`(Click streams, IoT, metrics & logs, ...)
+  * -> `Kinesis Streams`
+  * -> `Kinesis Analytics`
+  * -> `Kinesis Firehose`
+  * -> `storage` (S3, Redshift, splunk, Elasticsearch, ...)
 * On AWS: <a href="https://aws.amazon.com/kinesis" target="_blank">Service</a>
 
 <a name="10_1_2"></a>
@@ -4399,7 +4408,7 @@ Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time 
 * One stream is made of many different shards
 * Billing is per shard provisioned, can have as many shards as you want
 * Batching available or per message calls.
-* The number of shards can evolve over time (reshard / merge)
+* The number of shards can evolve over time (reshard/merge)
 * Records are ordered per Shard
 
 <a name="10_1_2_3"></a>
@@ -4423,18 +4432,20 @@ Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time 
     * checkpointing, coordinated reads
 
 <a name="10_1_2_4"></a>
-#### [↖](#10_1)[↑](#10_1_2_3) Limits
+#### [↖](#10_1)[↑](#10_1_2_3)[↓](#10_1_3) Limits
 
-.|.
+
 -|-
 Producer|1MB/s or 1000 messages/s at write PER SHARD<br/>“ProvisionedThroughputException” otherwise
 Consumer Classic|2MB/s at read PER SHARD across all consumers<br/>5 API calls per second PER SHARD across all consumers
 Consumer Enhanced Fan-Out|2MB/s at read PER SHARD, PER ENHANCED CONSUMER<br/>No API calls needed (push model)
 Data Retention|24 hours data retention by default<br/>Can be extended to 365 (was: 7) days
 
-### Kinesis Data Firehose
+<a name="10_1_3"></a>
+### [↖](#10_1)[↑](#10_1_2_4)[↓](#10_1_3_1) Kinesis Data Firehose
 
-#### Overview
+<a name="10_1_3_1"></a>
+#### [↖](#10_1)[↑](#10_1_3)[↓](#10_1_3_2) Overview
 Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data into data lakes, data stores, and analytics services. It can capture, transform, and deliver streaming data to Amazon S3, Amazon Redshift, Amazon Elasticsearch Service, generic HTTP endpoints, and service providers like Datadog, New Relic, MongoDB, and Splunk. It is a fully managed service that automatically scales to match the throughput of your data and requires no ongoing administration. It can also batch, compress, transform, and encrypt your data streams before loading, minimizing the amount of storage used and increasing security.
 
 You can easily create a Firehose delivery stream from the AWS Management Console, configure it with a few clicks, and start ingesting streaming data from hundreds of thousands of data sources to your specified destinations. You can also configure your data streams to automatically convert the incoming data to open and standards based formats like Apache Parquet and Apache ORC before the data is delivered.
@@ -4443,7 +4454,63 @@ With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pa
 
 * Fully Managed Service, no administration, automatic scaling, serverless
 * Near Real Time (60 seconds latency minimum for non full batches)
-* Load data into Redshift / Amazon S3 / ElasticSearch / Splunk
+* Load data into Redshift/Amazon S3/ElasticSearch/Splunk
 * Supports many data formats, conversions, transformations, compression
-* Pay for the amount of data going through Firehose
+* Pay only for the amount of data going through Firehose
+* High level picture
+  * -> `data producers`(SDK/KPL, Kinesis Agent, Kinesis Data Streams, CloudWatch Logs and Events, IoT rules actions)
+  * -> `Kinesis Firehose`
+    * Can optinally transform data with Lambda
+      * Several blueprint templates available
+      * Can upload transfromation failures into bucket
+    * Can optionally upload source records into bucket
+    * Can optionally upload delivery failures into bucket
+  * -> `storage` (S3, Redshift, splunk, Elasticsearch) <- these are only destinations available for Firehose!
 * On AWS: <a href="https://aws.amazon.com/kinesis/data-firehose" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-firehose/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
+
+<a name="10_1_3_2"></a>
+#### [↖](#10_1)[↑](#10_1_3_1)[↓](#10_1_4) Firehose Buffer Sizing
+* Firehose accumulates records in a buffer
+* The buffer is flushed based on time and size rules
+* **Buffer Size** (eg 32MB): if that buffer size is reached, it’s flushed
+* **Buffer Time** (eg 1 minute): if that time is reached, it’s flushed
+* Firehose can automatically increase the buffer size to increase throughput
+* High throughput => Buffer Size will be hit
+* Low throughput => Buffer Time will be hit
+* Firehose is near real-time, if real-time flush from Kinesis Data Streams to S3 is needed, use Lambda
+  * Will costs more
+
+<a name="10_1_4"></a>
+### [↖](#10_1)[↑](#10_1_3_2)[↓](#10_1_5) Data Streams vs Firehose
+
+* **Data Streams**
+  * Going to write custom code (producer/consumer)
+  * Real time (~200 ms latency for *classic*, ~70 ms latency for *enhanced fan-out*)
+  * Must manage scaling (shard splitting/merging)
+  * Data Storage for 1 to 7 days, replay capability, multiple consumers
+  * Use with Lambda to insert data in real-time to ElasticSearch (for example)
+* **Firehose**
+  * Near real time only (lowest buffer time is 1 minute)
+  * Fully managed, send to S3, Splunk, Redshift, ElasticSearch
+  * Serverless data transformations with Lambda
+  * Automated Scaling
+  * No data storage
+
+<a name="10_1_5"></a>
+### [↖](#10_1)[↑](#10_1_4) Kinesis Data Analytics
+Amazon Kinesis Data Analytics is the easiest way to transform and analyze streaming data in real time with Apache Flink. Apache Flink is an open source framework and engine for processing data streams. Amazon Kinesis Data Analytics reduces the complexity of building, managing, and integrating Apache Flink applications with other AWS services.
+
+Amazon Kinesis Data Analytics takes care of everything required to run streaming applications continuously, and scales automatically to match the volume and throughput of your incoming data. With Amazon Kinesis Data Analytics, there are no servers to manage, no minimum fee or setup cost, and you only pay for the resources your streaming applications consume.
+
+* Use cases
+  * Streaming ETL: select columns, make simple transformations, on streaming data
+  * Continuous metric generation: live leaderboard for a mobile game
+  * Responsive analytics: look for certain criteria and build alerting (filtering)
+* Features
+  * Pay only for resources consumed (but it’s not cheap)
+  * Serverless; scales automatically
+  * Use IAM permissions to access streaming source and destination(s)
+  * SQL or Flink to write the computation
+  * Schema discovery
+  * Lambda can be used for pre-processing
+* On AWS: <a href="https://aws.amazon.com/kinesis/data-analytics" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-analytics/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
