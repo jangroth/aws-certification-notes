@@ -4514,3 +4514,120 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
   * Schema discovery
   * Lambda can be used for pre-processing
 * On AWS: <a href="https://aws.amazon.com/kinesis/data-analytics" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-analytics/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
+
+### Streaming Architectures
+
+#### Full Data Engineering Pipeline
+* 'Classic Kinesis': (producer) -> Data Streams -> Data Analytics -> Data Firehose -> (storage)
+  * Can also produce into Data Firehose
+  * Can also use Data Firehose as an input to Data Analytics
+  * Can also use Data Streams as an output of Data Analytics
+
+#### 3000 messages of 1KB/sec
+* Option 1
+  * Kinesis Data Streams -> Lambda
+  * Costs
+    * 3 shards: 3MB/s in
+    * 3 * $0.015/hr = $32.4/mth
+    * Must use Data Firehose to output to S3
+* Option 2
+  * DynamoDB Streams -> Lambda
+    * 3000 WCU = 3 MB/s
+    * = $1,450.90 / month
+    * Storage in DynamoDB
+
+#### Comparison
+
+.|Kinesis Data Streams|SQS|SQS FIFO|SNS|DynamoDB|S3
+-|-|-|-|-|-|-
+**Data**|Immutable|Immutable|Immutable|Immutable|Mutable|Mutable
+**Retention**|1-7 days,export to S3 using KDF|1-14 days|1-14 days|No retention|Infinite or can implement TTL|Infinite, can setup lifecycle policies
+**Ordering**|Per shard|No ordering|Per group-id|No ordering|No ordering|No ordering
+**Scalability**|Provision shards|Soft limit|300 msg/s Or 3000 if batch|Soft limit|WCU & RCU On-demand|Infinite, 3500 PUT, 5500 GET/prefix
+**Readers**|EC2, Lambda, KDF, KDA, KCL (checkpoint)|EC2, Lambda|EC2, Lambda|HTTP, Lambda, Email, SQS...|DynamoDB Streams|SDK, S3 Events
+**Latency**|KDS (200 ms),KDF (1 min)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)
+
+## AWS Batch
+
+### Overview
+AWS Batch enables developers, scientists, and engineers to easily and efficiently run hundreds of thousands of batch computing jobs on AWS. AWS Batch dynamically provisions the optimal quantity and type of compute resources (e.g., CPU or memory optimized instances) based on the volume and specific resource requirements of the batch jobs submitted. With AWS Batch, there is no need to install and manage batch computing software or server clusters that you use to run your jobs, allowing you to focus on analyzing results and solving problems. AWS Batch plans, schedules, and executes your batch computing workloads across the full range of AWS compute services and features, such as AWS Fargate, Amazon EC2 and Spot Instances.
+
+There is no additional charge for AWS Batch. You only pay for the AWS resources (e.g. EC2 instances or Fargate jobs) you create to store and run your batch jobs.
+
+* Run batch jobs as Docker images (ECS)
+* Dynamic provisioning of the instances (EC2 & Spot Instances) – in VPC
+* Optimal quantity and type based on volume and requirements
+* No need to manage clusters (but still runs on instances)
+  * You just pay for the underlying EC2 instances
+* Example: batch process of images, running thousands of concurrent jobs
+* Schedule Batch Jobs using CloudWatch Events
+* Orchestrate Batch Jobs using AWS Step Functions
+* On AWS
+  * <a href="https://aws.amazon.com/batch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/batch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/batch/" target="_blank">User Guide</a>
+
+### Batch vs Lambda
+* Lambda:
+  * Time limit
+  * Limited runtimes
+  * Limited temporary disk space
+  * Serverless
+* Batch:
+  * No time limit
+  * Any runtime as long as it’s package as a Docker image
+  * Rely on EBS/instance store for disk space
+  * Relies on EC2 (can be managed by AWS)
+
+### Compute Environments
+* Managed Compute Environment
+  * AWS Batch managed the capacity and instance types within the environment
+  * You can choose On-Demand or Spot Instances
+  * You can set a maximum price for Spot Instances
+  * Launched within your own VPC
+  * If you launch within your own private subnet, make sure it has access to the ECS service
+  * Either using a NAT gateway / instance or using VPC Endpoints for ECS
+* Unmanaged Compute Environment
+  * You control and manage instance configuration, provisioning and scaling
+
+### Multi-Node Mode
+* Large scale, good for HPC (high performance computing)
+* Leverages multiple EC2/ECS instances at the same time
+* Good for tightly coupled workloads
+* Represents a single job, and specified how many nodes to create for the job
+* 1 main node, and many child node.
+* Does not work with Spot Instances!
+* Works better if your EC2 launch mode is a placement group ”cluster”
+
+## Amazon EMR
+### Overview
+Amazon EMR is the industry-leading cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. Amazon EMR makes it easy to set up, operate, and scale your big data environments by automating time-consuming tasks like provisioning capacity and tuning clusters. With EMR you can run petabyte-scale analysis at less than half of the cost of traditional on-premises solutions and over 3x faster than standard Apache Spark. You can run workloads on Amazon EC2 instances, on Amazon Elastic Kubernetes Service (EKS) clusters, or on-premises using EMR on AWS Outposts.
+
+* EMR stands for “Elastic MapReduce”
+* EMR helps creating Hadoop clusters (Big Data) to analyze and process vast amount of data
+* The clusters can be made of hundreds of EC2 instances
+* Also supports Apache Spark, HBase, Presto, Flink...
+* EMR takes care of all the provisioning and configuration of EC2
+* Auto-scaling with CloudWatch
+* Use cases: data processing, machine learning, web indexing, big data...
+* Runs on EC2 in your VPC/single AZ
+* Temporary storage on instances, permanent on S3
+  * Special file system for S3: EMRFS
+* On AWS
+  * <a href="https://aws.amazon.com/emr/" target="_blank">Service</a> - <a href="https://aws.amazon.com/emr/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/emr/index.html" target="_blank">User Guide</a>
+
+### Node types & purchasing
+* **Master Node**: Manage the cluster, coordinate, manage health
+* **Core Node**: Run tasks and store data
+* **Task Node** (optional): Just to run tasks
+* Purchasing options:
+  * On-demand: reliable, predictable, won’t be terminated
+  * Reserved (min 1 year): cost savings (EMR will automatically use if available)
+  * Spot Instances: cheaper, can be terminated, less reliable
+* Can have long-running cluster, or transient (temporary) cluster
+* One big cluster vs many smaller ones? Long running vs transient?
+
+### Instance Configuration
+* **Uniform instance groups**
+  * Select a single instance type and purchasing option for each node (has auto-scaling)
+* **Instance fleet**
+  * Select target capacity, mix instance types and purchasing options (no Auto Scaling)
+
