@@ -134,23 +134,22 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 # [↖](#top)[↑](#2_1_5)[↓](#3_1) Identity and Federation
 
 <a name="3_1"></a>
-## [↖](#top)[↑](#3)[↓](#3_2) Overview - possible ways to manager Identity in Federation in AWS
-* Users and Accounts all in AWS
-  * Simplest way
-* AWS Organizations
-  * In case we have multiple accounts
-  * Adds consolidated billing and compliance
-* Federation
-  * With SAML
-  * Without SAML with a custom IdP (GetFederationToken)
-  * With SSO for multiple accounts with AWS Organizations
-  * Web Identity Federation (not recommended, use Cognito)
-  * Cognito for most web and mobile applications (has anonymous mode, MFA)
-* Active Directory on AWS:
-  * Microsoft AD: standalone or setup trust AD with on-premises, has MFA, seamless join, RDS integration
-  * AD Connector: proxy requests to on-premises
-  * Simple AD: standalone & cheap AD-compatible with no MFA, no advanced capabilities
-* Single Sign On to connect to multiple AWS Accounts (Organization) and SAML apps
+## [↖](#top)[↑](#3)[↓](#3_2) Overview - possible ways to manage Identity and Federation in AWS
+
+.|.|.
+-|-|-
+**Identity only in AWS**|Users and Accounts all in AWS|Simplest setup
+.|AWS Organizations|In case we have multiple accounts<br/>Adds consolidated billing and compliance
+**Federation**|With SAML|.
+.|Without SAML|with a custom IdP (`GetFederationToken`)
+.|With SSO|for multiple accounts within AWS Organizations
+.|Web Identity Federation|not recommended, use Cognito
+.|Cognito|For most web and mobile applications<br/>has anonymous mode, MFA
+**Active Directory on AWS**|Microsoft AD|Standalone or setup trust AD with on-premises<br/>has MFA<br/>Seamless join<br/>RDS integration
+.|AD Connector|Proxy requests to on-premises
+.|Simple AD|Standalone & cheap AD-compatible with no MFA, no advanced capabilities
+
+* AWS Single Sign-On to connect to multiple AWS Accounts (Organization) and SAML apps
 
 ---
 
@@ -172,9 +171,7 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 
 <a name="3_2_1"></a>
 ### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Overview
-AWS Identity and Access Management (IAM) enables you to manage access to AWS services and
-resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions
-to allow and deny their access to AWS resources.
+AWS Identity and Access Management (IAM) enables you to manage access to AWS services and resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions to allow and deny their access to AWS resources.
 
 Best practices:
 * Lock away your AWS account root user access keys
@@ -194,62 +191,28 @@ Best practices:
 * Use policy conditions for extra security
 * Monitor activity in your AWS account
 
-IAM on AWS: <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
+On AWS:
+* <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
 
 <a name="3_2_2"></a>
 ### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Users
-* An AWS Identity and Access Management (IAM) user is an entity that you create in AWS to
-  represent the person or application that uses it to interact with AWS. A user in AWS consists of a
-  name and credentials.
-* Hold long-term credentials
+* An IAM user is an entity that you create in AWS to represent the person or application that uses it to interact with AWS. A user in AWS consists of a name and credentials.
+* Holds long-term credentials
 
 <a name="3_2_3"></a>
 ### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_4) Groups
-* An IAM group is a collection of IAM users. Groups let you specify permissions for multiple users,
-  which can make it easier to manage the permissions for those users.
+* An IAM group is a collection of IAM users. Groups let you specify permissions for multiple users, which can make it easier to manage the permissions for those users.
 * Typically only provides permission to assume a role
 
 <a name="3_2_4"></a>
 ### [↖](#3_2)[↑](#3_2_3)[↓](#3_2_5) Roles
-* **Role** - An IAM identity that you can create in your account that has specific permissions. An IAM role
-  has some similarities to an IAM user. Roles and users are both AWS identities with permissions
-  policies that determine what the identity can and cannot do in AWS. However, instead of being
-  uniquely associated with one person, a role is intended to be assumable by anyone who needs it.
-  Also, a role does not have standard long-term credentials such as a password or access keys
-  associated with it. Instead, when you assume a role, it provides you with temporary security
-  credentials for your role session, provided by STS.
-* **AWS service role** - A role that a service assumes to perform actions in your account on your
-  behalf. When you set up some AWS service environments, you must define a role for the service to
-  assume. This service role must include all the permissions required for the service to access the
-  AWS resources that it needs. Service roles vary from service to service, but many allow you to
-  choose your permissions, as long as you meet the documented requirements for that service. Service
-  roles provide access only within your account and cannot be used to grant access to services in
-  other accounts. You can create, modify, and delete a service role from within IAM.
-* **AWS service role for an EC2 instance** - A special type of service role that an application
-  running on an Amazon EC2 instance can assume to perform actions in your account. This role is
-  assigned to the EC2 instance when it is launched. Applications running on that instance can
-  retrieve temporary security credentials and perform actions that the role allows.
-* **AWS service-linked role** - A unique type of service role that is linked directly to an AWS
-  service. Service-linked roles are predefined by the service and include all the permissions that
-  the service requires to call other AWS services on your behalf. The linked service also defines
-  how you create, modify, and delete a service-linked role. A service might automatically create or
-  delete the role. It might allow you to create, modify, or delete the role as part of a wizard or
-  process in the service. Or it might require that you use IAM to create or delete the role.
-  Regardless of the method, service-linked roles make setting up a service easier because you don't
-  have to manually add the necessary permissions.
-* **Trust policy** - A JSON policy document in which you define the principals that you trust to
-  assume the role. A role trust policy is a required resource-based policy that is attached to a
-  role in IAM. The principals that you can specify in the trust policy include users, roles, accounts,
-  and services.
-* **Permissions boundary** - An advanced feature in which you use policies to limit the maximum
-  permissions that an identity-based policy can grant to a role. You cannot apply a permissions
-  boundary to a service-linked role.
-* **Role for cross-account access** - A role that grants access to resources in one account to a
-  trusted principal in a different account. Roles are the primary way to grant cross-account access.
-  However, some AWS services allow you to attach a policy directly to a resource (instead of using a
-  role as a proxy). These are called resource-based policies, and you can use them to grant
-  principals in another AWS account access to the resource. Some of these resources include S3,
-  S3 Glacier vaults, SNS and SQS.
+* **Role** - An IAM identity that you can create in your account that has specific permissions. An IAM role has some similarities to an IAM user. Roles and users are both AWS identities with permissions policies that determine what the identity can and cannot do in AWS. However, instead of being uniquely associated with one person, a role is intended to be assumable by anyone who needs it. Also, a role does not have standard long-term credentials such as a password or access keys associated with it. Instead, when you assume a role, it provides you with temporary security credentials for your role session, provided by STS.
+* **AWS service role** - A role that a service assumes to perform actions in your account on your behalf. When you set up some AWS service environments, you must define a role for the service to assume. This service role must include all the permissions required for the service to access the AWS resources that it needs. Service roles vary from service to service, but many allow you to choose your permissions, as long as you meet the documented requirements for that service. Service roles provide access only within your account and cannot be used to grant access to services in other accounts. You can create, modify, and delete a service role from within IAM.
+* **AWS service role for an EC2 instance** - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account. This role is assigned to the EC2 instance when it is launched. Applications running on that instance can retrieve temporary security credentials and perform actions that the role allows.
+* **AWS service-linked role** - A unique type of service role that is linked directly to an AWS service. Service-linked roles are predefined by the service and include all the permissions that the service requires to call other AWS services on your behalf. The linked service also defines how you create, modify, and delete a service-linked role. A service might automatically create or delete the role. It might allow you to create, modify, or delete the role as part of a wizard or process in the service. Or it might require that you use IAM to create or delete the role. Regardless of the method, service-linked roles make setting up a service easier because you don't have to manually add the necessary permissions.
+* **Trust policy** - A JSON policy document in which you define the principals that you trust to assume the role. A role trust policy is a required resource-based policy that is attached to a role in IAM. The principals that you can specify in the trust policy include users, roles, accounts, and services.
+* **Permissions boundary** - An advanced feature in which you use policies to limit the maximum permissions that an identity-based policy can grant to a role. You cannot apply a permissions boundary to a service-linked role.
+* **Role for cross-account access** - A role that grants access to resources in one account to a trusted principal in a different account. Roles are the primary way to grant cross-account access. However, some AWS services allow you to attach a policy directly to a resource (instead of using a role as a proxy). These are called resource-based policies, and you can use them to grant principals in another AWS account access to the resource. Some of these resources include S3, S3 Glacier vaults, SNS and SQS.
 
 ```
 Type: AWS::IAM::Role
@@ -268,38 +231,15 @@ Properties:
     - Tag
 ```
 
-
 <a name="3_2_5"></a>
 ### [↖](#3_2)[↑](#3_2_4)[↓](#3_2_5_1) Policies
-* You manage access in AWS by creating policies and attaching them to IAM identities (users,
-  groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated
-  with an identity or resource, defines their permissions. AWS evaluates these policies when an IAM
-  principal (user or role) makes a request. Permissions in the policies determine whether the
-  request is allowed or denied. Most policies are stored in AWS as JSON documents. AWS supports six
-  types of policies:
-  * **Identity-based policies** – Attach managed and inline policies to IAM identities (users,
-    groups to which users belong, or roles). Identity-based policies grant permissions to an identity.
-  * **Resource-based policies** – Attach inline policies to resources. The most common examples of
-    resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource
-    based policies grant permissions to the principal that is specified in the policy. Principals
-    can be in the same account as the resource or in other accounts.
-  * **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity
-    (user or role). That policy defines the maximum permissions that the identity-based policies can
-    grant to an entity, but does not grant permissions. Permissions boundaries do not define the
-    maximum permissions that a resource-based policy can grant to an entity.
-  * **Organizations SCPs** – Use an AWS Organizations service control policy (SCP) to define the
-    maximum permissions for account members of an organization or organizational unit (OU). SCPs
-    limit permissions that identity-based policies or resource-based policies grant to entities
-    (users or roles) within the account, but do not grant permissions.
-  * **Access control lists (ACLs)** – Use ACLs to control which principals in other accounts can
-    access the resource to which the ACL is attached. ACLs are similar to resource-based policies,
-    although they are the only policy type that does not use the JSON policy document structure.
-    ACLs are cross-account permissions policies that grant permissions to the specified principal.
-    ACLs cannot grant permissions to entities within the same account.
-  * **Session policies** – Pass advanced session policies when you use the AWS CLI or AWS API to
-    assume a role or a federated user. Session policies limit the permissions that the role or
-    user's identity-based policies grant to the session. Session policies limit permissions for a
-    created session, but do not grant permissions. For more information, see Session Policies.
+* You manage access in AWS by creating policies and attaching them to IAM identities (users, groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated with an identity or resource, defines their permissions. AWS evaluates these policies when an IAM principal (user or role) makes a request. Permissions in the policies determine whether the request is allowed or denied. Most policies are stored in AWS as JSON documents. AWS supports six types of policies:
+  * **Identity-based policies** – Attach managed and inline policies to IAM identities (users, groups to which users belong, or roles). Identity-based policies grant permissions to an identity.
+  * **Resource-based policies** – Attach inline policies to resources. The most common examples of resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource based policies grant permissions to the principal that is specified in the policy. Principals can be in the same account as the resource or in other accounts.
+  * **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity (user or role). That policy defines the maximum permissions that the identity-based policies can grant to an entity, but does not grant permissions. Permissions boundaries do not define the maximum permissions that a resource-based policy can grant to an entity.
+  * **Organizations SCPs** – Use an AWS Organizations service control policy (SCP) to define the maximum permissions for account members of an organization or organizational unit (OU). SCPs limit permissions that identity-based policies or resource-based policies grant to entities (users or roles) within the account, but do not grant permissions.
+  * **Access control lists (ACLs)** – Use ACLs to control which principals in other accounts can access the resource to which the ACL is attached. ACLs are similar to resource-based policies, although they are the only policy type that does not use the JSON policy document structure. ACLs are cross-account permissions policies that grant permissions to the specified principal. ACLs cannot grant permissions to entities within the same account.
+  * **Session policies** – Pass advanced session policies when you use the AWS CLI or AWS API to assume a role or a federated user. Session policies limit the permissions that the role or user's identity-based policies grant to the session. Session policies limit permissions for a created session, but do not grant permissions. For more information, see Session Policies.
 * An **AWS managed policy** is a standalone policy that is created and administered by AWS. Standalone policy means that the policy has its own Amazon Resource Name (ARN) that includes the policy name.
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_examples.html" target="_blank">Policy Examples</a>
 
@@ -357,24 +297,13 @@ Tag Based:
 
 <a name="3_2_6_1"></a>
 #### [↖](#3_2)[↑](#3_2_6)[↓](#3_2_6_2) Access Advisor
-Access Advisor shows the services that a certain user or role can access and when those services
-were last accessed. Review this data to remove unused permissions.
+Access Advisor shows the services that a certain user or role can access and when those services were last accessed. Review this data to remove unused permissions.
 
 <a name="3_2_6_2"></a>
 #### [↖](#3_2)[↑](#3_2_6_1)[↓](#3_3) Access Analyzer
-Makes it simple for security teams and administrators to check that their policies provide only
-the intended access to resources. Resource policies allow customers to granularly control who is
-able to access a specific resource and how they are able to use it across the entire cloud
-environment.
+Makes it simple for security teams and administrators to check that their policies provide only the intended access to resources. Resource policies allow customers to granularly control who is able to access a specific resource and how they are able to use it across the entire cloud environment.
 
-IAM Access Analyzer continuously monitors policies for changes, meaning customers no longer need
-to rely on intermittent manual checks in order to catch issues as policies are added or updated.
-Using IAM Access Analyzer, customers can proactively address any resource policies that violate
-their security and governance best practices around resource sharing and protect their resources
-from unintended access. IAM Access Analyzer delivers comprehensive, detailed findings through the
-AWS IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Findings can also be
-exported as a report for auditing purposes. IAM Access Analyzer findings provide definitive
-answers of who has public and cross-account access to AWS resources from outside an account.
+IAM Access Analyzer continuously monitors policies for changes, meaning customers no longer need to rely on intermittent manual checks in order to catch issues as policies are added or updated. Using IAM Access Analyzer, customers can proactively address any resource policies that violate their security and governance best practices around resource sharing and protect their resources from unintended access. IAM Access Analyzer delivers comprehensive, detailed findings through the AWS IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Findings can also be exported as a report for auditing purposes. IAM Access Analyzer findings provide definitive answers of who has public and cross-account access to AWS resources from outside an account.
 
 ---
 
@@ -3017,6 +2946,7 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
 * Can only attach to one VPC, create *one ENI per AZ* (mount target)
   * Other VPC can access EFS via VPC peering
 * On AWS: <a href="https://aws.amazon.com/efs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/efs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/amazon-efs/" target="_blank">AWS Geek 2020</a>
 
 <a name="6_3_2"></a>
 ### [↖](#6_3)[↑](#6_3_1)[↓](#6_4) Performance & Storage Classes
@@ -4192,6 +4122,7 @@ Orchestrating a series of individual serverless applications, managing retries, 
 * Possibility to implement human approval feature
 * If you chain Lambda functions using Step Functions, be mindful of the added latency to pass the calls.
 * On AWS: <a href="https://aws.amazon.com/step-functions" target="_blank">Service</a> - <a href="https://aws.amazon.com/step-functions/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/step-functions/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/amazon-kinesis-data-streams/" target="_blank">AWS Geek 2020</a>
 
 <a name="9_1_2"></a>
 ### [↖](#9_1)[↑](#9_1_1)[↓](#9_1_3) Tasks
@@ -4442,7 +4373,7 @@ Amazon Kinesis makes it easy to collect, process, and analyze real-time, streami
   * **Kinesis Analytics**: perform real-time analytics on streams using SQL
   * **Kinesis Firehose**: load streams into S3, Redshift, ElasticSearch & Splunk
 * High level
-  * `data producers`(Click streams, IoT, metrics & logs, ...) -> `Kinesis Streams` -> `Kinesis Analytics` -> `Kinesis Firehose` -> `storage` (S3, Redshift)
+  * `data producers`(Click streams, IoT, metrics & logs, ...) -> `Kinesis Streams` -> `Kinesis Analytics` -> `Kinesis Firehose` -> `storage` (S3, Redshift, splunk, Elasticsearch, ...)
 * On AWS: <a href="https://aws.amazon.com/kinesis" target="_blank">Service</a>
 
 <a name="10_1_2"></a>
@@ -4461,6 +4392,7 @@ Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time 
 * Once data is inserted in Kinesis, it can’t be deleted (immutability)
   * Another difference to SQS
 * On AWS: <a href="https://aws.amazon.com/kinesis/data-streams" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-streams/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/amazon-kinesis-data-streams/" target="_blank">AWS Geek 2020</a>
 
 <a name="10_1_2_2"></a>
 #### [↖](#10_1)[↑](#10_1_2_1)[↓](#10_1_2_3) Kinesis Streams Shards
@@ -4500,3 +4432,18 @@ Consumer Classic|2MB/s at read PER SHARD across all consumers<br/>5 API calls pe
 Consumer Enhanced Fan-Out|2MB/s at read PER SHARD, PER ENHANCED CONSUMER<br/>No API calls needed (push model)
 Data Retention|24 hours data retention by default<br/>Can be extended to 365 (was: 7) days
 
+### Kinesis Data Firehose
+
+#### Overview
+Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data into data lakes, data stores, and analytics services. It can capture, transform, and deliver streaming data to Amazon S3, Amazon Redshift, Amazon Elasticsearch Service, generic HTTP endpoints, and service providers like Datadog, New Relic, MongoDB, and Splunk. It is a fully managed service that automatically scales to match the throughput of your data and requires no ongoing administration. It can also batch, compress, transform, and encrypt your data streams before loading, minimizing the amount of storage used and increasing security.
+
+You can easily create a Firehose delivery stream from the AWS Management Console, configure it with a few clicks, and start ingesting streaming data from hundreds of thousands of data sources to your specified destinations. You can also configure your data streams to automatically convert the incoming data to open and standards based formats like Apache Parquet and Apache ORC before the data is delivered.
+
+With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pay for the amount of data that you transmit through the service, if applicable, for converting data formats, and for Amazon VPC delivery and data transfer.
+
+* Fully Managed Service, no administration, automatic scaling, serverless
+* Near Real Time (60 seconds latency minimum for non full batches)
+* Load data into Redshift / Amazon S3 / ElasticSearch / Splunk
+* Supports many data formats, conversions, transformations, compression
+* Pay for the amount of data going through Firehose
+* On AWS: <a href="https://aws.amazon.com/kinesis/data-firehose" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-firehose/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
