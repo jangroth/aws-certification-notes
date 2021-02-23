@@ -4434,7 +4434,7 @@ Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time 
 <a name="10_1_2_4"></a>
 #### [↖](#10_1)[↑](#10_1_2_3)[↓](#10_1_3) Limits
 
-
+.|.
 -|-
 Producer|1MB/s or 1000 messages/s at write PER SHARD<br/>“ProvisionedThroughputException” otherwise
 Consumer Classic|2MB/s at read PER SHARD across all consumers<br/>5 API calls per second PER SHARD across all consumers
