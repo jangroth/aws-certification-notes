@@ -4661,3 +4661,113 @@ Amazon EMR is the industry-leading cloud big data platform for processing vast a
 * **Instance fleet**
   * Select target capacity, mix instance types and purchasing options (no Auto Scaling)
 
+## Running Jobs on AWS
+* EC2 instance with long-running cronjob
+* Reactive workflow
+  * CloudWatch Events/S3 Events/API Gateway/SQS/SNS/... -> Lambda
+* Fargate
+  * CloudWatch Events -> Lambda
+* CloudWatch Events and Lambda (scheduled)
+  * Cloudwatch Events -> cron schedule -> Lambda
+* AWS Batch
+  * CloudWatch Events -> Batch
+* EMR
+
+## Amazon Redshift
+### Overview
+No other data warehouse makes it as easy to gain new insights from all your data. With Redshift, you can query and combine exabytes of structured and semi-structured data across your data warehouse, operational database, and data lake using standard SQL. Redshift lets you easily save the results of your queries back to your S3 data lake using open formats, like Apache Parquet, so that you can do additional analytics from other analytics services like Amazon EMR, Amazon Athena, and Amazon SageMaker.
+
+* Redshift is based on PostgreSQL (analytics and data warehousing)
+  * User for OLAP (Online Analytical Processing)
+  * Not used for OLTP (Online Transaction Processing) -> RDS
+* 10x better performance than other data warehouses, scale to PBs of data
+* Columnar storage of data (instead of row-based)
+  * Very efficient for e.g. sum or average of a column
+* Massively Parallel Query Execution (MPP)
+* Pay as you go, based on the instances provisioned
+  * Not a great choice for sporadic usage -> Athena
+* Has a SQL interface for performing queries
+* BI tools such as AWS Quicksight or Tableau integrate with it
+* On AWS
+  * <a href="https://aws.amazon.com/redshift/" target="_blank">Service</a> - <a href="https://aws.amazon.com/redshift/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/redshift/index.html" target="_blank">User Guide</a>
+
+### How it works
+• Data is loaded from S3, Kinesis Firehose, DynamoDB, Database Migration Service, ...
+• From 1 node to 128 nodes, up to 160 GB of space per node
+• Can provision multiple nodes, but it’s not Multi-AZ
+• **Leader node**: for query planning, results aggregation
+• **Compute node**: for performing the queries, send results to back leader
+• Backup & Restore, Security VPC/IAM/KMS, Monitoring
+• Redshift Enhanced VPC Routing: COPY/UNLOAD goes through VPC
+
+### Snapshots and DR
+* Snapshots are point-in-time backups of a cluster, stored internally in S3
+* Snapshots are incremental (only what has changed is saved)
+* You can restore a snapshot into a new cluster
+* Automated: every 8 hours, every 5 GB, or on a schedule. Set retention
+* Manual: snapshot is retained until you delete it
+* You can configure Amazon Redshift to automatically copy snapshots (automated or manual) to another AWS Region
+  * Great for DR
+
+### Redshift Spectrum
+Using Amazon Redshift Spectrum, you can efficiently query and retrieve structured and semistructured data from files in Amazon S3 without having to load the data into Amazon Redshift tables. Redshift Spectrum queries employ massive parallelism to execute very fast against large datasets. Much of the processing occurs in the Redshift Spectrum layer, and most of the data remains in Amazon S3. Multiple clusters can concurrently query the same dataset in Amazon S3 without the need to make copies of the data for each cluster.
+
+* Query data that is already in S3 without loading it
+* Must have a Redshift cluster available to start the query
+* The query is then submitted to thousands of Redshift Spectrum nodes
+  * Nodes are shared across customers
+
+## Athena
+### Overview
+Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless, so there is no infrastructure to manage, and you pay only for the queries that you run.
+
+Athena is easy to use. Simply point to your data in Amazon S3, define the schema, and start querying using standard SQL. Most results are delivered within seconds. With Athena, there’s no need for complex ETL jobs to prepare your data for analysis. This makes it easy for anyone with SQL skills to quickly analyze large-scale datasets.
+
+Athena is out-of-the-box integrated with AWS Glue Data Catalog, allowing you to create a unified metadata repository across various services, crawl data sources to discover schemas and populate your Catalog with new and modified table and partition definitions, and maintain schema versioning.
+
+* Serverless SQL queries on top of your data in S3, pay per query, output to S3
+* Supports CSV, JSON, Parquet, ORC
+* Queries are logged in CloudTrail (which can be chained with CloudWatch logs)
+* Great for sporadic queries
+* Ready-to-use queries for VPC Flow Logs, CloudTrail, ALB Access Logs, Cost and Usage reports (billing), etc...
+* On AWS
+  * <a href="https://aws.amazon.com/athena/" target="_blank">Service</a> - <a href="https://aws.amazon.com/athena/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/athena/" target="_blank">User Guide</a>
+
+## QuickSight
+### Overview
+Amazon QuickSight is a fast business analytics service to build visualizations, perform ad hoc analysis, and quickly get business insights from your data. Amazon QuickSight seamlessly discovers AWS data sources, enables organizations to scale to hundreds of thousands of users, and delivers fast and responsive query performance by using a robust in-memory engine (SPICE).
+* Business Intelligence tool for data visualization, creating dashboards, ...
+* Integrates with Athena, Redshift, EMR, RDS, ...
+* On AWS
+  * <a href="https://aws.amazon.com/quicksight/" target="_blank">Service</a> - <a href="https://aws.amazon.com/quicksight/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/quicksight/" target="_blank">User Guide</a>
+
+## Big Data Architecture
+### Analytics Layer
+* Amazon EMR
+* Redshift/Redshift Spectrum
+* Athena
+* QuickSight (visualization)
+
+### Big Data Ingestion
+* Kinesis Data Streams
+* Kinesis Firehose (every 1 minute)
+* S3
+* ...
+* Athena
+* S3
+* QuickSight
+
+### Comparison of warehousing technologies
+* EMR
+  * Need to use Big Data tools such as Apache Hive, Spark
+  * One long-running cluster, many jobs, with auto-scaling, or one cluster per job?
+  * Purchasing options – Spot, On Demand, Reserved Instances
+  * Can access data in DynamoDB and / or S3
+  * Scratch data on EBS disks (HDFS) and long term storage in S3 (EMRFS)
+* Athena
+  * Simple queries and aggregations, data must live in S3
+  * Serverless, simple SQL queries, out-of-the-box queries for many services (cost & billing..)
+  * Audit queries through CloudTrail
+* Redshift
+  * Advanced SQL queries, must provision servers
+  * Can leverage Redshift Spectrum for serverless queries on S3
