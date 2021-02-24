@@ -71,6 +71,9 @@
   * [Athena](#10_6)
   * [QuickSight](#10_7)
   * [Big Data Architecture](#10_8)
+* [Monitoring](#11)
+  * [CloudWatch](#11_1)
+  * [X-Ray](#11_2)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -4816,7 +4819,7 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
 * QuickSight
 
 <a name="10_8_3"></a>
-### [↖](#10_8)[↑](#10_8_2) Comparison of warehousing technologies
+### [↖](#10_8)[↑](#10_8_2)[↓](#11) Comparison of warehousing technologies
 * EMR
   * Need to use Big Data tools such as Apache Hive, Spark
   * One long-running cluster, many jobs, with auto-scaling, or one cluster per job?
@@ -4830,3 +4833,183 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
 * Redshift
   * Advanced SQL queries, must provision servers
   * Can leverage Redshift Spectrum for serverless queries on S3
+
+---
+
+<a name="11"></a>
+# [↖](#top)[↑](#10_8_3)[↓](#11_1) Monitoring
+
+<a name="11_1"></a>
+## [↖](#top)[↑](#11)[↓](#11_1_1) CloudWatch
+<!-- toc_start -->
+* [Overview](#11_1_1)
+* [CloudWatch Metrics](#11_1_2)
+* [CloudWatch Alarms](#11_1_3)
+* [CloudWatch Dashboards](#11_1_4)
+* [CloudWatch Events](#11_1_5)
+  * [EventBridge](#11_1_5_1)
+  * [S3 Events](#11_1_5_2)
+* [CloudWatch Logs](#11_1_6)
+  * [Log sources](#11_1_6_1)
+  * [Log targets](#11_1_6_2)
+  * [S3 Export](#11_1_6_3)
+  * [Log Subscriptions](#11_1_6_4)
+  * [Logs Agent & Unified Agent](#11_1_6_5)
+<!-- toc_end -->
+
+<a name="11_1_1"></a>
+### [↖](#11_1)[↑](#11_1)[↓](#11_1_2) Overview
+Amazon CloudWatch is a monitoring and observability service built for DevOps engineers, developers, site reliability engineers (SREs), and IT managers. CloudWatch provides you with data and actionable insights to monitor your applications, respond to system-wide performance changes, optimize resource utilization, and get a unified view of operational health. CloudWatch collects monitoring and operational data in the form of logs, metrics, and events, providing you with a unified view of AWS resources, applications, and services that run on AWS and on-premises servers. You can use CloudWatch to detect anomalous behavior in your environments, set alarms, visualize logs and metrics side by side, take automated actions, troubleshoot issues, and discover insights to keep your applications running smoothly.
+* Access all your data from a single platform
+* Easiest way to collect custom and granular metrics for AWS resources
+* Visibility across your applications, infrastructure, and services
+* Improve total cost of ownership
+* Optimize applications and operational resources
+* Derive actionable insights from logs
+* On AWS
+  * <a href="https://aws.amazon.com/cloudwatch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudwatch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudwatch/index.html" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-EventBridge/Amazon-EventBridge.jpg" target="_blank">AWS Geek 2019</a>
+
+<a name="11_1_2"></a>
+### [↖](#11_1)[↑](#11_1_1)[↓](#11_1_3) CloudWatch Metrics
+* Provided by many AWS services
+* EC2 standard: 5 minutes, detailed monitoring: 1 minute
+* EC2 RAM is not a built-in metric
+* Can create custom metrics: standard resolution 1 minute, high resolution 1 sec
+
+<a name="11_1_3"></a>
+### [↖](#11_1)[↑](#11_1_2)[↓](#11_1_4) CloudWatch Alarms
+* Based on thresholds defined on metrics, including custom metrics
+  * Can only be based on a *single* metric
+* Can trigger *SNS*, *Auto Scaling* or *EC2* action (`stop`/`terminate`/...
+  * Alarms do *not* raise CloudWatch Events themselves, but can be forwarded to CloudWatch EventBridge
+    * This allows to trigger a lot more actions
+    * Notable targets:
+      * Compute: Lambda, Batch, ECS task
+      * Orchestration: Step Functions, CodePipeline, CodeBuild
+      * Integration: SQS, SNS, Kinesis Data Streams, Kinesis Data Firehose
+      * Maintenance: SSM, EC2 Actions
+* *High resolution alarms* down to 10 seconds
+* Takes place once, at a specific point in time
+  * Disable with `mon-disable-alarm-actions` via CLI
+* Can be added to dashboard
+* Using *alarm actions*, you can create alarms that automatically stop, terminate, reboot, or recover your EC2 instances.
+
+<a name="11_1_4"></a>
+### [↖](#11_1)[↑](#11_1_3)[↓](#11_1_5) CloudWatch Dashboards
+* Customizable home pages in the CloudWatch console that you can use to monitor your resources in a single correlated view
+* Even those resources that are spread across different Regions.
+* You can use CloudWatch dashboards to create customized views of the metrics and alarms for your AWS resources.
+
+<a name="11_1_5"></a>
+### [↖](#11_1)[↑](#11_1_4)[↓](#11_1_5_1) CloudWatch Events
+* Define actions on things that happened
+* Or schedule `cron`-based events
+* Events are recorded constantly over time
+  * *Targets* process events
+  * *Rules* match incoming events and route them to targets
+  * E.g. CodeCommit automatically triggers CodePipeline on new commits
+* Can deliver cross-account
+  * Must be in the same region
+<a name="11_1_5_1"></a>
+#### [↖](#11_1)[↑](#11_1_5)[↓](#11_1_5_2) EventBridge
+* CloudWatch Events in its core
+* Adding other (3rd party service partners) event sources into the mix
+<a name="11_1_5_2"></a>
+#### [↖](#11_1)[↑](#11_1_5_1)[↓](#11_1_6) S3 Events
+* On bucket events send to SNS, SQS or Lambda
+  * Not everything is covered by S3 notifications
+  * Only object-level operations, not bucket-level
+* Can also integrate with CloudTrail, but need a trail configured for that bucket
+
+<a name="11_1_6"></a>
+### [↖](#11_1)[↑](#11_1_5_2)[↓](#11_1_6_1) CloudWatch Logs
+* *Log events* are records of some activity recorded by the application or resource being monitored
+* *Log streams* are sequences of log events from the same source
+* *Log groups* are groups of log streams that share the same retention, monitoring, and access control settings
+* *Metric filters* allow to extract metric observations from ingested events and transform them to data points in a CloudWatch metric
+  * Search for and match terms, phrases, or values in log events
+  * Can increment the value of a CloudWatch metric
+  * For example, find a specific IP inside of a log or count occurrences of “ERROR” in your logs
+  * Metric filters can be used to trigger alarms
+* *Retention settings* can be used to specify how long log events are kept in CloudWatch Logs
+  * Default: Indefinetely
+* Logs can be exported to S3 for durable storage.
+  * This can be automated with `EventsFilter` -> `Lambda`
+
+<a name="11_1_6_1"></a>
+#### [↖](#11_1)[↑](#11_1_6)[↓](#11_1_6_2) Log sources
+* SDK, CloudWatch Logs Agent, CloudWatch Unified Agent
+* Elastic Beanstalk: collection of logs from application
+* ECS: collection from containers
+* AWS Lambda: collection from function logs
+* VPC Flow Logs: VPC specific logs
+* API Gateway
+* CloudTrail based on filter
+* CloudWatch log agents: for example on EC2 machines
+* Route53: Log DNS queries
+
+<a name="11_1_6_2"></a>
+#### [↖](#11_1)[↑](#11_1_6_1)[↓](#11_1_6_3) Log targets
+* CloudWatch Logs can send logs to
+  * Amazon S3 (exports)
+  * Kinesis Data Streams
+  * Kinesis Data Firehose
+  * AWS Lambda
+  * ElasticSearch
+
+<a name="11_1_6_3"></a>
+#### [↖](#11_1)[↑](#11_1_6_2)[↓](#11_1_6_4) S3 Export
+* S3 buckets must be encrypted with AES-256 (SSE-S3), not SSE-KMS
+* Log data can take up to 12 hours to become available for export
+* The API call is CreateExportTask
+* Not near-real time or real-time... use Logs Subscriptions instead
+
+<a name="11_1_6_4"></a>
+#### [↖](#11_1)[↑](#11_1_6_3)[↓](#11_1_6_5) Log Subscriptions
+* Allow real-time delivery of log events
+* Can create subscription filter for *Lambda*, *Elasticsearch*, *Kinesis Data/Firehose* (not supported from console)
+  * Only Kinesis Stream supports cross-account
+    * Need to establish *log data sender* and *log data recipient*.
+    * The log group and the destination must be in the same AWS region. However, the AWS resource that the destination points to can be located in a different region.
+
+<a name="11_1_6_5"></a>
+#### [↖](#11_1)[↑](#11_1_6_4)[↓](#11_2) Logs Agent & Unified Agent
+* For virtual servers (EC2 instances, on-premise servers...)
+* CloudWatch Logs Agent
+  * Old version of the agent
+  * Can only send to CloudWatch Logs
+* CloudWatch Unified Agent
+  * Collect additional system-level metrics such as RAM, processes, etc...
+  * Collect logs to send to CloudWatch Logs
+  * Centralized configuration using SSM Parameter Store
+* Batch Sends
+  * `batch_count`: number of log events to send (default 10000, min 1)
+  * `batch_duration`: duration of batching for log events (default & min is 5000ms)
+  * `batch_size`: max size of log events in a batch (default & max is 1 MB)
+* Both agents cannot send logs to Kinesis
+
+<a name="11_2"></a>
+## [↖](#top)[↑](#11_1_6_5)[↓](#11_2_1) X-Ray
+<!-- toc_start -->
+* [Overview](#11_2_1)
+<!-- toc_end -->
+
+<a name="11_2_1"></a>
+### [↖](#11_2)[↑](#11_2) Overview
+*AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those built using a microservices architecture. With X-Ray, you can understand how your application and its underlying services are performing to identify and troubleshoot the root cause of performance issues and errors. X-Ray provides an end-to-end view of requests as they travel through your application, and shows a map of your application’s underlying components. You can use X-Ray to analyze both applications in development and in production, from simple three-tier applications to complex microservices applications consisting of thousands of services.
+
+* X-Ray demon runs on EC2-instances/Elastic Beanstalk instances/ECS
+* Integrations with:
+  * EC2 – install the X-Ray agent
+  * ECS – install the X-Ray agent or Docker container
+  * Lambda
+  * Beanstalk - agent is automatically installed
+  * API Gateway – helpful to debug errors (such as 504)
+* X-Ray SDK to send signals
+* X-Ray API collects information
+  * Automation could base on regular polling of `GetServiceGraph`
+* X-Ray Console displays information in *service map*
+* On AWS:
+  * <a href="https://aws.amazon.com/xray/" target="_blank">Service</a> - <a href="https://aws.amazon.com/xray/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/xray/latest/userguide/" target="_blank">User Guide</a
+
