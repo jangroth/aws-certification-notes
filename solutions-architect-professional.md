@@ -64,6 +64,8 @@
   * [Simple Notification Service (SNS)](#9_5)
 * [Data Engineering](#10)
   * [Kinesis](#10_1)
+  * [AWS Batch](#10_2)
+  * [Amazon EMR](#10_3)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -4364,6 +4366,10 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
   * [Firehose Buffer Sizing](#10_1_3_2)
 * [Data Streams vs Firehose](#10_1_4)
 * [Kinesis Data Analytics](#10_1_5)
+* [Streaming Architectures](#10_1_6)
+  * [Full Data Engineering Pipeline](#10_1_6_1)
+  * [3000 messages of 1KB/sec](#10_1_6_2)
+  * [Comparison](#10_1_6_3)
 <!-- toc_end -->
 <a name="10_1_1"></a>
 ### [↖](#10_1)[↑](#10_1)[↓](#10_1_2) Overview
@@ -4497,7 +4503,7 @@ With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pa
   * No data storage
 
 <a name="10_1_5"></a>
-### [↖](#10_1)[↑](#10_1_4) Kinesis Data Analytics
+### [↖](#10_1)[↑](#10_1_4)[↓](#10_1_6) Kinesis Data Analytics
 Amazon Kinesis Data Analytics is the easiest way to transform and analyze streaming data in real time with Apache Flink. Apache Flink is an open source framework and engine for processing data streams. Amazon Kinesis Data Analytics reduces the complexity of building, managing, and integrating Apache Flink applications with other AWS services.
 
 Amazon Kinesis Data Analytics takes care of everything required to run streaming applications continuously, and scales automatically to match the volume and throughput of your incoming data. With Amazon Kinesis Data Analytics, there are no servers to manage, no minimum fee or setup cost, and you only pay for the resources your streaming applications consume.
@@ -4515,15 +4521,18 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
   * Lambda can be used for pre-processing
 * On AWS: <a href="https://aws.amazon.com/kinesis/data-analytics" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-analytics/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
 
-### Streaming Architectures
+<a name="10_1_6"></a>
+### [↖](#10_1)[↑](#10_1_5)[↓](#10_1_6_1) Streaming Architectures
 
-#### Full Data Engineering Pipeline
+<a name="10_1_6_1"></a>
+#### [↖](#10_1)[↑](#10_1_6)[↓](#10_1_6_2) Full Data Engineering Pipeline
 * 'Classic Kinesis': (producer) -> Data Streams -> Data Analytics -> Data Firehose -> (storage)
   * Can also produce into Data Firehose
   * Can also use Data Firehose as an input to Data Analytics
   * Can also use Data Streams as an output of Data Analytics
 
-#### 3000 messages of 1KB/sec
+<a name="10_1_6_2"></a>
+#### [↖](#10_1)[↑](#10_1_6_1)[↓](#10_1_6_3) 3000 messages of 1KB/sec
 * Option 1
   * Kinesis Data Streams -> Lambda
   * Costs
@@ -4536,7 +4545,8 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
     * = $1,450.90 / month
     * Storage in DynamoDB
 
-#### Comparison
+<a name="10_1_6_3"></a>
+#### [↖](#10_1)[↑](#10_1_6_2)[↓](#10_2) Comparison
 
 .|Kinesis Data Streams|SQS|SQS FIFO|SNS|DynamoDB|S3
 -|-|-|-|-|-|-
@@ -4547,9 +4557,17 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
 **Readers**|EC2, Lambda, KDF, KDA, KCL (checkpoint)|EC2, Lambda|EC2, Lambda|HTTP, Lambda, Email, SQS...|DynamoDB Streams|SDK, S3 Events
 **Latency**|KDS (200 ms),KDF (1 min)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)
 
-## AWS Batch
+<a name="10_2"></a>
+## [↖](#top)[↑](#10_1_6_3)[↓](#10_2_1) AWS Batch
+<!-- toc_start -->
+* [Overview](#10_2_1)
+* [Batch vs Lambda](#10_2_2)
+* [Compute Environments](#10_2_3)
+* [Multi-Node Mode](#10_2_4)
+<!-- toc_end -->
 
-### Overview
+<a name="10_2_1"></a>
+### [↖](#10_2)[↑](#10_2)[↓](#10_2_2) Overview
 AWS Batch enables developers, scientists, and engineers to easily and efficiently run hundreds of thousands of batch computing jobs on AWS. AWS Batch dynamically provisions the optimal quantity and type of compute resources (e.g., CPU or memory optimized instances) based on the volume and specific resource requirements of the batch jobs submitted. With AWS Batch, there is no need to install and manage batch computing software or server clusters that you use to run your jobs, allowing you to focus on analyzing results and solving problems. AWS Batch plans, schedules, and executes your batch computing workloads across the full range of AWS compute services and features, such as AWS Fargate, Amazon EC2 and Spot Instances.
 
 There is no additional charge for AWS Batch. You only pay for the AWS resources (e.g. EC2 instances or Fargate jobs) you create to store and run your batch jobs.
@@ -4565,7 +4583,8 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
 * On AWS
   * <a href="https://aws.amazon.com/batch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/batch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/batch/" target="_blank">User Guide</a>
 
-### Batch vs Lambda
+<a name="10_2_2"></a>
+### [↖](#10_2)[↑](#10_2_1)[↓](#10_2_3) Batch vs Lambda
 * Lambda:
   * Time limit
   * Limited runtimes
@@ -4577,7 +4596,8 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
   * Rely on EBS/instance store for disk space
   * Relies on EC2 (can be managed by AWS)
 
-### Compute Environments
+<a name="10_2_3"></a>
+### [↖](#10_2)[↑](#10_2_2)[↓](#10_2_4) Compute Environments
 * Managed Compute Environment
   * AWS Batch managed the capacity and instance types within the environment
   * You can choose On-Demand or Spot Instances
@@ -4588,7 +4608,8 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
 * Unmanaged Compute Environment
   * You control and manage instance configuration, provisioning and scaling
 
-### Multi-Node Mode
+<a name="10_2_4"></a>
+### [↖](#10_2)[↑](#10_2_3)[↓](#10_3) Multi-Node Mode
 * Large scale, good for HPC (high performance computing)
 * Leverages multiple EC2/ECS instances at the same time
 * Good for tightly coupled workloads
@@ -4597,8 +4618,15 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
 * Does not work with Spot Instances!
 * Works better if your EC2 launch mode is a placement group ”cluster”
 
-## Amazon EMR
-### Overview
+<a name="10_3"></a>
+## [↖](#top)[↑](#10_2_4)[↓](#10_3_1) Amazon EMR
+<!-- toc_start -->
+* [Overview](#10_3_1)
+* [Node types & purchasing](#10_3_2)
+* [Instance Configuration](#10_3_3)
+<!-- toc_end -->
+<a name="10_3_1"></a>
+### [↖](#10_3)[↑](#10_3)[↓](#10_3_2) Overview
 Amazon EMR is the industry-leading cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. Amazon EMR makes it easy to set up, operate, and scale your big data environments by automating time-consuming tasks like provisioning capacity and tuning clusters. With EMR you can run petabyte-scale analysis at less than half of the cost of traditional on-premises solutions and over 3x faster than standard Apache Spark. You can run workloads on Amazon EC2 instances, on Amazon Elastic Kubernetes Service (EKS) clusters, or on-premises using EMR on AWS Outposts.
 
 * EMR stands for “Elastic MapReduce”
@@ -4614,7 +4642,8 @@ Amazon EMR is the industry-leading cloud big data platform for processing vast a
 * On AWS
   * <a href="https://aws.amazon.com/emr/" target="_blank">Service</a> - <a href="https://aws.amazon.com/emr/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/emr/index.html" target="_blank">User Guide</a>
 
-### Node types & purchasing
+<a name="10_3_2"></a>
+### [↖](#10_3)[↑](#10_3_1)[↓](#10_3_3) Node types & purchasing
 * **Master Node**: Manage the cluster, coordinate, manage health
 * **Core Node**: Run tasks and store data
 * **Task Node** (optional): Just to run tasks
@@ -4625,7 +4654,8 @@ Amazon EMR is the industry-leading cloud big data platform for processing vast a
 * Can have long-running cluster, or transient (temporary) cluster
 * One big cluster vs many smaller ones? Long running vs transient?
 
-### Instance Configuration
+<a name="10_3_3"></a>
+### [↖](#10_3)[↑](#10_3_2) Instance Configuration
 * **Uniform instance groups**
   * Select a single instance type and purchasing option for each node (has auto-scaling)
 * **Instance fleet**
