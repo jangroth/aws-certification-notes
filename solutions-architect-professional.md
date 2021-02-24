@@ -66,6 +66,11 @@
   * [Kinesis](#10_1)
   * [AWS Batch](#10_2)
   * [Amazon EMR](#10_3)
+  * [Running Jobs on AWS](#10_4)
+  * [Amazon Redshift](#10_5)
+  * [Athena](#10_6)
+  * [QuickSight](#10_7)
+  * [Big Data Architecture](#10_8)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -280,13 +285,13 @@ Properties:
 <a name="3_2_5_2"></a>
 #### [↖](#3_2)[↑](#3_2_5_1)[↓](#3_2_5_3) Policy Variables & Tags
 Example: `${aws:username}`
-• "Resource": ["arn:aws:s3:::mybucket/${aws:username}/*"]
+* "Resource": ["arn:aws:s3:::mybucket/${aws:username}/*"]
 AWS Specific:
-• `aws:CurrentTime`, `aws:TokenIssueTime`, `aws:principaltype`, `aws:SecureTransport`, `aws:SourceIp`, `aws:userid`, `ec2:SourceInstanceARN`
+* `aws:CurrentTime`, `aws:TokenIssueTime`, `aws:principaltype`, `aws:SecureTransport`, `aws:SourceIp`, `aws:userid`, `ec2:SourceInstanceARN`
 Service Specific:
-• `s3:prefix`, `s3:max-keys`, `s3:x-amz-acl`, `sns:Endpoint`, `sns:Protocol`...
+* `s3:prefix`, `s3:max-keys`, `s3:x-amz-acl`, `sns:Endpoint`, `sns:Protocol`...
 Tag Based:
-• `iam:ResourceTag/key-name`, `aws:PrincipalTag/key-name`...
+* `iam:ResourceTag/key-name`, `aws:PrincipalTag/key-name`...
 
 <a name="3_2_5_3"></a>
 #### [↖](#3_2)[↑](#3_2_5_2)[↓](#3_2_6) Identity-based vs resource-based policies
@@ -319,8 +324,7 @@ IAM Access Analyzer continuously monitors policies for changes, meaning customer
 
 <a name="3_3_1"></a>
 ### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
-AWS Security Token Service (AWS STS) is a web service that enables you to request temporary,
-limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
+AWS Security Token Service (AWS STS) is a web service that enables you to request temporary, limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
 
 * Provide access for an IAM user in one AWS account that you own to access resources in another account that you own
 * Provide access to IAM users in AWS accounts owned by third parties
@@ -328,14 +332,14 @@ limited-privilege credentials for AWS Identity and Access Management (IAM) users
 * Provide access for externally authenticated users (identity federation)
 * Ability to revoke active sessions and credentials for a role (by adding a policy using a time statement – AWSRevokeOlderSessions)
 
-Whenever an IAM assumes another role, it's *giving up* its original permissions.
+Whenever an IAM user assumes another role, it's *giving up* its original permissions.
 
 STS on AWS:
 * <a href="https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html" target="_blank">API Reference</a>
 
 <a name="3_3_2"></a>
 ### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_3) Providing access to an IAM user in another AWS account that you own
-• *Zone of trust* are accounts or organizations that you own
+* *Zone of trust* are accounts or organizations that you own
 * In *target account*, create *target role* that should be assumed
   * Define trust policy that specifies *source account* as `Principal`
   * Share role ARN
@@ -351,7 +355,7 @@ STS on AWS:
 
 <a name="3_3_3"></a>
 ### [↖](#3_3)[↑](#3_3_2)[↓](#3_4) Providing access to an IAM user from a third party AWS account
-• *Outside Zone of Trust* are third parties
+* *Outside Zone of Trust* are third parties
 * Create role for third party
 * Communicate role name and secret `ExternalId` to third party
   * `ExternalId` is *best practice* only, would also work without
@@ -367,8 +371,7 @@ STS on AWS:
     }
   }
   ```
-* *Confused Deputy* refers to the fact that *without* `externalId`, it wouldn't be possible for
-service providers to make sure that they are accessing the right account (as role ARNs are guessable)
+* *Confused Deputy* refers to the fact that *without* `externalId`, it wouldn't be possible for service providers to make sure that they are accessing the right account (as role ARNs are guessable)
 
 ---
 
@@ -384,10 +387,7 @@ service providers to make sure that they are accessing the right account (as rol
 
 <a name="3_4_1"></a>
 ### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) Overview
-If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating
-IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of
-AWS and give these external user identities permissions to use AWS resources in your account. These users assume
-identity provided access *role*.
+If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of AWS and give these external user identities permissions to use AWS resources in your account. These users assume identity provided access *role*.
 
 Federations can have many flavors:
 * SAML 2.0
@@ -399,6 +399,14 @@ Federations can have many flavors:
 
 <a name="3_4_2"></a>
 ### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) SAML 2.0
+> Security Assertion Markup Language (**SAML**) is an open standard for exchanging
+> authentication and authorization data between parties, in particular, between an identity provider
+> and a service provider.
+
+> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information
+> for principals and also provides authentication services to relying applications within a
+> federation or distributed network.
+
 * Overview
   * To integrate Active Directory/ADFS with AWS (or any SAML 2.0)
   * Access through console or CI
@@ -417,14 +425,6 @@ Federations can have many flavors:
     * For *Console access*, this goes against an AWS SSO endpoint instead, SSO then invokes STS
   * If the request is successful, the API returns a set of temporary security credentials,
 * Note - federation through SAML is the 'old' way of doing things. Better to use AWS SSO
-
-> Security Assertion Markup Language (**SAML**) is an open standard for exchanging
-> authentication and authorization data between parties, in particular, between an identity provider
-> and a service provider.
-
-> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information
-> for principals and also provides authentication services to relying applications within a
-> federation or distributed network.
 
 <a name="3_4_3"></a>
 ### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_4) Custom Identity Broker
@@ -622,14 +622,12 @@ no additional charge.
 
 <a name="3_6_1_2"></a>
 #### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_2) Multi-account strategies
-• Create accounts per department, per cost center, per dev/test/prod, based on regulatory
-  restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account
-  service limits, isolated account for logging,
-• Multi account vs one account multi vPC
-• Use tagging standards for billing purposes
-• Enable CloudTrail on all accounts, send logs to central S3 account
-• Send CloudWatch logs to central logging account
-• Establish cross account roles for admin purposes
+* Create accounts per department, per cost center, per dev/test/prod, based on regulatory restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account service limits, isolated account for logging,
+* Multi account vs one account multi vPC
+* Use tagging standards for billing purposes
+* Enable CloudTrail on all accounts, send logs to central S3 account
+* Send CloudWatch logs to central logging account
+* Establish cross account roles for admin purposes
 
 <a name="3_6_2"></a>
 ### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_3) Service Control Policies (SCP)
@@ -1118,9 +1116,9 @@ AWS S3 exposes:
 <a name="4_9_3"></a>
 ### [↖](#4_9)[↑](#4_9_2)[↓](#4_9_4) Events in S3 buckets
 S3 Access Logs:
-• Detailed records for the requests that are made to a bucket
-• Might take hours to deliver
-• Might be incomplete (best effort)
+* Detailed records for the requests that are made to a bucket
+* Might take hours to deliver
+* Might be incomplete (best effort)
 
 S3 Events Notifications:
 * Receive notifications when certain events happen in your bucket
@@ -2697,6 +2695,8 @@ Options:
   * Must programmatically (CLI) *associate the VPC* with the central hosted zone
 * One association must be created for each new account
 
+---
+
 <a name="5_10"></a>
 ## [↖](#top)[↑](#5_9_4)[↓](#5_10_1) Solution Architeture Comparision
 <!-- toc_start -->
@@ -2875,6 +2875,8 @@ lifecycle policies to back up your volumes in Amazon S3, while ensuring geograph
 * Create image from snapshot
 * Launch instance from that image
 
+---
+
 <a name="6_2"></a>
 ## [↖](#top)[↑](#6_1_5)[↓](#6_2_1) Local Instance Store
 <!-- toc_start -->
@@ -2900,6 +2902,8 @@ lifecycle policies to back up your volumes in Amazon S3, while ensuring geograph
   * On stop or termination, the instance store is lost
   * You can’t resize the instance store
   * Backups must be operated by the user
+
+---
 
 <a name="6_3"></a>
 ## [↖](#top)[↑](#6_2_1)[↓](#6_3_1) EFS
@@ -2964,6 +2968,8 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
 * Storage Tiers (lifecycle management feature – move file after N days)
   * *Standard*: for frequently accessed file
   * *Infrequent access*: higher cost to retrieve the file, lower price point to store the file
+
+---
 
 <a name="6_4"></a>
 ## [↖](#top)[↑](#6_3_2)[↓](#6_4_1) Amazon S3
@@ -3273,6 +3279,8 @@ Bucket policy max size|20KB
 Object size|0B to 5TB
 Object size in a single `PUT`|5GB
 
+---
+
 <a name="6_5"></a>
 ## [↖](#top)[↑](#6_4_6_2)[↓](#6_5_1) S3 Solution Architecture
 <!-- toc_start -->
@@ -3297,6 +3305,8 @@ Object size in a single `PUT`|5GB
     * Total storage used by a customer
     * List of all objects with certain attributes
     * Find all objects uploaded within a date range
+
+---
 
 <a name="6_6"></a>
 ## [↖](#top)[↑](#6_5_2)[↓](#7) S3 vs EFS vs EBS Comparison
@@ -3561,11 +3571,11 @@ existing databases by retrieving data from high throughput and low latency in-me
 * Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gamin, Geospatial Services, Real-Time Analytics, and Queuing.
 * Amazon ElastiCache offers fully managed Redis and Memcached for your most demanding applications that require sub-millisecond response times.
 
-• Caches are in-memory databases with really high performance, low latency
-• Helps reduce load off of databases for read intensive workloads
-• Helps make your application stateless
-• AWS takes care of OS maintenance/patching, optimizations, setup, configuration, monitoring, failure recovery and backups
-• Using ElastiCache involves heavy application code changes
+* Caches are in-memory databases with really high performance, low latency
+* Helps reduce load off of databases for read intensive workloads
+* Helps make your application stateless
+* AWS takes care of OS maintenance/patching, optimizations, setup, configuration, monitoring, failure recovery and backups
+* Using ElastiCache involves heavy application code changes
 * ElastiCache is a good choice if database is read-heavy and not prone to frequent changing.
 * On AWS: <a href="https://aws.amazon.com/elasticache/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticache/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticache/index.html" target="_blank">User Guide</a>
 
@@ -3650,6 +3660,8 @@ Lambda|1,000 concurrent executions|Soft limit per region
 |SQS, SNS|.|unlimited
 |SQS FIFO|3,000 RPS|(with batching)
 |Kinesis|1 MB/s in, 2 MB/s out|per shard
+
+---
 
 <a name="8"></a>
 # [↖](#top)[↑](#7_3_4)[↓](#8_1) Databases
@@ -4349,6 +4361,8 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
     * SQS allows for delayed processing, retries of work
     * May have many workers on one queue and one worker on the other queue
 
+---
+
 <a name="10"></a>
 # [↖](#top)[↑](#9_5_2)[↓](#10_1) Data Engineering
 
@@ -4557,6 +4571,8 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
 **Readers**|EC2, Lambda, KDF, KDA, KCL (checkpoint)|EC2, Lambda|EC2, Lambda|HTTP, Lambda, Email, SQS...|DynamoDB Streams|SDK, S3 Events
 **Latency**|KDS (200 ms),KDF (1 min)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)|Low (10-100ms)
 
+---
+
 <a name="10_2"></a>
 ## [↖](#top)[↑](#10_1_6_3)[↓](#10_2_1) AWS Batch
 <!-- toc_start -->
@@ -4618,6 +4634,8 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
 * Does not work with Spot Instances!
 * Works better if your EC2 launch mode is a placement group ”cluster”
 
+---
+
 <a name="10_3"></a>
 ## [↖](#top)[↑](#10_2_4)[↓](#10_3_1) Amazon EMR
 <!-- toc_start -->
@@ -4635,7 +4653,8 @@ Amazon EMR is the industry-leading cloud big data platform for processing vast a
 * Also supports Apache Spark, HBase, Presto, Flink...
 * EMR takes care of all the provisioning and configuration of EC2
 * Auto-scaling with CloudWatch
-* Use cases: data processing, machine learning, web indexing, big data...
+* Use cases
+  * Data processing, machine learning, web indexing, big data...
 * Runs on EC2 in your VPC/single AZ
 * Temporary storage on instances, permanent on S3
   * Special file system for S3: EMRFS
@@ -4655,26 +4674,38 @@ Amazon EMR is the industry-leading cloud big data platform for processing vast a
 * One big cluster vs many smaller ones? Long running vs transient?
 
 <a name="10_3_3"></a>
-### [↖](#10_3)[↑](#10_3_2) Instance Configuration
+### [↖](#10_3)[↑](#10_3_2)[↓](#10_4) Instance Configuration
 * **Uniform instance groups**
   * Select a single instance type and purchasing option for each node (has auto-scaling)
 * **Instance fleet**
   * Select target capacity, mix instance types and purchasing options (no Auto Scaling)
 
-## Running Jobs on AWS
-* EC2 instance with long-running cronjob
-* Reactive workflow
-  * CloudWatch Events/S3 Events/API Gateway/SQS/SNS/... -> Lambda
-* Fargate
-  * CloudWatch Events -> Lambda
-* CloudWatch Events and Lambda (scheduled)
-  * Cloudwatch Events -> cron schedule -> Lambda
-* AWS Batch
-  * CloudWatch Events -> Batch
-* EMR
+---
 
-## Amazon Redshift
-### Overview
+<a name="10_4"></a>
+## [↖](#top)[↑](#10_3_3)[↓](#10_5) Running Jobs on AWS
+
+.|.
+-|-
+EC2 instance|With long-running cronjob
+Reactive workflow|CloudWatch Events/S3 Events/API Gateway/SQS/SNS/... -> Lambda
+Fargate|CloudWatch Events -> Lambda
+CloudWatch Events and Lambda (scheduled)|Cloudwatch Events -> cron schedule -> Lambda
+AWS Batch|CloudWatch Events -> Batch
+EMR|.
+
+---
+
+<a name="10_5"></a>
+## [↖](#top)[↑](#10_4)[↓](#10_5_1) Amazon Redshift
+<!-- toc_start -->
+* [Overview](#10_5_1)
+* [How it works](#10_5_2)
+* [Snapshots and DR](#10_5_3)
+* [Redshift Spectrum](#10_5_4)
+<!-- toc_end -->
+<a name="10_5_1"></a>
+### [↖](#10_5)[↑](#10_5)[↓](#10_5_2) Overview
 No other data warehouse makes it as easy to gain new insights from all your data. With Redshift, you can query and combine exabytes of structured and semi-structured data across your data warehouse, operational database, and data lake using standard SQL. Redshift lets you easily save the results of your queries back to your S3 data lake using open formats, like Apache Parquet, so that you can do additional analytics from other analytics services like Amazon EMR, Amazon Athena, and Amazon SageMaker.
 
 * Redshift is based on PostgreSQL (analytics and data warehousing)
@@ -4691,16 +4722,18 @@ No other data warehouse makes it as easy to gain new insights from all your data
 * On AWS
   * <a href="https://aws.amazon.com/redshift/" target="_blank">Service</a> - <a href="https://aws.amazon.com/redshift/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/redshift/index.html" target="_blank">User Guide</a>
 
-### How it works
-• Data is loaded from S3, Kinesis Firehose, DynamoDB, Database Migration Service, ...
-• From 1 node to 128 nodes, up to 160 GB of space per node
-• Can provision multiple nodes, but it’s not Multi-AZ
-• **Leader node**: for query planning, results aggregation
-• **Compute node**: for performing the queries, send results to back leader
-• Backup & Restore, Security VPC/IAM/KMS, Monitoring
-• Redshift Enhanced VPC Routing: COPY/UNLOAD goes through VPC
+<a name="10_5_2"></a>
+### [↖](#10_5)[↑](#10_5_1)[↓](#10_5_3) How it works
+* Data is loaded from S3, Kinesis Firehose, DynamoDB, Database Migration Service, ...
+* From 1 node to 128 nodes, up to 160 GB of space per node
+* Can provision multiple nodes, but it’s not Multi-AZ
+* **Leader node**: for query planning, results aggregation
+* **Compute node**: for performing the queries, send results to back leader
+* Backup & Restore, Security VPC/IAM/KMS, Monitoring
+* Redshift Enhanced VPC Routing: COPY/UNLOAD goes through VPC
 
-### Snapshots and DR
+<a name="10_5_3"></a>
+### [↖](#10_5)[↑](#10_5_2)[↓](#10_5_4) Snapshots and DR
 * Snapshots are point-in-time backups of a cluster, stored internally in S3
 * Snapshots are incremental (only what has changed is saved)
 * You can restore a snapshot into a new cluster
@@ -4709,7 +4742,8 @@ No other data warehouse makes it as easy to gain new insights from all your data
 * You can configure Amazon Redshift to automatically copy snapshots (automated or manual) to another AWS Region
   * Great for DR
 
-### Redshift Spectrum
+<a name="10_5_4"></a>
+### [↖](#10_5)[↑](#10_5_3)[↓](#10_6) Redshift Spectrum
 Using Amazon Redshift Spectrum, you can efficiently query and retrieve structured and semistructured data from files in Amazon S3 without having to load the data into Amazon Redshift tables. Redshift Spectrum queries employ massive parallelism to execute very fast against large datasets. Much of the processing occurs in the Redshift Spectrum layer, and most of the data remains in Amazon S3. Multiple clusters can concurrently query the same dataset in Amazon S3 without the need to make copies of the data for each cluster.
 
 * Query data that is already in S3 without loading it
@@ -4717,8 +4751,15 @@ Using Amazon Redshift Spectrum, you can efficiently query and retrieve structure
 * The query is then submitted to thousands of Redshift Spectrum nodes
   * Nodes are shared across customers
 
-## Athena
-### Overview
+---
+
+<a name="10_6"></a>
+## [↖](#top)[↑](#10_5_4)[↓](#10_6_1) Athena
+<!-- toc_start -->
+* [Overview](#10_6_1)
+<!-- toc_end -->
+<a name="10_6_1"></a>
+### [↖](#10_6)[↑](#10_6)[↓](#10_7) Overview
 Amazon Athena is an interactive query service that makes it easy to analyze data in Amazon S3 using standard SQL. Athena is serverless, so there is no infrastructure to manage, and you pay only for the queries that you run.
 
 Athena is easy to use. Simply point to your data in Amazon S3, define the schema, and start querying using standard SQL. Most results are delivered within seconds. With Athena, there’s no need for complex ETL jobs to prepare your data for analysis. This makes it easy for anyone with SQL skills to quickly analyze large-scale datasets.
@@ -4733,22 +4774,39 @@ Athena is out-of-the-box integrated with AWS Glue Data Catalog, allowing you to 
 * On AWS
   * <a href="https://aws.amazon.com/athena/" target="_blank">Service</a> - <a href="https://aws.amazon.com/athena/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/athena/" target="_blank">User Guide</a>
 
-## QuickSight
-### Overview
+---
+
+<a name="10_7"></a>
+## [↖](#top)[↑](#10_6_1)[↓](#10_7_1) QuickSight
+<!-- toc_start -->
+* [Overview](#10_7_1)
+<!-- toc_end -->
+<a name="10_7_1"></a>
+### [↖](#10_7)[↑](#10_7)[↓](#10_8) Overview
 Amazon QuickSight is a fast business analytics service to build visualizations, perform ad hoc analysis, and quickly get business insights from your data. Amazon QuickSight seamlessly discovers AWS data sources, enables organizations to scale to hundreds of thousands of users, and delivers fast and responsive query performance by using a robust in-memory engine (SPICE).
 * Business Intelligence tool for data visualization, creating dashboards, ...
 * Integrates with Athena, Redshift, EMR, RDS, ...
 * On AWS
   * <a href="https://aws.amazon.com/quicksight/" target="_blank">Service</a> - <a href="https://aws.amazon.com/quicksight/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/quicksight/" target="_blank">User Guide</a>
 
-## Big Data Architecture
-### Analytics Layer
+---
+
+<a name="10_8"></a>
+## [↖](#top)[↑](#10_7_1)[↓](#10_8_1) Big Data Architecture
+<!-- toc_start -->
+* [Analytics Layer](#10_8_1)
+* [Big Data Ingestion](#10_8_2)
+* [Comparison of warehousing technologies](#10_8_3)
+<!-- toc_end -->
+<a name="10_8_1"></a>
+### [↖](#10_8)[↑](#10_8)[↓](#10_8_2) Analytics Layer
 * Amazon EMR
 * Redshift/Redshift Spectrum
 * Athena
 * QuickSight (visualization)
 
-### Big Data Ingestion
+<a name="10_8_2"></a>
+### [↖](#10_8)[↑](#10_8_1)[↓](#10_8_3) Big Data Ingestion
 * Kinesis Data Streams
 * Kinesis Firehose (every 1 minute)
 * S3
@@ -4757,7 +4815,8 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
 * S3
 * QuickSight
 
-### Comparison of warehousing technologies
+<a name="10_8_3"></a>
+### [↖](#10_8)[↑](#10_8_2) Comparison of warehousing technologies
 * EMR
   * Need to use Big Data tools such as Apache Hive, Spark
   * One long-running cluster, many jobs, with auto-scaling, or one cluster per job?
