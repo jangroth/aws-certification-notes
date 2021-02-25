@@ -74,6 +74,9 @@
 * [Monitoring](#11)
   * [CloudWatch](#11_1)
   * [X-Ray](#11_2)
+* [Deployment and Instance Management](#12)
+  * [Elastic Beanstalk](#12_1)
+  * [OpsWorks Stacks](#12_2)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -384,7 +387,7 @@ STS on AWS:
 * [Overview](#3_4_1)
 * [SAML 2.0](#3_4_2)
 * [Custom Identity Broker](#3_4_3)
-* [Federating users of a mobile or web-based app with WebIdentity](#3_4_4)
+* [Federating users of a mobile or web-based app with Web Identity Federation](#3_4_4)
 * [Federating users of a mobile or web-based app with Amazon Cognito](#3_4_5)
 <!-- toc_end -->
 
@@ -392,7 +395,7 @@ STS on AWS:
 ### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) Overview
 If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of AWS and give these external user identities permissions to use AWS resources in your account. These users assume identity provided access *role*.
 
-Federations can have many flavors:
+Federation can have many flavors:
 * SAML 2.0
 * Custom Identity Broker
 * Web Identity Federation with Amazon Cognito
@@ -402,13 +405,11 @@ Federations can have many flavors:
 
 <a name="3_4_2"></a>
 ### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) SAML 2.0
-> Security Assertion Markup Language (**SAML**) is an open standard for exchanging
-> authentication and authorization data between parties, in particular, between an identity provider
-> and a service provider.
+> Security Assertion Markup Language (**SAML**) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider.
 
-> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information
-> for principals and also provides authentication services to relying applications within a
-> federation or distributed network.
+> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.
+
+> Active Directory Federation Services (**ADFS**) is a Single Sign-On (SSO) solution created by Microsoft. As a component of Windows Server operating systems, it provides users with authenticated access to applications that are not capable of using Integrated Windows Authentication (IWA) through Active Directory (**AD**).
 
 * Overview
   * To integrate Active Directory/ADFS with AWS (or any SAML 2.0)
@@ -437,8 +438,8 @@ Federations can have many flavors:
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
 <a name="3_4_4"></a>
-### [↖](#3_4)[↑](#3_4_3)[↓](#3_4_5) Federating users of a mobile or web-based app with WebIdentity
-* Login with WebIdentity provider (Amazon, Google or Facebook)
+### [↖](#3_4)[↑](#3_4_3)[↓](#3_4_5) Federating users of a mobile or web-based app with Web Identity Federation
+* Login with Web Identity Federation provider (Amazon, Google or Facebook)
 * Get temporary credentials from STS
 * Assume IAM role
 * After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
@@ -453,8 +454,7 @@ Federations can have many flavors:
 
 <a name="3_4_5"></a>
 ### [↖](#3_4)[↑](#3_4_4)[↓](#3_5) Federating users of a mobile or web-based app with Amazon Cognito
-If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic
-requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
+If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
 * App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
   * Retrieves OpenID Connect token
 * App calls Amazon Cognito and retrieves STS token in exchange for OpenID Connect token
@@ -486,15 +486,11 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 <a name="3_5_1"></a>
 ### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) Overview
 
-> Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is
-> included in most Windows Server operating systems as a set of processes and services.
+> Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is included in most Windows Server operating systems as a set of processes and services.
 
-> Active Directory Federation Services (**ADFS**), a software component developed by Microsoft, can run on
-> Windows Server operating systems to provide users with single sign-on access to systems and
-> applications located across organizational boundaries.
+> Active Directory Federation Services (**ADFS**), a software component developed by Microsoft, can run on Windows Server operating systems to provide users with single sign-on access to systems and applications located across organizational boundaries.
 
-> The Lightweight Directory Access Protocol (**LDAP**) is an open, vendor-neutral, industry standard application
-> protocol for accessing and maintaining distributed directory information services over an Internet Protocol network.
+> The Lightweight Directory Access Protocol (**LDAP**) is an open, vendor-neutral, industry standard application protocol for accessing and maintaining distributed directory information services over an Internet Protocol network.
 
 * **AWS Managed Microsoft AD**
   * Create your own AD in AWS, manage users locally, supports MFA
@@ -512,14 +508,7 @@ requests to AWS. For most mobile application scenarios, we recommend that you us
 <a name="3_5_2_1"></a>
 #### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_2_2) Overview
 
-AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft Active
-Directory (AD), enables your directory-aware workloads and AWS resources to use managed Active
-Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not
-require you to synchronize or replicate data from your existing Active Directory to the cloud. You
-can use the standard AD administration tools and take advantage of the built-in AD features, such
-as Group Policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2
-and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing (EUC)
-services, such as Amazon WorkSpaces, with AD users and groups.
+AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft Active Directory (AD), enables your directory-aware workloads and AWS resources to use managed Active Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not require you to synchronize or replicate data from your existing Active Directory to the cloud. You can use the standard AD administration tools and take advantage of the built-in AD features, such as Group Policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2 and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing (EUC) services, such as Amazon WorkSpaces, with AD users and groups.
 
 * Managed Service
 * Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
@@ -4996,7 +4985,7 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 <!-- toc_end -->
 
 <a name="11_2_1"></a>
-### [↖](#11_2)[↑](#11_2) Overview
+### [↖](#11_2)[↑](#11_2)[↓](#12) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those built using a microservices architecture. With X-Ray, you can understand how your application and its underlying services are performing to identify and troubleshoot the root cause of performance issues and errors. X-Ray provides an end-to-end view of requests as they travel through your application, and shows a map of your application’s underlying components. You can use X-Ray to analyze both applications in development and in production, from simple three-tier applications to complex microservices applications consisting of thousands of services.
 
 * X-Ray demon runs on EC2-instances/Elastic Beanstalk instances/ECS
@@ -5013,3 +5002,117 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 * On AWS:
   * <a href="https://aws.amazon.com/xray/" target="_blank">Service</a> - <a href="https://aws.amazon.com/xray/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/xray/latest/userguide/" target="_blank">User Guide</a
 
+<a name="12"></a>
+# [↖](#top)[↑](#11_2_1)[↓](#12_1) Deployment and Instance Management
+
+<a name="12_1"></a>
+## [↖](#top)[↑](#12)[↓](#12_1_1) Elastic Beanstalk
+<!-- toc_start -->
+* [Overview](#12_1_1)
+* [Architecture models](#12_1_2)
+* [Blue/Green Deployment](#12_1_3)
+<!-- toc_end -->
+
+<a name="12_1_1"></a>
+### [↖](#12_1)[↑](#12_1)[↓](#12_1_2) Overview
+AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and services developed with `Java`, `.NET`, `PHP`, `Node.js`, `Python`, `Ruby`, `Go`, and `Docker` on familiar servers such as Apache, Nginx, Passenger, and IIS.
+
+You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring. At the same time, you retain full control over the AWS resources powering your application and can access the underlying resources at any time.
+
+* Elastic Beanstalk is a developer centric view of deploying an application on AWS
+* Allows to *deploy*, *monitor* and *scale* applications quickly
+* It uses all the component’s we’ve seen before: EC2, Auto Scaling Group, Elastic Load Balancers, RDS, etc...
+  * But it’s all in one view that’s easy to make sense of!
+* We still have full control over the configuration of each component
+* Beanstalk is free but you pay for the underlying instances
+* Focuses on components and performance, not configuration and specification
+* Aims to simplify or even remove infrastructure management
+* Provides different options for *low cost* and *high availability* quick starts
+* Underlying *instances* can be automatically patched
+* Platform-specific application *source bundle* (e.g. Java `war` for Tomcat)
+  * Go
+  * Java SE/with Tomcat
+  * .NET on Windows Server with IIS
+  * Node.js
+  * PHP
+  * Python
+  * Ruby Stanalone/Puma
+  * Packer Builder
+  * Docker Single-/Multicontainer - runs on ECS
+  * Docker Preconfigured Glassfish/Python/Go
+* Elastic Beanstalk is great to “Replatform” your application from on-premises to the cloud
+* Managed service
+  * Instance configuration/OS is handled by Elastic Beanstalk
+  * Deployment strategy is configurable but performed by Elastic Beanstalk
+* Just the application code is the responsibility of the developer
+* On AWS: <a href="https://aws.amazon.com/elasticbeanstalk/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticbeanstalk/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elastic-beanstalk/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/AWS-Elastic-Beanstalk/AWS-Elastic-Beanstalk.jpg" target="_blank">AWS Geek 2019</a>
+
+<a name="12_1_2"></a>
+### [↖](#12_1)[↑](#12_1_1)[↓](#12_1_3) Architecture models
+* Three architecture models:
+  * **Single Instance deployment**: good for dev
+    * Elastic IP, EC2, (RDS)
+  * **LB + ASG**: great for production or pre-production web applications
+    * ALB, ASG, EC2 (x AZs), (RDS multi-AZ)
+  * **ASG only**: great for non-web apps in production (workers, etc..)
+    * SQS, ASG, EC2
+
+* If your application performs tasks that are long to complete, offload these tasks to a dedicated worker environment
+* Decoupling your application into two tiers is common
+  * Web Tier (LB + ASG + EC2)
+  * Worker Tier (SQS + EC2)
+* Example: processing a video, generating a zip file, etc
+* You can define periodic tasks in a file `cron.yaml`
+
+<a name="12_1_3"></a>
+### [↖](#12_1)[↑](#12_1_2)[↓](#12_2) Blue/Green Deployment
+* Not a “direct feature” of Elastic Beanstalk, but can achieve Zero downtime and release facility
+* Create a new “stage” environment and deploy v2 there
+* The new environment (green) can be validated independently and roll back if issues
+* Route 53 can be setup using weighted policies to redirect a little bit of traffic to the stage environment
+* Use Elastic Beanstalk's “swap URLs” feature (DNS swap) when done with the environment test
+
+<a name="12_2"></a>
+## [↖](#top)[↑](#12_1_3)[↓](#12_2_1) OpsWorks Stacks
+<!-- toc_start -->
+* [Overview](#12_2_1)
+* [Components](#12_2_2)
+<!-- toc_end -->
+<a name="12_2_1"></a>
+### [↖](#12_2)[↑](#12_2)[↓](#12_2_2) Overview
+*AWS OpsWorks* is a configuration management service that provides managed instances of Chef and Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are configured, deployed, and managed across your Amazon EC2 instances or on-premises compute environments.
+
+* Chef & Puppet help you perform server configuration automatically, or repetitive actions
+* They work great with EC2 & On Premises VM
+* AWS OpsWorks = Managed Chef & Puppet
+* It’s an alternative to AWS SSM
+* If you’re already using cookbooks (chef) on premises, OpsWorks is good
+* Migrating from other tech to OpsWorks or vice–versa is not easy
+* Declarative desired state engine
+  * Automate, monitor and maintain deployments
+* AWS' implementation of *Chef*
+	* Original Chef
+	* AWS-bespoke orchestration components
+  * **Cookbooks** define **recipes**
+* OpsWorks has three offerings:
+  * *AWS OpsWorks Stacks* (**<- exam relevant**)
+  * *AWS Opsworks for Chef Automate*
+  * *AWS OpsWorks for Puppet Enterprise*
+* For Chef 11, *BerkShelf* is often used
+	* Allows to use external cookbooks
+* On AWS: <a href="https://aws.amazon.com/opsworks/stacks/" target="_blank">Service</a> - <a href="https://aws.amazon.com/opsworks/stacks/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/opsworks/latest/userguide/" target="_blank">User Guide</a>
+<a name="12_2_2"></a>
+### [↖](#12_2)[↑](#12_2_1) Components
+* **Stack**
+  * Set of resources that are managed as a group
+* **Layer**
+  * Represent and configure components of a stack
+  * Share common configuration elements
+* **Instance**
+  * Units of compute within the platform
+  * Must be associated with at least one layer
+* **App**
+  * Applications that are deployed on one or more instances
+* **Deployments**
+  * Deploy application code and related files to application server instances
