@@ -77,6 +77,8 @@
 * [Deployment and Instance Management](#12)
   * [Elastic Beanstalk](#12_1)
   * [OpsWorks Stacks](#12_2)
+  * [CodeDeploy](#12_3)
+  * [CloudFormation](#12_4)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5073,6 +5075,8 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 * Route 53 can be setup using weighted policies to redirect a little bit of traffic to the stage environment
 * Use Elastic Beanstalk's “swap URLs” feature (DNS swap) when done with the environment test
 
+---
+
 <a name="12_2"></a>
 ## [↖](#top)[↑](#12_1_3)[↓](#12_2_1) OpsWorks Stacks
 <!-- toc_start -->
@@ -5103,7 +5107,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 	* Allows to use external cookbooks
 * On AWS: <a href="https://aws.amazon.com/opsworks/stacks/" target="_blank">Service</a> - <a href="https://aws.amazon.com/opsworks/stacks/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/opsworks/latest/userguide/" target="_blank">User Guide</a>
 <a name="12_2_2"></a>
-### [↖](#12_2)[↑](#12_2_1) Components
+### [↖](#12_2)[↑](#12_2_1)[↓](#12_3) Components
 * **Stack**
   * Set of resources that are managed as a group
 * **Layer**
@@ -5116,3 +5120,185 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
   * Applications that are deployed on one or more instances
 * **Deployments**
   * Deploy application code and related files to application server instances
+
+---
+
+<a name="12_3"></a>
+## [↖](#top)[↑](#12_2_2)[↓](#12_3_1) CodeDeploy
+<!-- toc_start -->
+* [Overview](#12_3_1)
+* [Deploys](#12_3_2)
+  * [To EC2/On-premises](#12_3_2_1)
+  * [To Lambdas](#12_3_2_2)
+  * [To ECS](#12_3_2_3)
+<!-- toc_end -->
+<a name="12_3_1"></a>
+### [↖](#12_3)[↑](#12_3)[↓](#12_3_2) Overview
+*AWS CodeDeploy* is a fully managed deployment service that automates software deployments to a variety of compute services such as Amazon EC2, AWS Fargate, AWS Lambda, and your on-premises servers. AWS CodeDeploy makes it easier for you to rapidly release new features, helps you avoid downtime during application deployment, and handles the complexity of updating your applications. You can use AWS CodeDeploy to automate software deployments, eliminating the need for error-prone manual operations. The service scales to match your deployment needs.
+
+* CodeDeploy can be chained into CodePipeline and can use artifacts from there
+* CodeDeploy does not provision resources
+* Automated deployments
+  * EC2, on-premises, (ASG), ECS (Fargate), Lambda
+* Minimize downtime
+* Centralized control
+* Easy to adopt
+* Integrates with AWS SAM
+* On AWS: <a href="https://aws.amazon.com/codedeploy/" target="_blank">Service</a> - <a href="https://aws.amazon.com/codedeploy/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/codedeploy/latest/userguide/" target="_blank">User Guide</a>
+<a name="12_3_2"></a>
+### [↖](#12_3)[↑](#12_3_1)[↓](#12_3_2_1) Deploys
+<a name="12_3_2_1"></a>
+#### [↖](#12_3)[↑](#12_3_2)[↓](#12_3_2_1_1) To EC2/On-premises
+* Define how to deploy the application using appspec.yml + deployment strategy
+* Can use hooks to verify the deployment after each deployment phase
+* **In-place**
+  * The application on each instance in the deployment group is stopped
+  * The latest application revision is installed
+  * The new version of the application is started and validated.
+  * You can use a load balancer so that each instance is deregistered during its deployment and then restored to service after the deployment is complete.
+  * Only deployments that use the EC2/On-Premises compute platform can use in-place deployments.0
+
+* **Blue/green**
+  * Instances are provisioned for the replacement environment.
+  * The latest application revision is installed on the replacement instances.
+  * An optional wait time occurs for activities such as application testing and system verification.
+  * Instances in the *replacement* environment are registered with an Elastic Load Balancing load balancer, causing traffic to be rerouted to them.
+  * Instances in the *original* environment are deregistered and can be terminated or kept running for other uses.
+  * If you use an EC2/On-Premises compute platform, be aware that blue/green deployments work with Amazon EC2 instances only.
+
+##### Integration with Elastic Load Balancing
+* During deployments, a load balancer prevents internet traffic from being routed to instances when they are not ready, are currently being deployed to, or are no longer needed as part of an environment.
+* **Blue/Green Deployments**
+  * Allows traffic to be routed to the new instances in a deployment group that the latest application revision has been deployed to (the replacement environment), according to the rules you specify
+  * Blocks traffic from the old instances where the previous application revision was running (the original environment).
+  * After instances in a replacement environment are registered with a load balancer, instances from the original environment are deregistered and, if you choose, terminated.
+  * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer in your deployment group.
+* **In-Place Deployments**
+  * Prevents internet traffic from being routed to an instance while it is being deployed to
+  * Makes the instance available for traffic again after the deployment to that instance is complete.
+  * If a load balancer isn't used during an in-place deployment, internet traffic may still be directed to an instance during the deployment process.
+  * When you use a load balancer with an in-place deployment, instances in a deployment group are deregistered from a load balancer, updated with the latest application revision, and then reregistered with the load balancer as part of the same deployment group after the deployment is successful.
+  * Specify a Classic Load Balancer, Application Load Balancer, or Network Load Balancer. You can specify the load balancer as part of the deployment group's configuration, or use a script provided by CodeDeploy to implement the load balancer.
+
+##### Integration with Auto Scaling Groups
+* When new Amazon EC2 instances are launched as part of an Amazon EC2 Auto Scaling group, CodeDeploy can deploy your revisions to the new instances automatically.
+* During blue/green deployments on an EC2/On-Premises compute platform, you have two options for adding instances to your replacement (green) environment:
+  * Use instances that already exist or that you create manually.
+  * Use settings from an Amazon EC2 Auto Scaling group that you specify to define and create instances in a new Amazon EC2 Auto Scaling group.
+* If an Amazon EC2 Auto Scaling scale-up event occurs while a deployment is underway, the new instances will be updated with the application revision that was most recently deployed, not the application revision that is currently being deployed.
+  * Suspend scaling during rolling deploys
+  * Or redeploy
+
+##### Register on-premises instances
+* Configure each on-premises instance, register it with CodeDeploy, and then tag it.
+* Need to install CodeDeploy agent, obviously
+* On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
+
+<a name="12_3_2_2"></a>
+#### [↖](#12_3)[↑](#12_3_2_1_3)[↓](#12_3_2_2_1) To Lambdas
+* Lambda deploys a new *version* under an *alias*, and traffic is shifted between old and new version
+	* (Versions and Aliases are native Lambda features)
+* Pre- and post-traffic hooks feature to validate deployment before and after the traffic shift
+* Easy & automated rollback using CloudWatch Alarms
+
+##### Integration with AWS Serverless
+* Deploys new versions of your Lambda function, and automatically creates aliases that point to the new version.
+* Gradually shifts customer traffic to the new version until you're satisfied that it's working as expected, or you roll back the update.
+* Defines pre-traffic and post-traffic test functions to verify that the newly deployed code is configured correctly and your application operates as expected.
+* Rolls back the deployment if CloudWatch alarms are triggered.
+
+<a name="12_3_2_3"></a>
+#### [↖](#12_3)[↑](#12_3_2_2_1)[↓](#12_4) To ECS
+* Support for Blue/Green deployments for Amazon ECS and AWS Fargate
+* Setup is done within the ECS service definition
+* CodeDeploy reroutes traffic from the original version of a task set to a new, replacement task set
+* Target groups specified in the deployment group are used to serve traffic to the original and replacement task sets
+* After the deployment is complete, the original task set is terminated.
+* Can specify an optional test listener to serve test traffic to your replacement version before traffic is rerouted to it
+
+---
+
+<a name="12_4"></a>
+## [↖](#top)[↑](#12_3_2_3)[↓](#12_4_1) CloudFormation
+<!-- toc_start -->
+* [Overview](#12_4_1)
+* [CloudFormation and ASG](#12_4_2)
+* [Retaining Data on Deletes](#12_4_3)
+* [CloudFormation and IAM](#12_4_4)
+* [Custom Resources](#12_4_5)
+* [Cross vs Nested Stacks](#12_4_6)
+* [Other Concepts](#12_4_7)
+<!-- toc_end -->
+<a name="12_4_1"></a>
+### [↖](#12_4)[↑](#12_4)[↓](#12_4_2) Overview
+*AWS CloudFormation* provides a common language for you to describe and provision all the infrastructure resources in your cloud environment. CloudFormation allows you to use a simple text file to model and provision, in an automated and secure manner, all the resources needed for your applications across all regions and accounts. This file serves as the single source of truth for your cloud environment.
+
+AWS CloudFormation is available at no additional charge, and you pay only for the AWS resources needed to run your applications.
+
+* Allows to create and provision **resources** in a reusable **template** fashion
+* Declarative - no need for ordering and orchestration
+* Separation of concerns - different stacks for different purposes
+* Backbone of
+  * Elastic Beanstalk
+  * Service Catalog
+  * SAM (Serverless Application Model)
+* On AWS: <a href="https://aws.amazon.com/cloudformation/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudformation/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html" target="_blank">User Guide</a>
+
+<a name="12_4_2"></a>
+### [↖](#12_4)[↑](#12_4_1)[↓](#12_4_3) CloudFormation and ASG
+* CloudFormation manages the ASG, not the underlying EC2
+* You can define “success conditions” for the launch of your EC2 instances using a `CreationPolicy`
+* You can define “update strategies” for the update of your EC2 instances using an `UpdatePolicy`
+* To update the underlying EC2 in an ASG, you have to create a new launch configuration/launch template & use an `UpdatePolicy`
+
+<a name="12_4_3"></a>
+### [↖](#12_4)[↑](#12_4_2)[↓](#12_4_4) Retaining Data on Deletes
+* You can put a DeletionPolicy on any resource to control what happens when the CloudFormation template is deleted
+* DeletionPolicy **Retain**
+  * Specify on resources to preserve / backup in case of CloudFormation deletes
+  * To keep a resource, specify Retain (works for any resource / nested stack)
+* DeletionPolicy **Snapshot**
+  * EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
+  * RDS DBInstance, RDS DBCluster, Redshift Cluster
+* DeletePolicy **Delete** (default behavior):
+  * Note: for AWS::RDS::DBCluster resources, the default policy is Snapshot
+  * Note: to delete an S3 bucket, you need to first empty the bucket of its content
+
+<a name="12_4_4"></a>
+### [↖](#12_4)[↑](#12_4_3)[↓](#12_4_5) CloudFormation and IAM
+* When deploying a CloudFormation stack
+  * It uses the permissions of our own IAM principal
+  * OR assign an IAM role to the stack that can perform the actions
+* If you create IAM resources, you need to explicitly provide a “capability” to CloudFormation CAPABILITY_IAM and CAPABILITY_NAMED_IAM
+
+<a name="12_4_5"></a>
+### [↖](#12_4)[↑](#12_4_4)[↓](#12_4_6) Custom Resources
+* You can define a Custom Resource in CloudFormation to address any of these use cases:
+* An AWS resource is not yet supported (new service for example)
+* Example use cases
+  * An On-Premise resource
+  * Emptying an S3 bucket before being deleted
+  * Fetch an AMI id
+  * Anything you want...!
+
+<a name="12_4_6"></a>
+### [↖](#12_4)[↑](#12_4_5)[↓](#12_4_7) Cross vs Nested Stacks
+* Cross Stacks
+  * Helpful when stacks have different lifecycles
+  * Use Outputs Export and `Fn::ImportValue`
+  * When you need to pass export values to many stacks (VPC Id, etc...)
+* Nested Stacks
+  * Helpful when components must be re-used
+  * Ex: re-use Application Load Balancer configuration
+  * The nested stack only is important to the higher level stack (it’s not shared)
+
+<a name="12_4_7"></a>
+### [↖](#12_4)[↑](#12_4_6) Other Concepts
+* CloudFormer
+  * Create an AWS CloudFormation template from existing AWS resources
+* ChangeSets
+  * Generate & Preview the CloudFormation changes before they get applied
+* StackSets
+  * Deploy a CloudFormation stack across multiple accounts and regions
+* Stack Policies
+  * Prevent accidental updates / deletes to stack resources
