@@ -82,7 +82,10 @@
   * [Service Catalog](#12_5)
   * [AWS Serverless Application Model](#12_6)
   * [Deployment Options](#12_7)
-  * [Systems Manager (Core Service)](#12_8)
+  * [Systems Manager](#12_8)
+* [Cost Control](#13)
+  * [AWS Cost Allocation Tags](#13_1)
+  * [Trusted Advisor](#13_2)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5052,7 +5055,7 @@ SAM Framework|Leverages CloudFormation & CodeDeploy
 ---
 
 <a name="12_8"></a>
-## [↖](#top)[↑](#12_7)[↓](#12_8_1) Systems Manager (Core Service)
+## [↖](#top)[↑](#12_7)[↓](#12_8_1) Systems Manager
 <!-- toc_start -->
 * [Overview](#12_8_1)
 * [Components](#12_8_2)
@@ -5102,7 +5105,14 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 
 <a name="12_8_2_3"></a>
 #### [↖](#12_8)[↑](#12_8_2_2)[↓](#12_8_2_4) Parameter store
-* Centralized store to manage your configuration data, whether plain-text data such as database strings or secrets such as passwords
+* Secure storage for configuration and secrets
+* Optional seamless encryption using KMS
+* Serverless, scalable, durable, easy SDK, free
+* Version tracking of configurations/secrets
+* Configuration management using path & IAM
+* Notifications with CloudWatch Events
+* Integration with CloudFormation
+* Can retrieve secrets from Secrets Manager using the SSM Parameter Store API
 
 <a name="12_8_2_4"></a>
 #### [↖](#12_8)[↑](#12_8_2_3)[↓](#12_8_2_5) Action & Change
@@ -5121,7 +5131,7 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
   * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
 
 <a name="12_8_2_5"></a>
-#### [↖](#12_8)[↑](#12_8_2_4) Instances & Nodes
+#### [↖](#12_8)[↑](#12_8_2_4)[↓](#13) Instances & Nodes
 * **Run command**
   * Lets you remotely and securely manage the configuration of your managed instances
   * Commands are in *document* format
@@ -5132,12 +5142,25 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 * **Patch manager**
   * Automates the process of patching managed instances with both security related and other types of updates
   * AWS predefined *patch baselines* per operating system
+    * Linux
+      * `AWS-AmazonLinux2DefaultPatchBaseline`
+      * `AWS-CentOSDefaultPatchBaseline`
+      * `AWS-RedHatDefaultPatchBaseline`
+      * `AWS-SuseDefaultPatchBaseline`
+      * `AWS-UbuntuDefaultPatchBaseline`
+    * Windows
+      * `AWS-DefaultPatchBaseline`: install OS patch CriticalUpdates & SecurityUpdates
+      * `AWS-WindowsPredefinedPatchBaseline-OS`: same as “AWS-DefaultPatchBaseline”
+      * `AWS-WindowsPredefinedPatchBaseline-OS-Applications`: also updates Microsoft applications
     * Can also define own patch baselines
       * Patch items in approved or rejected list, e.g. 'CVE-2020-1234567'
       * Can define own patch source
+  * Define *Patch Group* (based on tags)
   * Define *Maintenance Window* when patches are possibly executed
-  * Use `AWS-RunPatchBaseline` run command
-  * Can also evaluate compliance without applying patches
+  * Use `AWS-RunPatchBaseline` *run command*
+  * Define *Rate Control* (concurrency & error threshold) for the task
+  * Monitor *Patch Compliance* using SSM Inventory
+    * Can also evaluate compliance without applying patches
 * **State manager**
   * Secure and scalable configuration management service that automates the process of keeping your Amazon EC2 and hybrid infrastructure in a state that you define
 * **SSM Documents**
@@ -5150,3 +5173,49 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 
 ---
 
+<a name="13"></a>
+# [↖](#top)[↑](#12_8_2_5)[↓](#13_1) Cost Control
+
+<a name="13_1"></a>
+## [↖](#top)[↑](#13)[↓](#13_2) AWS Cost Allocation Tags
+* With Tags we can track resources that relate to each other
+* With Cost Allocation Tags we can enable detailed costing reports
+* Just like Tags, but they show up as columns in Reports
+* AWS Generated Cost Allocation Tags
+  * Automatically applied to the resource you create
+  * Starts with Prefix aws: (e.g. `aws:createdBy`)
+  * They’re not applied to resources created before the activation
+* User tags
+  * Defined by the user
+  * Starts with Prefix user:
+* Cost Allocation Tags just appear in the Billing Console
+* Takes up to 24 hours for the tags to show up in the report
+* <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html" target="_blank">On AWS</a>
+
+---
+
+<a name="13_2"></a>
+## [↖](#top)[↑](#13_1)[↓](#13_2_1) Trusted Advisor
+<!-- toc_start -->
+* [Overview](#13_2_1)
+<!-- toc_end -->
+
+<a name="13_2_1"></a>
+### [↖](#13_2)[↑](#13_2) Overview
+* AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision your resources following AWS best practices. Whether establishing new workflows, developing applications, or as part of ongoing improvement, take advantage of the recommendations provided by Trusted Advisor on a regular basis to help keep your solutions provisioned optimally.
+* Global service
+* Creates recommendations for
+  * Cost optimization
+  * Performance
+  * Security
+  * Fault tolerance
+  * Service limits
+* Trusted Advisor *check results* are raised as CloudWatch Events
+  * Automate by triggering Lambdas
+  * Events are only available in `us-east-1`
+* Checks are refreshed on visits to the dashboard (max every 5 minutes)
+	* Otherwise weekly
+  * Can trigger refresh via API
+* On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
+
+---
