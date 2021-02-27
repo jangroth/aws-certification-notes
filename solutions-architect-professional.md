@@ -82,6 +82,7 @@
   * [Service Catalog](#12_5)
   * [AWS Serverless Application Model](#12_6)
   * [Deployment Options](#12_7)
+  * [Systems Manager (Core Service)](#12_8)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -581,17 +582,9 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 <!-- toc_end -->
 <a name="3_6_1"></a>
 ### [↖](#3_6)[↑](#3_6)[↓](#3_6_1_1) Overview
-*AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations,
-you can create groups of accounts, automate account creation, apply and manage policies for those
-groups. Organizations enables you to centrally manage policies across multiple accounts, without
-requiring custom scripts and manual processes.
+*AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations, you can create groups of accounts, automate account creation, apply and manage policies for those groups. Organizations enables you to centrally manage policies across multiple accounts, without requiring custom scripts and manual processes.
 
-Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS
-service use across multiple AWS accounts. You can also use Organizations to help automate the
-creation of new accounts through APIs. Organizations helps simplify the billing for multiple
-accounts by enabling you to setup a single payment method for all the accounts in your
-organization through consolidated billing. AWS Organizations is available to all AWS customers at
-no additional charge.
+Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS service use across multiple AWS accounts. You can also use Organizations to help automate the creation of new accounts through APIs. Organizations helps simplify the billing for multiple accounts by enabling you to setup a single payment method for all the accounts in your organization through consolidated billing. AWS Organizations is available to all AWS customers at no additional charge.
 
 * Master accounts must invite child accounts
   * Invited accounts must approve enabling all features
@@ -628,12 +621,7 @@ no additional charge.
 
 <a name="3_6_2"></a>
 ### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_3) Service Control Policies (SCP)
-Service control policies (SCPs) are one type of policy that you can use to manage your organization.
-SCPs offer central control over the maximum available permissions for all accounts in your
-organization, allowing you to ensure your accounts stay within your organization’s access control
-guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't
-available if your organization has enabled only the consolidated billing features. SCPs do *not* apply
-for the master account itself.
+Service control policies (SCPs) are one type of policy that you can use to manage your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization, allowing you to ensure your accounts stay within your organization’s access control guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't available if your organization has enabled only the consolidated billing features. SCPs do *not* apply for the master account itself.
 
 * Whitelist or blacklist IAM actions
   * Applied at the Root, OU or Account level
@@ -650,17 +638,13 @@ for the master account itself.
 
 <a name="3_6_3"></a>
 ### [↖](#3_6)[↑](#3_6_2)[↓](#3_6_4) Tag Policies
-Tag policies are a type of policy that can help you standardize tags across resources in your
-organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
+Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
 <a name="3_6_4"></a>
 ### [↖](#3_6)[↑](#3_6_3)[↓](#3_7) Reserved Instances
-* For billing purposes, the consolidated billing feature of AWS Organizations treats all the
-  accounts in the organization as one account.
-* This means that all accounts in the organization can receive the hourly cost benefit of Reserved
-  Instances that are purchased by any other account.
-* The payer account (master account) of an organization can turn off Reserved Instance (RI)
-  discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
+* For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
+* This means that all accounts in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
+* The payer account (master account) of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
@@ -673,9 +657,7 @@ organization's accounts. In a tag policy, you specify tagging rules applicable t
 <!-- toc_end -->
 <a name="3_7_1"></a>
 ### [↖](#3_7)[↑](#3_7)[↓](#3_8) Overview
-AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you
-have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those
-resources with other accounts.
+AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
 
 * Avoids resource duplication
 * Key resources that can be shared
@@ -700,13 +682,7 @@ resources with other accounts.
 
 <a name="3_8_1"></a>
 ### [↖](#3_8)[↑](#3_8)[↓](#4) Overview
-AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally
-manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you
-manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO
-also helps you manage access and permissions to commonly used third-party software as a service (SaaS)
-applications, AWS SSO-integrated applications as well as custom applications that support Security
-Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find
-and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
+AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO also helps you manage access and permissions to commonly used third-party software as a service (SaaS) applications, AWS SSO-integrated applications as well as custom applications that support Security Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
 
 * Centrally manage Single Sign-On to access multiple accounts and 3rd-party business applications.
   * No need for custom IdP login portal, AWS SSO communicates directly with SAML-compatible login portal
@@ -737,17 +713,9 @@ and access all their assigned AWS accounts, cloud applications, and custom appli
 
 <a name="4_1_1"></a>
 ### [↖](#4_1)[↑](#4_1)[↓](#4_1_2) Overview
-AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk
-auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain
-account activity related to actions across your AWS infrastructure. CloudTrail provides event
-history of your AWS account activity, including actions taken through the AWS Management Console,
-AWS SDKs, command line tools, and other AWS services. This event history simplifies security
-analysis, resource change tracking, and troubleshooting. In addition, you can use CloudTrail to
-detect unusual activity in your AWS accounts. These capabilities help simplify operational
-analysis and troubleshooting.
+AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain account activity related to actions across your AWS infrastructure. CloudTrail provides event history of your AWS account activity, including actions taken through the AWS Management Console, AWS SDKs, command line tools, and other AWS services. This event history simplifies security analysis, resource change tracking, and troubleshooting. In addition, you can use CloudTrail to detect unusual activity in your AWS accounts. These capabilities help simplify operational analysis and troubleshooting.
 
-CloudTrail is enabled by default in every account. All activities in an AWS account are being
-recorded as CloudTrail events.
+CloudTrail is enabled by default in every account. All activities in an AWS account are being recorded as CloudTrail events.
 
 * On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
 
@@ -799,11 +767,7 @@ CloudWatch Events|Fastest way, works for every API call
 <!-- toc_end -->
 <a name="4_2_1"></a>
 ### [↖](#4_2)[↑](#4_2)[↓](#4_2_2) Overview
-AWS Key Management Service (KMS) makes it easy for you to create and manage cryptographic keys and
-control their use across a wide range of AWS services and in your applications. AWS KMS is a
-secure and resilient service that uses hardware security modules that have been validated under
-FIPS 140-2, or are in the process of being validated, to protect your keys. AWS KMS is integrated
-with AWS CloudTrail to provide you with logs of all key usage to help meet your regulatory and compliance needs.
+AWS Key Management Service (KMS) makes it easy for you to create and manage cryptographic keys and control their use across a wide range of AWS services and in your applications. AWS KMS is a secure and resilient service that uses hardware security modules that have been validated under FIPS 140-2, or are in the process of being validated, to protect your keys. AWS KMS is integrated with AWS CloudTrail to provide you with logs of all key usage to help meet your regulatory and compliance needs.
 
 * Fully managed
 * Centralized key management
@@ -817,8 +781,7 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
 
 <a name="4_2_2"></a>
 ### [↖](#4_2)[↑](#4_2_1)[↓](#4_2_3) Concepts
-* The value in KMS is that the CMK used to encrypt data can never be retrieved by the user, and
-  the CMK can be rotated for extra security
+* The value in KMS is that the CMK used to encrypt data can never be retrieved by the user, and the CMK can be rotated for extra security
 * KMS can only help in encrypting up to 4KB of data per call
 * If data > 4 KB, use Envelope Encryption
 * To give access to KMS to someone:
@@ -831,9 +794,7 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
 <a name="4_2_3_1"></a>
 #### [↖](#4_2)[↑](#4_2_3)[↓](#4_2_3_2) Customer master keys (CMKs)
 * Customer master keys are the primary resources in AWS KMS.
-* A customer master key (CMK) is a logical representation of a master key. The CMK includes
-  metadata, such as the key ID, creation date, description, and key state. The CMK also contains
-  the key material used to encrypt and decrypt data.
+* A customer master key (CMK) is a logical representation of a master key. The CMK includes metadata, such as the key ID, creation date, description, and key state. The CMK also contains the key material used to encrypt and decrypt data.
 * Create, manage and use, can enable or disable
 * Possibility of rotation policy (new key generated every year, old key preserved)
 * Can add a key policy (resource policy)
@@ -841,22 +802,15 @@ with AWS CloudTrail to provide you with logs of all key usage to help meet your 
 
 <a name="4_2_3_2"></a>
 #### [↖](#4_2)[↑](#4_2_3_1)[↓](#4_2_3_3) Customer managed CMKs
-Customer managed CMKs are CMKs in your AWS account that you create, own, and manage. You have full
-control over these CMKs, including establishing and maintaining their key policies, IAM policies,
-and grants, enabling and disabling them, rotating their cryptographic material, adding tags,
-creating aliases that refer to the CMK, and scheduling the CMKs for deletion.
+Customer managed CMKs are CMKs in your AWS account that you create, own, and manage. You have full control over these CMKs, including establishing and maintaining their key policies, IAM policies, and grants, enabling and disabling them, rotating their cryptographic material, adding tags, creating aliases that refer to the CMK, and scheduling the CMKs for deletion.
 
 <a name="4_2_3_3"></a>
 #### [↖](#4_2)[↑](#4_2_3_2)[↓](#4_2_3_4) AWS managed CMKs
-AWS managed CMKs are CMKs in your account that are created, managed, and used on your behalf by an
-AWS service that is integrated with AWS KMS. Some AWS services support only an AWS managed CMK.
-Others use an AWS owned CMK or offer you a choice of CMKs.
+AWS managed CMKs are CMKs in your account that are created, managed, and used on your behalf by an AWS service that is integrated with AWS KMS. Some AWS services support only an AWS managed CMK. Others use an AWS owned CMK or offer you a choice of CMKs.
 
 <a name="4_2_3_4"></a>
 #### [↖](#4_2)[↑](#4_2_3_3)[↓](#4_3) AWS owned CMKs
-AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in multiple
-AWS accounts. Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS
-owned CMKs to protect the resources in your account.
+AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in multiple AWS accounts. Although AWS owned CMKs are not in your AWS account, an AWS service can use its AWS owned CMKs to protect the resources in your account.
 
 ---
 
@@ -867,12 +821,7 @@ owned CMKs to protect the resources in your account.
 <!-- toc_end -->
 <a name="4_3_1"></a>
 ### [↖](#4_3)[↑](#4_3)[↓](#4_4) Overview
-AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data
-management and secrets management. You can store data such as passwords, database strings, Amazon
-Machine Image (AMI) IDs, and license codes as parameter values. You can store values as plain text
-or encrypted data. You can reference Systems Manager parameters in your scripts, commands, SSM
-documents, and configuration and automation workflows by using the unique name that you specified
-when you created the parameter.
+AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, Amazon Machine Image (AMI) IDs, and license codes as parameter values. You can store values as plain text or encrypted data. You can reference Systems Manager parameters in your scripts, commands, SSM documents, and configuration and automation workflows by using the unique name that you specified when you created the parameter.
 
 * Secure storage for configuration and secrets
 * Optional Seamless Encryption using KMS
@@ -893,15 +842,7 @@ when you created the parameter.
 <!-- toc_end -->
 <a name="4_4_1"></a>
 ### [↖](#4_4)[↑](#4_4)[↓](#4_5) Overview
-AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT
-resources. The service enables you to easily rotate, manage, and retrieve database credentials,
-API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets
-with a call to Secrets Manager APIs, eliminating the need to hardcode sensitive information in
-plain text. Secrets Manager offers secret rotation with built-in integration for Amazon RDS,
-Amazon Redshift, and Amazon DocumentDB. Also, the service is extensible to other types of secrets,
-including API keys and OAuth tokens. In addition, Secrets Manager enables you to control access to
-secrets using fine-grained permissions and audit secret rotation centrally for resources in the
-AWS Cloud, third-party services, and on-premises.
+AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT resources. The service enables you to easily rotate, manage, and retrieve database credentials, API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets with a call to Secrets Manager APIs, eliminating the need to hardcode sensitive information in plain text. Secrets Manager offers secret rotation with built-in integration for Amazon RDS, Amazon Redshift, and Amazon DocumentDB. Also, the service is extensible to other types of secrets, including API keys and OAuth tokens. In addition, Secrets Manager enables you to control access to secrets using fine-grained permissions and audit secret rotation centrally for resources in the AWS Cloud, third-party services, and on-premises.
 
 * Newer service, meant for storing secrets
 * Capability to force rotation of secrets every X days
@@ -991,21 +932,9 @@ Secure Symmetric ..|..Communication in Place
 <!-- toc_end -->
 <a name="4_7_1"></a>
 ### [↖](#4_7)[↑](#4_7)[↓](#4_8) Overview
-AWS Certificate Manager is a service that lets you easily provision, manage, and deploy public and
-private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS
-services and your internal connected resources. SSL/TLS certificates are used to secure network
-communications and establish the identity of websites over the Internet as well as resources on
-private networks. AWS Certificate Manager removes the time-consuming manual process of purchasing,
-uploading, and renewing SSL/TLS certificates.
+AWS Certificate Manager is a service that lets you easily provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS services and your internal connected resources. SSL/TLS certificates are used to secure network communications and establish the identity of websites over the Internet as well as resources on private networks. AWS Certificate Manager removes the time-consuming manual process of purchasing, uploading, and renewing SSL/TLS certificates.
 
-With AWS Certificate Manager, you can quickly request a certificate, deploy it on ACM-integrated
-AWS resources, such as Elastic Load Balancers, Amazon CloudFront distributions, and APIs on API
-Gateway, and let AWS Certificate Manager handle certificate renewals. It also enables you to
-create private certificates for your internal resources and manage the certificate lifecycle
-centrally. Public and private certificates provisioned through AWS Certificate Manager for use
-with ACM-integrated services are free. You pay only for the AWS resources you create to run your
-application. With AWS Certificate Manager Private Certificate Authority, you pay monthly for the
-operation of the private CA and for the private certificates you issue.
+With AWS Certificate Manager, you can quickly request a certificate, deploy it on ACM-integrated AWS resources, such as Elastic Load Balancers, Amazon CloudFront distributions, and APIs on API Gateway, and let AWS Certificate Manager handle certificate renewals. It also enables you to create private certificates for your internal resources and manage the certificate lifecycle centrally. Public and private certificates provisioned through AWS Certificate Manager for use with ACM-integrated services are free. You pay only for the AWS resources you create to run your application. With AWS Certificate Manager Private Certificate Authority, you pay monthly for the operation of the private CA and for the private certificates you issue.
 
 * To host public SSL certificates in AWS, you can:
   * Buy your own and upload them using the CLI
@@ -1040,8 +969,7 @@ operation of the private CA and for the private certificates you issue.
 <!-- toc_end -->
 <a name="4_8_1"></a>
 ### [↖](#4_8)[↑](#4_8)[↓](#4_8_2) Overview
-AWS CloudHSM provides hardware security modules in the AWS Cloud. A hardware security module (HSM)
-is a computing device that processes cryptographic operations and provides secure storage for cryptographic keys.
+AWS CloudHSM provides hardware security modules in the AWS Cloud. A hardware security module (HSM) is a computing device that processes cryptographic operations and provides secure storage for cryptographic keys.
 
 When you use an HSM from AWS CloudHSM, you can perform a variety of cryptographic tasks:
 * Generate, store, import, export, and manage cryptographic keys, including symmetric keys and asymmetric key pairs.
@@ -1050,8 +978,7 @@ When you use an HSM from AWS CloudHSM, you can perform a variety of cryptographi
 * Cryptographically sign data (including code signing) and verify signatures.
 * Generate cryptographically secure random data.
 
-If you want a managed service for creating and controlling your encryption keys, but you don't
-want or need to operate your own HSM, consider using AWS KMS.
+If you want a managed service for creating and controlling your encryption keys, but you don't want or need to operate your own HSM, consider using AWS KMS.
 
 * You manage your own encryption keys entirely (not AWS)
 * HSM device is tamper resistant, FIPS 140-2 Level 3 compliance
@@ -1246,13 +1173,7 @@ Can generate pre-signed URLs using SDK or CLI
 
 <a name="4_10_3"></a>
 ### [↖](#4_10)[↑](#4_10_2_2)[↓](#4_10_4) AWS Shield
-You can use AWS WAF web access control lists (web ACLs) to help minimize the effects of a
-distributed denial of service (DDoS) attack. For additional protection against DDoS attacks, AWS
-also provides AWS Shield Standard and AWS Shield Advanced. AWS Shield Standard is automatically
-included at no extra cost beyond what you already pay for AWS WAF and your other AWS services. AWS
-Shield Advanced provides expanded DDoS attack protection for your Amazon EC2 instances, Elastic
-Load Balancing load balancers, CloudFront distributions, Route 53 hosted zones, and AWS Global
-Accelerator accelerators. AWS Shield Advanced incurs additional charges.
+You can use AWS WAF web access control lists (web ACLs) to help minimize the effects of a distributed denial of service (DDoS) attack. For additional protection against DDoS attacks, AWS also provides AWS Shield Standard and AWS Shield Advanced. AWS Shield Standard is automatically included at no extra cost beyond what you already pay for AWS WAF and your other AWS services. AWS Shield Advanced provides expanded DDoS attack protection for your Amazon EC2 instances, Elastic Load Balancing load balancers, CloudFront distributions, Route 53 hosted zones, and AWS Global Accelerator accelerators. AWS Shield Advanced incurs additional charges.
 
 * AWS Shield Standard
   * Free service that is activated for every AWS customer
@@ -1266,13 +1187,7 @@ Accelerator accelerators. AWS Shield Advanced incurs additional charges.
 
 <a name="4_10_4"></a>
 ### [↖](#4_10)[↑](#4_10_3)[↓](#4_10_5) AWS WAF
-AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are
-forwarded to an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application
-Load Balancer, or an AWS AppSync GraphQL API. AWS WAF also lets you control access to your conten
-. Based on conditions that you specify, such as the IP addresses that requests originate from or
-the values of query strings, Amazon CloudFront, Amazon API Gateway, Application Load Balancer, or
-AWS AppSync responds to requests either with the requested content or with an HTTP 403 status code
-(Forbidden). You also can configure CloudFront to return a custom error page when a request is blocked.
+AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, or an AWS AppSync GraphQL API. AWS WAF also lets you control access to your conten . Based on conditions that you specify, such as the IP addresses that requests originate from or the values of query strings, Amazon CloudFront, Amazon API Gateway, Application Load Balancer, or AWS AppSync responds to requests either with the requested content or with an HTTP 403 status code (Forbidden). You also can configure CloudFront to return a custom error page when a request is blocked.
 
 * Protects your web applications from common web exploits (Layer 7)
 * Deploy on Application Load Balancer (localized rules)
@@ -1289,12 +1204,7 @@ AWS AppSync responds to requests either with the requested content or with an HT
 
 <a name="4_10_5"></a>
 ### [↖](#4_10)[↑](#4_10_4)[↓](#4_11) AWS Firewall Manager
-AWS Firewall Manager simplifies your administration and maintenance tasks across multiple accounts
-and resources for AWS WAF, AWS Shield Advanced, Amazon VPC security groups, and AWS Network
-Firewall. With Firewall Manager, you set up your AWS WAF firewall rules, Shield Advanced
-protections, Amazon VPC security groups, and Network Firewall firewalls just once. The service
-automatically applies the rules and protections across your accounts and resources, even as you
-add new resources.
+AWS Firewall Manager simplifies your administration and maintenance tasks across multiple accounts and resources for AWS WAF, AWS Shield Advanced, Amazon VPC security groups, and AWS Network Firewall. With Firewall Manager, you set up your AWS WAF firewall rules, Shield Advanced protections, Amazon VPC security groups, and Network Firewall firewalls just once. The service automatically applies the rules and protections across your accounts and resources, even as you add new resources.
 
 Firewall Manager provides these benefits:
 * Helps to protect resources across accounts
@@ -1338,19 +1248,9 @@ Summary
 
 <a name="4_12_1"></a>
 ### [↖](#4_12)[↑](#4_12)[↓](#4_13) Overview
-Amazon Inspector is an automated security assessment service that helps improve the security and
-compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications
-for exposure, vulnerabilities, and deviations from best practices. After performing an assessment,
-Amazon Inspector produces a detailed list of security findings prioritized by level of severity.
-These findings can be reviewed directly or as part of detailed assessment reports which are
-available via the Amazon Inspector console or API.
+Amazon Inspector is an automated security assessment service that helps improve the security and compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications for exposure, vulnerabilities, and deviations from best practices. After performing an assessment, Amazon Inspector produces a detailed list of security findings prioritized by level of severity. These findings can be reviewed directly or as part of detailed assessment reports which are available via the Amazon Inspector console or API.
 
-Amazon Inspector security assessments help you check for unintended network accessibility of your
-Amazon EC2 instances and for vulnerabilities on those EC2 instances. Amazon Inspector assessments
-are offered to you as pre-defined rules packages mapped to common security best practices and
-vulnerability definitions. Examples of built-in rules include checking for access to your EC2
-instances from the internet, remote root login being enabled, or vulnerable software versions
-installed. These rules are regularly updated by AWS security researchers.
+Amazon Inspector security assessments help you check for unintended network accessibility of your Amazon EC2 instances and for vulnerabilities on those EC2 instances. Amazon Inspector assessments are offered to you as pre-defined rules packages mapped to common security best practices and vulnerability definitions. Examples of built-in rules include checking for access to your EC2 instances from the internet, remote root login being enabled, or vulnerable software versions installed. These rules are regularly updated by AWS security researchers.
 
 * **Network Assessments**
   * Does not require agent
@@ -1377,12 +1277,7 @@ installed. These rules are regularly updated by AWS security researchers.
 <a name="4_13_1"></a>
 ### [↖](#4_13)[↑](#4_13)[↓](#4_13_2) Overview
 *AWS Config* is a service that enables you to assess, audit, and evaluate the configurations of your
-AWS resources. Config continuously monitors and records your AWS resource configurations and
-allows you to automate the evaluation of recorded configurations against desired configurations.
-With Config, you can review changes in configurations and relationships between AWS resources,
-dive into detailed resource configuration histories, and determine your overall compliance against
-the configurations specified in your internal guidelines. This enables you to simplify compliance
-auditing, security analysis, change management, and operational troubleshooting.
+AWS resources. Config continuously monitors and records your AWS resource configurations and allows you to automate the evaluation of recorded configurations against desired configurations. With Config, you can review changes in configurations and relationships between AWS resources, dive into detailed resource configuration histories, and determine your overall compliance against the configurations specified in your internal guidelines. This enables you to simplify compliance auditing, security analysis, change management, and operational troubleshooting.
 
 * Evaluate your AWS resource configurations for desired settings.
 * Get a snapshot of the current configurations of the supported resources that are associated with your AWS account.
@@ -1448,18 +1343,7 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 
 <a name="4_15_1"></a>
 ### [↖](#4_15)[↑](#4_15)[↓](#5) Overview
-Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity
-and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the
-collection and aggregation of account and network activities is simplified, but it can be time
-consuming for security teams to continuously analyze event log data for potential threats. With
-GuardDuty, you now have an intelligent and cost-effective option for continuous threat detection
-in the AWS Cloud. The service uses machine learning, anomaly detection, and integrated threat
-intelligence to identify and prioritize potential threats. GuardDuty analyzes tens of billions of
-events across multiple AWS data sources, such as AWS CloudTrail, Amazon VPC Flow Logs, and DNS log.
-With a few clicks in the AWS Management Console, GuardDuty can be enabled with no software or
-hardware to deploy or maintain. By integrating with Amazon CloudWatch Events, GuardDuty alerts are
-actionable, easy to aggregate across multiple accounts, and straightforward to push into existing
-event management and workflow systems.
+Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the collection and aggregation of account and network activities is simplified, but it can be time consuming for security teams to continuously analyze event log data for potential threats. With GuardDuty, you now have an intelligent and cost-effective option for continuous threat detection in the AWS Cloud. The service uses machine learning, anomaly detection, and integrated threat intelligence to identify and prioritize potential threats. GuardDuty analyzes tens of billions of events across multiple AWS data sources, such as AWS CloudTrail, Amazon VPC Flow Logs, and DNS log. With a few clicks in the AWS Management Console, GuardDuty can be enabled with no software or hardware to deploy or maintain. By integrating with Amazon CloudWatch Events, GuardDuty alerts are actionable, easy to aggregate across multiple accounts, and straightforward to push into existing event management and workflow systems.
 
 * Analyses AWS CloudTrail, Amazon VPC Flow Logs, and DNS log
 * Integrates with CloudWatch Events
@@ -1516,17 +1400,7 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 <!-- toc_end -->
 <a name="5_2_1"></a>
 ### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
-Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute
-capacity in the cloud. It is designed to make web-scale cloud computing easier for developers.
-Amazon EC2’s simple web service interface allows you to obtain and configure capacity with minimal
-friction. It provides you with complete control of your computing resources and lets you run on
-Amazon’s proven computing environment.
-
-Amazon EC2 offers the broadest and deepest compute platform with choice of processor, storage,
-networking, operating system, and purchase model. We offer the fastest processors in the cloud and
-we are the only cloud with 400 Gbps ethernet networking. We have the most powerful GPU instances
-for machine learning training and graphics workloads, as well as the lowest cost-per-inference
-instances in the cloud.
+Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud. It is designed to make web-scale cloud computing easier for developers. Amazon EC2’s simple web service interface allows you to obtain and configure capacity with minimal friction. It provides you with complete control of your computing resources and lets you run on Amazon’s proven computing environment. Amazon EC2 offers the broadest and deepest compute platform with choice of processor, storage, networking, operating system, and purchase model. We offer the fastest processors in the cloud and we are the only cloud with 400 Gbps ethernet networking. We have the most powerful GPU instances for machine learning training and graphics workloads, as well as the lowest cost-per-inference instances in the cloud.
 
 * On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
 
@@ -1535,12 +1409,9 @@ instances in the cloud.
 * **On-demand instances**
 	* Pay for compute capacity by the hour, instance can be terminated by Amazon
 * **Reserved instances**
-	* Provide a significant discount compared to On-Demand pricing and provide a capacity reservation
-    when used in a specific Availability Zone
-  * Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a
-    certain usage)
-  * Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to
-    provision instances in that AZ
+	* Provide a significant discount compared to On-Demand pricing and provide a capacity reservation when used in a specific Availability Zone
+  * Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a certain usage)
+  * Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to provision instances in that AZ
   * Can resell reserved capacity on *Reserved Instance Marketplace*
 	* Can transfer between AZs
   * Types:
@@ -1640,12 +1511,7 @@ Metric|Effect
 
 <a name="5_2_6"></a>
 ### [↖](#5_2)[↑](#5_2_5)[↓](#5_3) EC2 Instance Recovery
-You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically
-recovers the instance if it becomes impaired due to an underlying hardware failure or a problem
-that requires AWS involvement to repair (`StatusCheckFailed_System`). Terminated instances cannot be recovered. A recovered
-instance is identical to the original instance, including the instance ID, private IP addresses,
-Elastic IP addresses, and all instance metadata. If the impaired instance is in a placement group,
-the recovered instance runs in the placement group.
+You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically recovers the instance if it becomes impaired due to an underlying hardware failure or a problem that requires AWS involvement to repair (`StatusCheckFailed_System`). Terminated instances cannot be recovered. A recovered instance is identical to the original instance, including the instance ID, private IP addresses, Elastic IP addresses, and all instance metadata. If the impaired instance is in a placement group, the recovered instance runs in the placement group.
 
 If your instance has a public IPv4 address, it retains the public IPv4 address after recovery.
 
@@ -1666,15 +1532,7 @@ If your instance has a public IPv4 address, it retains the public IPv4 address a
 
 <a name="5_3_1"></a>
 ### [↖](#5_3)[↑](#5_3)[↓](#5_3_2) Overview
-*Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances
-available to handle the load for your application. You create collections of EC2 instances, called
-*Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group,
-and Amazon EC2 Auto Scaling ensures that your group never goes below this size. You can specify
-the **maximum** number of instances in each Auto Scaling Group, and Amazon EC2 Auto Scaling ensures
-that your group never goes above this size. If you specify the **desired** capacity, either when you
-create the group or at any time thereafter, Amazon EC2 Auto Scaling ensures that your group has
-this many instances. If you specify **scaling policies**, then Amazon EC2 Auto Scaling can launch or
-terminate instances as demand on your application increases or decreases.
+*Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances available to handle the load for your application. You create collections of EC2 instances, called *Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group, and Amazon EC2 Auto Scaling ensures that your group never goes below this size. You can specify the **maximum** number of instances in each Auto Scaling Group, and Amazon EC2 Auto Scaling ensures that your group never goes above this size. If you specify the **desired** capacity, either when you create the group or at any time thereafter, Amazon EC2 Auto Scaling ensures that your group has this many instances. If you specify **scaling policies**, then Amazon EC2 Auto Scaling can launch or terminate instances as demand on your application increases or decreases.
 
 * *Spot Fleet* support (mix on Spot and On-Demand instances)
   * Also configure ratio between these instance options
@@ -1746,9 +1604,7 @@ terminate instances as demand on your application increases or decreases.
 
 <a name="5_3_2_5"></a>
 #### [↖](#5_3)[↑](#5_3_2_4)[↓](#5_3_2_6) Scaling Processes
-You can suspend and then resume one or more of the scaling processes for your Auto Scaling Group.
-This can be useful for investigating a configuration problem or other issues with your web
-application and making changes to your application without invoking the scaling processes.
+You can suspend and then resume one or more of the scaling processes for your Auto Scaling Group. This can be useful for investigating a configuration problem or other issues with your web application and making changes to your application without invoking the scaling processes.
 
 Process|Impact|On Suspension
 -|-|-
@@ -1786,12 +1642,7 @@ Process|Impact|On Suspension
 <!-- toc_end -->
 <a name="5_4_1"></a>
 ### [↖](#5_4)[↑](#5_4)[↓](#5_4_1_1) Overview
-*Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management
-service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host
-your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your
-services or tasks using the Fargate launch type. For more control you can host your tasks on a
-cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2
-launch type.
+*Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your services or tasks using the Fargate launch type. For more control you can host your tasks on a cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2 launch type.
 
 * On AWS: <a href="https://aws.amazon.com/ecs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ecs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ecs/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2019/CI-CD-with-Fargate-ECS/CI-CD-with-Fargate-ECS.jpg" target="_blank">AWS Geek 2020</a>
@@ -1870,8 +1721,7 @@ launch type.
   * Can mark container as *essential* - if that container fails or stops for any reason, all other containers that are part of the task are stopped
 * **Task**
   * A *task* is the instantiation of a *task definition* within a cluster
-  * If a task should fail or stop, the ECS scheduler launches another instance of the task
-    definition to replace it and to maintain the desired count of tasks in service
+  * If a task should fail or stop, the ECS scheduler launches another instance of the task definition to replace it and to maintain the desired count of tasks in service
   * Static host port mapping: Only one task per container instance allowed, e.g. mapping host port 80 to container port
   * Dynamic host port mapping: Uses randomized host ports, can work together with ALB to run multiple task instances per container instance
   * Tasks can have individual IAM roles
@@ -1924,18 +1774,9 @@ Use Cases:
 <!-- toc_end -->
 <a name="5_5_1"></a>
 ### [↖](#5_5)[↑](#5_5)[↓](#5_6) Overview
-AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic
-Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate makes it easy for you
-to focus on building your applications. Fargate removes the need to provision and manage servers,
-lets you specify and pay for resources per application, and improves security through application
-isolation by design.
+AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate makes it easy for you to focus on building your applications. Fargate removes the need to provision and manage servers, lets you specify and pay for resources per application, and improves security through application isolation by design.
 
-Fargate allocates the right amount of compute, eliminating the need to choose instances and scale
-cluster capacity. You only pay for the resources required to run your containers, so there is no
-over-provisioning and paying for additional servers. Fargate runs each task or pod in its own
-kernel providing the tasks and pods their own isolated compute environment. This enables your
-application to have workload isolation and improved security by design. This is why customers such
-as Vanguard, Accenture, Foursquare, and Ancestry have chosen to run their mission critical applications on Fargate.
+Fargate allocates the right amount of compute, eliminating the need to choose instances and scale cluster capacity. You only pay for the resources required to run your containers, so there is no over-provisioning and paying for additional servers. Fargate runs each task or pod in its own kernel providing the tasks and pods their own isolated compute environment. This enables your application to have workload isolation and improved security by design. This is why customers such as Vanguard, Accenture, Foursquare, and Ancestry have chosen to run their mission critical applications on Fargate.
 
 * Don't need to provision cluster
   * Does not need EC2 instance roles to create cluster
@@ -1963,12 +1804,7 @@ as Vanguard, Accenture, Foursquare, and Ancestry have chosen to run their missio
 <!-- toc_end -->
 <a name="5_6_1"></a>
 ### [↖](#5_6)[↑](#5_6)[↓](#5_6_2) Overview
-*AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the
-compute time you consume - there is no charge when your code is not running. With Lambda, you can
-run code for virtually any type of application or backend service - all with zero administration.
-Just upload your code and Lambda takes care of everything required to run and scale your code with
-high availability. You can set up your code to automatically trigger from other AWS services or
-call it directly from any web or mobile app.
+*AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the compute time you consume - there is no charge when your code is not running. With Lambda, you can run code for virtually any type of application or backend service - all with zero administration. Just upload your code and Lambda takes care of everything required to run and scale your code with high availability. You can set up your code to automatically trigger from other AWS services or call it directly from any web or mobile app.
 
 * Features
   * No servers
@@ -1999,8 +1835,7 @@ call it directly from any web or mobile app.
 <a name="5_6_3_1"></a>
 #### [↖](#5_6)[↑](#5_6_3)[↓](#5_6_3_2) Versions
 * If you work on a Lambda function, you work on `$LATEST`
-* The system creates a new version of your Lambda function each time that you *publish* the function.
-  The new version is a copy of the *unpublished* version of the function.
+* The system creates a new version of your Lambda function each time that you *publish* the function. The new version is a copy of the *unpublished* version of the function.
 * Version is code *and* configuration
 * Versions are immutable, you can change the function code and settings (including environment variables) only on the unpublished version of a function.
 * Each version gets its own ARN
@@ -2050,16 +1885,11 @@ call it directly from any web or mobile app.
   * -> API Gateway, ALB, Cognito, Lex, Alexa, CloudFront (Lambda@Edge), Kinesis Data Firehose
 * When you invoke a function **asynchronously**, Lambda sends the event to a queue. A separate
 process reads events from the queue and runs your function.
-  * Lambda manages the function's asynchronous invocation queue and attempts to retry failed
-  events automatically. If the function returns an error, Lambda attempts to run it two more times
+  * Lambda manages the function's asynchronous invocation queue and attempts to retry failed events automatically. If the function returns an error, Lambda attempts to run it two more times
   * For retries, Lambda needs to be idempotent
   * You can also configure Lambda to send an invocation record to another service.
     * Lambda supports the following **destinations** for asynchronous invocation recordings: SQS, SNS, AWS Lambda, EventBridge
-    * The invocation record contains details about the request and response in JSON format. You can
-      configure separate destinations for events that are processed successfully, and events that fail
-      all processing attempts. Alternatively, you can configure an SQS queue or SNS topic as a dead
-      letter queue for discarded events. For dead-letter queues, Lambda only sends the content of the
-      event, without details about the response.
+    * The invocation record contains details about the request and response in JSON format. You can configure separate destinations for events that are processed successfully, and events that fail all processing attempts. Alternatively, you can configure an SQS queue or SNS topic as a dead letter queue for discarded events. For dead-letter queues, Lambda only sends the content of the event, without details about the response.
   * When all attempts to process an asynchronous invocation fail, Lambda can send the event to an Amazon SQS queue or an Amazon SNS topic (DLQ).
     * Less information than *destinations*, not recommended any more by AWS
   * -> S3, SNS, SES, CloudFormation, CloudWatch Logs & Events, CodeCommit, Config
@@ -2102,8 +1932,7 @@ its handler method to process the event.
   * Enable in Lambda configuration (runs the X-Ray daemon for you)
   * Use AWS SDK in Code
   * Ensure Lambda Function has correct IAM Execution Role
-* AWS Lambda automatically monitors Lambda functions on your behalf and reports metrics through
-  Amazon CloudWatch. To help you monitor your code as it executes, Lambda automatically tracks the
+* AWS Lambda automatically monitors Lambda functions on your behalf and reports metrics through Amazon CloudWatch. To help you monitor your code as it executes, Lambda automatically tracks the
   *number of requests*, the *execution duration per request*, and the *number of requests that result in an error*.
 * It also publishes the associated CloudWatch metrics.
 * Need *custom metric* for memory usage
@@ -2152,12 +1981,7 @@ CloudFront invocation|100 ms
 
 <a name="5_7_1"></a>
 ### [↖](#5_7)[↑](#5_7)[↓](#5_7_2) Overview
-Elastic Load Balancing automatically distributes incoming application traffic across multiple
-targets, such as Amazon EC2 instances, containers, IP addresses, Lambda functions, and virtual
-appliances. It can handle the varying load of your application traffic in a single Availability
-Zone or across multiple Availability Zones. Elastic Load Balancing offers four types of load
-balancers that all feature the high availability, automatic scaling, and robust security necessary
-to make your applications fault tolerant.
+Elastic Load Balancing automatically distributes incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, Lambda functions, and virtual appliances. It can handle the varying load of your application traffic in a single Availability Zone or across multiple Availability Zones. Elastic Load Balancing offers four types of load balancers that all feature the high availability, automatic scaling, and robust security necessary to make your applications fault tolerant.
 
 * <a href="https://aws.amazon.com/elasticloadbalancing/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticloadbalancing/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticloadbalancing/" target="_blank">User Guide</a>
 
@@ -2203,14 +2027,7 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
 ### [↖](#5_7)[↑](#5_7_2)[↓](#5_7_3_1) ALB
 <a name="5_7_3_1"></a>
 #### [↖](#5_7)[↑](#5_7_3)[↓](#5_7_3_2) Overview
-An Application Load Balancer functions at the application layer, the seventh layer of the Open
-Systems Interconnection (OSI) model. After the load balancer receives a request, it evaluates the
-listener rules in priority order to determine which rule to apply, and then selects a target from
-the target group for the rule action. You can configure listener rules to route requests to
-different target groups based on the content of the application traffic. Routing is performed
-independently for each target group, even when a target is registered with multiple target groups.
-You can configure the routing algorithm used at the target group level. The default routing
-algorithm is round robin; alternatively, you can specify the least outstanding requests routing algorithm.
+An Application Load Balancer functions at the application layer, the seventh layer of the Open Systems Interconnection (OSI) model. After the load balancer receives a request, it evaluates the listener rules in priority order to determine which rule to apply, and then selects a target from the target group for the rule action. You can configure listener rules to route requests to different target groups based on the content of the application traffic. Routing is performed independently for each target group, even when a target is registered with multiple target groups. You can configure the routing algorithm used at the target group level. The default routing algorithm is round robin; alternatively, you can specify the least outstanding requests routing algorithm.
 
 * Application load balancers is Layer 7 (HTTP)
 * Load balancing to multiple HTTP applications *across machines*
@@ -2249,16 +2066,7 @@ algorithm is round robin; alternatively, you can specify the least outstanding r
 ### [↖](#5_7)[↑](#5_7_3_4)[↓](#5_7_4_1) NLB
 <a name="5_7_4_1"></a>
 #### [↖](#5_7)[↑](#5_7_4)[↓](#5_7_4_2) Overview
-A Network Load Balancer functions at the fourth layer of the Open Systems Interconnection (OSI)
-model. It can handle millions of requests per second. After the load balancer receives a
-connection request, it selects a target from the target group for the default rule. It attempts to
-open a TCP connection to the selected target on the port specified in the listener configuration.
-
-When you enable an Availability Zone for the load balancer, Elastic Load Balancing creates a load
-balancer node in the Availability Zone. By default, each load balancer node distributes traffic
-across the registered targets in its Availability Zone only. If you enable cross-zone load
-balancing, each load balancer node distributes traffic across the registered targets in all
-enabled Availability Zones.
+A Network Load Balancer functions at the fourth layer of the Open Systems Interconnection (OSI) model. It can handle millions of requests per second. After the load balancer receives a connection request, it selects a target from the target group for the default rule. It attempts to open a TCP connection to the selected target on the port specified in the listener configuration. When you enable an Availability Zone for the load balancer, Elastic Load Balancing creates a load balancer node in the Availability Zone. By default, each load balancer node distributes traffic across the registered targets in its Availability Zone only. If you enable cross-zone load balancing, each load balancer node distributes traffic across the registered targets in all enabled Availability Zones.
 
 * Network load balancers (Layer 4) allow to do:
   * Forward TCP and/or UDP traffic to your instances
@@ -2274,32 +2082,16 @@ enabled Availability Zones.
 
 <a name="5_7_4_2"></a>
 #### [↖](#5_7)[↑](#5_7_4_1)[↓](#5_7_4_3) Target Groups
-Each target group is used to route requests to one or more registered targets. When you create a
-listener, you specify a target group for its default action. Traffic is forwarded to the target
-group specified in the listener rule. You can create different target groups for different types
-of requests. For example, create one target group for general requests and other target groups for
-requests to the microservices for your application.
+Each target group is used to route requests to one or more registered targets. When you create a listener, you specify a target group for its default action. Traffic is forwarded to the target group specified in the listener rule. You can create different target groups for different types of requests. For example, create one target group for general requests and other target groups for requests to the microservices for your application.
 
-You define health check settings for your load balancer on a per target group basis. Each target
-group uses the default health check settings, unless you override them when you create the target
-group or modify them later on. After you specify a target group in a rule for a listener, the load
-balancer continually monitors the health of all targets registered with the target group that are
-in an Availability Zone enabled for the load balancer. The load balancer routes requests to the
-registered targets that are healthy.
+You define health check settings for your load balancer on a per target group basis. Each target group uses the default health check settings, unless you override them when you create the target group or modify them later on. After you specify a target group in a rule for a listener, the load balancer continually monitors the health of all targets registered with the target group that are in an Availability Zone enabled for the load balancer. The load balancer routes requests to the registered targets that are healthy.
 * EC2 instances (can be managed by an ASG) – TCP
 * ECS tasks (managed by ECS itself) – TCP
 * IP addresses – Private IP only, even outside your VPC
 
 <a name="5_7_4_3"></a>
 #### [↖](#5_7)[↑](#5_7_4_2)[↓](#5_7_5) Proxy protocol
-Network Load Balancers use proxy protocol version 2 to send additional connection information such
-as the source and destination. Proxy protocol version 2 provides a binary encoding of the proxy
-protocol header. The load balancer prepends a proxy protocol header to the TCP data. It does not
-discard or overwrite any existing data, including any proxy protocol headers sent by the client or
-any other proxies, load balancers, or servers in the network path. Therefore, it is possible to
-receive more than one proxy protocol header. Also, if there is another network path to your
-targets outside of your Network Load Balancer, the first proxy protocol header might not be the
-one from your Network Load Balancer.
+Network Load Balancers use proxy protocol version 2 to send additional connection information such as the source and destination. Proxy protocol version 2 provides a binary encoding of the proxy protocol header. The load balancer prepends a proxy protocol header to the TCP data. It does not discard or overwrite any existing data, including any proxy protocol headers sent by the client or any other proxies, load balancers, or servers in the network path. Therefore, it is possible to receive more than one proxy protocol header. Also, if there is another network path to your targets outside of your Network Load Balancer, the first proxy protocol header might not be the one from your Network Load Balancer.
 * Send additional connection information such as the source and destination
 * The load balancer prepends a proxy protocol header to the TCP data
 * Helpful when you have the “IP addresses” target group type
@@ -2351,12 +2143,7 @@ NLB|Disabled|Charges for inter-AZ data
 
 <a name="5_8_1"></a>
 ### [↖](#5_8)[↑](#5_8)[↓](#5_8_1_1) Overview
-*Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish,
-maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console,
-you can create *REST* and *WebSocket* APIs that act as a “front door” for applications to access data,
-business logic, or functionality from your backend services, such as workloads running on Amazon
-Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time
-communication applications.
+*Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console, you can create *REST* and *WebSocket* APIs that act as a “front door” for applications to access data, business logic, or functionality from your backend services, such as workloads running on Amazon Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time communication applications.
 
 * **Benefits**
   * **RESTful** (stateless) or **Websocket** (stateful) APIs
@@ -2387,8 +2174,7 @@ Max payload size|10 MB
 
 <a name="5_8_2_1"></a>
 #### [↖](#5_8)[↑](#5_8_2)[↓](#5_8_2_2) Endpoint
-A hostname for an API in API Gateway that is deployed to a specific region. The hostname is of the
-form `{api-id}.execute-api.{region}.amazonaws.com`.
+A hostname for an API in API Gateway that is deployed to a specific region. The hostname is of the form `{api-id}.execute-api.{region}.amazonaws.com`.
 
 The following types of API endpoints are supported:
 * *Regional* - deployed to the specified region and intended to serve clients in the same AWS region.
@@ -2414,9 +2200,7 @@ A logical reference to a lifecycle state of your REST or WebSocket API (for exam
 
 <a name="5_8_2_3"></a>
 #### [↖](#5_8)[↑](#5_8_2_2)[↓](#5_8_2_4) Deployment
-After creating your API, you *must* deploy it to make it callable by your users. To deploy an API,
-you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API
-and is made available for client apps to call.
+After creating your API, you *must* deploy it to make it callable by your users. To deploy an API, you create an *API deployment* and associate it with a *stage*. Each stage is a snapshot of the API and is made available for client apps to call.
 
 <a name="5_8_2_4"></a>
 #### [↖](#5_8)[↑](#5_8_2_3)[↓](#5_8_2_5) Canary Deployments
@@ -2438,10 +2222,7 @@ and is made available for client apps to call.
   * Can transform request as well as response
   * Allows to evolve the API while keeping Lambda function static
 * *Any service*
-  * **All** AWS services support dedicated APIs to expose their features. However, the application
-  protocols or programming interfaces are likely to differ from service to service. An API Gateway
-  API with the AWS integration has the advantage of providing a consistent application protocol
-  for your client to access different AWS services.
+  * **All** AWS services support dedicated APIs to expose their features. However, the application protocols or programming interfaces are likely to differ from service to service. An API Gateway API with the AWS integration has the advantage of providing a consistent application protocol for your client to access different AWS services.
 
 <a name="5_8_2_6"></a>
 #### [↖](#5_8)[↑](#5_8_2_5)[↓](#5_8_2_7) Mapping Template
@@ -2542,20 +2323,13 @@ Client-side|Server-side|.
 <!-- toc_end -->
 <a name="5_9_1"></a>
 ### [↖](#5_9)[↑](#5_9)[↓](#5_9_1_1) Overview
-Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can
-use Route 53 to perform three main functions in any combination: domain registration, DNS routing,
-and health checking. If you choose to use Route 53 for all three functions, perform the steps in this order:
+Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web service. You can use Route 53 to perform three main functions in any combination: domain registration, DNS routing, and health checking. If you choose to use Route 53 for all three functions, perform the steps in this order:
 * Register domain names
-  * Your website needs a name, such as example.com. Route 53 lets you register a name for your
-    website or web application, known as a domain name.
+  * Your website needs a name, such as example.com. Route 53 lets you register a name for your website or web application, known as a domain name.
 * Route internet traffic to the resources for your domain
-  * When a user opens a web browser and enters your domain name (example.com) or subdomain name
-    acme.example.com) in the address bar, Route 53 helps connect the browser with your website or web application
+  * When a user opens a web browser and enters your domain name (example.com) or subdomain name acme.example.com) in the address bar, Route 53 helps connect the browser with your website or web application
 * Check the health of your resources
-  * Route 53 sends automated requests over the internet to a resource, such as a web server, to
-    verify that it's reachable, available, and functional. You also can choose to receive
-    notifications when a resource becomes unavailable and choose to route internet traffic away
-    from unhealthy resources.
+  * Route 53 sends automated requests over the internet to a resource, such as a web server, to verify that it's reachable, available, and functional. You also can choose to receive notifications when a resource becomes unavailable and choose to route internet traffic away from unhealthy resources.
 * Private DNS:
   * Can use Route 53 for internal private DNS
   * Must enable the VPC settings enableDnsHostNames and enableDnsSupport
@@ -2599,13 +2373,8 @@ Type|Definition|Example
 
 Route 53 specific:
 * **Alias** record
-  * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality.
-  Alias records let you route traffic to selected AWS resources, such as CloudFront distributions
-  and Amazon S3 bucket. They also let you route traffic from one record in a hosted zone to another record.
-  * Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also
-  known as the *zone apex*. For example, if you register the DNS name example.com, the zone apex is
-  example.com. You can't create a CNAME record for example.com, but you can create an alias record
-  for example.com that routes traffic to www.example.com
+  * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality. Alias records let you route traffic to selected AWS resources, such as CloudFront distributions and Amazon S3 bucket. They also let you route traffic from one record in a hosted zone to another record.
+  * Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also known as the *zone apex*. For example, if you register the DNS name example.com, the zone apex is example.com. You can't create a CNAME record for example.com, but you can create an alias record for example.com that routes traffic to www.example.com
   * Preferred choice over CNAME (TODO: why?)
 
 <a name="5_9_2_3"></a>
@@ -2628,29 +2397,16 @@ Route 53 specific:
     * Setup *secondary* route with optional health check
       * Good for disaster recovery
     * Can set up *health checks* for endpoints or domains from within *Route 53*
-      * Route 53 has health checkers in locations around the world. When you create a health check that
-        monitors an endpoint, health checkers start to send requests to the endpoint that you specify
-        to determine whether the endpoint is healthy.
+      * Route 53 has health checkers in locations around the world. When you create a health check that monitors an endpoint, health checkers start to send requests to the endpoint that you specify to determine whether the endpoint is healthy.
       * `evaluate target health`
-    * DNS entries are then being associated with health checks and can be configured to failover as
-      well (1 primary and n secondary recordsets)
+    * DNS entries are then being associated with health checks and can be configured to failover as well (1 primary and n secondary recordsets)
   * **Geo location**
-    * Geolocation routing lets you choose the resources that serve your traffic based on the geographic
-      location of your users, meaning the location that DNS queries originate from. For example, you
-      might want all queries from Europe to be routed to an ELB load balancer in the Frankfurt region.
+    * Geolocation routing lets you choose the resources that serve your traffic based on the geographic location of your users, meaning the location that DNS queries originate from. For example, you might want all queries from Europe to be routed to an ELB load balancer in the Frankfurt region.
     * Should create a “default” policy (in case there’s no match on location)
   * **Geo proximity Routing (Traffic Flow Only)**
-    * Geoproximity routing lets Amazon Route 53 route traffic to your resources based on the geographic
-      location of your users and your resources. You can also optionally choose to route more traffic or
-      less to a given resource by specifying a value, known as a bias. A bias expands or shrinks the
-      size of the geographic region from which traffic is routed to a resource.
+    * Geoproximity routing lets Amazon Route 53 route traffic to your resources based on the geographic location of your users and your resources. You can also optionally choose to route more traffic or less to a given resource by specifying a value, known as a bias. A bias expands or shrinks the size of the geographic region from which traffic is routed to a resource.
   * **Multivalue Answer Routing**
-    * Multivalue answer routing lets you configure Amazon Route 53 to return multiple values, such as
-      IP addresses for your web servers, in response to DNS queries. You can specify multiple values for
-      almost any record, but multivalue answer routing also lets you check the health of each resource,
-      so Route 53 returns only values for healthy resources. It's not a substitute for a load balancer,
-      but the ability to return multiple health-checkable IP addresses is a way to use DNS to improve
-      availability and load balancing.
+    * Multivalue answer routing lets you configure Amazon Route 53 to return multiple values, such as IP addresses for your web servers, in response to DNS queries. You can specify multiple values for almost any record, but multivalue answer routing also lets you check the health of each resource, so Route 53 returns only values for healthy resources. It's not a substitute for a load balancer, but the ability to return multiple health-checkable IP addresses is a way to use DNS to improve availability and load balancing.
   * **Complex/Nested records**
     * Can combine different routing policies by routing to alias records that point to route 53 again.
       * E.g. can use *latency* policy to route into certain region
@@ -2800,21 +2556,11 @@ Options:
 
 <a name="6_1_1"></a>
 ### [↖](#6_1)[↑](#6_1)[↓](#6_1_2) Overview
-Amazon Elastic Block Store (EBS) is an easy to use, high-performance, block-storage service
-designed for use with Amazon Elastic Compute Cloud (EC2) for both throughput and transaction
-intensive workloads at any scale. A broad range of workloads, such as relational and non-relational
-databases, enterprise applications, containerized applications, big data analytics engines, file
-systems, and media workflows are widely deployed on Amazon EBS.
+Amazon Elastic Block Store (EBS) is an easy to use, high-performance, block-storage service designed for use with Amazon Elastic Compute Cloud (EC2) for both throughput and transaction intensive workloads at any scale. A broad range of workloads, such as relational and non-relational databases, enterprise applications, containerized applications, big data analytics engines, file systems, and media workflows are widely deployed on Amazon EBS.
 
-You can choose from six different volume types to balance optimal price and performance. You can
-achieve single-digit-millisecond latency for high-performance database workloads such as SAP HANA
-or gigabyte per second throughput for large, sequential workloads such as Hadoop. You can change
-volume types, tune performance, or increase volume size without disrupting your critical
-applications, so you have cost-effective storage when you need it.
+You can choose from six different volume types to balance optimal price and performance. You can achieve single-digit-millisecond latency for high-performance database workloads such as SAP HANA or gigabyte per second throughput for large, sequential workloads such as Hadoop. You can change volume types, tune performance, or increase volume size without disrupting your critical applications, so you have cost-effective storage when you need it.
 
-Designed for mission-critical systems, EBS volumes are replicated within an Availability Zone (AZ)
-and can easily scale to petabytes of data. Also, you can use EBS Snapshots with automated
-lifecycle policies to back up your volumes in Amazon S3, while ensuring geographic protection of your data and business continuity.
+Designed for mission-critical systems, EBS volumes are replicated within an Availability Zone (AZ) and can easily scale to petabytes of data. Also, you can use EBS Snapshots with automated lifecycle policies to back up your volumes in Amazon S3, while ensuring geographic protection of your data and business continuity.
 
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
@@ -2910,33 +2656,17 @@ lifecycle policies to back up your volumes in Amazon S3, while ensuring geograph
 <!-- toc_end -->
 <a name="6_3_1"></a>
 ### [↖](#6_3)[↑](#6_3)[↓](#6_3_2) Overview
-Amazon Elastic File System (Amazon EFS) provides a simple, scalable, fully managed elastic NFS
-file system for use with AWS Cloud services and on-premises resources. It is built to scale on
-demand to petabytes without disrupting applications, growing and shrinking automatically as you
-add and remove files, eliminating the need to provision and manage capacity to accommodate growth.
+Amazon Elastic File System (Amazon EFS) provides a simple, scalable, fully managed elastic NFS file system for use with AWS Cloud services and on-premises resources. It is built to scale on demand to petabytes without disrupting applications, growing and shrinking automatically as you add and remove files, eliminating the need to provision and manage capacity to accommodate growth.
 
-Amazon EFS offers two storage classes: the Standard storage class, and the Infrequent Access
-storage class (EFS IA). EFS IA provides price/performance that's cost-optimized for files not
-accessed every day. By simply enabling EFS Lifecycle Management on your file system, files not
-accessed according to the lifecycle policy you choose will be automatically and transparently
-moved into EFS IA. The EFS IA storage class costs only $0.025/GB-month*.
+Amazon EFS offers two storage classes: the Standard storage class, and the Infrequent Access storage class (EFS IA). EFS IA provides price/performance that's cost-optimized for files not accessed every day. By simply enabling EFS Lifecycle Management on your file system, files not accessed according to the lifecycle policy you choose will be automatically and transparently moved into EFS IA. The EFS IA storage class costs only $0.025/GB-month*.
 
-While workload patterns vary, customers typically find that 80% of files are infrequently accessed
-(and suitable for EFS IA), and 20% are actively used (suitable for EFS Standard), resulting in an
-effective storage cost as low as $0.08/GB-month*. Amazon EFS transparently serves files from both
-storage classes in a common file system namespace.
+While workload patterns vary, customers typically find that 80% of files are infrequently accessed (and suitable for EFS IA), and 20% are actively used (suitable for EFS Standard), resulting in an effective storage cost as low as $0.08/GB-month*. Amazon EFS transparently serves files from both storage classes in a common file system namespace.
 
-Amazon EFS is designed to provide massively parallel shared access to thousands of Amazon EC2
-instances, enabling your applications to achieve high levels of aggregate throughput and IOPS with consistent low latencies.
+Amazon EFS is designed to provide massively parallel shared access to thousands of Amazon EC2 instances, enabling your applications to achieve high levels of aggregate throughput and IOPS with consistent low latencies.
 
-Amazon EFS is well suited to support a broad spectrum of use cases from home directories to
-business-critical applications. Customers can use EFS to lift-and-shift existing enterprise
-applications to the AWS Cloud. Other use cases include: big data analytics, web serving and
-content management, application development and testing, media and entertainment workflows, database backups, and container storage.
+Amazon EFS is well suited to support a broad spectrum of use cases from home directories to business-critical applications. Customers can use EFS to lift-and-shift existing enterprise applications to the AWS Cloud. Other use cases include: big data analytics, web serving and content management, application development and testing, media and entertainment workflows, database backups, and container storage.
 
-Amazon EFS is a regional service storing data within and across multiple Availability Zones (AZs)
-for high availability and durability. Amazon EC2 instances can access your file system across AZs,
-regions, and VPCs, while on-premises servers can access using AWS Direct Connect or AWS VPN.
+Amazon EFS is a regional service storing data within and across multiple Availability Zones (AZs) for high availability and durability. Amazon EC2 instances can access your file system across AZs, regions, and VPCs, while on-premises servers can access using AWS Direct Connect or AWS VPN.
 
 * Managed NFS (network file system) that can be mounted on many EC2
 * EFS works with EC2 instances in multi-AZ, & on–premises (via Direct Connect or Site-To-Site VPN)
@@ -2998,9 +2728,7 @@ regions, and VPCs, while on-premises servers can access using AWS Direct Connect
 
 <a name="6_4_1"></a>
 ### [↖](#6_4)[↑](#6_4)[↓](#6_4_2) Overview
-Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and
-retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and
-scale past trillions of objects worldwide.
+Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and scale past trillions of objects worldwide.
 
 * **Key**-**value** storage (folder-like structure is only a UI representation)
 * **Bucket** size is unlimited. Objects from 0B to 5TB.
@@ -3063,10 +2791,8 @@ scale past trillions of objects worldwide.
 		* Older versions (pre-delete) can still be requested.
 		* Restore old version by deleting the new version or by copying the old version on top of the bucket.
 	* `DELETE` (with a version) permanently deletes that version.
-	* If versioning is *suspendend*, S3 automatically adds a `null` version ID to every subsequent
-    object stored thereafter
-* *Lifecycle Management policies* can automatically handle old versions, e.g. permanently delete or
-  move to *AWS Glacier*.
+	* If versioning is *suspendend*, S3 automatically adds a `null` version ID to every subsequent object stored thereafter
+* *Lifecycle Management policies* can automatically handle old versions, e.g. permanently delete or move to *AWS Glacier*.
 * Different versions of the same object can have different permissions.
 * Can enable *MFA delete* for an extra layer of security.
 * Versioning integrates with lifecycle rules.
@@ -3082,8 +2808,7 @@ scale past trillions of objects worldwide.
 
 <a name="6_4_2_4"></a>
 #### [↖](#6_4)[↑](#6_4_2_3)[↓](#6_4_2_5) Logging
-* *AWS CloudTrail* logs S3-API calls for *bucket-level* operations (and many other information) and
-  stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for specific events.
+* *AWS CloudTrail* logs S3-API calls for *bucket-level* operations (and many other information) and stores them in an S3 bucket. Could also send email notifications or trigger *SNS* notifications for specific events.
 * You can also get *AWS CloudTrail* logs for *object-level* Amazon S3 actions. To do this, enable data events for your S3 bucket or all buckets in your account.
 * *S3 Server Access Logs* log on *object-level*.
   * Provide detailed records for the requests that are made to a bucket
@@ -3104,9 +2829,7 @@ scale past trillions of objects worldwide.
   * recommended for files > 100MB, must use for files > 5GB
   * Can help parallelize uploads (speed up transfers)
 * **Transfer Acceleration**
-  * *Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers (upload & download) of files over long distances
-  between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally
-  distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an optimized network path.
+  * *Amazon S3 Transfer Acceleration* enables fast, easy, and secure transfers (upload & download) of files over long distances between your client and an S3 bucket. Transfer Acceleration takes advantage of Amazon CloudFront’s globally distributed edge locations. As the data arrives at an edge location, data is routed to Amazon S3 over an optimized network path.
   * File upload/downloads through an Edge location via a dedicated CloudFront endpoint
   * Compatible with multi-part upload
 * **S3 Byte-Range Fetches**
@@ -3122,10 +2845,7 @@ scale past trillions of objects worldwide.
 
 <a name="6_4_2_6"></a>
 #### [↖](#6_4)[↑](#6_4_2_5)[↓](#6_4_2_7) Cross Region Replication/Same Region Replication
-Replication enables automatic, asynchronous copying of objects across Amazon S3 buckets. Buckets
-that are configured for object replication can be owned by the same AWS account or by different
-accounts. Object may be replicated to a single destination bucket or multiple destination buckets.
-Destination buckets can be in different AWS Regions or within the same Region as the source bucket.
+Replication enables automatic, asynchronous copying of objects across Amazon S3 buckets. Buckets that are configured for object replication can be owned by the same AWS account or by different accounts. Object may be replicated to a single destination bucket or multiple destination buckets. Destination buckets can be in different AWS Regions or within the same Region as the source bucket.
 
 * Use cases
   * Reduce latency
@@ -3215,9 +2935,7 @@ bucket.
 `arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
 <a name="6_4_4"></a>
 ### [↖](#6_4)[↑](#6_4_3_5)[↓](#6_4_5) Pre-signed URLs
-All objects are private by default. Only the object owner has permission to access these objects.
-However, the object owner can optionally share objects with others by creating a **pre-signed URL**,
-using their own security credentials, to grant time-limited permission to download the objects.
+All objects are private by default. Only the object owner has permission to access these objects. However, the object owner can optionally share objects with others by creating a **pre-signed URL**, using their own security credentials, to grant time-limited permission to download the objects.
 
 <a name="6_4_5"></a>
 ### [↖](#6_4)[↑](#6_4_4)[↓](#6_4_5_1) Encryption
@@ -3340,24 +3058,14 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 <!-- toc_end -->
 <a name="7_1_1"></a>
 ### [↖](#7_1)[↑](#7_1)[↓](#7_1_2) Overview
-Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web
-content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your
-content through a worldwide network of data centers called edge locations. When a user requests
-content that you're serving with CloudFront, the request is routed to the edge location that
-provides the lowest latency (time delay), so that content is delivered with the best possible performance.
+Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your content through a worldwide network of data centers called edge locations. When a user requests content that you're serving with CloudFront, the request is routed to the edge location that provides the lowest latency (time delay), so that content is delivered with the best possible performance.
 
 * If the content is already in the edge location with the lowest latency, CloudFront delivers it immediately.
 * If the content is not in that edge location, CloudFront retrieves it from an origin that you've defined—such as an Amazon S3 bucket, a MediaPackage channel, or an HTTP server (for example, a web server) that you have identified as the source for the definitive version of your content.
 
-CloudFront speeds up the distribution of your content by routing each user request through the AWS
-backbone network to the edge location that can best serve your content. Typically, this is a
-CloudFront edge server that provides the fastest delivery to the viewer. Using the AWS network
-dramatically reduces the number of networks that your users' requests must pass through, which
-improves performance. Users get lower latency—the time it takes to load the first byte of the file
-and higher data transfer rates.
+CloudFront speeds up the distribution of your content by routing each user request through the AWS backbone network to the edge location that can best serve your content. Typically, this is a CloudFront edge server that provides the fastest delivery to the viewer. Using the AWS network dramatically reduces the number of networks that your users' requests must pass through, which improves performance. Users get lower latency—the time it takes to load the first byte of the file and higher data transfer rates.
 
-You also get increased reliability and availability because copies of your files (also known as
-objects) are now held (or cached) in multiple edge locations around the world.
+You also get increased reliability and availability because copies of your files (also known as objects) are now held (or cached) in multiple edge locations around the world.
 * Content Delivery Network (CDN)
 * Improves read performance, content is cached at the edge
 * 225 Point of Presence globally (edge locations)
@@ -3450,12 +3158,7 @@ Can leverage caching features|.
 
 <a name="7_1_7_1"></a>
 #### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8) CloudFront Caching vs API Gateway Caching
-API Gateway now has two different kinds of endpoints. The original design is now called *edge
-optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services
-from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region.
-All existing endpoints were categorized as edge-optimized when the new regional capability was
-rolled out. With a regional endpoint, the CloudFront-* headers are not present in the request,
-unless you use your own CloudFront distribution and whitelist those headers for forwarding to the origin.
+API Gateway now has two different kinds of endpoints. The original design is now called *edge optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region. All existing endpoints were categorized as edge-optimized when the new regional capability was rolled out. With a regional endpoint, the CloudFront-* headers are not present in the request, unless you use your own CloudFront distribution and whitelist those headers for forwarding to the origin.
 
 * Can deploy API Gateway in *regional mode* (comes with its own cache), *and* deploy a CloudFront distribution at the edge, that can have a cache too.
   * Allows for fine-grained control of caching
@@ -3562,9 +3265,7 @@ If Host header is *not* forwarded:
 
 <a name="7_2_1"></a>
 ### [↖](#7_2)[↑](#7_2)[↓](#7_2_2) Overview
-* Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible
-in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your
-existing databases by retrieving data from high throughput and low latency in-memory data stores.
+* Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your existing databases by retrieving data from high throughput and low latency in-memory data stores.
 * Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gamin, Geospatial Services, Real-Time Analytics, and Queuing.
 * Amazon ElastiCache offers fully managed Redis and Memcached for your most demanding applications that require sub-millisecond response times.
 
@@ -3585,9 +3286,7 @@ existing databases by retrieving data from high throughput and low latency in-me
 
 <a name="7_2_3"></a>
 ### [↖](#7_2)[↑](#7_2_2)[↓](#7_2_4) Memcached
-* A widely adopted memory object caching system. ElastiCache is protocol compliant with Memcached,
-  so popular tools that you use today with existing Memchached environments willwork seamlessly with
-  the service.
+* A widely adopted memory object caching system. ElastiCache is protocol compliant with Memcached, so popular tools that you use today with existing Memchached environments willwork seamlessly with the service.
 * Multi-node for partitioning of data (sharding)
 * Non persistent
 * No backup and restore
@@ -3595,8 +3294,7 @@ existing databases by retrieving data from high throughput and low latency in-me
 
 <a name="7_2_4"></a>
 ### [↖](#7_2)[↑](#7_2_3)[↓](#7_3) Redis
-* A popular open-source in-memory key-value store that supports data structures such as sorted sets
-  and lists. ElastiCache supports master/slave replication and multi-AZ which can be used to achieve cross-AZ-redundancy.
+* A popular open-source in-memory key-value store that supports data structures such as sorted sets and lists. ElastiCache supports master/slave replication and multi-AZ which can be used to achieve cross-AZ-redundancy.
 * Also offers Pub/Sub, Sorted Sets and In-Memory Data Store
 * Multi AZ with Auto-Failover
 * Read Replicas to scale reads and have high availability
@@ -3683,11 +3381,7 @@ Lambda|1,000 concurrent executions|Soft limit per region
 
 <a name="8_1_1"></a>
 ### [↖](#8_1)[↑](#8_1)[↓](#8_1_2) Overview
-Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond
-performance at any scale. It's a fully managed, multi-region, multi-active, durable database with
-built-in security, backup and restore, and in-memory caching for internet-scale applications.
-DynamoDB can handle more than 10 trillion requests per day and can support peaks of more than 20
-million requests per second.
+Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale. It's a fully managed, multi-region, multi-active, durable database with built-in security, backup and restore, and in-memory caching for internet-scale applications. DynamoDB can handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second.
 * NoSQL database, fully managed, massive scale (1,000,000 rps)
 * Similar to Apache Cassandra (can migrate to DynamoDB)
 * No disk space to provision, max object size is 400 KB
@@ -3839,13 +3533,7 @@ million requests per second.
 
 <a name="8_2_1"></a>
 ### [↖](#8_2)[↑](#8_2)[↓](#8_2_2) Overview
-Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy,
-secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot
-your applications using the tools you love, at the scale you need. The service provides support
-for open source Elasticsearch APIs, managed Kibana, integration with Logstash and other AWS
-services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only
-for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch
-Service, you get the ELK stack you need, without the operational overhead.
+Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy, secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot your applications using the tools you love, at the scale you need. The service provides support for open source Elasticsearch APIs, managed Kibana, integration with Logstash and other AWS services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch Service, you get the ELK stack you need, without the operational overhead.
 
 * Managed version of Elasticsearch (open source project)
 * Runs on servers (not a serverless offering)
@@ -3890,16 +3578,9 @@ Service, you get the ELK stack you need, without the operational overhead.
 <!-- toc_end -->
 <a name="8_3_1"></a>
 ### [↖](#8_3)[↑](#8_3)[↓](#8_3_2) Overview
-Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a
-relational database in the cloud. It provides cost-efficient and resizable capacity while
-automating time-consuming administration tasks such as hardware provisioning, database setup,
-patching and backups. It frees you to focus on your applications so you can give them the fast
-performance, high availability, security and compatibility they need
+Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a relational database in the cloud. It provides cost-efficient and resizable capacity while automating time-consuming administration tasks such as hardware provisioning, database setup, patching and backups. It frees you to focus on your applications so you can give them the fast performance, high availability, security and compatibility they need
 
-Amazon RDS is available on several database instance types - optimized for memory, performance or I/O -
-and provides you with six familiar database engines to choose from, including Amazon Aurora,
-PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database
-Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
+Amazon RDS is available on several database instance types - optimized for memory, performance or I/O - and provides you with six familiar database engines to choose from, including Amazon Aurora, PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
 
 * Set up, operate, and scale a **relational database** in the cloud
   * Provisioning, backups, patching, monitoring
@@ -3962,8 +3643,7 @@ Migration Service to easily migrate or replicate your existing databases to Amaz
 
 <a name="8_3_4"></a>
 ### [↖](#8_3)[↑](#8_3_3)[↓](#8_3_5) Multi-AZ deployments
-Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a
-single AWS Region.
+Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a single AWS Region.
 
 * Meant for *disaster recover*, not for performance improvement (-> Read Replica)
 * Configure RDS for **multi-AZ-deployments** and turn replication on
@@ -4006,8 +3686,7 @@ single AWS Region.
   * AWS provisiones different *endpoint* for read replica
   * Configure use of endpoint on application level
 * Read replicas can be promoted to normal instances
-  * E.g. use read replica to implement bigger changes on db level, after these have been finished
-  promote to master instance
+  * E.g. use read replica to implement bigger changes on db level, after these have been finished promote to master instance
   * This will break replication
   * Useful for database sharding, could create replicas for each shard
 
@@ -4032,21 +3711,11 @@ single AWS Region.
 <!-- toc_end -->
 <a name="8_4_1"></a>
 ### [↖](#8_4)[↑](#8_4)[↓](#8_4_2) Overview
-Amazon Aurora (Aurora) is a fully managed relational database engine that's compatible with MySQL
-and PostgreSQL. You already know how MySQL and PostgreSQL combine the speed and reliability of high-end
-commercial databases with the simplicity and cost-effectiveness of open-source databases. The
-code, tools, and applications you use today with your existing MySQL and PostgreSQL databases can
-be used with Aurora. With some workloads, Aurora can deliver up to five times the throughput of
-MySQL and up to three times the throughput of PostgreSQL without requiring changes to most of your existing applications.
+Amazon Aurora (Aurora) is a fully managed relational database engine that's compatible with MySQL and PostgreSQL. You already know how MySQL and PostgreSQL combine the speed and reliability of high-end commercial databases with the simplicity and cost-effectiveness of open-source databases. The code, tools, and applications you use today with your existing MySQL and PostgreSQL databases can be used with Aurora. With some workloads, Aurora can deliver up to five times the throughput of MySQL and up to three times the throughput of PostgreSQL without requiring changes to most of your existing applications.
 
-Aurora includes a high-performance storage subsystem. Its MySQL- and PostgreSQL-compatible
-database engines are customized to take advantage of that fast distributed storage. The underlying
-storage grows automatically as needed. An Aurora cluster volume can grow to a maximum size of 128 tebibytes (TiB).
-Aurora also automates and standardizes database clustering and replication, which are typically
-among the most challenging aspects of database configuration and administration.
+Aurora includes a high-performance storage subsystem. Its MySQL- and PostgreSQL-compatible database engines are customized to take advantage of that fast distributed storage. The underlying storage grows automatically as needed. An Aurora cluster volume can grow to a maximum size of 128 tebibytes (TiB). Aurora also automates and standardizes database clustering and replication, which are typically among the most challenging aspects of database configuration and administration.
 
-Aurora is part of the managed database service Amazon Relational Database Service (Amazon RDS). More
-cloud-native, usually preferred over RDS
+Aurora is part of the managed database service Amazon Relational Database Service (Amazon RDS). More cloud-native, usually preferred over RDS
 
 * DB Engines: PostgreSQL-compatible & MySQL-compatible
 * Storage: *automatically* grows up to 128 TB, 6 copies of data, multi-AZ
@@ -5195,7 +4864,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 ##### Register on-premises instances
 * Configure each on-premises instance, register it with CodeDeploy, and then tag it.
 * Need to install CodeDeploy agent, obviously
-* On-prem instances cannot blue/green, as CodeDeploy cannot create new infrastructure
+* On-premises instances cannot blue/green, as CodeDeploy cannot create new infrastructure
 
 <a name="12_3_2_2"></a>
 #### [↖](#12_3)[↑](#12_3_2_1_3)[↓](#12_3_2_2_1) To Lambdas
@@ -5368,7 +5037,7 @@ To get started with building SAM-based applications, use the AWS SAM CLI. SAM CL
 ---
 
 <a name="12_7"></a>
-## [↖](#top)[↑](#12_6_1) Deployment Options
+## [↖](#top)[↑](#12_6_1)[↓](#12_8) Deployment Options
 
 .|.
 -|-
@@ -5379,3 +5048,105 @@ CodeDeploy|In-place on EC2<br/>In-place on ASG<br/>New instances on ASG<br/>Traf
 Elastic Beanstalk|In-place all at once upgrades<br/>Rolling upgrades (with or without additional instances)<br/>Immutable upgrades (new instances)<br/>Blue / Green (entirely new stack)
 OpsWorks|For chef/puppet stacks only<br/>Can manage ELB and EC2 instances<br/>Cannot manage an ASG
 SAM Framework|Leverages CloudFormation & CodeDeploy
+
+---
+
+<a name="12_8"></a>
+## [↖](#top)[↑](#12_7)[↓](#12_8_1) Systems Manager (Core Service)
+<!-- toc_start -->
+* [Overview](#12_8_1)
+* [Components](#12_8_2)
+  * [Resources groups](#12_8_2_1)
+  * [Insights](#12_8_2_2)
+  * [Parameter store](#12_8_2_3)
+  * [Action & Change](#12_8_2_4)
+  * [Instances & Nodes](#12_8_2_5)
+<!-- toc_end -->
+
+<a name="12_8_1"></a>
+### [↖](#12_8)[↑](#12_8)[↓](#12_8_2) Overview
+AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
+
+*Group resources* -> *Visualize data* -> *Take action*
+
+* Manage EC2 and on-premises instances at scale
+  * On-premises requires generation of secret *activation code*/*activation id*
+* Get operational insights of infrastructure
+* Easily detect problems
+* Patching automation for enhanced compliance
+* Both Linux and Windows
+* Tightly integrated with CloudWatch, AWS Config
+* Free service
+* SSM Agent
+  * Installed on instances
+  * Need correct IAM permissions, then shows up on SSM dashboard
+* On AWS: <a href="https://aws.amazon.com/systems-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/systems-manager/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/" target="_blank">User Guide</a>
+
+<a name="12_8_2"></a>
+### [↖](#12_8)[↑](#12_8_1)[↓](#12_8_2_1) Components
+<a name="12_8_2_1"></a>
+#### [↖](#12_8)[↑](#12_8_2)[↓](#12_8_2_2) Resources groups
+* Organize your AWS resources.
+* Make it easier to manage, monitor, and automate tasks on large numbers of resources at one time.
+  * Define groups based on tags or on CloudFormation stacks
+	* Same region only
+
+<a name="12_8_2_2"></a>
+#### [↖](#12_8)[↑](#12_8_2_1)[↓](#12_8_2_3) Insights
+* **Insights dashboards**
+  * Automatically aggregates and displays operational data for each resource group
+* **Inventory**
+  * Discover and audit the software installed
+* **Configuration Compliance**
+  * Scan your fleet of managed instances for patch compliance and configuration inconsistencies
+
+<a name="12_8_2_3"></a>
+#### [↖](#12_8)[↑](#12_8_2_2)[↓](#12_8_2_4) Parameter store
+* Centralized store to manage your configuration data, whether plain-text data such as database strings or secrets such as passwords
+
+<a name="12_8_2_4"></a>
+#### [↖](#12_8)[↑](#12_8_2_3)[↓](#12_8_2_5) Action & Change
+* **Automation**
+  * Simplifies common maintenance and deployment tasks of EC2 instances and other AWS resources.
+  * Build Automation workflows to configure and manage instances and AWS resources.
+  * Create custom workflows or use pre-defined workflows maintained by AWS.
+  * Receive notifications about Automation tasks and workflows by using Amazon CloudWatch Events.
+  * Monitor Automation progress and execution details by using the Amazon EC2 or the AWS Systems Manager console.
+  * Can integrate manual approval step
+  * Complete *list* of tasks, unlike run command which is a one-off
+  * E.g. create *Golden AMi*
+* **Maintenance windows**
+  * Define a schedule for when to perform potentially disruptive actions on your instances
+* **Change Calendar**
+  * Set up date and time ranges when actions you specify may or may not be performed in your AWS account
+
+<a name="12_8_2_5"></a>
+#### [↖](#12_8)[↑](#12_8_2_4) Instances & Nodes
+* **Run command**
+  * Lets you remotely and securely manage the configuration of your managed instances
+  * Commands are in *document* format
+  * Can run on resource group, individually or tag-based
+* **Session manager**
+  * Fully managed AWS Systems Manager capability that lets you manage your EC2 instances, on-premises instances, and virtual machines (VMs) through an interactive one-click browser-based shell or through the AWS CLI.
+  * Session Manager provides secure and auditable instance management without the need to open inbound ports, maintain bastion hosts, or manage SSH keys
+* **Patch manager**
+  * Automates the process of patching managed instances with both security related and other types of updates
+  * AWS predefined *patch baselines* per operating system
+    * Can also define own patch baselines
+      * Patch items in approved or rejected list, e.g. 'CVE-2020-1234567'
+      * Can define own patch source
+  * Define *Maintenance Window* when patches are possibly executed
+  * Use `AWS-RunPatchBaseline` run command
+  * Can also evaluate compliance without applying patches
+* **State manager**
+  * Secure and scalable configuration management service that automates the process of keeping your Amazon EC2 and hybrid infrastructure in a state that you define
+* **SSM Documents**
+  * JSON format
+  * Different types:
+    * *Command*
+    * *Automation*
+    * *Policy*
+    * *Session*
+
+---
+
