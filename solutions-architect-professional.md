@@ -86,6 +86,8 @@
 * [Cost Control](#13)
   * [AWS Cost Allocation Tags](#13_1)
   * [Trusted Advisor](#13_2)
+  * [EC2 Purchasing Options & Saving Plans](#13_3)
+  * [S3 Cost Savings](#13_4)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5198,11 +5200,12 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 ## [↖](#top)[↑](#13_1)[↓](#13_2_1) Trusted Advisor
 <!-- toc_start -->
 * [Overview](#13_2_1)
+* [Support Plans](#13_2_2)
 <!-- toc_end -->
 
 <a name="13_2_1"></a>
-### [↖](#13_2)[↑](#13_2) Overview
-* AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision your resources following AWS best practices. Whether establishing new workflows, developing applications, or as part of ongoing improvement, take advantage of the recommendations provided by Trusted Advisor on a regular basis to help keep your solutions provisioned optimally.
+### [↖](#13_2)[↑](#13_2)[↓](#13_2_2) Overview
+AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision your resources following AWS best practices. Whether establishing new workflows, developing applications, or as part of ongoing improvement, take advantage of the recommendations provided by Trusted Advisor on a regular basis to help keep your solutions provisioned optimally.
 * Global service
 * Creates recommendations for
   * Cost optimization
@@ -5216,6 +5219,90 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 * Checks are refreshed on visits to the dashboard (max every 5 minutes)
 	* Otherwise weekly
   * Can trigger refresh via API
+* Full Trusted Advisor – Available for Business & Enterprise support plans only
+  * Ability to set CloudWatch alarms when reaching limits
+  * Programmatic Access using AWS Support API
 * On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
 
+<a name="13_2_2"></a>
+### [↖](#13_2)[↑](#13_2_1)[↓](#13_3) Support Plans
+
+.|.
+-|-
+Basic Support|included for all AWS customers and free
+Developer|Recommended when you are experimenting with AWS
+Business|If you have production workloads
+Enterprise|If you have mission-critical workloads
+
 ---
+
+<a name="13_3"></a>
+## [↖](#top)[↑](#13_2_2)[↓](#13_3_1) EC2 Purchasing Options & Saving Plans
+<!-- toc_start -->
+* [EC2 Purchasing Options](#13_3_1)
+* [Savings Plan](#13_3_2)
+<!-- toc_end -->
+
+<a name="13_3_1"></a>
+### [↖](#13_3)[↑](#13_3)[↓](#13_3_2) EC2 Purchasing Options
+* **On Demand Instances**: short workload, predictable pricing, reliable
+* **Spot Instances**: short workloads, for cheap, can lose instances (not reliable)
+* **Reserved**: (MINIMUM 1 year)
+  * **Reserved Instances**: long workloads
+  * **Convertible Reserved Instances**: long workloads with flexible instances
+  * **Scheduled Reserved Instances**: example – every Thursday between 3 and 6 pm
+* **Dedicated Instances**: no other customers will share your hardware
+* **Dedicated Hosts**: book an entire physical server, control instance placement
+  * Great for software licenses that operate at the core, or socket level
+  * Can define host affinity so that instance reboots are kept on the same host
+* <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html" target="_blank">On AWS</a>
+
+<a name="13_3_2"></a>
+### [↖](#13_3)[↑](#13_3_1)[↓](#13_4) Savings Plan
+Savings Plans is a flexible pricing model that provides savings of up to 72% on your AWS compute usage. This pricing model offers lower prices on Amazon EC2 instances usage, regardless of instance family, size, OS, tenancy or AWS Region, and also applies to AWS Fargate and AWS Lambda usage.
+
+Savings Plans offer significant savings over On Demand, just like EC2 Reserved Instances, in exchange for a commitment to use a specific amount of compute power (measured in $/hour) for a one or three year period. You can sign up for Savings Plans for a 1- or 3-year term and easily manage your plans by taking advantage of recommendations, performance reporting and budget alerts in the AWS Cost Explorer.
+
+* Complements or replaces reserved instances
+* New pricing model to get a discount based on long-term usage
+* Commit to a certain type of usage: ex $10 per hour for 1 to 3 years
+* Any usage beyond the savings plan is billed at the on-demand price
+* **EC2 Instance Savings plan** (up to 72% - same discount as Standard RIs)
+  * Select instance family (e.g. M5, C5...), and locked to a specific region
+  * Flexible across size (m5.large to m5.4xlarge), OS (Windows to Linux), tenancy (dedicated or default)
+* **Compute Savings plan** (up to 66% - same discount as Convertible RIs)
+  * Ability to move between instance family (move from C5 to M5), region (Ireland to US), compute type (EC2, Fargate, Lambda), OS & tenancy
+* On AWS: <a href="https://aws.amazon.com/savingsplans/" target="_blank">Service</a> - <a href="https://aws.amazon.com/savingsplans/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/savingsplans/" target="_blank">User Guide</a>
+
+<a name="13_4"></a>
+## [↖](#top)[↑](#13_3_2)[↓](#13_4_1) S3 Cost Savings
+<!-- toc_start -->
+* [S3 Storage Clsses](#13_4_1)
+* [S3 Other Cost savings](#13_4_2)
+<!-- toc_end -->
+
+<a name="13_4_1"></a>
+### [↖](#13_4)[↑](#13_4)[↓](#13_4_2) S3 Storage Clsses
+
+.|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
+-|-|-|-|-|-|-
+S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
+S3 Intelligent Tiering|**11x9**|3x9|**>=3**|$0.023|**No**|Automatically moves objects between two access tiers based on changing access patterns
+S3 IA (infrequent access)|**11x9**|3x9|**>=3**|$0.0125|Yes|For data that is accessed less frequently, but requires rapid access when needed
+S3 One Zone IA (infrequent access)|**11x9**|99.5|1|**$0.01**|Yes|For data that is accessed less frequently, but requires rapid access when needed
+Glacier|**11x9**|.|**>=3**|$0.004<br/>min 90 days|Yes|For archival only, comes as *expedited*, *standard* or *bulk*
+Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer time span to retrieve
+~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
+
+<a name="13_4_2"></a>
+### [↖](#13_4)[↑](#13_4_1) S3 Other Cost savings
+
+* *S3 Select* & *Glacier Select*: save in network and CPU cost
+* S3 Lifecycle Rules: transition objects between tiers
+* Compress objects to save space
+* S3 Requester Pays:
+  * In general, bucket owners pay for all Amazon S3 storage and data transfer costs associated with their bucket
+  * With Requester Pays buckets, the requester instead of the bucket owner pays the cost of the request and the data download from the bucket
+  * The bucket owner always pays the cost of storing data
+  * Helpful when you want to share large datasets with other accounts
+  * If an IAM role is assumed, the owner account of that role pays for the request
