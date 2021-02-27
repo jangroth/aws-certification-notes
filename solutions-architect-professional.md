@@ -88,6 +88,8 @@
   * [Trusted Advisor](#13_2)
   * [EC2 Purchasing Options & Saving Plans](#13_3)
   * [S3 Cost Savings](#13_4)
+* [Migration](#14)
+  * [The 6R Strategies](#14_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5295,7 +5297,7 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
 <a name="13_4_2"></a>
-### [↖](#13_4)[↑](#13_4_1) S3 Other Cost savings
+### [↖](#13_4)[↑](#13_4_1)[↓](#14) S3 Other Cost savings
 
 * *S3 Select* & *Glacier Select*: save in network and CPU cost
 * S3 Lifecycle Rules: transition objects between tiers
@@ -5306,3 +5308,63 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
   * The bucket owner always pays the cost of storing data
   * Helpful when you want to share large datasets with other accounts
   * If an IAM role is assumed, the owner account of that role pays for the request
+
+---
+
+<a name="14"></a>
+# [↖](#top)[↑](#13_4_2)[↓](#14_1) Migration
+
+<a name="14_1"></a>
+## [↖](#top)[↑](#14)[↓](#14_1_1) The 6R Strategies
+<!-- toc_start -->
+* [Rehosting — Otherwise known as “lift-and-shift.”](#14_1_1)
+* [Replatforming — I sometimes call this “lift-tinker-and-shift.”](#14_1_2)
+* [Repurchasing — Moving to a different product.](#14_1_3)
+* [Refactoring / Re-architecting — Re-imagining how the application is architected and developed, typically using cloud-native features.](#14_1_4)
+* [Retire — Get rid of.](#14_1_5)
+* [Retain — Usually this means “revisit” or do nothing (for now).](#14_1_6)
+<!-- toc_end -->
+
+* <a href="https://aws.amazon.com/blogs/enterprise-strategy/6-strategies-for-migrating-applications-to-the-cloud/" target="_blank">On AWS Blog</a>
+
+<a name="14_1_1"></a>
+### [↖](#14_1)[↑](#14_1)[↓](#14_1_2) Rehosting — Otherwise known as “lift-and-shift.”
+* Simple migrations by re-hosting on AWS (applications, databases, data...)
+* No cloud optimizations being done, application is migrated as is
+* Could save as much as 30% on cost
+* Example: Migrate using AWS VM Import/Export, AWS Server Migration Service
+
+<a name="14_1_2"></a>
+### [↖](#14_1)[↑](#14_1_1)[↓](#14_1_3) Replatforming — I sometimes call this “lift-tinker-and-shift.”
+* Not changing the core architecture, but leverage some cloud optimizations
+* Example
+	* Migrate database to RDS
+	* Migrate application to Elastic Beanstalk (Java with Tomcat)
+
+<a name="14_1_3"></a>
+### [↖](#14_1)[↑](#14_1_2)[↓](#14_1_4) Repurchasing — Moving to a different product.
+* Moving to a different product while moving to the cloud
+* Often you move to a SaaS platform
+* Expensive in the short term, but quick to deploy
+* Example
+	* CRM to Salesforce.com, HR to Workday, CMS to Drupal
+
+<a name="14_1_4"></a>
+### [↖](#14_1)[↑](#14_1_3)[↓](#14_1_5) Refactoring / Re-architecting — Re-imagining how the application is architected and developed, typically using cloud-native features.
+* Reimagining how the application is architected using Cloud Native features
+* Driven by the need of the business to add features, scale, performance
+* Example
+	* Move an application to Serverless architectures, use AWS S3
+
+<a name="14_1_5"></a>
+### [↖](#14_1)[↑](#14_1_4)[↓](#14_1_6) Retire — Get rid of.
+* Turn off things you don’t need (maybe as a result of Re-architecting)
+* Helps with reducing the surface areas for attacks (more security)
+* Save cost, maybe up to 10% to 20%
+* Focus your attention on resources that must be maintained
+
+<a name="14_1_6"></a>
+### [↖](#14_1)[↑](#14_1_5) Retain — Usually this means “revisit” or do nothing (for now).
+* Do nothing for now (for simplicity, cost reason, importance...)
+* It’s still a decision to make in a Cloud Migration
+
