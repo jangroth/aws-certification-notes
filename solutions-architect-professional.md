@@ -81,6 +81,7 @@
   * [CloudFormation](#12_4)
   * [Service Catalog](#12_5)
   * [AWS Serverless Application Model](#12_6)
+  * [Deployment Options](#12_7)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5349,7 +5350,7 @@ AWS Service Catalog allows organizations to create and manage catalogs of IT ser
 <!-- toc_end -->
 
 <a name="12_6_1"></a>
-### [↖](#12_6)[↑](#12_6) Overview
+### [↖](#12_6)[↑](#12_6)[↓](#12_7) Overview
 The AWS Serverless Application Model (SAM) is an open-source framework for building serverless applications. It provides shorthand syntax to express functions, APIs, databases, and event source mappings. With just a few lines per resource, you can define the application you want and model it using YAML. During deployment, SAM transforms and expands the SAM syntax into AWS CloudFormation syntax, enabling you to build serverless applications faster.
 
 To get started with building SAM-based applications, use the AWS SAM CLI. SAM CLI provides a Lambda-like execution environment that lets you locally build, test, and debug applications defined by SAM templates. You can also use the SAM CLI to deploy your applications to AWS.
@@ -5363,3 +5364,18 @@ To get started with building SAM-based applications, use the AWS SAM CLI. SAM CL
 * SAM can use CodeDeploy to deploy Lambda functions (traffic shifting)
 * Leverages CloudFormation in the backend
 * On AWS: <a href="https://aws.amazon.com/serverless/sam" target="_blank">Service</a> - <a href="https://aws.amazon.com/serverless/sam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/serverless-application-model/" target="_blank">User Guide</a>
+
+---
+
+<a name="12_7"></a>
+## [↖](#top)[↑](#12_6_1) Deployment Options
+
+.|.
+-|-
+Vanilla EC2|With User Data (just for the first launch)
+AMI Baking|For things that are slow to install (runtimes, updates, tools), and use EC2 user data for quick runtime setup
+Auto Scaling Group|With launch template (AMI)
+CodeDeploy|In-place on EC2<br/>In-place on ASG<br/>New instances on ASG<br/>Traffic shifting for AWS Lambda<br/>New task set for ECS + traffic shifting
+Elastic Beanstalk|In-place all at once upgrades<br/>Rolling upgrades (with or without additional instances)<br/>Immutable upgrades (new instances)<br/>Blue / Green (entirely new stack)
+OpsWorks|For chef/puppet stacks only<br/>Can manage ELB and EC2 instances<br/>Cannot manage an ASG
+SAM Framework|Leverages CloudFormation & CodeDeploy
