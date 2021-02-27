@@ -79,6 +79,8 @@
   * [OpsWorks Stacks](#12_2)
   * [CodeDeploy](#12_3)
   * [CloudFormation](#12_4)
+  * [Service Catalog](#12_5)
+  * [AWS Serverless Application Model](#12_6)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5293,7 +5295,7 @@ AWS CloudFormation is available at no additional charge, and you pay only for th
   * The nested stack only is important to the higher level stack (it’s not shared)
 
 <a name="12_4_7"></a>
-### [↖](#12_4)[↑](#12_4_6) Other Concepts
+### [↖](#12_4)[↑](#12_4_6)[↓](#12_5) Other Concepts
 * CloudFormer
   * Create an AWS CloudFormation template from existing AWS resources
 * ChangeSets
@@ -5302,3 +5304,62 @@ AWS CloudFormation is available at no additional charge, and you pay only for th
   * Deploy a CloudFormation stack across multiple accounts and regions
 * Stack Policies
   * Prevent accidental updates / deletes to stack resources
+
+  ---
+
+<a name="12_5"></a>
+## [↖](#top)[↑](#12_4_7)[↓](#12_5_1) Service Catalog
+<!-- toc_start -->
+* [Overview](#12_5_1)
+* [Components](#12_5_2)
+<!-- toc_end -->
+
+<a name="12_5_1"></a>
+### [↖](#12_5)[↑](#12_5)[↓](#12_5_2) Overview
+AWS Service Catalog allows organizations to create and manage catalogs of IT services that are approved for use on AWS. These IT services can include everything from virtual machine images, servers, software, and databases to complete multi-tier application architectures. AWS Service Catalog allows you to centrally manage commonly deployed IT services, and helps you achieve consistent governance and meet your compliance requirements, while enabling users to quickly deploy only the approved IT services they need.
+* Ensure compliance with corporate standards
+* Help employees quickly find and deploy approved IT services
+* Centrally manage IT service lifecycle
+* Connect with ITSM/ITOM software
+* Self-service for user
+  * Integrates with self-service portals like ServiceNow
+* Users of Service Catalog *only* required IAM permissions for the product, but *not* the underlying services
+* On AWS: <a href="https://aws.amazon.com/servicecatalog/" target="_blank">Service</a> - <a href="https://aws.amazon.com/servicecatalog/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/servicecatalog/latest/userguide/" target="_blank">User Guide</a>
+
+<a name="12_5_2"></a>
+### [↖](#12_5)[↑](#12_5_1)[↓](#12_6) Components
+* **Admins** define
+  * **Product**
+    * Defined in CloudFormation
+    * Can be versioned
+  *	**Portfolio**
+    * Collection of products
+    * IAM permissions to govern access
+    * Products available per team/per client/...
+* **Users** choose
+  * from product list
+  * launches automatically
+
+---
+
+<a name="12_6"></a>
+## [↖](#top)[↑](#12_5_2)[↓](#12_6_1) AWS Serverless Application Model
+<!-- toc_start -->
+* [Overview](#12_6_1)
+<!-- toc_end -->
+
+<a name="12_6_1"></a>
+### [↖](#12_6)[↑](#12_6) Overview
+The AWS Serverless Application Model (SAM) is an open-source framework for building serverless applications. It provides shorthand syntax to express functions, APIs, databases, and event source mappings. With just a few lines per resource, you can define the application you want and model it using YAML. During deployment, SAM transforms and expands the SAM syntax into AWS CloudFormation syntax, enabling you to build serverless applications faster.
+
+To get started with building SAM-based applications, use the AWS SAM CLI. SAM CLI provides a Lambda-like execution environment that lets you locally build, test, and debug applications defined by SAM templates. You can also use the SAM CLI to deploy your applications to AWS.
+* Framework for developing and deploying serverless applications
+* All configuration is YAML code
+  * Lambda Functions (`AWS::Serverless::Function`)
+  * DynamoDB tables (`AWS::Serverless::SimpleTable`)
+  * API Gateway (`AWS::Serverless::API`)
+  * Cognito User Pools
+* SAM can help you to run Lambda, API Gateway, DynamoDB locally
+* SAM can use CodeDeploy to deploy Lambda functions (traffic shifting)
+* Leverages CloudFormation in the backend
+* On AWS: <a href="https://aws.amazon.com/serverless/sam" target="_blank">Service</a> - <a href="https://aws.amazon.com/serverless/sam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/serverless-application-model/" target="_blank">User Guide</a>
