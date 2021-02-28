@@ -9,7 +9,7 @@
   * [Identity and Access Management (IAM)](#3_2)
   * [STS (Security Token Service)](#3_3)
   * [Identity Federation](#3_4)
-  * [AWS Active Directory Services](#3_5)
+  * [AWS Active Directory Services (Core Subject)](#3_5)
   * [AWS Organization](#3_6)
   * [AWS Resource Access Manager](#3_7)
   * [AWS Single Sign-On](#3_8)
@@ -230,9 +230,9 @@ Best practices:
 * Create individual IAM users
 * Use groups to assign permissions to IAM users
 * Grant least privilege
-* Get started using permissions with AWS managed policies
-* Use customer managed policies instead of inline policies
-* Use access levels to review IAM permissions
+* Get started using permissions with **AWS managed policies**
+* Use **customer managed policies** instead of **inline policies**
+* Use access levels (*full*, *limited*) to review IAM permissions
 * Configure a strong password policy for your users
 * Enable MFA
 * Use roles for applications that run on Amazon EC2 instances
@@ -248,20 +248,22 @@ On AWS:
 
 <a name="3_2_2"></a>
 ### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Users
-* An IAM user is an entity that you create in AWS to represent the person or application that uses it to interact with AWS. A user in AWS consists of a name and credentials.
+An entity that you create in AWS to represent the person or application that uses it to interact with AWS. A user in AWS consists of a name and credentials.
 * Holds long-term credentials
 
 <a name="3_2_3"></a>
 ### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_4) Groups
-* An IAM group is a collection of IAM users. Groups let you specify permissions for multiple users, which can make it easier to manage the permissions for those users.
+A collection of IAM users. Groups let you specify permissions for multiple users, which can make it easier to manage the permissions for those users.
 * Typically only provides permission to assume a role
 
 <a name="3_2_4"></a>
 ### [↖](#3_2)[↑](#3_2_3)[↓](#3_2_5) Roles
-* **Role** - An IAM identity that you can create in your account that has specific permissions. An IAM role has some similarities to an IAM user. Roles and users are both AWS identities with permissions policies that determine what the identity can and cannot do in AWS. However, instead of being uniquely associated with one person, a role is intended to be assumable by anyone who needs it. Also, a role does not have standard long-term credentials such as a password or access keys associated with it. Instead, when you assume a role, it provides you with temporary security credentials for your role session, provided by STS.
+An IAM identity that you can create in your account that has specific permissions. An IAM role has some similarities to an IAM user. Roles and users are both AWS identities with permissions policies that determine what the identity can and cannot do in AWS. However, instead of being uniquely associated with one person, a role is intended to be assumable by anyone who needs it. Also, a role does not have standard long-term credentials such as a password or access keys associated with it. Instead, when you assume a role, it provides you with temporary security credentials for your role session, provided by STS.
 * **AWS service role** - A role that a service assumes to perform actions in your account on your behalf. When you set up some AWS service environments, you must define a role for the service to assume. This service role must include all the permissions required for the service to access the AWS resources that it needs. Service roles vary from service to service, but many allow you to choose your permissions, as long as you meet the documented requirements for that service. Service roles provide access only within your account and cannot be used to grant access to services in other accounts. You can create, modify, and delete a service role from within IAM.
-* **AWS service role for an EC2 instance** - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account. This role is assigned to the EC2 instance when it is launched. Applications running on that instance can retrieve temporary security credentials and perform actions that the role allows.
-* **AWS service-linked role** - A unique type of service role that is linked directly to an AWS service. Service-linked roles are predefined by the service and include all the permissions that the service requires to call other AWS services on your behalf. The linked service also defines how you create, modify, and delete a service-linked role. A service might automatically create or delete the role. It might allow you to create, modify, or delete the role as part of a wizard or process in the service. Or it might require that you use IAM to create or delete the role. Regardless of the method, service-linked roles make setting up a service easier because you don't have to manually add the necessary permissions.
+	* **AWS service role for an EC2 instance** - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account. This role is assigned to the EC2 instance when it is launched. Applications running on that instance can retrieve temporary security credentials and perform actions that the role allows.
+	* **AWS service-linked role** - A unique type of service role that is linked directly to an AWS service. Service-linked roles are **predefined by the service** and include all the permissions that the service requires to call other AWS services on your behalf. The linked service also defines how you create, modify, and delete a service-linked role. A service might automatically create or delete the role. It might allow you to create, modify, or delete the role as part of a wizard or process in the service. Or it might require that you use IAM to create or delete the role. Regardless of the method, service-linked roles make setting up a service easier because you don't have to manually add the necessary permissions.
+		* `aws iam create-service-linked-role --aws-service-name SERVICE-NAME.amazonaws.com`
+		* <a href="https://aws.amazon.com/blogs/security/introducing-an-easier-way-to-delegate-permissions-to-aws-services-service-linked-roles/" target="_blank">AWS Blog</a>
 * **Trust policy** - A JSON policy document in which you define the principals that you trust to assume the role. A role trust policy is a required resource-based policy that is attached to a role in IAM. The principals that you can specify in the trust policy include users, roles, accounts, and services.
 * **Permissions boundary** - An advanced feature in which you use policies to limit the maximum permissions that an identity-based policy can grant to a role. You cannot apply a permissions boundary to a service-linked role.
 * **Role for cross-account access** - A role that grants access to resources in one account to a trusted principal in a different account. Roles are the primary way to grant cross-account access. However, some AWS services allow you to attach a policy directly to a resource (instead of using a role as a proxy). These are called resource-based policies, and you can use them to grant principals in another AWS account access to the resource. Some of these resources include S3, S3 Glacier vaults, SNS and SQS.
@@ -285,7 +287,8 @@ Properties:
 
 <a name="3_2_5"></a>
 ### [↖](#3_2)[↑](#3_2_4)[↓](#3_2_5_1) Policies
-* You manage access in AWS by creating policies and attaching them to IAM identities (users, groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated with an identity or resource, defines their permissions. AWS evaluates these policies when an IAM principal (user or role) makes a request. Permissions in the policies determine whether the request is allowed or denied. Most policies are stored in AWS as JSON documents. AWS supports six types of policies:
+You manage access in AWS by creating policies and attaching them to IAM identities (users, groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated with an identity or resource, defines their permissions. AWS evaluates these policies when an *IAM principal* (user or role) makes a request. Permissions in the policies determine whether the request is allowed or denied. Most policies are stored in AWS as JSON documents.
+* AWS supports six types of policies:
   * **Identity-based policies** – Attach managed and inline policies to IAM identities (users, groups to which users belong, or roles). Identity-based policies grant permissions to an identity.
   * **Resource-based policies** – Attach inline policies to resources. The most common examples of resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource based policies grant permissions to the principal that is specified in the policy. Principals can be in the same account as the resource or in other accounts.
   * **Permissions boundaries** – Use a managed policy as the permissions boundary for an IAM entity (user or role). That policy defines the maximum permissions that the identity-based policies can grant to an entity, but does not grant permissions. Permissions boundaries do not define the maximum permissions that a resource-based policy can grant to an entity.
@@ -305,6 +308,12 @@ Properties:
       - Effect: Allow
         Action: '*'
         Resource: '*'
+      - Effect: Allow
+        NotAction: 's3:DeleteBucket' # <-- all S3 but deleteBucket
+        Resource: '*'
+      - Effect: Deny
+        NotAction: 's3:DeleteBucket' # <-- no S3 but deleteBucket
+        Resource: '*'
   Groups:
     - String (!Ref)
   Roles:
@@ -312,6 +321,7 @@ Properties:
   Users:
     - String (!Ref)
 ```
+
 <a name="3_2_5_1"></a>
 #### [↖](#3_2)[↑](#3_2_5)[↓](#3_2_5_2) Policy Conditions
 * String (`StringEquals`, `StringNotEquals`, `StringLike`...)
@@ -329,14 +339,14 @@ Properties:
 
 <a name="3_2_5_2"></a>
 #### [↖](#3_2)[↑](#3_2_5_1)[↓](#3_2_5_3) Policy Variables & Tags
-Example: `${aws:username}`
-* "Resource": ["arn:aws:s3:::mybucket/${aws:username}/*"]
-AWS Specific:
-* `aws:CurrentTime`, `aws:TokenIssueTime`, `aws:principaltype`, `aws:SecureTransport`, `aws:SourceIp`, `aws:userid`, `ec2:SourceInstanceARN`
-Service Specific:
-* `s3:prefix`, `s3:max-keys`, `s3:x-amz-acl`, `sns:Endpoint`, `sns:Protocol`...
-Tag Based:
-* `iam:ResourceTag/key-name`, `aws:PrincipalTag/key-name`...
+* Example: `${aws:username}`
+	* "Resource": ["arn:aws:s3:::mybucket/${aws:username}/*"]
+* AWS Specific:
+	* `aws:CurrentTime`, `aws:TokenIssueTime`, `aws:principaltype`, `aws:SecureTransport`, `aws:SourceIp`, `aws:userid`, `ec2:SourceInstanceARN`
+* Service Specific:
+	* `s3:prefix`, `s3:max-keys`, `s3:x-amz-acl`, `sns:Endpoint`, `sns:Protocol`...
+* Tag Based:
+	* `iam:ResourceTag/key-name`, `aws:PrincipalTag/key-name`...
 
 <a name="3_2_5_3"></a>
 #### [↖](#3_2)[↑](#3_2_5_2)[↓](#3_2_6) Identity-based vs resource-based policies
@@ -426,7 +436,7 @@ STS on AWS:
 * [Overview](#3_4_1)
 * [SAML 2.0](#3_4_2)
 * [Custom Identity Broker](#3_4_3)
-* [Federating users of a mobile or web-based app with Web Identity Federation](#3_4_4)
+* [Federating users of a mobile or web-based app with Web Identity Federation (*not* using Amazon Cognito)](#3_4_4)
 * [Federating users of a mobile or web-based app with Amazon Cognito](#3_4_5)
 <!-- toc_end -->
 
@@ -439,7 +449,7 @@ Federation can have many flavors:
 * Custom Identity Broker
 * Web Identity Federation with Amazon Cognito
 * Web Identity Federation without Amazon Cognito
-* Single Sign On
+* Single Sign-On
 * Non-SAML with AWS Microsoft AD
 
 <a name="3_4_2"></a>
@@ -451,11 +461,11 @@ Federation can have many flavors:
 > Active Directory Federation Services (**ADFS**) is a Single Sign-On (SSO) solution created by Microsoft. As a component of Windows Server operating systems, it provides users with authenticated access to applications that are not capable of using Integrated Windows Authentication (IWA) through Active Directory (**AD**).
 
 * Overview
-  * To integrate Active Directory/ADFS with AWS (or any SAML 2.0)
+  * To integrate Active Directory/ADFS (or any SAML 2.0) with AWS
   * Access through console or CI
   * Client app authenticates against IdP, receives *SAML assertion* back
   * SAML assertion is exchanged with STS to reveive temporary credentials
-* To configure your organization's IdP and AWS to trust each other
+* Need to establish trust between your organization's IdP and AWS
   * You begin by registering AWS with your IdP. In your organization's IdP you register AWS as a service provider (SP)
   * AD/ADFS
     * For *AD*, using your organization's IdP, you generate an equivalent metadata XML file that can describe your IdP as an IAM identity provider in AWS.
@@ -465,7 +475,7 @@ Federation can have many flavors:
   * In your organization's IdP, you define assertions that map users or groups in your organization to the IAM roles.
   * API/Console
     * For *API access*, in the application that you're creating, you call the AWS STS `AssumeRoleWithSAML` API, passing it the ARN of the SAML provider you created in Step 3, the ARN of the role to assume that you created in Step 4, and the SAML assertion about the current user that you get from your IdP.
-    * For *Console access*, this goes against an AWS SSO endpoint instead, SSO then invokes STS
+    * For *console access*, this goes against an AWS SSO endpoint instead, SSO then invokes STS
   * If the request is successful, the API returns a set of temporary security credentials,
 * Note - federation through SAML is the 'old' way of doing things. Better to use AWS SSO
 
@@ -477,9 +487,12 @@ Federation can have many flavors:
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
 <a name="3_4_4"></a>
-### [↖](#3_4)[↑](#3_4_3)[↓](#3_4_5) Federating users of a mobile or web-based app with Web Identity Federation
-* Login with Web Identity Federation provider (Amazon, Google or Facebook)
+### [↖](#3_4)[↑](#3_4_3)[↓](#3_4_5) Federating users of a mobile or web-based app with Web Identity Federation (*not* using Amazon Cognito)
+* Login with Web Identity Federation provider (Amazon, Google, Facebook or any other OpenID-Connect compatible IdP)
+  * Retrieves OpenID-Connect token
 * Get temporary credentials from STS
+	* *This is harder than interacting with Cognito!*
+* App calls STS and receives token in exchange for OpenID Connect token
 * Assume IAM role
 * After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
   * `www.amazon.com:user_id`
@@ -494,23 +507,24 @@ Federation can have many flavors:
 <a name="3_4_5"></a>
 ### [↖](#3_4)[↑](#3_4_4)[↓](#3_5) Federating users of a mobile or web-based app with Amazon Cognito
 If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
-* App user authenticates with OpenID Connect IdP (Amazon, Google, ...)
-  * Retrieves OpenID Connect token
+* Login with Web Identity Federation provider (Amazon, Google, Facebook or any other OpenID-Connect compatible IdP)
+  * Retrieves OpenID-Connect token
 * App calls Amazon Cognito and retrieves STS token in exchange for OpenID Connect token
-* After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
-  * `cognito-identity.amazonaws.com:sub`
+* Assume IAM role
+	* After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
+		* `cognito-identity.amazonaws.com:sub`
 * Requires trust relationship between Amazon Cognito and OpenID Connect IdP
 * Amazon Cognito prefered over WebIdentiy federation
   * Supports anonymous users
   * Supports MFA
   * Supports data syncronization
-* Amazon Connect replaces old service called Token Vending Machine
+* Amazon Cognito replaces old service called Token Vending Machine
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_cognito.html" target="_blank">Documentation On AWS</a>
 
 ---
 
 <a name="3_5"></a>
-## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services
+## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services (Core Subject)
 <!-- toc_start -->
 * [Overview](#3_5_1)
 * [AWS Managed Microsoft AD](#3_5_2)
@@ -531,15 +545,16 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 
 > The Lightweight Directory Access Protocol (**LDAP**) is an open, vendor-neutral, industry standard application protocol for accessing and maintaining distributed directory information services over an Internet Protocol network.
 
-* **AWS Managed Microsoft AD**
-  * Create your own AD in AWS, manage users locally, supports MFA
-  * Establish “trust" connections with on-premises AD
-* **Active Directory Connector**
-  * Directory Gateway (proxy) to redirect to on-premises AD
-  * Users are managed on the on-premises AD
-* **Simple Active Directory**
-  * AD-compatible managed directory on AWS
-  * Cannot be joined with on-premises AD
+* Three scenarios:
+	* **AWS Managed Microsoft AD**
+		* Create your own AD in AWS, manage users locally, supports MFA
+		* Establish “trust" connections with on-premises AD
+	* **Active Directory Connector**
+		* Directory Gateway (proxy) to redirect to on-premises AD
+		* Users are managed on the on-premises AD
+	* **Simple Active Directory**
+		* AD-compatible managed directory on AWS
+		* Cannot be joined with on-premises AD!
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
 
 <a name="3_5_2"></a>
@@ -547,11 +562,11 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 <a name="3_5_2_1"></a>
 #### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_2_2) Overview
 
-AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft Active Directory (AD), enables your directory-aware workloads and AWS resources to use managed Active Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not require you to synchronize or replicate data from your existing Active Directory to the cloud. You can use the standard AD administration tools and take advantage of the built-in AD features, such as Group Policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2 and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing (EUC) services, such as Amazon WorkSpaces, with AD users and groups.
+AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft AD, enables your directory-aware workloads and AWS resources to use managed Active Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not require you to synchronize or replicate data from your existing Active Directory to the cloud. You can use the standard AD administration tools and take advantage of the built-in AD features, such as group policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2 and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing services, such as Amazon WorkSpaces, with AD users and groups.
 
 * Managed Service
 * Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
-  * Standalone in cloud, or joined to on-premises AD
+  * *Standalone* in cloud, or *joined* to on-premises AD
 * *Seamless Domain Join* allows to join AD from different accounts or VPCs
 * Automated backups are supported
 * Can join on-premises AD
@@ -567,12 +582,12 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 
 <a name="3_5_2_3"></a>
 #### [↖](#3_5)[↑](#3_5_2_2)[↓](#3_5_2_4) Connecting to on-premises AD
-* Needs Direct Connect or VPN
+* Needs AWS Direct Connect or VPN
 * Three kinds of of forest trust
   * One way on-premises -> AWS
   * One way AWS -> on-premises
   * Two way AWS <-> on-premises
-* Forest trust is different to syncronization!
+* Forest trust is different to syncronize!
   * Replication not supported
   * Users on both ADs are independent from each other
 
@@ -588,12 +603,12 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
   * Has latency
 * Manage users solely on-premises, no possibility of setting up a trust
   * No MFA
-* VPN or Direct Connect -> can't function if connection goes down
+* Requires VPN or Direct Connect -> can't function if connection goes down!
 * Doesn’t work with SQL Server, doesn’t do seamless joining, can’t share directory
 
 <a name="3_5_4"></a>
 ### [↖](#3_5)[↑](#3_5_3)[↓](#3_6) Simple AD
-* Simple AD is an inexpensive Active Directory–compatible service with the common directory features.
+* Simple AD is an inexpensive AD–compatible service with the common directory features.
 * Supports joining EC2 instances, manage users and groups
 * Does not support MFA, RDS SQL server, AWS SSO
 * Small: 500 users, large: 5000 users
