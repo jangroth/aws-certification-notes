@@ -99,6 +99,10 @@
   * [Disaster Recovery](#14_8)
 * [VPC](#15)
   * [Virtual Private Cloud (VPC)](#15_1)
+  * [VPC Peering](#15_2)
+  * [Transit Gateway](#15_3)
+  * [VPC Endpoints](#15_4)
+  * [PrivateLink](#15_5)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5659,18 +5663,20 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 * [Overview](#15_1_1)
   * [Default VPC (Amazon specific)](#15_1_1_1)
   * [Non-default VPC (regular VPC)](#15_1_1_2)
-  * [VPC Peering](#15_1_1_3)
-  * [VPC Scenarios](#15_1_1_4)
+  * [VPC Scenarios](#15_1_1_3)
 * [Components](#15_1_2)
 * [Structure & Package Flow](#15_1_3)
   * [Package flow through VPC components](#15_1_3_1)
   * [VPC Flow Logs](#15_1_3_2)
-* [VPC Endpoints](#15_1_4)
-* [Limits:](#15_1_5)
+* [Limits:](#15_1_4)
 <!-- toc_end -->
 
 <a name="15_1_1"></a>
 ### [↖](#15_1)[↑](#15_1)[↓](#15_1_1_1) Overview
+Amazon Virtual Private Cloud (Amazon VPC) is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
+
+As one of AWS's foundational services, Amazon VPC makes it easy to customize your VPC's network configuration. You can create a public-facing subnet for your web servers that have access to the internet. It also lets you place your backend systems, such as databases or application servers, in a private-facing subnet with no internet access. Amazon VPC lets you to use multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet.
+
 * Provisions a logically isolated section of the AWS cloud
 * Spans over all AZs in a region
 * Allows to create layered architecture
@@ -5678,38 +5684,30 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
   * Cannot be changed after VPC creation
 * *Security groups* and subnet-level *network ACLs*
 * Ability to extend on-premise network to cloud
+* On AWS
+	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
 
 <a name="15_1_1_1"></a>
 #### [↖](#15_1)[↑](#15_1_1)[↓](#15_1_1_2) Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
 * Has different subnets in different AZs and an internet gateway (HA, spread out to all AZs)
-* Each instance launched automatically receives a *public IP* (and a private IP), this is
-  usually not the case for non-default VPCs)
+* Each instance launched automatically receives a *public IP* (and a private IP), this is usually not the case for non-default VPCs)
 * Cannot be restored if deleted
 * Comes with default NACL that allows all inbound/outbound traffic
 <a name="15_1_1_2"></a>
 #### [↖](#15_1)[↑](#15_1_1_1)[↓](#15_1_1_3) Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
+
 <a name="15_1_1_3"></a>
-#### [↖](#15_1)[↑](#15_1_1_2)[↓](#15_1_1_4) VPC Peering
-* Connect VPCs through direct network routing
-* Can occur between different accounts and regions
-* Cannot have matching or overlapping CIDR blocks
-* Allows instances to communicate with each other as if they were in the same network
-* Peering is in star configuration with 1 central VPC. No transitive peering.
-* Only routes traffic between source and destination VPC
-  * Does not support edge to edge routing
-  * Does not share VPN connection into datacenter
-<a name="15_1_1_4"></a>
-#### [↖](#15_1)[↑](#15_1_1_3)[↓](#15_1_2) VPC Scenarios
+#### [↖](#15_1)[↑](#15_1_1_2)[↓](#15_1_2) VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
 * VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
 <a name="15_1_2"></a>
-### [↖](#15_1)[↑](#15_1_1_4)[↓](#15_1_3) Components
+### [↖](#15_1)[↑](#15_1_1_3)[↓](#15_1_3) Components
 * **Subnet**
 	* In exactly one AZ
 	* If traffic is routed to an Internet gateway, the subnet is known as a public subnet
@@ -5720,9 +5718,7 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 * **Route Table**
 	* Contains a set of rules, called routes that determine where network traffic is directed to
 	* Each VPC automatically comes with a main route table that can be configured
-	* Each subnet in a VPC must be associated with a route table; the table controls the routing
-	for the subnet. A subnet can only be associated with one route table at a time, but multiple
-	subnets can be associated with the same route table
+	* Each subnet in a VPC must be associated with a route table; the table controls the routing for the subnet. A subnet can only be associated with one route table at a time, but multiple subnets can be associated with the same route table
 	* Each route in a table specifies a destination CIDR and a target
 	* Every route table contains a local route for communication within the VPC
 	* Can have a *default route* 0.0.0.0/0 to route everything that doesn't have a specific rule
@@ -5735,11 +5731,9 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 	* Can only map to instances in public subnets
 * **Gateways**
 	* *Internet Gateway*
-		* Horizontally scaled, redundant, and highly available VPC component that allows communication
-		between instances in a VPC and the internet
+		* Horizontally scaled, redundant, and highly available VPC component that allows communication between instances in a VPC and the internet
 		* Provides a target in VPC route tables for internet-routable traffic
-		* Performs network address translation (NAT) for instances that have been assigned public
-		IPv4 addresses
+		* Performs network address translation (NAT) for instances that have been assigned public IPv4 addresses
   * *Egress-Only* Gateway
     * Allows outbound communication over IPv6 from instances in your VPC to the Internet
     * Prevents the Internet from initiating an IPv6 connection with your instances.
@@ -5760,8 +5754,7 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
     * HA per AZ, create one gateway per AZ
 * **Network ACL**
   * Subnet level, acting as firewall
-  * One subnet can (and must) only ever be associated to one NACL, however, one NACL can be
-    associated to many subnets
+  * One subnet can (and must) only ever be associated to one NACL, however, one NACL can be associated to many subnets
   * Rules for inbound and outbound traffic
   * Rules have numbers and are evaluated from low to high
   * Default is to deny everything in and out
@@ -5796,10 +5789,7 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 
 <a name="15_1_3_2"></a>
 #### [↖](#15_1)[↑](#15_1_3_1)[↓](#15_1_4) VPC Flow Logs
-VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to
-and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs
-and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen
-destination.
+VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen destination.
 
 Can be created at 3 levels:
 * VPC
@@ -5807,21 +5797,7 @@ Can be created at 3 levels:
 * Network interface
 
 <a name="15_1_4"></a>
-### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_1_5) VPC Endpoints
-Allows instances with a VPC to connect to services without going via public internet.
-
-Supported by:
-Amazon API Gateway, AWS CloudFormation, Amazon CloudWatch, Amazon CloudWatch Events, Amazon
-CloudWatch Logs, AWS CodeBuild, AWS Config, Amazon EC2 API, Elastic Load Balancing API, Amazon
-Elastic Container Registry, Amazon Elastic Container Service, AWS Key Management Service, Amazon
-Kinesis Data Streams, Amazon SageMaker and Amazon SageMaker Runtime, Amazon SageMaker Notebook
-Instance, AWS Secrets Manager, AWS Security Token Service, AWS Service Catalog, Amazon SNS, Amazon
-SQS, AWS Systems Manager, Endpoint services hosted by other AWS accounts, Supported AWS
-Marketplace partner services
-
-
-<a name="15_1_5"></a>
-### [↖](#15_1)[↑](#15_1_4) Limits:
+### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_2) Limits:
 .|.
 -|-
 VPCs per region|5
@@ -5832,3 +5808,139 @@ Elastic IPs per account per region|5
 VPN connections per region|50
 Route tables per region|200
 Security groups per region|500
+
+---
+
+<a name="15_2"></a>
+## [↖](#top)[↑](#15_1_4)[↓](#15_2_1) VPC Peering
+<!-- toc_start -->
+* [Longest prefix match](#15_2_1)
+<!-- toc_end -->
+* Connect VPCs through direct network routing
+	* Cross-region, cross-account
+* Cannot have matching or overlapping CIDR blocks
+* Allows instances to communicate with each other as if they were in the same network
+* Peering is in star configuration with 1 central VPC. No transitive peering.
+	* Must be established for each VPC that need to communicate with one another
+* Only routes traffic between source and destination VPC
+  * Does not support edge to edge routing
+		* Even if VPC A can route into VPC B, it cannot use VPC A's edge infrastructure
+		* VPN, Direct Connect, IGW, NAT, Gateway VPC Endpoint (S3 & DynamoDB)
+  * Does not share VPN connection into datacenter
+* Must update route tables in each VPC’s subnets to ensure instances can communicate
+* Can reference a security group of a peered VPC (even cross-account)
+
+<a name="15_2_1"></a>
+### [↖](#15_2)[↑](#15_2)[↓](#15_3) Longest prefix match
+* VPC uses the longest prefix match to select the most specific route
+* Other way of saying it is “most specific route”
+
+---
+
+<a name="15_3"></a>
+## [↖](#top)[↑](#15_2_1)[↓](#15_3_1) Transit Gateway
+<!-- toc_start -->
+* [Overview](#15_3_1)
+* [Previously: Transit VPC (=Software VPN)](#15_3_2)
+<!-- toc_end -->
+
+<a name="15_3_1"></a>
+### [↖](#15_3)[↑](#15_3)[↓](#15_3_2) Overview
+AWS Transit Gateway connects VPCs and on-premises networks through a central hub. This simplifies your network and puts an end to complex peering relationships. It acts as a cloud router – each new connection is only made once.
+
+As you expand globally, inter-Region peering connects AWS Transit Gateways together using the AWS global network. Your data is automatically encrypted, and never travels over the public internet. And, because of its central position, AWS Transit Gateway Network Manager has a unique view over your entire network, even connecting to Software-Defined Wide Area Network (SD-WAN) devices.
+
+* For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection
+* Regional resource, can work cross-region
+* Share cross-account using Resource Access Manager
+	* AWS Resource Access Manager (AWS RAM) lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts. 
+* You can peer Transit Gateways across regions
+* Route Tables: limit which VPC can talk with other VPC
+* Works with Direct Connect Gateway, VPN connections
+* Supports *IP Multicast* (not supported by any other AWS service)
+* Instances in a VPC can access a NAT Gateway, NLB, PrivateLink, and EFS in others VPCs attached to the AWS Transit Gateway.
+* On AWS:
+	* <a href="https://aws.amazon.com/transit-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/transit-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank">User Guide</a>
+
+<a name="15_3_2"></a>
+### [↖](#15_3)[↑](#15_3_1)[↓](#15_4) Previously: Transit VPC (=Software VPN)
+* Not an AWS offering, newer managed solution is Transit Gateway
+* Uses the public internet with a software VPN solution
+* Allows for transitive connectivity between VPC & locations
+* More complex routing rules, overlapping CIDR ranges, network-level packet filtering
+
+---
+
+<a name="15_4"></a>
+## [↖](#top)[↑](#15_3_2)[↓](#15_4_1) VPC Endpoints
+<!-- toc_start -->
+* [VPC Endpoint Gateway](#15_4_1)
+* [VPC Endpoint Interface](#15_4_2)
+* [VPC Endpoint Policies](#15_4_3)
+<!-- toc_end -->
+A VPC endpoint enables private connections between your VPC and supported AWS services and VPC endpoint services powered by AWS PrivateLink. AWS PrivateLink is a technology that enables you to privately access services by using private IP addresses. Traffic between your VPC and the other service does not leave the Amazon network. A VPC endpoint does not require an internet gateway, virtual private gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service.
+
+* Endpoints allow you to connect to AWS Services using a private network instead of the public internet
+* They scale horizontally and are redundant
+* No more IGW, NAT, etc... to access AWS Services
+* *VPC Endpoint Gateway* (S3 & DynamoDB)
+* *VPC Endpoint Interface* (the rest)
+* In case of problems:
+	* Check DNS Setting Resolution in your VPC
+	* Check Route Tables
+* On AWS:
+	* <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html" target="_blank">User Guide</a>
+
+<a name="15_4_1"></a>
+### [↖](#15_4)[↑](#15_4)[↓](#15_4_2) VPC Endpoint Gateway
+* Only works for S3 and DynamoDB, must create one gateway per VPC
+* Must update route tables entries
+* Gateway is defined at the VPC level
+* DNS resolution must be enabled in the VPC
+* The same public hostname for S3 can be used
+* Gateway endpoint cannot be extended out of a VPC (VPN, DX, TGW, peering)
+
+<a name="15_4_2"></a>
+### [↖](#15_4)[↑](#15_4_1)[↓](#15_4_3) VPC Endpoint Interface
+* Provision an ENI that will have a private endpoint interface hostname
+* Leverage Security Groups for security
+* Private DNS (setting when you create the endpoint)
+* The public hostname of a service will resolve to the private Endpoint Interface hostname
+* VPC Setting: “Enable DNS hostnames” and “Enable DNS Support” must be 'true’
+* Example for Athena:
+		* vpce-0b7d2995e9dfe5418-mwrths3x.athena.us-east-1.vpce.amazonaws.com
+		* vpce-0b7d2995e9dfe5418-mwrths3x-us-east-1a.athena.us-east-1.vpce.amazonaws.com
+		* vpce-0b7d2995e9dfe5418-mwrths3x-us-east-1b.athena.us-east-1.vpce.amazonaws.com 
+		* athena.us-east-1.amazonaws.com (private DNS name)
+* Interface are sharable
+	* Can be accessed from Direct Connect and Site-to-Site VPN
+
+<a name="15_4_3"></a>
+### [↖](#15_4)[↑](#15_4_2)[↓](#15_5) VPC Endpoint Policies
+A VPC endpoint policy is an IAM resource policy that you attach to an endpoint when you create or modify the endpoint. If you do not attach a policy when you create an endpoint, we attach a default policy for you that allows full access to the service. If a service does not support endpoint policies, the endpoint allows full access to the service. An endpoint policy does not override or replace IAM user policies or service-specific policies (such as S3 bucket policies). It is a separate policy for controlling access from the endpoint to the specified service.
+* Endpoint Policies are JSON documents to control access to services
+* Does not override or replace IAM user policies or service-specific policies (such as S3 bucket policies)
+* On AWS:
+	* <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html" target="_blank">User Guide</a>
+
+---
+
+<a name="15_5"></a>
+## [↖](#top)[↑](#15_4_3)[↓](#15_5_1) PrivateLink
+<!-- toc_start -->
+* [Overview](#15_5_1)
+<!-- toc_end -->
+<a name="15_5_1"></a>
+### [↖](#15_5)[↑](#15_5) Overview
+AWS PrivateLink provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet. AWS PrivateLink makes it easy to connect services across different accounts and VPCs to significantly simplify your network architecture.
+
+Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hosted by AWS Partners and supported solutions available in AWS Marketplace. By powering Gateway Load Balancer endpoints, AWS PrivateLink brings the same level of security and performance to your virtual network appliances or custom traffic inspection logic.
+
+* Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts)
+* Does not require VPC peering, internet gateway, NAT, route tables...
+* Requires a network load balancer (Service VPC) and ENI (Customer VPC)
+* If the NLB is in multiple AZ, and the ENI in multiple AZ, the solution is fault tolerant!
+* Scenario:
+	* Secure and Scale Web Filtering using Explicit Proxy
+* On AWS:
+	* <a href="https://aws.amazon.com/priatelink/" target="_blank">Service</a> - <a href="https://aws.amazon.com/privatelink/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html" target="_blank">User Guide</a>
