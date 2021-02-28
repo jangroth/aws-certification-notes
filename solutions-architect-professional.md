@@ -90,10 +90,12 @@
   * [S3 Cost Savings](#13_4)
 * [Migration](#14)
   * [The 6R Strategies](#14_1)
-  * [Storage Gateway](#14_2)
-  * [Snowball](#14_3)
-  * [Database Migration Service](#14_4)
-  * [Application Discovery Service](#14_5)
+  * [On-Premises strategies with AWS](#14_2)
+  * [Storage Gateway](#14_3)
+  * [Snowball](#14_4)
+  * [Database Migration Service](#14_5)
+  * [Application Discovery Service](#14_6)
+  * [Server Migration Service](#14_7)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -514,10 +516,10 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
   * Establish “trust" connections with on-premises AD
 * **Active Directory Connector**
   * Directory Gateway (proxy) to redirect to on-premises AD
-  * Users are managed on the on-premise AD
+  * Users are managed on the on-premises AD
 * **Simple Active Directory**
   * AD-compatible managed directory on AWS
-  * Cannot be joined with on-premise AD
+  * Cannot be joined with on-premises AD
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
 
 <a name="3_5_2"></a>
@@ -702,7 +704,7 @@ AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it e
 * Integration with on-premises Active Directory
   * Standalone AWS Managed Microsoft AD
   * AD Connector to on-premises AD
-  * AWS Managed Microsoft AD with two-way forest trust with on-premise AD
+  * AWS Managed Microsoft AD with two-way forest trust with on-premises AD
 * Centralized permission management
 * Centralized auditing with CloudTrail
 * On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
@@ -2444,7 +2446,7 @@ Route 53 specific:
 <a name="5_9_3_3"></a>
 #### [↖](#5_9)[↑](#5_9_3_2)[↓](#5_9_4) Private Hosted Zones
 * Route 53 health checkers are outside the VPC
-* They can’t access private endpoints (private VPC or on-premise resource)
+* They can’t access private endpoints (private VPC or on-premises resource)
 
 Options:
 * To check a resource within a VPC, you must assign a public IP address.
@@ -4233,7 +4235,7 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
 * Option 2
   * DynamoDB Streams -> Lambda
     * 3000 WCU = 3 MB/s
-    * = $1,450.90 / month
+    * = $1,450.90/month
     * Storage in DynamoDB
 
 <a name="10_1_6_3"></a>
@@ -4297,7 +4299,7 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
   * You can set a maximum price for Spot Instances
   * Launched within your own VPC
   * If you launch within your own private subnet, make sure it has access to the ECS service
-  * Either using a NAT gateway / instance or using VPC Endpoints for ECS
+  * Either using a NAT gateway/instance or using VPC Endpoints for ECS
 * Unmanaged Compute Environment
   * You control and manage instance configuration, provisioning and scaling
 
@@ -4498,7 +4500,7 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
   * Need to use Big Data tools such as Apache Hive, Spark
   * One long-running cluster, many jobs, with auto-scaling, or one cluster per job?
   * Purchasing options – Spot, On Demand, Reserved Instances
-  * Can access data in DynamoDB and / or S3
+  * Can access data in DynamoDB and/or S3
   * Scratch data on EBS disks (HDFS) and long term storage in S3 (EMRFS)
 * Athena
   * Simple queries and aggregations, data must live in S3
@@ -4649,7 +4651,7 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 
 <a name="11_1_6_5"></a>
 #### [↖](#11_1)[↑](#11_1_6_4)[↓](#11_2) Logs Agent & Unified Agent
-* For virtual servers (EC2 instances, on-premise servers...)
+* For virtual servers (EC2 instances, on-premises servers...)
 * CloudWatch Logs Agent
   * Old version of the agent
   * Can only send to CloudWatch Logs
@@ -4771,10 +4773,10 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 *AWS OpsWorks* is a configuration management service that provides managed instances of Chef and Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are configured, deployed, and managed across your Amazon EC2 instances or on-premises compute environments.
 
 * Chef & Puppet help you perform server configuration automatically, or repetitive actions
-* They work great with EC2 & On Premises VM
+* They work great with EC2 & On-premises VM
 * AWS OpsWorks = Managed Chef & Puppet
 * It’s an alternative to AWS SSM
-* If you’re already using cookbooks (chef) on premises, OpsWorks is good
+* If you’re already using cookbooks (chef) on-Premises, OpsWorks is good
 * Migrating from other tech to OpsWorks or vice–versa is not easy
 * Declarative desired state engine
   * Automate, monitor and maintain deployments
@@ -4938,8 +4940,8 @@ AWS CloudFormation is available at no additional charge, and you pay only for th
 ### [↖](#12_4)[↑](#12_4_2)[↓](#12_4_4) Retaining Data on Deletes
 * You can put a DeletionPolicy on any resource to control what happens when the CloudFormation template is deleted
 * DeletionPolicy **Retain**
-  * Specify on resources to preserve / backup in case of CloudFormation deletes
-  * To keep a resource, specify Retain (works for any resource / nested stack)
+  * Specify on resources to preserve/backup in case of CloudFormation deletes
+  * To keep a resource, specify Retain (works for any resource/nested stack)
 * DeletionPolicy **Snapshot**
   * EBS Volume, ElastiCache Cluster, ElastiCache ReplicationGroup
   * RDS DBInstance, RDS DBCluster, Redshift Cluster
@@ -4959,7 +4961,7 @@ AWS CloudFormation is available at no additional charge, and you pay only for th
 * You can define a Custom Resource in CloudFormation to address any of these use cases:
 * An AWS resource is not yet supported (new service for example)
 * Example use cases
-  * An On-Premise resource
+  * An on-premises resource
   * Emptying an S3 bucket before being deleted
   * Fetch an AMI id
   * Anything you want...!
@@ -4984,7 +4986,7 @@ AWS CloudFormation is available at no additional charge, and you pay only for th
 * StackSets
   * Deploy a CloudFormation stack across multiple accounts and regions
 * Stack Policies
-  * Prevent accidental updates / deletes to stack resources
+  * Prevent accidental updates/deletes to stack resources
 
   ---
 
@@ -5056,7 +5058,7 @@ Vanilla EC2|With User Data (just for the first launch)
 AMI Baking|For things that are slow to install (runtimes, updates, tools), and use EC2 user data for quick runtime setup
 Auto Scaling Group|With launch template (AMI)
 CodeDeploy|In-place on EC2<br/>In-place on ASG<br/>New instances on ASG<br/>Traffic shifting for AWS Lambda<br/>New task set for ECS + traffic shifting
-Elastic Beanstalk|In-place all at once upgrades<br/>Rolling upgrades (with or without additional instances)<br/>Immutable upgrades (new instances)<br/>Blue / Green (entirely new stack)
+Elastic Beanstalk|In-place all at once upgrades<br/>Rolling upgrades (with or without additional instances)<br/>Immutable upgrades (new instances)<br/>Blue/Green (entirely new stack)
 OpsWorks|For chef/puppet stacks only<br/>Can manage ELB and EC2 instances<br/>Cannot manage an ASG
 SAM Framework|Leverages CloudFormation & CodeDeploy
 
@@ -5324,7 +5326,7 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 * [Rehosting — Otherwise known as “lift-and-shift.”](#14_1_1)
 * [Replatforming — I sometimes call this “lift-tinker-and-shift.”](#14_1_2)
 * [Repurchasing — Moving to a different product.](#14_1_3)
-* [Refactoring / Re-architecting — Re-imagining how the application is architected and developed, typically using cloud-native features.](#14_1_4)
+* [Refactoring/Re-architecting — Re-imagining how the application is architected and developed, typically using cloud-native features.](#14_1_4)
 * [Retire — Get rid of.](#14_1_5)
 * [Retain — Usually this means “revisit” or do nothing (for now).](#14_1_6)
 <!-- toc_end -->
@@ -5354,7 +5356,7 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 	* CRM to Salesforce.com, HR to Workday, CMS to Drupal
 
 <a name="14_1_4"></a>
-### [↖](#14_1)[↑](#14_1_3)[↓](#14_1_5) Refactoring / Re-architecting — Re-imagining how the application is architected and developed, typically using cloud-native features.
+### [↖](#14_1)[↑](#14_1_3)[↓](#14_1_5) Refactoring/Re-architecting — Re-imagining how the application is architected and developed, typically using cloud-native features.
 * Reimagining how the application is architected using Cloud Native features
 * Driven by the need of the business to add features, scale, performance
 * Example
@@ -5375,18 +5377,31 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 ---
 
 <a name="14_2"></a>
-## [↖](#top)[↑](#14_1_6)[↓](#14_2_1) Storage Gateway
+## [↖](#top)[↑](#14_1_6)[↓](#14_3) On-Premises strategies with AWS
+
+.|.
+-|-
+Download Amazon Linux 2 AMI as a VM (.iso format)|VMWare, KVM, VirtualBox (Oracle VM), Microsoft Hyper-V
+AWS Application Discovery Service|Gather information about your on-premises servers to plan a migration<br/>Server utilization and dependency mappings<br/>Track with AWS Migration Hub
+AWS VM Import/Export|Migrate existing applications into EC2<br/>Create a DR repository strategy for your on-premises VMs<br/>Can export back the VMs from EC2 to on-premise
+AWS Server Migration Service (SMS)|Incremental replication of on-premises live servers to AWS<br/>Migrates the entire VM into AWS
+AWS Database Migration Service (DMS)|Replicate On-premises => AWS , AWS => AWS, AWS => On-premises<br/>Works with various database technologies (Oracle, MySQL, DynamoDB, etc..)
+
+---
+
+<a name="14_3"></a>
+## [↖](#top)[↑](#14_2)[↓](#14_3_1) Storage Gateway
 <!-- toc_start -->
-* [Overview](#14_2_1)
-* [Gateway types](#14_2_2)
-  * [File gateway (NFS, SMB)](#14_2_2_1)
-  * [File gateway scenarios](#14_2_2_2)
-  * [Volume gateway (iSCSI)](#14_2_2_3)
-  * [Tape gateway (VTL)](#14_2_2_4)
+* [Overview](#14_3_1)
+* [Gateway types](#14_3_2)
+  * [File gateway (NFS, SMB)](#14_3_2_1)
+  * [File gateway scenarios](#14_3_2_2)
+  * [Volume gateway (iSCSI)](#14_3_2_3)
+  * [Tape gateway (VTL)](#14_3_2_4)
 <!-- toc_end -->
 
-<a name="14_2_1"></a>
-### [↖](#14_2)[↑](#14_2)[↓](#14_2_2) Overview
+<a name="14_3_1"></a>
+### [↖](#14_3)[↑](#14_3)[↓](#14_3_2) Overview
 *AWS Storage Gateway* is a hybrid cloud storage service that connects your existing on-premises environments with the AWS Cloud. Its features make it easy for you to run hybrid cloud workloads at any stage of your cloud adoption, whether it's getting started with cloud backups, running cloud processing workflows for data generated by on-premises machines, or performing a one-time migration of block volume data or databases.
 
 The gateway connects to AWS storage services, such as Amazon S3, Amazon Glacier, Amazon EBS, and AWS Backup, providing storage for files, volumes, snapshots, and virtual tapes in AWS.
@@ -5397,11 +5412,11 @@ The gateway connects to AWS storage services, such as Amazon S3, Amazon Glacier,
 * On AWS
 	* <a href="https://aws.amazon.com/storagegateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/storagegateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/storagegateway/latest/userguide/WhatIsStorageGateway.html" target="_blank">User Guide</a>
 
-<a name="14_2_2"></a>
-### [↖](#14_2)[↑](#14_2_1)[↓](#14_2_2_1) Gateway types
+<a name="14_3_2"></a>
+### [↖](#14_3)[↑](#14_3_1)[↓](#14_3_2_1) Gateway types
 
-<a name="14_2_2_1"></a>
-#### [↖](#14_2)[↑](#14_2_2)[↓](#14_2_2_2) File gateway (NFS, SMB)
+<a name="14_3_2_1"></a>
+#### [↖](#14_3)[↑](#14_3_2)[↓](#14_3_2_2) File gateway (NFS, SMB)
 The *File Gateway* presents a file interface that enables you to store files as objects in Amazon S3 using the industry-standard NFS and SMB file protocols, and access those files via NFS and SMB from your datacenter or Amazon EC2, or access those files as objects with the S3 API.
 
 * File Gateway appliance is a virtual machine to bridge between your NFS and S3
@@ -5413,8 +5428,8 @@ The *File Gateway* presents a file interface that enables you to store files as 
 * Can be mounted on many servers
 * <a href="https://d0.awsstatic.com/whitepapers/aws-storage-gateway-file-gateway-for-hybrid-architectures.pdf" target="_blank">AWS whitepaper</a>
 
-<a name="14_2_2_2"></a>
-#### [↖](#14_2)[↑](#14_2_2_1)[↓](#14_2_2_3) File gateway scenarios
+<a name="14_3_2_2"></a>
+#### [↖](#14_3)[↑](#14_3_2_1)[↓](#14_3_2_3) File gateway scenarios
 * **Migration setup**
 	* Install File Gateway Appliance DC *and* in a VPC
 	* EC2s would see the same data than on-premises
@@ -5432,20 +5447,20 @@ The *File Gateway* presents a file interface that enables you to store files as 
 	* Enables to have the File Gateway for *Write Once Read Many* (WORM) data
 	* If there are file modifications or renames in the file share clients, the file gateway creates a new version of the object without affecting priori versions, and the original locked version will remain unchanged
 
-<a name="14_2_2_3"></a>
-#### [↖](#14_2)[↑](#14_2_2_2)[↓](#14_2_2_4) Volume gateway (iSCSI)
+<a name="14_3_2_3"></a>
+#### [↖](#14_3)[↑](#14_3_2_2)[↓](#14_3_2_4) Volume gateway (iSCSI)
 The *Volume Gateway* presents your applications storage volumes using the iSCSI block protocol. Data written to these volumes can be asynchronously backed up as point-in-time snapshots of your volumes, and stored in the cloud as Amazon EBS snapshots. You can set the schedule for when snapshots occur or create them via the AWS Management Console or service API. Snapshots are incremental backups that capture only changed blocks. All snapshot storage is also compressed to minimize your storage charges. * *Stored* volumes (all data on-prem, EBS snapshots in cloud, stored on S3) * *Cached* volumes (only recently used data on-prem, EBS volumes in cloud, stored on S3)
 
 * Block storage using iSCSI protocol backed by S3
 * **Cached volumes**: low latency access to most recent data, full data on S3
-* **Stored volumes**: entire dataset is on premise, scheduled backups to S3
+* **Stored volumes**: entire dataset is on-premises, scheduled backups to S3
 * Can create EBS snapshots from the volumes and restore as EBS!
 * Up to 32 volumes per gateway
 	* Each volume up to 32TB in cached mode (1PB per Gateway)
 	* Each volume up to 16 TB in stored mode (512TB per Gateway)
 
-<a name="14_2_2_4"></a>
-#### [↖](#14_2)[↑](#14_2_2_3)[↓](#14_3) Tape gateway (VTL)
+<a name="14_3_2_4"></a>
+#### [↖](#14_3)[↑](#14_3_2_3)[↓](#14_4) Tape gateway (VTL)
 The *Tape Gateway* presents itself to your existing backup application as an industry-standard iSCSI-based virtual tape library (VTL), consisting of a virtual media changer and virtual tape drives. You can continue to use your existing backup applications and workflows while writing to a nearly limitless collection of virtual tapes. Each virtual tape is stored in Amazon S3. When you no longer require immediate or frequent access to data contained on a virtual tape, you can have your backup application move it from the Storage Gateway Virtual Tape Library into an archive tier that sits on top of Amazon Glacier cloud storage, further reducing storage costs.
 * Some companies still have backup processes using physical tapes
 * With Tape Gateway, companies use the same processes but in the cloud
@@ -5456,10 +5471,10 @@ The *Tape Gateway* presents itself to your existing backup application as an ind
 
 ---
 
-<a name="14_3"></a>
-## [↖](#top)[↑](#14_2_2_4)[↓](#14_3_1) Snowball
+<a name="14_4"></a>
+## [↖](#top)[↑](#14_3_2_4)[↓](#14_4_1) Snowball
 <!-- toc_start -->
-* [Snowball Process](#14_3_1)
+* [Snowball Process](#14_4_1)
 <!-- toc_end -->
 
 Snowball is a petabyte-scale data transport solution that uses devices designed to be secure to transfer large amounts of data into and out of the AWS Cloud. Using Snowball addresses common challenges with large-scale data transfers including high network costs, long transfer times, and security concerns. Customers today use Snowball to migrate analytics data, genomics data, video libraries, image repositories, backups, and to archive part of data center shutdowns, tape replacement or application migration projects. Transferring data with Snowball is simple, fast, more secure, and can be as little as one-fifth the cost of transferring data via high-speed Internet.
@@ -5485,8 +5500,8 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 * On AWS
 	* <a href="https://aws.amazon.com/snowball/" target="_blank">Service</a> - <a href="https://aws.amazon.com/snowball/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/snowball/index.html" target="_blank">User Guide</a>
 
-<a name="14_3_1"></a>
-### [↖](#14_3)[↑](#14_3)[↓](#14_4) Snowball Process
+<a name="14_4_1"></a>
+### [↖](#14_4)[↑](#14_4)[↓](#14_5) Snowball Process
 * Request snowball devices from the AWS console for delivery
 * Install the snowball client on your servers
 * Connect the snowball to your servers and copy files using the client
@@ -5497,17 +5512,17 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 
 ---
 
-<a name="14_4"></a>
-## [↖](#top)[↑](#14_3_1)[↓](#14_4_1) Database Migration Service
+<a name="14_5"></a>
+## [↖](#top)[↑](#14_4_1)[↓](#14_5_1) Database Migration Service
 <!-- toc_start -->
-* [Overview](#14_4_1)
-* [Schema Conversion Tool (SCT)](#14_4_2)
-* [Good to know](#14_4_3)
-* [Combine Snowball & DMS](#14_4_4)
+* [Overview](#14_5_1)
+* [Schema Conversion Tool (SCT)](#14_5_2)
+* [Good to know](#14_5_3)
+* [Combine Snowball & DMS](#14_5_4)
 <!-- toc_end -->
 
-<a name="14_4_1"></a>
-### [↖](#14_4)[↑](#14_4)[↓](#14_4_2) Overview
+<a name="14_5_1"></a>
+### [↖](#14_5)[↑](#14_5)[↓](#14_5_2) Overview
 AWS Database Migration Service helps you migrate databases to AWS quickly and securely. The source database remains fully operational during the migration, minimizing downtime to applications that rely on the database. The AWS Database Migration Service can migrate your data to and from most widely used commercial and open-source databases.
 
 AWS Database Migration Service supports homogeneous migrations such as Oracle to Oracle, as well as heterogeneous migrations between different database platforms, such as Oracle or Microsoft SQL Server to Amazon Aurora. With AWS Database Migration Service, you can continuously replicate your data with high availability and consolidate databases into a petabyte-scale data warehouse by streaming data to Amazon Redshift and Amazon S3. Learn more about the supported source and target databases.
@@ -5527,22 +5542,22 @@ AWS Database Migration Service supports homogeneous migrations such as Oracle to
 	* Amazon S3
 	* *not*: RedShift, DynamoDb, ElasticSearch Service, Kinesis Data Streams
 * Targets
-	* On-Premise and EC2 instances databases: Oracle, MS SQL Server, MySQL, MariaDB, PostgreSQL, SAP
+	* On-premises and EC2 instances databases: Oracle, MS SQL Server, MySQL, MariaDB, PostgreSQL, SAP
 	* Amazon RDS, Amazon Redshift, Amazon DynamoDB, Amazon S3, ElasticSearch Service, Kinesis Data Streams, DocumentDB
 * On AWS
 	* <a href="https://aws.amazon.com/dms/" target="_blank">Service</a> - <a href="https://aws.amazon.com/dms/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/dms/" target="_blank">User Guide</a>
 
-<a name="14_4_2"></a>
-### [↖](#14_4)[↑](#14_4_1)[↓](#14_4_3) Schema Conversion Tool (SCT)
+<a name="14_5_2"></a>
+### [↖](#14_5)[↑](#14_5_1)[↓](#14_5_3) Schema Conversion Tool (SCT)
 * Convert your Database’s Schema from one engine to another
 * Example OLTP: (SQL Server or Oracle) to MySQL, PostgreSQL, Aurora
 * Example OLAP: (Teradata or Oracle) to Amazon Redshift
 * You do *not* need to use SCT if you are migrating the *same* DB engine
-	* Ex: On-Premise PostgreSQL => RDS PostgreSQL
+	* Ex: On-premises PostgreSQL => RDS PostgreSQL
 	* The DB engine is still PostgreSQL (RDS is the platform)
 
-<a name="14_4_3"></a>
-### [↖](#14_4)[↑](#14_4_2)[↓](#14_4_4) Good to know
+<a name="14_5_3"></a>
+### [↖](#14_5)[↑](#14_5_2)[↓](#14_5_4) Good to know
 * Works over VPC Peering, VPN (site to site, software), Direct Connect
 * Supports Full Load, Full Load + CDC, or CDC only
 * Oracle:
@@ -5553,8 +5568,8 @@ AWS Database Migration Service supports homogeneous migrations such as Oracle to
 	* Target: possible to migrate to DMS from a relational database
 	* Therefore DMS cannot be used to replicate ElasticSearch data
 
-<a name="14_4_4"></a>
-### [↖](#14_4)[↑](#14_4_3)[↓](#14_5) Combine Snowball & DMS
+<a name="14_5_4"></a>
+### [↖](#14_5)[↑](#14_5_3)[↓](#14_6) Combine Snowball & DMS
 * Larger data migrations can include many terabytes of information.
 * Can be limited due to network bandwidth or size of data
 * AWS DMS can use Snowball Edge & Amazon S3 to speed up migration
@@ -5566,14 +5581,41 @@ AWS Database Migration Service supports homogeneous migrations such as Oracle to
 
 ---
 
-<a name="14_5"></a>
-## [↖](#top)[↑](#14_4_4) Application Discovery Service
+<a name="14_6"></a>
+## [↖](#top)[↑](#14_5_4)[↓](#14_7) Application Discovery Service
 AWS Application Discovery Service helps enterprise customers plan migration projects by gathering information about their on-premises data centers.
 
 Planning data center migrations can involve thousands of workloads that are often deeply interdependent. Server utilization data and dependency mapping are important early first steps in the migration process. AWS Application Discovery Service collects and presents configuration, usage, and behavior data from your servers to help you better understand your workloads.
 
 The collected data is retained in encrypted format in an AWS Application Discovery Service data store. You can export this data as a CSV file and use it to estimate the Total Cost of Ownership (TCO) of running on AWS and to plan your migration to AWS. In addition, this data is also available in AWS Migration Hub, where you can migrate the discovered servers and track their progress as they get migrated to AWS.
 
+* Plan migration projects by gathering information about on-premises data centers
+* Server utilization data and dependency mapping are important for migrations
+* Agentless discovery (Application Discovery Agentless Connector):
+	* Open Virtual Appliance (OVA) package that can be deployed to a VMware host
+	* VM inventory, configuration, and performance history such as CPU, memory, and disk usage
+	* OS agnostic
+* Agent-based discovery:
+	* System configuration, system performance, running processes, and details of the network connections between systems
+	* Supports Microsoft Server, Amazon Linux, Ubuntu, RedHat, CentOS, SUSE...
+	* Resulting data can be exported as CSV or viewed within AWS Migration Hub
+* Data can be explorer using pre-defined queries in Amazon Athena
 * On AWS
 	* <a href="https://aws.amazon.com/application-discovery/" target="_blank">Service</a> - <a href="https://aws.amazon.com/application-discovery/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/application-discovery/index.html" target="_blank">User Guide</a>
 
+---
+
+<a name="14_7"></a>
+## [↖](#top)[↑](#14_6) Server Migration Service
+AWS Server Migration Service (SMS) is an agentless service which makes it easier and faster for you to migrate thousands of on-premises workloads to AWS. AWS SMS allows you to automate, schedule, and track incremental replications of live server volumes, making it easier for you to coordinate large-scale server migrations.
+
+* Migrate entire VMs to AWS, improvement over EC2 VM Import/Export service (deprecated)
+	* That means the OS, the data, everything is kept intact
+	* After loading the VM onto EC2 you can update the OS, the data, make an AMI
+	* Therefore SMS is used to Re-host
+* Only works with VMware vSphere, Windows Hyper-V, and Azure VM
+* Every replication creates an EBS snapshot/AMI ready for deployment on EC2
+* Every replication is incremental
+* “*One time migrations*”, or “*replication every interval*” option
+* On AWS
+	* <a href="https://aws.amazon.com/server-migration-service/" target="_blank">Service</a> - <a href="https://aws.amazon.com/server-migration-service/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/server-migration-service/index.html" target="_blank">User Guide</a>
