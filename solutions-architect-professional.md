@@ -103,6 +103,7 @@
   * [Transit Gateway](#15_3)
   * [VPC Endpoints](#15_4)
   * [PrivateLink](#15_5)
+  * [VPN](#15_6)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5683,7 +5684,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 * Shared or dedicated tenancy (exclusive hardware or not)
   * Cannot be changed after VPC creation
 * *Security groups* and subnet-level *network ACLs*
-* Ability to extend on-premise network to cloud
+* Ability to extend on-premises network to cloud
 * On AWS
 	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
 
@@ -5931,7 +5932,7 @@ A VPC endpoint policy is an IAM resource policy that you attach to an endpoint w
 * [Overview](#15_5_1)
 <!-- toc_end -->
 <a name="15_5_1"></a>
-### [↖](#15_5)[↑](#15_5) Overview
+### [↖](#15_5)[↑](#15_5)[↓](#15_6) Overview
 AWS PrivateLink provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet. AWS PrivateLink makes it easy to connect services across different accounts and VPCs to significantly simplify your network architecture.
 
 Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hosted by AWS Partners and supported solutions available in AWS Marketplace. By powering Gateway Load Balancer endpoints, AWS PrivateLink brings the same level of security and performance to your virtual network appliances or custom traffic inspection logic.
@@ -5944,3 +5945,77 @@ Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hos
 	* Secure and Scale Web Filtering using Explicit Proxy
 * On AWS:
 	* <a href="https://aws.amazon.com/privatelink/" target="_blank">Service</a> - <a href="https://aws.amazon.com/privatelink/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html" target="_blank">User Guide</a>
+
+---
+
+<a name="15_6"></a>
+## [↖](#top)[↑](#15_5_1)[↓](#15_6_1) VPN
+<!-- toc_start -->
+* [Site-To-Site VPN](#15_6_1)
+  * [Route Propagation](#15_6_1_1)
+* [AWS VPN CLoudHub](#15_6_2)
+* [Client VPN](#15_6_3)
+* [Software VPN (not AWS managed)](#15_6_4)
+* [VPN to multiple VPCs](#15_6_5)
+<!-- toc_end -->
+AWS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Together, they deliver a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.
+
+AWS Site-to-Site VPN creates encrypted tunnels between your network and your Amazon Virtual Private Clouds or AWS Transit Gateways. For managing remote access, AWS Client VPN connects your users to AWS or on-premises resources using a VPN software client.
+* On AWS:
+	* <a href="https://aws.amazon.com/vpn/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpn/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/vpn/index.html" target="_blank">User Guide</a>
+
+<a name="15_6_1"></a>
+### [↖](#15_6)[↑](#15_6)[↓](#15_6_1_1) Site-To-Site VPN
+* On-premises
+	* Setup a software or hardware VPN appliance to your on-premises network.
+	* The on-premises VPN should be accessible using a public IP
+* AWS-side
+	* Setup a Virtual Private Gateway (VGW) and attach to your VPC
+	* Setup a Customer Gateway (CGW) to point the on-premises VPN appliance
+	* Two VPN connections (tunnels) are created for redundancy, encrypted using IPSec
+	* Can optionally accelerate traffic with Global Accelerator (for worldwide networks)
+
+<a name="15_6_1_1"></a>
+#### [↖](#15_6)[↑](#15_6_1)[↓](#15_6_2) Route Propagation
+* Static Routing:
+	* Create static route in corporate data center for 10.0.0.1/24 (AWS) through the CGW
+	* Create static route in AWS for 10.3.0.0/20 (DC) through the VGW
+* Dynamic Routing (BGP):
+	* Uses BGP (Border Gateway Protocol) to share routes automatically (eBGP for internet)
+	* We don’t need to update the routing tables, it will be done for us dynamically
+	* Just need to specify the ASN (Autonomous System Number) of the CGW and VGW
+
+<a name="15_6_2"></a>
+### [↖](#15_6)[↑](#15_6_1_1)[↓](#15_6_3) AWS VPN CLoudHub
+Building on the AWS managed VPN options described previously, you can securely communicate from one site to another using the AWS VPN CloudHub. The AWS VPN CloudHub operates on a simple hub-and-spoke model that you can use with or without a VPC. Use this approach if you have multiple branch offices and existing internet connections and would like to implement a convenient, potentially low-cost hub-and-spoke model for primary or backup connectivity between these remote offices.
+* Can connect up to 10 Customer Gateway for each Virtual Private Gateway (VGW)
+* Low cost hub-and-spoke model for primary or secondary network connectivity between locations
+* Provide secure communication between sites, if you have multiple VPN connections
+* It’s a VPN connection so it goes over the public internet
+* Can be a failover connection between your on-premises locations
+* On AWS:
+	* <a href="https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-vpn-cloudhub.html" target="_blank">User Guide</a>
+
+<a name="15_6_3"></a>
+### [↖](#15_6)[↑](#15_6_2)[↓](#15_6_4) Client VPN
+* Connect from your personal computer using OpenVPN to your private network in AWS and on-premises
+
+<a name="15_6_4"></a>
+### [↖](#15_6)[↑](#15_6_3)[↓](#15_6_5) Software VPN (not AWS managed)
+* You can setup your own software VPN, but you have to manage everything including bandwidth, redundancy, etc.
+* You would have more control over the setup and routing options
+
+<a name="15_6_5"></a>
+### [↖](#15_6)[↑](#15_6_4) VPN to multiple VPCs
+* For VPN-based customers, AWS recommends creating a separate VPN connection for each customer VPC.
+* Direct Connect is recommended because it has a Direct Connect Gateway
+* Other Option: Share Services VPC
+	* Create a VPN connection between on-premises and shared service VPC
+	* Replicate services, applications, databases between on-premises and the Shared Services VPC or deploy proxies in the shared service VPC
+	* Do VPC peering between the VPC and the shared service VPC
+	* VPCs can directly access the Shared Service VPC services and do not need VPN connections to on-premise
+* Other Option: Transit VPC (complicated)
+	* Software VPN in transit VPC
+	* Good for resources that are hard to replicate on the cloud
+	* Must use VPN as VPC peering does not support transitive routing
+* Other Option: Transit Gateway
