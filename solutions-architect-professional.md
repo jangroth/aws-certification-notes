@@ -96,6 +96,7 @@
   * [Database Migration Service](#14_5)
   * [Application Discovery Service](#14_6)
   * [Server Migration Service](#14_7)
+  * [Disaster Recovery](#14_8)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5606,7 +5607,7 @@ The collected data is retained in encrypted format in an AWS Application Discove
 ---
 
 <a name="14_7"></a>
-## [↖](#top)[↑](#14_6) Server Migration Service
+## [↖](#top)[↑](#14_6)[↓](#14_8) Server Migration Service
 AWS Server Migration Service (SMS) is an agentless service which makes it easier and faster for you to migrate thousands of on-premises workloads to AWS. AWS SMS allows you to automate, schedule, and track incremental replications of live server volumes, making it easier for you to coordinate large-scale server migrations.
 
 * Migrate entire VMs to AWS, improvement over EC2 VM Import/Export service (deprecated)
@@ -5619,3 +5620,30 @@ AWS Server Migration Service (SMS) is an agentless service which makes it easier
 * “*One time migrations*”, or “*replication every interval*” option
 * On AWS
 	* <a href="https://aws.amazon.com/server-migration-service/" target="_blank">Service</a> - <a href="https://aws.amazon.com/server-migration-service/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/server-migration-service/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="14_8"></a>
+## [↖](#top)[↑](#14_7) Disaster Recovery
+* DR is about preparing for and recovering from a disaster
+* *Recovery Point Objective* - RPO
+  * How often do you run backups? How much data will be lost (since last backup)
+* *Recovery Time Objective* - RTO
+  * How much downtime is acceptable?
+
+From|To|.
+-|-|-
+On-prem|On-prem|Traditional DR, very expensive
+On-prem|Cloud|Hybrid recovery
+Cloud Region A|Cloud Region B|.
+
+.|RPO|RTO|Costs|Comment|What to do for DR
+-|-|-|-|-|-
+Backup & Restore|High|High|$|Regular backups|Restore
+Pilot Light|Medium|Medium|$$|Core system is always running|Add non-critical systems
+Warm Standby|Low|Low|$$$|Full system at minimum size always running|Add resources
+Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always running|Only switch traffic
+
+* <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html" target="_blank">On AWS</a>
+---
+
