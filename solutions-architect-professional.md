@@ -97,6 +97,8 @@
   * [Application Discovery Service](#14_6)
   * [Server Migration Service](#14_7)
   * [Disaster Recovery](#14_8)
+* [VPC](#15)
+  * [Virtual Private Cloud (VPC)](#15_1)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5624,7 +5626,7 @@ AWS Server Migration Service (SMS) is an agentless service which makes it easier
 ---
 
 <a name="14_8"></a>
-## [↖](#top)[↑](#14_7) Disaster Recovery
+## [↖](#top)[↑](#14_7)[↓](#15) Disaster Recovery
 * DR is about preparing for and recovering from a disaster
 * *Recovery Point Objective* - RPO
   * How often do you run backups? How much data will be lost (since last backup)
@@ -5645,5 +5647,188 @@ Warm Standby|Low|Low|$$$|Full system at minimum size always running|Add resource
 Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always running|Only switch traffic
 
 * <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html" target="_blank">On AWS</a>
+
 ---
 
+<a name="15"></a>
+# [↖](#top)[↑](#14_8)[↓](#15_1) VPC
+
+<a name="15_1"></a>
+## [↖](#top)[↑](#15)[↓](#15_1_1) Virtual Private Cloud (VPC)
+<!-- toc_start -->
+* [Overview](#15_1_1)
+  * [Default VPC (Amazon specific)](#15_1_1_1)
+  * [Non-default VPC (regular VPC)](#15_1_1_2)
+  * [VPC Peering](#15_1_1_3)
+  * [VPC Scenarios](#15_1_1_4)
+* [Components](#15_1_2)
+* [Structure & Package Flow](#15_1_3)
+  * [Package flow through VPC components](#15_1_3_1)
+  * [VPC Flow Logs](#15_1_3_2)
+* [VPC Endpoints](#15_1_4)
+* [Limits:](#15_1_5)
+<!-- toc_end -->
+
+<a name="15_1_1"></a>
+### [↖](#15_1)[↑](#15_1)[↓](#15_1_1_1) Overview
+* Provisions a logically isolated section of the AWS cloud
+* Spans over all AZs in a region
+* Allows to create layered architecture
+* Shared or dedicated tenancy (exclusive hardware or not)
+  * Cannot be changed after VPC creation
+* *Security groups* and subnet-level *network ACLs*
+* Ability to extend on-premise network to cloud
+
+<a name="15_1_1_1"></a>
+#### [↖](#15_1)[↑](#15_1_1)[↓](#15_1_1_2) Default VPC (Amazon specific)
+* Gives easy access to a VPC without having to configure it from scratch
+* Has different subnets in different AZs and an internet gateway (HA, spread out to all AZs)
+* Each instance launched automatically receives a *public IP* (and a private IP), this is
+  usually not the case for non-default VPCs)
+* Cannot be restored if deleted
+* Comes with default NACL that allows all inbound/outbound traffic
+<a name="15_1_1_2"></a>
+#### [↖](#15_1)[↑](#15_1_1_1)[↓](#15_1_1_3) Non-default VPC (regular VPC)
+* Only has private IP addresses
+* Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
+<a name="15_1_1_3"></a>
+#### [↖](#15_1)[↑](#15_1_1_2)[↓](#15_1_1_4) VPC Peering
+* Connect VPCs through direct network routing
+* Can occur between different accounts and regions
+* Cannot have matching or overlapping CIDR blocks
+* Allows instances to communicate with each other as if they were in the same network
+* Peering is in star configuration with 1 central VPC. No transitive peering.
+* Only routes traffic between source and destination VPC
+  * Does not support edge to edge routing
+  * Does not share VPN connection into datacenter
+<a name="15_1_1_4"></a>
+#### [↖](#15_1)[↑](#15_1_1_3)[↓](#15_1_2) VPC Scenarios
+* VPC with private subnet only -> single tier apps
+* VPC with public and private subnets -> layered apps
+* VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
+* VPC with private subnets and hardware connected VPN -> extended VPN
+
+<a name="15_1_2"></a>
+### [↖](#15_1)[↑](#15_1_1_4)[↓](#15_1_3) Components
+* **Subnet**
+	* In exactly one AZ
+	* If traffic is routed to an Internet gateway, the subnet is known as a public subnet
+	* If a subnet doesn't have a route to the Internet gateway, it's known as a private subnet
+	* EC2 instances are launched into subnets
+	* Use ssh-agent forwarding to connect from public to private instances
+	* Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
+* **Route Table**
+	* Contains a set of rules, called routes that determine where network traffic is directed to
+	* Each VPC automatically comes with a main route table that can be configured
+	* Each subnet in a VPC must be associated with a route table; the table controls the routing
+	for the subnet. A subnet can only be associated with one route table at a time, but multiple
+	subnets can be associated with the same route table
+	* Each route in a table specifies a destination CIDR and a target
+	* Every route table contains a local route for communication within the VPC
+	* Can have a *default route* 0.0.0.0/0 to route everything that doesn't have a specific rule
+* **Elastic IP**
+	* Static IPv4 address mapped to an instance or network interface
+	* If attached to network interface it's decoupled from the instance's lifecycle
+	* Routes to private IP address of instance
+	* Can be remapped in case of failure.
+	* For use in a specific region only
+	* Can only map to instances in public subnets
+* **Gateways**
+	* *Internet Gateway*
+		* Horizontally scaled, redundant, and highly available VPC component that allows communication
+		between instances in a VPC and the internet
+		* Provides a target in VPC route tables for internet-routable traffic
+		* Performs network address translation (NAT) for instances that have been assigned public
+		IPv4 addresses
+  * *Egress-Only* Gateway
+    * Allows outbound communication over IPv6 from instances in your VPC to the Internet
+    * Prevents the Internet from initiating an IPv6 connection with your instances.
+    * (IPv6 addresses are globally unique, and are therefore public by default)
+	* *Virtual Private* Gateway
+    * AWS side of Site-to-site VPN
+		* Has VPN connection to customer gateway attached
+		* Serves as VPN concentrator on the Amazon side of the VPN connection
+	* *Customer Gateway*
+    * Customer side of Site-to-site VPN
+		* A physical device or software application on your side of the VPN connection
+* **NAT**
+	* *NAT Instances*
+		* Manually configured instance from an NAT AMI
+    * Need to manually disable *source/destination check* on the instance
+	* *NAT Gateway*
+		* AWS-mananged service
+    * HA per AZ, create one gateway per AZ
+* **Network ACL**
+  * Subnet level, acting as firewall
+  * One subnet can (and must) only ever be associated to one NACL, however, one NACL can be
+    associated to many subnets
+  * Rules for inbound and outbound traffic
+  * Rules have numbers and are evaluated from low to high
+  * Default is to deny everything in and out
+  * *Stateless*
+  * Support *allow* and *deny* rules
+  * Can block IP addresses (Security groups can't)
+* **Security Groups**
+  * Acts as a virtual firewall to control inbound and outbound traffic to instances
+  * Acts on instance level, not subnet level
+  * 'Allow rules' for inbound and outbound traffic (*no* explicite deny rules)
+    * All outbound traffic is allowed by default
+    * All inbound traffic is denied per default
+  * Support *allow* rules only
+  * *Stateful* - will always allow response to (allowed) outbound traffic
+  * Can refer to other security group, e.g. allow traffic from there
+  * Can have mulitple security groups attached to an instance
+  * Can have any number of instances within a security group
+  * Cannot block individual IP adresses (use NACL for that)
+
+<a name="15_1_3"></a>
+### [↖](#15_1)[↑](#15_1_2)[↓](#15_1_3_1) Structure & Package Flow
+<a name="15_1_3_1"></a>
+#### [↖](#15_1)[↑](#15_1_3)[↓](#15_1_3_2) Package flow through VPC components
+* VPC (has *CIDR*)
+	* Gateway (Internet or VPN)
+  * Router
+	* Route table (one per subnet, can be shared)
+	* Network ACL (one per subnet, can be shared)
+	* Subnets (CIDRs match VPC's CIDR)
+	* Security Group (on VPC level)
+	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
+
+<a name="15_1_3_2"></a>
+#### [↖](#15_1)[↑](#15_1_3_1)[↓](#15_1_4) VPC Flow Logs
+VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to
+and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs
+and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen
+destination.
+
+Can be created at 3 levels:
+* VPC
+* Subnet
+* Network interface
+
+<a name="15_1_4"></a>
+### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_1_5) VPC Endpoints
+Allows instances with a VPC to connect to services without going via public internet.
+
+Supported by:
+Amazon API Gateway, AWS CloudFormation, Amazon CloudWatch, Amazon CloudWatch Events, Amazon
+CloudWatch Logs, AWS CodeBuild, AWS Config, Amazon EC2 API, Elastic Load Balancing API, Amazon
+Elastic Container Registry, Amazon Elastic Container Service, AWS Key Management Service, Amazon
+Kinesis Data Streams, Amazon SageMaker and Amazon SageMaker Runtime, Amazon SageMaker Notebook
+Instance, AWS Secrets Manager, AWS Security Token Service, AWS Service Catalog, Amazon SNS, Amazon
+SQS, AWS Systems Manager, Endpoint services hosted by other AWS accounts, Supported AWS
+Marketplace partner services
+
+
+<a name="15_1_5"></a>
+### [↖](#15_1)[↑](#15_1_4) Limits:
+.|.
+-|-
+VPCs per region|5
+Subnets per VPC|200
+Customer gateways per region|50
+Gateway per region|5 Internet
+Elastic IPs per account per region|5
+VPN connections per region|50
+Route tables per region|200
+Security groups per region|500
