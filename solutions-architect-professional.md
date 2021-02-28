@@ -104,6 +104,16 @@
   * [VPC Endpoints](#15_4)
   * [PrivateLink](#15_5)
   * [VPN](#15_6)
+  * [Direct Connect](#15_7)
+  * [Redundant connections beweteen on-premises and AWS](#15_8)
+* [Other Services](#16)
+  * [CloudSearch](#16_1)
+  * [Alex for Business](#16_2)
+  * [Amazon Lex](#16_3)
+  * [Amazon Rekognition](#16_4)
+  * [Kinesis Video Streams](#16_5)
+  * [AWS Workspaces](#16_6)
+  * [AWS AppStream 2.0](#16_7)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -5953,7 +5963,7 @@ Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hos
 <!-- toc_start -->
 * [Site-To-Site VPN](#15_6_1)
   * [Route Propagation](#15_6_1_1)
-* [AWS VPN CLoudHub](#15_6_2)
+* [AWS VPN CloudHub](#15_6_2)
 * [Client VPN](#15_6_3)
 * [Software VPN (not AWS managed)](#15_6_4)
 * [VPN to multiple VPCs](#15_6_5)
@@ -5986,8 +5996,9 @@ AWS Site-to-Site VPN creates encrypted tunnels between your network and your Ama
 	* Just need to specify the ASN (Autonomous System Number) of the CGW and VGW
 
 <a name="15_6_2"></a>
-### [↖](#15_6)[↑](#15_6_1_1)[↓](#15_6_3) AWS VPN CLoudHub
+### [↖](#15_6)[↑](#15_6_1_1)[↓](#15_6_3) AWS VPN CloudHub
 Building on the AWS managed VPN options described previously, you can securely communicate from one site to another using the AWS VPN CloudHub. The AWS VPN CloudHub operates on a simple hub-and-spoke model that you can use with or without a VPC. Use this approach if you have multiple branch offices and existing internet connections and would like to implement a convenient, potentially low-cost hub-and-spoke model for primary or backup connectivity between these remote offices.
+
 * Can connect up to 10 Customer Gateway for each Virtual Private Gateway (VGW)
 * Low cost hub-and-spoke model for primary or secondary network connectivity between locations
 * Provide secure communication between sites, if you have multiple VPN connections
@@ -6006,7 +6017,7 @@ Building on the AWS managed VPN options described previously, you can securely c
 * You would have more control over the setup and routing options
 
 <a name="15_6_5"></a>
-### [↖](#15_6)[↑](#15_6_4) VPN to multiple VPCs
+### [↖](#15_6)[↑](#15_6_4)[↓](#15_7) VPN to multiple VPCs
 * For VPN-based customers, AWS recommends creating a separate VPN connection for each customer VPC.
 * Direct Connect is recommended because it has a Direct Connect Gateway
 * Other Option: Share Services VPC
@@ -6019,3 +6030,237 @@ Building on the AWS managed VPN options described previously, you can securely c
 	* Good for resources that are hard to replicate on the cloud
 	* Must use VPN as VPC peering does not support transitive routing
 * Other Option: Transit Gateway
+
+---
+
+<a name="15_7"></a>
+## [↖](#top)[↑](#15_6_5)[↓](#15_7_1) Direct Connect
+<!-- toc_start -->
+* [Overview](#15_7_1)
+* [Direct Connect Virtual Interfaces (VIF)](#15_7_2)
+* [Connection Types](#15_7_3)
+* [Encryption](#15_7_4)
+* [Direct Connect Link Aggregation Groups (LAG)](#15_7_5)
+* [Direct Connect Gateway](#15_7_6)
+<!-- toc_end -->
+<a name="15_7_1"></a>
+### [↖](#15_7)[↑](#15_7)[↓](#15_7_2) Overview
+AWS Direct Connect is a cloud service solution that makes it easy to establish a dedicated network connection from your premises to AWS. Using AWS Direct Connect, you can establish private connectivity between AWS and your datacenter, office, or colocation environment, which in many cases can reduce your network costs, increase bandwidth throughput, and provide a more consistent network experience than Internet-based connections.
+
+AWS Direct Connect lets you establish a dedicated network connection between your network and one of the AWS Direct Connect locations. Using industry standard 802.1q VLANs, this dedicated connection can be partitioned into multiple virtual interfaces. This allows you to use the same connection to access public resources such as objects stored in Amazon S3 using public IP address space, and private resources such as Amazon EC2 instances running within an Amazon Virtual Private Cloud (VPC) using private IP space, while maintaining network separation between the public and private environments. Virtual interfaces can be reconfigured at any time to meet your changing needs.
+
+* Provides a dedicated private connection from a remote network to your VPC
+* Dedicated connection must be setup between your DC and AWS Direct Connect locations
+* More expensive than running a VPN solution
+* Private access to AWS services through virtual interfaces (VIF)
+* Bypass ISP, reduce network cost, increase bandwidth and stability
+* Not redundant by default (must setup a failover DX or VPN)
+* Consistent network performance
+* Compatible with all AWS services
+* Elastic
+* On AWS:
+	* <a href="https://aws.amazon.com/directconnect/" target="_blank">Service</a> - <a href="https://aws.amazon.com/directconnect/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/directconnect/index.html" target="_blank">User Guide</a>
+
+<a name="15_7_2"></a>
+### [↖](#15_7)[↑](#15_7_1)[↓](#15_7_3) Direct Connect Virtual Interfaces (VIF)
+* **Public VIF**: Connect to Public AWS Endpoints (S3 buckets, EC2 service, anything AWS...)
+* **Private VIF**: To connect to resources in your VPC (EC2 instances, ALB, etc..)
+* **Transit VIF**: To connect to resources in a VPC using a Transit Gateway
+* VPC endpoints cannot be accessed through Private VIF (Use Public VIF)
+
+<a name="15_7_3"></a>
+### [↖](#15_7)[↑](#15_7_2)[↓](#15_7_4) Connection Types
+* Dedicated Connections: 1 Gbps and 10 Gbps capacity
+	* Physical ethernet port dedicated to a customer
+	* Request made to AWS first, then completed by AWS Direct Connect Partners
+* Hosted Connections: 50 Mbps, 500 Mbps, to 10 Gbps
+	* Connection requests are made via AWS Direct Connect Partners
+	* Capacity can be added or removed on demand (-> elasticity)
+	* 1, 2, 5, 10 Gbps available at select AWS Direct Connect Partners
+* Lead times are often longer than 1 month to establish a new connection
+
+<a name="15_7_4"></a>
+### [↖](#15_7)[↑](#15_7_3)[↓](#15_7_5) Encryption
+* Data in transit is not encrypted (but is private)
+* AWS Direct Connect + VPN provides an IPsec-encrypted private connection
+	* Good for an extra level of security, but slightly more complex to put in place
+
+<a name="15_7_5"></a>
+### [↖](#15_7)[↑](#15_7_4)[↓](#15_7_6) Direct Connect Link Aggregation Groups (LAG)
+* Get increased speed and failover by summing up existing Direct Connect connections into a logical one
+* Can aggregate up to 4 (active active mode)
+* Can add connections over time to the LAG
+* All connections in the LAG must have the same bandwidth
+* All connections in the LAG must terminate at the same AWS Direct Connect Endpoint
+* Can set a minimum number of connections for the LAG to function
+
+<a name="15_7_6"></a>
+### [↖](#15_7)[↑](#15_7_5)[↓](#15_8) Direct Connect Gateway
+* If you want to setup a Direct Connect to one or more VPC in many different regions (same account, cross account), you must use a Direct Connect Gateway
+	* Connect to transit gateway when you have multiple VPCs in the same Region
+	* A virtual private gateway to extend your Local Zone
+
+---
+
+<a name="15_8"></a>
+## [↖](#top)[↑](#15_7_6)[↓](#16) Redundant connections beweteen on-premises and AWS
+* Site-to-Site Active Active Connection
+	* Two datacenters both with VPN connection
+		* If one connection goes down, the affected datacenter can connect via the other datacenter
+* Direct Connect – High Availability
+	* Multiple connections at multiple AWS Direct Connect locations
+		* If one connection goes down, the affected datacenter can connect via the other datacenter
+	* Backup VPN
+		* If one connection goes down, the affected datacenter can connect via the other datacenter
+
+---
+
+<a name="16"></a>
+# [↖](#top)[↑](#15_8)[↓](#16_1) Other Services
+
+<a name="16_1"></a>
+## [↖](#top)[↑](#16)[↓](#16_2) CloudSearch
+Amazon CloudSearch is a managed service in the AWS Cloud that makes it simple and cost-effective to set up, manage, and scale a search solution for your website or application.
+* Managed service to setup, manage and scale a search solution
+* Managed alternative to ElasticSearch
+* Free text, Boolean, autocomplete suggestions, geospatial search...
+* On AWS:
+	* <a href="https://aws.amazon.com/cloudsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudsearch/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_2"></a>
+## [↖](#top)[↑](#16_1)[↓](#16_3) Alex for Business
+Alexa for Business is a service that enables organizations and employees to use Alexa to get more work done. With Alexa for Business, employees can use Alexa as their intelligent assistant to be more productive in meeting rooms, at their desks, and even with the Alexa devices they already use at home or on the go. IT and facilities managers can also use Alexa for Business to measure and increase the utilization of the existing meeting rooms in their workplace.
+* Use Alexa to help employees be more productive in meeting rooms and their desk
+* Measure and increase the utilization of meeting rooms in their workplace
+* On AWS:
+	* <a href="https://aws.amazon.com/alexaforbusiness/" target="_blank">Service</a> - <a href="https://aws.amazon.com/alexaforbusiness/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/a4b/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_3"></a>
+## [↖](#top)[↑](#16_2)[↓](#16_4) Amazon Lex
+Amazon Lex is a service for building conversational interfaces into any application using voice and text. Amazon Lex provides the advanced deep learning functionalities of automatic speech recognition (ASR) for converting speech to text, and natural language understanding (NLU) to recognize the intent of the text, to enable you to build applications with highly engaging user experiences and lifelike conversational interactions. With Amazon Lex, the same deep learning technologies that power Amazon Alexa are now available to any developer, enabling you to quickly and easily build sophisticated, natural language, conversational bots (“chatbots”).
+
+With Amazon Lex, you can build bots to increase contact center productivity, automate simple tasks, and drive operational efficiencies across the enterprise. As a fully managed service, Amazon Lex scales automatically, so you don’t need to worry about managing infrastructure.
+* Automatic Speech Recognition (ASR) to convert speech to text
+* Natural Language Understanding to recognize the intent of text, callers
+* Helps build chatbots, call center bots
+* On AWS:
+	* <a href="https://aws.amazon.com/lex/" target="_blank">Service</a> - <a href="https://aws.amazon.com/lex/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/lex/" target="_blank">User Guide</a>
+
+---
+
+<a name="16_4"></a>
+## [↖](#top)[↑](#16_3)[↓](#16_5) Amazon Rekognition
+Amazon Rekognition makes it easy to add image and video analysis to your applications using proven, highly scalable, deep learning technology that requires no machine learning expertise to use. With Amazon Rekognition, you can identify objects, people, text, scenes, and activities in images and videos, as well as detect any inappropriate content. Amazon Rekognition also provides highly accurate facial analysis and facial search capabilities that you can use to detect, analyze, and compare faces for a wide variety of user verification, people counting, and public safety use cases.
+
+With Amazon Rekognition Custom Labels, you can identify the objects and scenes in images that are specific to your business needs. For example, you can build a model to classify specific machine parts on your assembly line or to detect unhealthy plants. Amazon Rekognition Custom Labels takes care of the heavy lifting of model development for you, so no machine learning experience is required. You simply need to supply images of objects or scenes you want to identify, and the service handles the rest.
+* Find objects, people, text, scenes in images and videos using ML
+* Facial analysis and facial search to do user verification, people counting
+* Create a database of “familiar faces” or compare against celebrities
+* Use cases:
+	* Labeling
+	* Content Moderation
+	* Text Detection
+	* Face Detection and Analysis (gender, age range, emotions...)
+	* Face Search and Verification
+	* Celebrity Recognition
+	* Pathing (ex: for sports game analysis)
+* On AWS:
+	* <a href="https://aws.amazon.com/rekognition/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rekognition/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rekognition/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_5"></a>
+## [↖](#top)[↑](#16_4)[↓](#16_6) Kinesis Video Streams
+Amazon Kinesis Video Streams makes it easy to securely stream video from connected devices to AWS for analytics, machine learning (ML), playback, and other processing. Kinesis Video Streams automatically provisions and elastically scales all the infrastructure needed to ingest streaming video data from millions of devices. It durably stores, encrypts, and indexes video data in your streams, and allows you to access your data through easy-to-use APIs. Kinesis Video Streams enables you to playback video for live and on-demand viewing, and quickly build applications that take advantage of computer vision and video analytics through integration with Amazon Rekognition Video, and libraries for ML frameworks such as Apache MxNet, TensorFlow, and OpenCV. Kinesis Video Streams also supports WebRTC, an open-source project that enables real-time media streaming and interaction between web browsers, mobile applications, and connected devices via simple APIs. Typical uses include video chat and peer-to-peer media streaming.
+
+* One video stream per streaming device (producers)
+	* Security cameras, body worn camera, smartphone
+	* Can use a Kinesis Video Streams Producer library
+* Underlying data is stored in S3 (but we don’t have access to it)
+* Cannot output the stream data to S3 (must build custom solution)
+* Consumers:
+	* Consumed by EC2 instances for real time analysis, or in batch
+	* Can leverage the Kinesis Video Stream Parser Library
+	* Integration with AWS Rekognition for facial detection
+* On AWS:
+	* <a href="https://aws.amazon.com/kinesis/video-streams/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/video-streams/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_6"></a>
+## [↖](#top)[↑](#16_5)[↓](#16_7) AWS Workspaces
+Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You can use Amazon WorkSpaces to provision either Windows or Linux desktops in just a few minutes and quickly scale to provide thousands of desktops to workers across the globe. You can pay either monthly or hourly, just for the WorkSpaces you launch, which helps you save money when compared to traditional desktops and on-premises VDI solutions. Amazon WorkSpaces helps you eliminate the complexity in managing hardware inventory, OS versions and patches, and Virtual Desktop Infrastructure (VDI), which helps simplify your desktop delivery strategy. With Amazon WorkSpaces, your users get a fast, responsive desktop of their choice that they can access anywhere, anytime, from any supported device.
+
+* Managed, Secure Cloud Desktop
+* Great to eliminate management of on-premise VDI (Virtual Desktop Infrastructure)
+* On Demand, pay per by usage
+* Secure, Encrypted, Network Isolation
+* Integrated with Microsoft Active Directory
+* **WorkSpaces Application Manager** (WAM)
+	* Deploy and Manage applications as virtualized application containers
+	* Provision at scale, and keep the applications updated using WAM
+* **Windows Updates**
+	* By default, Amazon Workspaces are configured to install software updates
+	* Amazon WorkSpaces with Windows will have Windows Update turned on
+	* You have full control over the Windows Update frequency
+* **Maintenance Windows**
+	* Updates are installed during maintenance windows (you define them)
+	* Always On WorkSpaces: default is from 00h00 to 04h00 on Sunday morning
+	* AutoStop WorkSpaces: automatically starts once a month to install updates
+* Manual maintenance: you define your windows and perform maintenance
+* On AWS:
+	* <a href="https://aws.amazon.com/workspaces/" target="_blank">Service</a> - <a href="https://aws.amazon.com/workspaces/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/workspaces/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_7"></a>
+## [↖](#top)[↑](#16_6)[↓](#16_7_1) AWS AppStream 2.0
+<!-- toc_start -->
+* [Amazon AppStream 2.0 vs WorkSpaces](#16_7_1)
+* [Amazon Mechanical Turk](#16_7_2)
+* [Device Farm](#16_7_3)
+<!-- toc_end -->
+Amazon AppStream 2.0 is a fully managed non-persistent application and desktop streaming service. You centrally manage your desktop applications on AppStream 2.0 and securely deliver them to any computer. You can easily scale to any number of users across the globe without acquiring, provisioning, and operating hardware or infrastructure. AppStream 2.0 is built on AWS, so you benefit from a data center and network architecture designed for the most security-sensitive organizations. Each end user has a fluid and responsive experience because your applications run on virtual machines optimized for specific use cases and each streaming sessions automatically adjust to network conditions.
+
+* Desktop Application Streaming Service
+* Deliver to any computer, without acquiring, provisioning infrastructure
+* The application is delivered from within a web browser
+* On AWS:
+	* <a href="https://aws.amazon.com/appstream2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/appstream2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/appstream2/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_7_1"></a>
+### [↖](#16_7)[↑](#16_7)[↓](#16_7_2) Amazon AppStream 2.0 vs WorkSpaces
+* Workspaces
+	* Fully managed VDI and desktop available
+	* The users connect to the VDI and open native or WAM applications
+	* Workspaces are on-demand or always on
+* AppStream 2.0
+	* Stream a desktop application to web browsers (no need to connect to a VDI)
+	* Works with any device (that has a web browser)
+	* Allow to configure an instance type per application type (CPU, RAM, GPU)
+
+---
+
+<a name="16_7_2"></a>
+### [↖](#16_7)[↑](#16_7_1)[↓](#16_7_3) Amazon Mechanical Turk
+* Crowdsourcing marketplace to perform simple human tasks
+* Distributed virtual workforce.
+* Integrates with SWF natively, does not integrate with Step Functions
+
+---
+
+<a name="16_7_3"></a>
+### [↖](#16_7)[↑](#16_7_2) Device Farm
+* Application testing service for your mobile and web applications
+* Test across real browsers and real mobiles devices
+* Fully automated using framework
+* Improve the quality of web and mobile apps
+* Generates videos and logs to document the issues encountered
+* Can remotely log-in to devices for debugging
+
