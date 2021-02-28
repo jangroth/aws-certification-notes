@@ -114,6 +114,8 @@
   * [Kinesis Video Streams](#16_5)
   * [AWS Workspaces](#16_6)
   * [AWS AppStream 2.0](#16_7)
+  * [Amazon Mechanical Turk](#16_8)
+  * [Device Farm](#16_9)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -6221,8 +6223,6 @@ Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You
 ## [↖](#top)[↑](#16_6)[↓](#16_7_1) AWS AppStream 2.0
 <!-- toc_start -->
 * [Amazon AppStream 2.0 vs WorkSpaces](#16_7_1)
-* [Amazon Mechanical Turk](#16_7_2)
-* [Device Farm](#16_7_3)
 <!-- toc_end -->
 Amazon AppStream 2.0 is a fully managed non-persistent application and desktop streaming service. You centrally manage your desktop applications on AppStream 2.0 and securely deliver them to any computer. You can easily scale to any number of users across the globe without acquiring, provisioning, and operating hardware or infrastructure. AppStream 2.0 is built on AWS, so you benefit from a data center and network architecture designed for the most security-sensitive organizations. Each end user has a fluid and responsive experience because your applications run on virtual machines optimized for specific use cases and each streaming sessions automatically adjust to network conditions.
 
@@ -6235,7 +6235,7 @@ Amazon AppStream 2.0 is a fully managed non-persistent application and desktop s
 ---
 
 <a name="16_7_1"></a>
-### [↖](#16_7)[↑](#16_7)[↓](#16_7_2) Amazon AppStream 2.0 vs WorkSpaces
+### [↖](#16_7)[↑](#16_7)[↓](#16_8) Amazon AppStream 2.0 vs WorkSpaces
 * Workspaces
 	* Fully managed VDI and desktop available
 	* The users connect to the VDI and open native or WAM applications
@@ -6247,16 +6247,16 @@ Amazon AppStream 2.0 is a fully managed non-persistent application and desktop s
 
 ---
 
-<a name="16_7_2"></a>
-### [↖](#16_7)[↑](#16_7_1)[↓](#16_7_3) Amazon Mechanical Turk
+<a name="16_8"></a>
+## [↖](#top)[↑](#16_7_1)[↓](#16_9) Amazon Mechanical Turk
 * Crowdsourcing marketplace to perform simple human tasks
 * Distributed virtual workforce.
 * Integrates with SWF natively, does not integrate with Step Functions
 
 ---
 
-<a name="16_7_3"></a>
-### [↖](#16_7)[↑](#16_7_2) Device Farm
+<a name="16_9"></a>
+## [↖](#top)[↑](#16_8) Device Farm
 * Application testing service for your mobile and web applications
 * Test across real browsers and real mobiles devices
 * Fully automated using framework
