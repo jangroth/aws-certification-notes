@@ -1461,7 +1461,7 @@ Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure,
   * Set a maximum price you’re willing to pay per Spot Instances or all
   * Can have a mix of instance types (M5.large, M5.xlarge, C5.2xlarge, etc..)
 * Supports: EC2 standalone, Auto Scaling Groups (launch template), ECS (underlying ASG), AWS Batch (Managed Compute Environment)
-* Soft limits:
+* Soft limits
   * Target capacity per Spot Fleet or EC2 fleet: 10,000
   * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
 
@@ -3911,7 +3911,7 @@ Amazon SWF offers capabilities to support a variety of application requirements.
 * [Overview](#9_3_1)
 * [Core features](#9_3_2)
 * [Scenarios](#9_3_3)
-* [Limits:](#9_3_4)
+* [Limits](#9_3_4)
 <!-- toc_end -->
 
 <a name="9_3_1"></a>
@@ -3981,7 +3981,7 @@ SQS offers two types of message queues. Standard queues offer maximum throughput
     * Load Balancing
 
 <a name="9_3_4"></a>
-### [↖](#9_3)[↑](#9_3_3)[↓](#9_4) Limits:
+### [↖](#9_3)[↑](#9_3_3)[↓](#9_4) Limits
 .|.
 -|-
 Max message size|256KB (2GB with Extended Client Library)
@@ -5668,7 +5668,7 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 * [Structure & Package Flow](#15_1_3)
   * [Package flow through VPC components](#15_1_3_1)
   * [VPC Flow Logs](#15_1_3_2)
-* [Limits:](#15_1_4)
+* [Limits](#15_1_4)
 <!-- toc_end -->
 
 <a name="15_1_1"></a>
@@ -5797,7 +5797,7 @@ Can be created at 3 levels:
 * Network interface
 
 <a name="15_1_4"></a>
-### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_2) Limits:
+### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_2) Limits
 .|.
 -|-
 VPCs per region|5
@@ -5853,7 +5853,7 @@ As you expand globally, inter-Region peering connects AWS Transit Gateways toget
 * For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection
 * Regional resource, can work cross-region
 * Share cross-account using Resource Access Manager
-	* AWS Resource Access Manager (AWS RAM) lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts. 
+	* AWS Resource Access Manager (AWS RAM) lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
 * You can peer Transit Gateways across regions
 * Route Tables: limit which VPC can talk with other VPC
 * Works with Direct Connect Gateway, VPN connections
@@ -5908,10 +5908,10 @@ A VPC endpoint enables private connections between your VPC and supported AWS se
 * The public hostname of a service will resolve to the private Endpoint Interface hostname
 * VPC Setting: “Enable DNS hostnames” and “Enable DNS Support” must be 'true’
 * Example for Athena:
-		* vpce-0b7d2995e9dfe5418-mwrths3x.athena.us-east-1.vpce.amazonaws.com
-		* vpce-0b7d2995e9dfe5418-mwrths3x-us-east-1a.athena.us-east-1.vpce.amazonaws.com
-		* vpce-0b7d2995e9dfe5418-mwrths3x-us-east-1b.athena.us-east-1.vpce.amazonaws.com 
-		* athena.us-east-1.amazonaws.com (private DNS name)
+	* vpce-0b7d2995e9dfe5418-mwrths3x.athena.us-east-1.vpce.amazonaws.com
+	* vpce-0b7d2995e9dfe5418-mwrths3x-us-east-1a.athena.us-east-1.vpce.amazonaws.co
+	* vpce-0b7d2995e9dfe5418-mwrths3x-us-east-1b.athena.us-east-1.vpce.amazonaws.com
+	* athena.us-east-1.amazonaws.com (private DNS name)
 * Interface are sharable
 	* Can be accessed from Direct Connect and Site-to-Site VPN
 
@@ -5943,4 +5943,4 @@ Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hos
 * Scenario:
 	* Secure and Scale Web Filtering using Explicit Proxy
 * On AWS:
-	* <a href="https://aws.amazon.com/priatelink/" target="_blank">Service</a> - <a href="https://aws.amazon.com/privatelink/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html" target="_blank">User Guide</a>
+	* <a href="https://aws.amazon.com/privatelink/" target="_blank">Service</a> - <a href="https://aws.amazon.com/privatelink/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/whitepapers/latest/aws-vpc-connectivity-options/aws-privatelink.html" target="_blank">User Guide</a>
