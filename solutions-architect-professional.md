@@ -6,8 +6,8 @@
   * [Content](#2_1)
 * [Identity and Federation](#3)
   * [Overview - possible ways to manage Identity and Federation in AWS](#3_1)
-  * [Identity and Access Management (IAM)](#3_2)
-  * [STS (Security Token Service)](#3_3)
+  * [Identity and Access Management (Core Subject)](#3_2)
+  * [Security Token Service](#3_3)
   * [Identity Federation](#3_4)
   * [AWS Active Directory Services (Core Subject)](#3_5)
   * [AWS Organization](#3_6)
@@ -206,7 +206,7 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 ---
 
 <a name="3_2"></a>
-## [↖](#top)[↑](#3_1)[↓](#3_2_1) Identity and Access Management (IAM)
+## [↖](#top)[↑](#3_1)[↓](#3_2_1) Identity and Access Management (Core Subject)
 <!-- toc_start -->
 * [Overview](#3_2_1)
 * [Users](#3_2_2)
@@ -370,7 +370,7 @@ IAM Access Analyzer continuously monitors policies for changes, meaning customer
 ---
 
 <a name="3_3"></a>
-## [↖](#top)[↑](#3_2_6_2)[↓](#3_3_1) STS (Security Token Service)
+## [↖](#top)[↑](#3_2_6_2)[↓](#3_3_1) Security Token Service
 <!-- toc_start -->
 * [Overview](#3_3_1)
 * [Providing access to an IAM user in another AWS account that you own](#3_3_2)
