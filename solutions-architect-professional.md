@@ -32,11 +32,11 @@
 * [Compute & Load Balancing](#5)
   * [AWS Solution Architectures](#5_1)
   * [EC2](#5_2)
-  * [Auto Scaling](#5_3)
+  * [Auto Scaling (Core Topic)](#5_3)
   * [ECS](#5_4)
   * [Fargate](#5_5)
   * [Lambda](#5_6)
-  * [Load Balancers](#5_7)
+  * [Elastic Load Balancing (Core Topic)](#5_7)
   * [API Gateway](#5_8)
   * [Route 53](#5_9)
   * [Solution Architeture Comparision](#5_10)
@@ -49,7 +49,7 @@
   * [S3 vs EFS vs EBS Comparison](#6_6)
 * [Caching](#7)
   * [CloudFront](#7_1)
-  * [ElastiCache](#7_2)
+  * [ElastiCache (Core Topic)](#7_2)
   * [Handling Extreme Rates](#7_3)
 * [Databases](#8)
   * [DynamoDB](#8_1)
@@ -59,11 +59,11 @@
 * [Service Communication](#9)
   * [Step Functions](#9_1)
   * [Simple Workflow Service (SWF)](#9_2)
-  * [Simple Queue Service (SQS)](#9_3)
+  * [Simple Queue Service (Core Topic)](#9_3)
   * [Amazon MQ](#9_4)
-  * [Simple Notification Service (SNS)](#9_5)
+  * [Simple Notification Service (Core Topic)](#9_5)
 * [Data Engineering](#10)
-  * [Kinesis](#10_1)
+  * [Kinesis (Core Topic)](#10_1)
   * [AWS Batch](#10_2)
   * [Amazon EMR](#10_3)
   * [Running Jobs on AWS](#10_4)
@@ -72,13 +72,13 @@
   * [QuickSight](#10_7)
   * [Big Data Architecture](#10_8)
 * [Monitoring](#11)
-  * [CloudWatch](#11_1)
+  * [CloudWatch (Core Topic)](#11_1)
   * [X-Ray](#11_2)
 * [Deployment and Instance Management](#12)
   * [Elastic Beanstalk](#12_1)
   * [OpsWorks Stacks](#12_2)
   * [CodeDeploy](#12_3)
-  * [CloudFormation](#12_4)
+  * [CloudFormation (Core Topic)](#12_4)
   * [Service Catalog](#12_5)
   * [AWS Serverless Application Model](#12_6)
   * [Deployment Options](#12_7)
@@ -1563,7 +1563,7 @@ If your instance has a public IPv4 address, it retains the public IPv4 address a
 ---
 
 <a name="5_3"></a>
-## [↖](#top)[↑](#5_2_6)[↓](#5_3_1) Auto Scaling
+## [↖](#top)[↑](#5_2_6)[↓](#5_3_1) Auto Scaling (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_3_1)
 * [Components](#5_3_2)
@@ -2000,7 +2000,7 @@ CloudFront invocation|100 ms
 ---
 
 <a name="5_7"></a>
-## [↖](#top)[↑](#5_6_5)[↓](#5_7_1) Load Balancers
+## [↖](#top)[↑](#5_6_5)[↓](#5_7_1) Elastic Load Balancing (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_7_1)
 * [ELB (Classic Load Balancer)](#5_7_2)
@@ -3279,7 +3279,7 @@ If Host header is *not* forwarded:
 ---
 
 <a name="7_2"></a>
-## [↖](#top)[↑](#7_1_9_3)[↓](#7_2_1) ElastiCache
+## [↖](#top)[↑](#7_1_9_3)[↓](#7_2_1) ElastiCache (Core Topic)
 <!-- toc_start -->
 * [Overview](#7_2_1)
 * [Scenarios](#7_2_2)
@@ -3903,7 +3903,7 @@ Amazon SWF offers capabilities to support a variety of application requirements.
 ---
 
 <a name="9_3"></a>
-## [↖](#top)[↑](#9_2_2)[↓](#9_3_1) Simple Queue Service (SQS)
+## [↖](#top)[↑](#9_2_2)[↓](#9_3_1) Simple Queue Service (Core Topic)
 <!-- toc_start -->
 * [Overview](#9_3_1)
 * [Core features](#9_3_2)
@@ -4007,7 +4007,7 @@ Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ t
 ---
 
 <a name="9_5"></a>
-## [↖](#top)[↑](#9_4_1)[↓](#9_5_1) Simple Notification Service (SNS)
+## [↖](#top)[↑](#9_4_1)[↓](#9_5_1) Simple Notification Service (Core Topic)
 <!-- toc_start -->
 * [Overview](#9_5_1)
 * [Scenarios](#9_5_2)
@@ -4047,7 +4047,7 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
 # [↖](#top)[↑](#9_5_2)[↓](#10_1) Data Engineering
 
 <a name="10_1"></a>
-## [↖](#top)[↑](#10)[↓](#10_1_1) Kinesis
+## [↖](#top)[↑](#10)[↓](#10_1_1) Kinesis (Core Topic)
 <!-- toc_start -->
 * [Overview](#10_1_1)
 * [Kinesis Data Streams](#10_1_2)
@@ -4508,7 +4508,7 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
 # [↖](#top)[↑](#10_8_3)[↓](#11_1) Monitoring
 
 <a name="11_1"></a>
-## [↖](#top)[↑](#11)[↓](#11_1_1) CloudWatch
+## [↖](#top)[↑](#11)[↓](#11_1_1) CloudWatch (Core Topic)
 <!-- toc_start -->
 * [Overview](#11_1_1)
 * [CloudWatch Metrics](#11_1_2)
@@ -4890,7 +4890,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 ---
 
 <a name="12_4"></a>
-## [↖](#top)[↑](#12_3_2_3)[↓](#12_4_1) CloudFormation
+## [↖](#top)[↑](#12_3_2_3)[↓](#12_4_1) CloudFormation (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_4_1)
 * [CloudFormation and ASG](#12_4_2)
