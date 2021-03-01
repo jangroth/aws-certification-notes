@@ -10,7 +10,7 @@
   * [Security Token Service](#3_3)
   * [Identity Federation](#3_4)
   * [AWS Active Directory Services (Core Topic)](#3_5)
-  * [AWS Organization](#3_6)
+  * [AWS Organization (Core Topic)](#3_6)
   * [AWS Resource Access Manager](#3_7)
   * [AWS Single Sign-On](#3_8)
 * [Security](#4)
@@ -614,12 +614,13 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 ---
 
 <a name="3_6"></a>
-## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Organization
+## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Organization (Core Topic)
 <!-- toc_start -->
 * [Overview](#3_6_1)
   * [Benefits](#3_6_1_1)
   * [Multi-account strategies](#3_6_1_2)
-* [Service Control Policies (SCP)](#3_6_2)
+  * [Best Practices](#3_6_1_3)
+* [Service Control Policies](#3_6_2)
 * [Tag Policies](#3_6_3)
 * [Reserved Instances](#3_6_4)
 <!-- toc_end -->
@@ -628,13 +629,13 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations, you can create groups of accounts, automate account creation, apply and manage policies for those groups. Organizations enables you to centrally manage policies across multiple accounts, without requiring custom scripts and manual processes.
 
 Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS service use across multiple AWS accounts. You can also use Organizations to help automate the creation of new accounts through APIs. Organizations helps simplify the billing for multiple accounts by enabling you to setup a single payment method for all the accounts in your organization through consolidated billing. AWS Organizations is available to all AWS customers at no additional charge.
-* Master accounts must invite child accounts
+* Management accounts must invite child accounts
   * Invited accounts must approve enabling all features
-* Master accounts can create child accounts
+* Management accounts can create child accounts
 * Master can access child accounts using:
   * CloudFormation StackSets to create IAM roles in target accounts
   * Assume the roles using the STS Cross Account capability
-* Recommended strategy to create a dedicated account for logging or security
+* Recommended strategy is creating a dedicated account for logging or security
 * API is available to automate AWS account creation
 * Integration with AWS Single Sign-On (SSO)
 * On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
@@ -653,17 +654,38 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 * Apply Tag Policies across the hierachy
 
 <a name="3_6_1_2"></a>
-#### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_2) Multi-account strategies
+#### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_1_3) Multi-account strategies
 * Create accounts per department, per cost center, per dev/test/prod, based on regulatory restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account service limits, isolated account for logging,
-* Multi account vs one account multi vPC
+* "Multi account" vs "one account, multi VPC"
 * Use tagging standards for billing purposes
 * Enable CloudTrail on all accounts, send logs to central S3 account
 * Send CloudWatch logs to central logging account
 * Establish cross account roles for admin purposes
 
+<a name="3_6_1_3"></a>
+#### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_2) Best Practices
+* For the management account
+	* Use the management account only for tasks that require the management account
+	* Use a group email address for the management account's root user
+	* Use a complex password for the management account's root user
+	* Enable MFA for your root user credentials
+	* Add a phone number to the account contact information
+	* Review and keep track of who has access
+	* Document the processes for using the root user credentials
+	* Apply controls to monitor access to the root user credentials
+* For member accounts
+	* Use a group email address for all member account root users
+	* Use a complex password for member account root user
+	* Enable MFA for your root user credentials
+	* Add the management account's phone number to the member account contact information
+	* Review and keep track of who has access
+	* Document the processes for using the root user credentials
+	* Use an SCP to restrict what the root user in your member accounts can do
+	* Apply controls to monitor access to the root user credentials
+
 <a name="3_6_2"></a>
-### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_3) Service Control Policies (SCP)
-Service control policies (SCPs) are one type of policy that you can use to manage your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization, allowing you to ensure your accounts stay within your organization’s access control guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't available if your organization has enabled only the consolidated billing features. SCPs do *not* apply for the master account itself.
+### [↖](#3_6)[↑](#3_6_1_3)[↓](#3_6_3) Service Control Policies
+Service control policies (SCPs) are one type of policy that you can use to manage your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization, allowing you to ensure your accounts stay within your organization’s access control guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't available if your organization has enabled only the consolidated billing features. SCPs do *not* apply for the management account itself.
 * Whitelist or blacklist IAM actions
   * Applied at the Root, OU or Account level
   * SCP is applied to all the users and roles of the account, including root (*no effect on root though*)
@@ -685,7 +707,7 @@ Tag policies are a type of policy that can help you standardize tags across reso
 ### [↖](#3_6)[↑](#3_6_3)[↓](#3_7) Reserved Instances
 * For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
 * This means that all accounts in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
-* The payer account (master account) of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
+* The payer account (management account) of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
