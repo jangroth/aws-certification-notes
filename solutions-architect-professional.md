@@ -6,10 +6,10 @@
   * [Content](#2_1)
 * [Identity and Federation](#3)
   * [Overview - possible ways to manage Identity and Federation in AWS](#3_1)
-  * [Identity and Access Management (Core Subject)](#3_2)
+  * [Identity and Access Management (Core Topic)](#3_2)
   * [Security Token Service](#3_3)
   * [Identity Federation](#3_4)
-  * [AWS Active Directory Services (Core Subject)](#3_5)
+  * [AWS Active Directory Services (Core Topic)](#3_5)
   * [AWS Organization](#3_6)
   * [AWS Resource Access Manager](#3_7)
   * [AWS Single Sign-On](#3_8)
@@ -91,7 +91,7 @@
 * [Migration](#14)
   * [The 6R Strategies](#14_1)
   * [On-Premises strategies with AWS](#14_2)
-  * [Storage Gateway](#14_3)
+  * [Storage Gateway (Core Topic)](#14_3)
   * [Snowball](#14_4)
   * [Database Migration Service](#14_5)
   * [Application Discovery Service](#14_6)
@@ -103,7 +103,7 @@
   * [Transit Gateway](#15_3)
   * [VPC Endpoints](#15_4)
   * [PrivateLink](#15_5)
-  * [VPN](#15_6)
+  * [VPN (Core Topic)](#15_6)
   * [Direct Connect](#15_7)
   * [Redundant connections beweteen on-premises and AWS](#15_8)
 * [Other Services](#16)
@@ -206,7 +206,7 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 ---
 
 <a name="3_2"></a>
-## [↖](#top)[↑](#3_1)[↓](#3_2_1) Identity and Access Management (Core Subject)
+## [↖](#top)[↑](#3_1)[↓](#3_2_1) Identity and Access Management (Core Topic)
 <!-- toc_start -->
 * [Overview](#3_2_1)
 * [Users](#3_2_2)
@@ -380,7 +380,6 @@ IAM Access Analyzer continuously monitors policies for changes, meaning customer
 <a name="3_3_1"></a>
 ### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
 AWS Security Token Service (AWS STS) is a web service that enables you to request temporary, limited-privilege credentials for AWS Identity and Access Management (IAM) users or for users that
-
 * Provide access for an IAM user in one AWS account that you own to access resources in another account that you own
 * Provide access to IAM users in AWS accounts owned by third parties
 * Provide access for services offered by AWS to AWS resources
@@ -459,7 +458,6 @@ Federation can have many flavors:
 > An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.
 
 > Active Directory Federation Services (**ADFS**) is a Single Sign-On (SSO) solution created by Microsoft. As a component of Windows Server operating systems, it provides users with authenticated access to applications that are not capable of using Integrated Windows Authentication (IWA) through Active Directory (**AD**).
-
 * Overview
   * To integrate Active Directory/ADFS (or any SAML 2.0) with AWS
   * Access through console or CI
@@ -524,7 +522,7 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 ---
 
 <a name="3_5"></a>
-## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services (Core Subject)
+## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services (Core Topic)
 <!-- toc_start -->
 * [Overview](#3_5_1)
 * [AWS Managed Microsoft AD](#3_5_2)
@@ -544,7 +542,6 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 > Active Directory Federation Services (**ADFS**), a software component developed by Microsoft, can run on Windows Server operating systems to provide users with single sign-on access to systems and applications located across organizational boundaries.
 
 > The Lightweight Directory Access Protocol (**LDAP**) is an open, vendor-neutral, industry standard application protocol for accessing and maintaining distributed directory information services over an Internet Protocol network.
-
 * Three scenarios:
 	* **AWS Managed Microsoft AD**
 		* Create your own AD in AWS, manage users locally, supports MFA
@@ -561,9 +558,7 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 ### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_2_1) AWS Managed Microsoft AD
 <a name="3_5_2_1"></a>
 #### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_2_2) Overview
-
 AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft AD, enables your directory-aware workloads and AWS resources to use managed Active Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not require you to synchronize or replicate data from your existing Active Directory to the cloud. You can use the standard AD administration tools and take advantage of the built-in AD features, such as group policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2 and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing services, such as Amazon WorkSpaces, with AD users and groups.
-
 * Managed Service
 * Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
   * *Standalone* in cloud, or *joined* to on-premises AD
@@ -633,7 +628,6 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations, you can create groups of accounts, automate account creation, apply and manage policies for those groups. Organizations enables you to centrally manage policies across multiple accounts, without requiring custom scripts and manual processes.
 
 Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS service use across multiple AWS accounts. You can also use Organizations to help automate the creation of new accounts through APIs. Organizations helps simplify the billing for multiple accounts by enabling you to setup a single payment method for all the accounts in your organization through consolidated billing. AWS Organizations is available to all AWS customers at no additional charge.
-
 * Master accounts must invite child accounts
   * Invited accounts must approve enabling all features
 * Master accounts can create child accounts
@@ -670,7 +664,6 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 <a name="3_6_2"></a>
 ### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_3) Service Control Policies (SCP)
 Service control policies (SCPs) are one type of policy that you can use to manage your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization, allowing you to ensure your accounts stay within your organization’s access control guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't available if your organization has enabled only the consolidated billing features. SCPs do *not* apply for the master account itself.
-
 * Whitelist or blacklist IAM actions
   * Applied at the Root, OU or Account level
   * SCP is applied to all the users and roles of the account, including root (*no effect on root though*)
@@ -706,7 +699,6 @@ Tag policies are a type of policy that can help you standardize tags across reso
 <a name="3_7_1"></a>
 ### [↖](#3_7)[↑](#3_7)[↓](#3_8) Overview
 AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
-
 * Avoids resource duplication
 * Key resources that can be shared
   * VPC Subnets
@@ -731,7 +723,6 @@ AWS RAM lets you share your resources with any AWS account or through AWS Organi
 <a name="3_8_1"></a>
 ### [↖](#3_8)[↑](#3_8)[↓](#4) Overview
 AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO also helps you manage access and permissions to commonly used third-party software as a service (SaaS) applications, AWS SSO-integrated applications as well as custom applications that support Security Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
-
 * Centrally manage Single Sign-On to access multiple accounts and 3rd-party business applications.
   * No need for custom IdP login portal, AWS SSO communicates directly with SAML-compatible login portal
 * Integrated with AWS Organizations
@@ -764,7 +755,6 @@ AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it e
 AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk auditing of your AWS account. With CloudTrail, you can log, continuously monitor, and retain account activity related to actions across your AWS infrastructure. CloudTrail provides event history of your AWS account activity, including actions taken through the AWS Management Console, AWS SDKs, command line tools, and other AWS services. This event history simplifies security analysis, resource change tracking, and troubleshooting. In addition, you can use CloudTrail to detect unusual activity in your AWS accounts. These capabilities help simplify operational analysis and troubleshooting.
 
 CloudTrail is enabled by default in every account. All activities in an AWS account are being recorded as CloudTrail events.
-
 * On AWS: <a href="https://aws.amazon.com/cloudtrail/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudtrail/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide" target="_blank">User Guide</a>
 
 <a name="4_1_2"></a>
@@ -816,7 +806,6 @@ CloudWatch Events|Fastest way, works for every API call
 <a name="4_2_1"></a>
 ### [↖](#4_2)[↑](#4_2)[↓](#4_2_2) Overview
 AWS Key Management Service (KMS) makes it easy for you to create and manage cryptographic keys and control their use across a wide range of AWS services and in your applications. AWS KMS is a secure and resilient service that uses hardware security modules that have been validated under FIPS 140-2, or are in the process of being validated, to protect your keys. AWS KMS is integrated with AWS CloudTrail to provide you with logs of all key usage to help meet your regulatory and compliance needs.
-
 * Fully managed
 * Centralized key management
 * Manage Encryption for AWS services
@@ -870,7 +859,6 @@ AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for
 <a name="4_3_1"></a>
 ### [↖](#4_3)[↑](#4_3)[↓](#4_4) Overview
 AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, Amazon Machine Image (AMI) IDs, and license codes as parameter values. You can store values as plain text or encrypted data. You can reference Systems Manager parameters in your scripts, commands, SSM documents, and configuration and automation workflows by using the unique name that you specified when you created the parameter.
-
 * Secure storage for configuration and secrets
 * Optional Seamless Encryption using KMS
 * Serverless, scalable, durable, easy SDK, free
@@ -891,7 +879,6 @@ AWS Systems Manager Parameter Store provides secure, hierarchical storage for co
 <a name="4_4_1"></a>
 ### [↖](#4_4)[↑](#4_4)[↓](#4_5) Overview
 AWS Secrets Manager helps you protect secrets needed to access your applications, services, and IT resources. The service enables you to easily rotate, manage, and retrieve database credentials, API keys, and other secrets throughout their lifecycle. Users and applications retrieve secrets with a call to Secrets Manager APIs, eliminating the need to hardcode sensitive information in plain text. Secrets Manager offers secret rotation with built-in integration for Amazon RDS, Amazon Redshift, and Amazon DocumentDB. Also, the service is extensible to other types of secrets, including API keys and OAuth tokens. In addition, Secrets Manager enables you to control access to secrets using fine-grained permissions and audit secret rotation centrally for resources in the AWS Cloud, third-party services, and on-premises.
-
 * Newer service, meant for storing secrets
 * Capability to force rotation of secrets every X days
 * Automate generation of secrets on rotation (uses Lambda)
@@ -983,7 +970,6 @@ Secure Symmetric ..|..Communication in Place
 AWS Certificate Manager is a service that lets you easily provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS services and your internal connected resources. SSL/TLS certificates are used to secure network communications and establish the identity of websites over the Internet as well as resources on private networks. AWS Certificate Manager removes the time-consuming manual process of purchasing, uploading, and renewing SSL/TLS certificates.
 
 With AWS Certificate Manager, you can quickly request a certificate, deploy it on ACM-integrated AWS resources, such as Elastic Load Balancers, Amazon CloudFront distributions, and APIs on API Gateway, and let AWS Certificate Manager handle certificate renewals. It also enables you to create private certificates for your internal resources and manage the certificate lifecycle centrally. Public and private certificates provisioned through AWS Certificate Manager for use with ACM-integrated services are free. You pay only for the AWS resources you create to run your application. With AWS Certificate Manager Private Certificate Authority, you pay monthly for the operation of the private CA and for the private certificates you issue.
-
 * To host public SSL certificates in AWS, you can:
   * Buy your own and upload them using the CLI
   * Have ACM provision and renew public SSL certificates for you (free of cost)
@@ -1004,7 +990,6 @@ With AWS Certificate Manager, you can quickly request a certificate, deploy it o
 * ACM is a regional service
   * To use with a global application (multiple ALB for example), you need to issue an SSL certificate in each region where you application is deployed.
   * You cannot copy certs across regions
-
 * On AWS: <a href="https://aws.amazon.com/certificate-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/certificate-manager/faqs/?nc=sn&loc=5" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">User Guide</a>
 
 ---
@@ -1027,7 +1012,6 @@ When you use an HSM from AWS CloudHSM, you can perform a variety of cryptographi
 * Generate cryptographically secure random data.
 
 If you want a managed service for creating and controlling your encryption keys, but you don't want or need to operate your own HSM, consider using AWS KMS.
-
 * You manage your own encryption keys entirely (not AWS)
 * HSM device is tamper resistant, FIPS 140-2 Level 3 compliance
 * Supports both symmetric and asymmetric encryption (SSL/TLS keys)
@@ -1131,7 +1115,6 @@ CloudWatch Events:
   * CloudFront Origin Identity
   * MFA
 * <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html" target="_blank">On AWS</a>
-
 **ACL**
 * Defined as XML. Legacy, not recomended any more.
 * Can
@@ -1187,14 +1170,12 @@ Can generate pre-signed URLs using SDK or CLI
 * Can reference by CIDR and security group id
 * Supports security group references for VPC peering
 * Default: inbound denied, outbound all allowed
-
 **NACL (Network ACL)**
 * Attached at the subnet level
 * Are stateless (inbound and outbound rules apply for all traffic)
 * Can only reference a CIDR range (no hostname)
 * Default: allow all inbound, allow all outbound
 * New NACL: denies all inbound, denies all outbound
-
 **Host Firewall**
 * Software based, highly customizable
 
@@ -1222,7 +1203,6 @@ Can generate pre-signed URLs using SDK or CLI
 <a name="4_10_3"></a>
 ### [↖](#4_10)[↑](#4_10_2_2)[↓](#4_10_4) AWS Shield
 You can use AWS WAF web access control lists (web ACLs) to help minimize the effects of a distributed denial of service (DDoS) attack. For additional protection against DDoS attacks, AWS also provides AWS Shield Standard and AWS Shield Advanced. AWS Shield Standard is automatically included at no extra cost beyond what you already pay for AWS WAF and your other AWS services. AWS Shield Advanced provides expanded DDoS attack protection for your Amazon EC2 instances, Elastic Load Balancing load balancers, CloudFront distributions, Route 53 hosted zones, and AWS Global Accelerator accelerators. AWS Shield Advanced incurs additional charges.
-
 * AWS Shield Standard
   * Free service that is activated for every AWS customer
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layer 3/layer 4 attacks
@@ -1236,7 +1216,6 @@ You can use AWS WAF web access control lists (web ACLs) to help minimize the eff
 <a name="4_10_4"></a>
 ### [↖](#4_10)[↑](#4_10_3)[↓](#4_10_5) AWS WAF
 AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, or an AWS AppSync GraphQL API. AWS WAF also lets you control access to your conten . Based on conditions that you specify, such as the IP addresses that requests originate from or the values of query strings, Amazon CloudFront, Amazon API Gateway, Application Load Balancer, or AWS AppSync responds to requests either with the requested content or with an HTTP 403 status code (Forbidden). You also can configure CloudFront to return a custom error page when a request is blocked.
-
 * Protects your web applications from common web exploits (Layer 7)
 * Deploy on Application Load Balancer (localized rules)
 * Deploy on API Gateway (rules running at the regional or edge level)
@@ -1299,7 +1278,6 @@ Summary
 Amazon Inspector is an automated security assessment service that helps improve the security and compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications for exposure, vulnerabilities, and deviations from best practices. After performing an assessment, Amazon Inspector produces a detailed list of security findings prioritized by level of severity. These findings can be reviewed directly or as part of detailed assessment reports which are available via the Amazon Inspector console or API.
 
 Amazon Inspector security assessments help you check for unintended network accessibility of your Amazon EC2 instances and for vulnerabilities on those EC2 instances. Amazon Inspector assessments are offered to you as pre-defined rules packages mapped to common security best practices and vulnerability definitions. Examples of built-in rules include checking for access to your EC2 instances from the internet, remote root login being enabled, or vulnerable software versions installed. These rules are regularly updated by AWS security researchers.
-
 * **Network Assessments**
   * Does not require agent
 * **Host Assessments**
@@ -1326,7 +1304,6 @@ Amazon Inspector security assessments help you check for unintended network acce
 ### [↖](#4_13)[↑](#4_13)[↓](#4_13_2) Overview
 *AWS Config* is a service that enables you to assess, audit, and evaluate the configurations of your
 AWS resources. Config continuously monitors and records your AWS resource configurations and allows you to automate the evaluation of recorded configurations against desired configurations. With Config, you can review changes in configurations and relationships between AWS resources, dive into detailed resource configuration histories, and determine your overall compliance against the configurations specified in your internal guidelines. This enables you to simplify compliance auditing, security analysis, change management, and operational troubleshooting.
-
 * Evaluate your AWS resource configurations for desired settings.
 * Get a snapshot of the current configurations of the supported resources that are associated with your AWS account.
 * Retrieve configurations of one or more resources that exist in your account.
@@ -1392,7 +1369,6 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 <a name="4_15_1"></a>
 ### [↖](#4_15)[↑](#4_15)[↓](#5) Overview
 Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity and unauthorized behavior to protect your AWS accounts and workloads. With the cloud, the collection and aggregation of account and network activities is simplified, but it can be time consuming for security teams to continuously analyze event log data for potential threats. With GuardDuty, you now have an intelligent and cost-effective option for continuous threat detection in the AWS Cloud. The service uses machine learning, anomaly detection, and integrated threat intelligence to identify and prioritize potential threats. GuardDuty analyzes tens of billions of events across multiple AWS data sources, such as AWS CloudTrail, Amazon VPC Flow Logs, and DNS log. With a few clicks in the AWS Management Console, GuardDuty can be enabled with no software or hardware to deploy or maintain. By integrating with Amazon CloudWatch Events, GuardDuty alerts are actionable, easy to aggregate across multiple accounts, and straightforward to push into existing event management and workflow systems.
-
 * Analyses AWS CloudTrail, Amazon VPC Flow Logs, and DNS log
 * Integrates with CloudWatch Events
 * On AWS: <a href="https://aws.amazon.com/guardduty/" target="_blank">Service</a> - <a href="https://aws.amazon.com/guardduty/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/guardduty/latest/userguide/" target="_blank">User Guide</a>
@@ -1449,7 +1425,6 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 <a name="5_2_1"></a>
 ### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
 Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud. It is designed to make web-scale cloud computing easier for developers. Amazon EC2’s simple web service interface allows you to obtain and configure capacity with minimal friction. It provides you with complete control of your computing resources and lets you run on Amazon’s proven computing environment. Amazon EC2 offers the broadest and deepest compute platform with choice of processor, storage, networking, operating system, and purchase model. We offer the fastest processors in the cloud and we are the only cloud with 400 Gbps ethernet networking. We have the most powerful GPU instances for machine learning training and graphics workloads, as well as the lowest cost-per-inference instances in the cloud.
-
 * On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
 
 <a name="5_2_2"></a>
@@ -1581,7 +1556,6 @@ If your instance has a public IPv4 address, it retains the public IPv4 address a
 <a name="5_3_1"></a>
 ### [↖](#5_3)[↑](#5_3)[↓](#5_3_2) Overview
 *Amazon EC2 Auto Scaling* helps you ensure that you have the correct number of Amazon EC2 instances available to handle the load for your application. You create collections of EC2 instances, called *Auto Scaling Groups*. You can specify the **minimum** number of instances in each Auto Scaling Group, and Amazon EC2 Auto Scaling ensures that your group never goes below this size. You can specify the **maximum** number of instances in each Auto Scaling Group, and Amazon EC2 Auto Scaling ensures that your group never goes above this size. If you specify the **desired** capacity, either when you create the group or at any time thereafter, Amazon EC2 Auto Scaling ensures that your group has this many instances. If you specify **scaling policies**, then Amazon EC2 Auto Scaling can launch or terminate instances as demand on your application increases or decreases.
-
 * *Spot Fleet* support (mix on Spot and On-Demand instances)
   * Also configure ratio between these instance options
 * To upgrade an AMI, must update the launch configuration/template
@@ -1667,7 +1641,6 @@ Process|Impact|On Suspension
 
 <a name="5_3_2_6"></a>
 #### [↖](#5_3)[↑](#5_3_2_5)[↓](#5_4) Deploying with ASGs
-
 * `ALB` - `ASG` - `Launch Template v1` **&** `Launch Template v2`
   * Different application versions in same ASG
 * `ALB` - `ASG 1` - `Launch Template v1` **&** `ASG 2` - `Launch Template v2`
@@ -1691,7 +1664,6 @@ Process|Impact|On Suspension
 <a name="5_4_1"></a>
 ### [↖](#5_4)[↑](#5_4)[↓](#5_4_1_1) Overview
 *Amazon Elastic Container Service* (Amazon ECS) is a highly scalable, fast, container management service that makes it easy to run, stop, and manage Docker containers on a cluster. You can host your cluster on a serverless infrastructure that is managed by Amazon ECS by launching your services or tasks using the Fargate launch type. For more control you can host your tasks on a cluster of Amazon Elastic Compute Cloud (Amazon EC2) instances that you manage by using the EC2 launch type.
-
 * On AWS: <a href="https://aws.amazon.com/ecs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ecs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ecs/latest/userguide/" target="_blank">User Guide</a>
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2019/CI-CD-with-Fargate-ECS/CI-CD-with-Fargate-ECS.jpg" target="_blank">AWS Geek 2020</a>
 * See also: <a href="https://www.awsgeek.com/AWS-re-Invent-2017/Container-Networking-Deep-Dive-with-Amazon-ECS/Container-Networking-Deep-Dive-with-Amazon-ECS.jpg" target="_blank">AWS Geek 2017</a>
@@ -1729,7 +1701,6 @@ Process|Impact|On Suspension
   ]
 ]
 ```
-
 * **Cluster**
   * Logical grouping of EC2 instances that you can place tasks on
   * Instances run ECS agent as a Docker container
@@ -1780,7 +1751,6 @@ Process|Impact|On Suspension
   * Target Tracking Scaling Poilicy
   * Step Scaling Policy
   * Sdcheduled Scaling
-
 * For ECS, we also need to scale the cluster
   * This is really tricky, but in essence there's an ASG around the EC2 instances that form the cluster
   * Could use Fargate, obviously
@@ -1825,7 +1795,6 @@ Use Cases:
 AWS Fargate is a serverless compute engine for containers that works with both Amazon Elastic Container Service (ECS) and Amazon Elastic Kubernetes Service (EKS). Fargate makes it easy for you to focus on building your applications. Fargate removes the need to provision and manage servers, lets you specify and pay for resources per application, and improves security through application isolation by design.
 
 Fargate allocates the right amount of compute, eliminating the need to choose instances and scale cluster capacity. You only pay for the resources required to run your containers, so there is no over-provisioning and paying for additional servers. Fargate runs each task or pod in its own kernel providing the tasks and pods their own isolated compute environment. This enables your application to have workload isolation and improved security by design. This is why customers such as Vanguard, Accenture, Foursquare, and Ancestry have chosen to run their mission critical applications on Fargate.
-
 * Don't need to provision cluster
   * Does not need EC2 instance roles to create cluster
 * Requires VPC
@@ -1853,7 +1822,6 @@ Fargate allocates the right amount of compute, eliminating the need to choose in
 <a name="5_6_1"></a>
 ### [↖](#5_6)[↑](#5_6)[↓](#5_6_2) Overview
 *AWS Lambda* lets you run code without provisioning or managing servers. You pay only for the compute time you consume - there is no charge when your code is not running. With Lambda, you can run code for virtually any type of application or backend service - all with zero administration. Just upload your code and Lambda takes care of everything required to run and scale your code with high availability. You can set up your code to automatically trigger from other AWS services or call it directly from any web or mobile app.
-
 * Features
   * No servers
   * Continuous scaling
@@ -2030,7 +1998,6 @@ CloudFront invocation|100 ms
 <a name="5_7_1"></a>
 ### [↖](#5_7)[↑](#5_7)[↓](#5_7_2) Overview
 Elastic Load Balancing automatically distributes incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, Lambda functions, and virtual appliances. It can handle the varying load of your application traffic in a single Availability Zone or across multiple Availability Zones. Elastic Load Balancing offers four types of load balancers that all feature the high availability, automatic scaling, and robust security necessary to make your applications fault tolerant.
-
 * <a href="https://aws.amazon.com/elasticloadbalancing/" target="_blank">Service</a> - <a href="https://aws.amazon.com/elasticloadbalancing/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/elasticloadbalancing/" target="_blank">User Guide</a>
 
 .|**ALB** (2016)|**NLB** (2017)|**ELB** (2009)
@@ -2046,7 +2013,6 @@ Protocoll|HTTP, HTTPS|TCP, TLS (secure TCP), UDP|TCP, SSL, HTTP, HTTPS
 
 <a name="5_7_2"></a>
 ### [↖](#5_7)[↑](#5_7_1)[↓](#5_7_3) ELB (Classic Load Balancer)
-
 * `Client` -> [listener] -> `CLB` -> [internal] -> EC2
 
 Listener|Internal
@@ -2076,7 +2042,6 @@ SSL secure TCP (L4)<br/>Must install certificate on CLB TCP|SSL<br/>(must instal
 <a name="5_7_3_1"></a>
 #### [↖](#5_7)[↑](#5_7_3)[↓](#5_7_3_2) Overview
 An Application Load Balancer functions at the application layer, the seventh layer of the Open Systems Interconnection (OSI) model. After the load balancer receives a request, it evaluates the listener rules in priority order to determine which rule to apply, and then selects a target from the target group for the rule action. You can configure listener rules to route requests to different target groups based on the content of the application traffic. Routing is performed independently for each target group, even when a target is registered with multiple target groups. You can configure the routing algorithm used at the target group level. The default routing algorithm is round robin; alternatively, you can specify the least outstanding requests routing algorithm.
-
 * Application load balancers is Layer 7 (HTTP)
 * Load balancing to multiple HTTP applications *across machines*
   * **Target group** represents an application
@@ -2115,7 +2080,6 @@ An Application Load Balancer functions at the application layer, the seventh lay
 <a name="5_7_4_1"></a>
 #### [↖](#5_7)[↑](#5_7_4)[↓](#5_7_4_2) Overview
 A Network Load Balancer functions at the fourth layer of the Open Systems Interconnection (OSI) model. It can handle millions of requests per second. After the load balancer receives a connection request, it selects a target from the target group for the default rule. It attempts to open a TCP connection to the selected target on the port specified in the listener configuration. When you enable an Availability Zone for the load balancer, Elastic Load Balancing creates a load balancer node in the Availability Zone. By default, each load balancer node distributes traffic across the registered targets in its Availability Zone only. If you enable cross-zone load balancing, each load balancer node distributes traffic across the registered targets in all enabled Availability Zones.
-
 * Network load balancers (Layer 4) allow to do:
   * Forward TCP and/or UDP traffic to your instances
   * Handle millions of request per seconds
@@ -2192,7 +2156,6 @@ NLB|Disabled|Charges for inter-AZ data
 <a name="5_8_1"></a>
 ### [↖](#5_8)[↑](#5_8)[↓](#5_8_1_1) Overview
 *Amazon API Gateway* is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. With a few clicks in the AWS Management Console, you can create *REST* and *WebSocket* APIs that act as a “front door” for applications to access data, business logic, or functionality from your backend services, such as workloads running on Amazon Elastic Compute Cloud (Amazon EC2), code running on AWS Lambda, any web application, or real-time communication applications.
-
 * **Benefits**
   * **RESTful** (stateless) or **Websocket** (stateful) APIs
   * Powerful, flexible **authentication** mechanisms, such as AWS IAM policies, Lambda authorizer functions, and Amazon Cognito user pools.
@@ -2609,7 +2572,6 @@ Amazon Elastic Block Store (EBS) is an easy to use, high-performance, block-stor
 You can choose from six different volume types to balance optimal price and performance. You can achieve single-digit-millisecond latency for high-performance database workloads such as SAP HANA or gigabyte per second throughput for large, sequential workloads such as Hadoop. You can change volume types, tune performance, or increase volume size without disrupting your critical applications, so you have cost-effective storage when you need it.
 
 Designed for mission-critical systems, EBS volumes are replicated within an Availability Zone (AZ) and can easily scale to petabytes of data. Also, you can use EBS Snapshots with automated lifecycle policies to back up your volumes in Amazon S3, while ensuring geographic protection of your data and business continuity.
-
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
 * Only accessible by a *single instance*
@@ -2654,8 +2616,6 @@ Designed for mission-critical systems, EBS volumes are replicated within an Avai
 * Create snapshot in AZ1
 * Use that to create volume in AZ2
 * Also could have *copied* snapshot into different region
-
-* TODO: Look into moving instances into different regions/AZs
 
 <a name="6_1_5"></a>
 ### [↖](#6_1)[↑](#6_1_4)[↓](#6_2) Encrypting root volumes
@@ -2715,7 +2675,6 @@ Amazon EFS is designed to provide massively parallel shared access to thousands 
 Amazon EFS is well suited to support a broad spectrum of use cases from home directories to business-critical applications. Customers can use EFS to lift-and-shift existing enterprise applications to the AWS Cloud. Other use cases include: big data analytics, web serving and content management, application development and testing, media and entertainment workflows, database backups, and container storage.
 
 Amazon EFS is a regional service storing data within and across multiple Availability Zones (AZs) for high availability and durability. Amazon EC2 instances can access your file system across AZs, regions, and VPCs, while on-premises servers can access using AWS Direct Connect or AWS VPN.
-
 * Managed NFS (network file system) that can be mounted on many EC2
 * EFS works with EC2 instances in multi-AZ, & on–premises (via Direct Connect or Site-To-Site VPN)
 * Highly available, scalable, expensive (3x gp2), pay per GB used
@@ -2777,7 +2736,6 @@ Amazon EFS is a regional service storing data within and across multiple Availab
 <a name="6_4_1"></a>
 ### [↖](#6_4)[↑](#6_4)[↓](#6_4_2) Overview
 Amazon Simple Storage Service (S3) is object storage with a simple web service interface to store and retrieve any amount of data from anywhere on the web. It is designed to deliver 11x9 *durability* and scale past trillions of objects worldwide.
-
 * **Key**-**value** storage (folder-like structure is only a UI representation)
 * **Bucket** size is unlimited. Objects from 0B to 5TB.
 * HA and scalable, transparent data partitioning
@@ -2894,7 +2852,6 @@ Amazon Simple Storage Service (S3) is object storage with a simple web service i
 <a name="6_4_2_6"></a>
 #### [↖](#6_4)[↑](#6_4_2_5)[↓](#6_4_2_7) Cross Region Replication/Same Region Replication
 Replication enables automatic, asynchronous copying of objects across Amazon S3 buckets. Buckets that are configured for object replication can be owned by the same AWS account or by different accounts. Object may be replicated to a single destination bucket or multiple destination buckets. Destination buckets can be in different AWS Regions or within the same Region as the source bucket.
-
 * Use cases
   * Reduce latency
   * Disaster recovery
@@ -3107,7 +3064,6 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 <a name="7_1_1"></a>
 ### [↖](#7_1)[↑](#7_1)[↓](#7_1_2) Overview
 Amazon CloudFront is a web service that speeds up distribution of your static and dynamic web content, such as .html, .css, .js, and image files, to your users. CloudFront delivers your content through a worldwide network of data centers called edge locations. When a user requests content that you're serving with CloudFront, the request is routed to the edge location that provides the lowest latency (time delay), so that content is delivered with the best possible performance.
-
 * If the content is already in the edge location with the lowest latency, CloudFront delivers it immediately.
 * If the content is not in that edge location, CloudFront retrieves it from an origin that you've defined—such as an Amazon S3 bucket, a MediaPackage channel, or an HTTP server (for example, a web server) that you have identified as the source for the definitive version of your content.
 
@@ -3207,7 +3163,6 @@ Can leverage caching features|.
 <a name="7_1_7_1"></a>
 #### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8) CloudFront Caching vs API Gateway Caching
 API Gateway now has two different kinds of endpoints. The original design is now called *edge optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region. All existing endpoints were categorized as edge-optimized when the new regional capability was rolled out. With a regional endpoint, the CloudFront-* headers are not present in the request, unless you use your own CloudFront distribution and whitelist those headers for forwarding to the origin.
-
 * Can deploy API Gateway in *regional mode* (comes with its own cache), *and* deploy a CloudFront distribution at the edge, that can have a cache too.
   * Allows for fine-grained control of caching
   * Many different options from here, could e.g. also disable API-Gateway cache
@@ -3222,7 +3177,6 @@ API Gateway now has two different kinds of endpoints. The original design is now
   * You don’t manage servers, Lambda is deployed globally
   * Customize the CDN content
   * Pay only for what you use
-
 **Scenarios**
 * You can use Lambda to change CloudFront requests and responses:
   * After CloudFront receives a request from a viewer (viewer request)
@@ -3316,7 +3270,6 @@ If Host header is *not* forwarded:
 * Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your existing databases by retrieving data from high throughput and low latency in-memory data stores.
 * Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gamin, Geospatial Services, Real-Time Analytics, and Queuing.
 * Amazon ElastiCache offers fully managed Redis and Memcached for your most demanding applications that require sub-millisecond response times.
-
 * Caches are in-memory databases with really high performance, low latency
 * Helps reduce load off of databases for read intensive workloads
 * Helps make your application stateless
@@ -3582,7 +3535,6 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
 <a name="8_2_1"></a>
 ### [↖](#8_2)[↑](#8_2)[↓](#8_2_2) Overview
 Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy, secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot your applications using the tools you love, at the scale you need. The service provides support for open source Elasticsearch APIs, managed Kibana, integration with Logstash and other AWS services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch Service, you get the ELK stack you need, without the operational overhead.
-
 * Managed version of Elasticsearch (open source project)
 * Runs on servers (not a serverless offering)
 * Use cases:
@@ -3629,7 +3581,6 @@ Amazon Elasticsearch Service is a fully managed service that makes it easy for y
 Amazon Relational Database Service (Amazon RDS) makes it easy to set up, operate, and scale a relational database in the cloud. It provides cost-efficient and resizable capacity while automating time-consuming administration tasks such as hardware provisioning, database setup, patching and backups. It frees you to focus on your applications so you can give them the fast performance, high availability, security and compatibility they need
 
 Amazon RDS is available on several database instance types - optimized for memory, performance or I/O - and provides you with six familiar database engines to choose from, including Amazon Aurora, PostgreSQL, MySQL, MariaDB, Oracle Database, and SQL Server. You can use the AWS Database Migration Service to easily migrate or replicate your existing databases to Amazon RDS.
-
 * Set up, operate, and scale a **relational database** in the cloud
   * Provisioning, backups, patching, monitoring
 * Supports
@@ -3692,7 +3643,6 @@ Amazon RDS is available on several database instance types - optimized for memor
 <a name="8_3_4"></a>
 ### [↖](#8_3)[↑](#8_3_3)[↓](#8_3_5) Multi-AZ deployments
 Amazon RDS Multi-AZ deployments provide enhanced availability for database instances within a single AWS Region.
-
 * Meant for *disaster recover*, not for performance improvement (-> Read Replica)
 * Configure RDS for **multi-AZ-deployments** and turn replication on
   * Keeps a **synchronous** standby replica in a different AZ
@@ -3764,7 +3714,6 @@ Amazon Aurora (Aurora) is a fully managed relational database engine that's comp
 Aurora includes a high-performance storage subsystem. Its MySQL- and PostgreSQL-compatible database engines are customized to take advantage of that fast distributed storage. The underlying storage grows automatically as needed. An Aurora cluster volume can grow to a maximum size of 128 tebibytes (TiB). Aurora also automates and standardizes database clustering and replication, which are typically among the most challenging aspects of database configuration and administration.
 
 Aurora is part of the managed database service Amazon Relational Database Service (Amazon RDS). More cloud-native, usually preferred over RDS
-
 * DB Engines: PostgreSQL-compatible & MySQL-compatible
 * Storage: *automatically* grows up to 128 TB, 6 copies of data, multi-AZ
 * Read Replicas: up to 15 RR
@@ -3841,7 +3790,6 @@ Aurora is part of the managed database service Amazon Relational Database Servic
 AWS Step Functions is a serverless function orchestrator that makes it easy to sequence AWS Lambda functions and multiple AWS services into business-critical applications. Through its visual interface, you can create and run a series of checkpointed and event-driven workflows that maintain the application state. The output of one step acts as an input to the next. Each step in your application executes in order, as defined by your business logic.
 
 Orchestrating a series of individual serverless applications, managing retries, and debugging failures can be challenging. As your distributed applications become more complex, the complexity of managing them also grows. With its built-in operational controls, Step Functions manages sequencing, error handling, retry logic, and state, removing a significant operational burden from your team.
-
 * Build serverless visual workflow to orchestrate your Lambda functions
 * Represent flow as a JSON state machine/YAML via SAM
 * Features: sequence, parallel, conditions, timeouts, error handling...
@@ -3889,7 +3837,6 @@ The Amazon Simple Workflow Service (Amazon SWF) makes it easy to build applicati
 When using Amazon SWF, you implement workers to perform tasks. These workers can run either on cloud infrastructure, such as Amazon Elastic Compute Cloud (Amazon EC2), or on your own premises. You can create tasks that are long-running, or that may fail, time out, or require restarts—or that may complete with varying throughput and latency. Amazon SWF stores tasks and assigns them to workers when they are ready, tracks their progress, and maintains their state, including details on their completion. To coordinate tasks, you write a program that gets the latest state of each task from Amazon SWF and uses it to initiate subsequent tasks. Amazon SWF maintains an application's execution state durably so that the application is resilient to failures in individual components. With Amazon SWF, you can implement, deploy, scale, and modify these application components independently.
 
 Amazon SWF offers capabilities to support a variety of application requirements. It is suitable for a range of use cases that require coordination of tasks, including media processing, web application back-ends, business process workflows, and analytics pipelines.
-
 * **Task coordination** and **state management** service
 * Code runs on EC2 (not serverless)
 * Distributed, scales up and down depending on task
@@ -3947,7 +3894,6 @@ Amazon SWF offers capabilities to support a variety of application requirements.
 Amazon Simple Queue Service (SQS) is a fully managed message queuing service that enables you to decouple and scale microservices, distributed systems, and serverless applications. SQS eliminates the complexity and overhead associated with managing and operating message oriented middleware, and empowers developers to focus on differentiating work. Using SQS, you can send, store, and receive messages between software components at any volume, without losing messages or requiring other services to be available. Get started with SQS in minutes using the AWS console, Command Line Interface or SDK of your choice, and three simple commands.
 
 SQS offers two types of message queues. Standard queues offer maximum throughput, best-effort ordering, and at-least-once delivery. SQS FIFO queues are designed to guarantee that messages are processed exactly once, in the exact order that they are sent.
-
 * Oldest AWS service
 * Scalable **message queue** service
 * Allows *loose coupling* and *asynchronous processing*
@@ -4026,7 +3972,6 @@ Max inflight messages|120,000
 <a name="9_4_1"></a>
 ### [↖](#9_4)[↑](#9_4)[↓](#9_5) Overview
 Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ that makes it easy to set up and operate message brokers on AWS. Amazon MQ reduces your operational responsibilities by managing the provisioning, setup, and maintenance of message brokers for you. Because Amazon MQ connects to your current applications with industry-standard APIs and protocols, you can easily migrate to AWS without having to rewrite code.
-
 * Amazon MQ = managed Apache ActiveMQ
   * Doesn’t “scale” as much as SQS/SNS
   * Runs on a dedicated machine, can run in HA with failover
@@ -4051,7 +3996,6 @@ Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ t
 Amazon Simple Notification Service (Amazon SNS) is a fully managed messaging service for both application-to-application (A2A) and application-to-person (A2P) communication.
 
 The A2A pub/sub functionality provides topics for high-throughput, push-based, many-to-many messaging between distributed systems, microservices, and event-driven serverless applications. Using Amazon SNS topics, your publisher systems can fanout messages to a large number of subscriber systems including Amazon SQS queues, AWS Lambda functions and HTTPS endpoints, for parallel processing, and Amazon Kinesis Data Firehose. The A2P functionality enables you to send messages to users at scale via SMS, mobile push, and email.
-
 * The *event producer* (publisher) only sends message to one SNS topic
 * As many *event receivers* (subscriptions) as we want to listen to the SNS topic notifications
 * Each subscriber to the topic will get all the messages (note: new feature to filter messages)
@@ -4124,7 +4068,6 @@ Amazon Kinesis makes it easy to collect, process, and analyze real-time, streami
 <a name="10_1_2_1"></a>
 #### [↖](#10_1)[↑](#10_1_2)[↓](#10_1_2_2) Overview
 Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time data streaming service. KDS can continuously capture gigabytes of data per second from hundreds of thousands of sources such as website clickstreams, database event streams, financial transactions, social media feeds, IT logs, and location-tracking events. The data collected is available in milliseconds to enable real-time analytics use cases such as real-time dashboards, real-time anomaly detection, dynamic pricing, and more.
-
 * Streams are divided in ordered *Shards*/partitions
 * Data retention is 24 hours by default, can go up to 365 days (previously: 7 days)
 * Ability to reprocess/replay data
@@ -4185,7 +4128,6 @@ Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data 
 You can easily create a Firehose delivery stream from the AWS Management Console, configure it with a few clicks, and start ingesting streaming data from hundreds of thousands of data sources to your specified destinations. You can also configure your data streams to automatically convert the incoming data to open and standards based formats like Apache Parquet and Apache ORC before the data is delivered.
 
 With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pay for the amount of data that you transmit through the service, if applicable, for converting data formats, and for Amazon VPC delivery and data transfer.
-
 * Fully Managed Service, no administration, automatic scaling, serverless
 * Near Real Time (60 seconds latency minimum for non full batches)
 * Load data into Redshift/Amazon S3/ElasticSearch/Splunk
@@ -4216,7 +4158,6 @@ With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pa
 
 <a name="10_1_4"></a>
 ### [↖](#10_1)[↑](#10_1_3_2)[↓](#10_1_5) Data Streams vs Firehose
-
 * **Data Streams**
   * Going to write custom code (producer/consumer)
   * Real time (~200 ms latency for *classic*, ~70 ms latency for *enhanced fan-out*)
@@ -4235,7 +4176,6 @@ With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pa
 Amazon Kinesis Data Analytics is the easiest way to transform and analyze streaming data in real time with Apache Flink. Apache Flink is an open source framework and engine for processing data streams. Amazon Kinesis Data Analytics reduces the complexity of building, managing, and integrating Apache Flink applications with other AWS services.
 
 Amazon Kinesis Data Analytics takes care of everything required to run streaming applications continuously, and scales automatically to match the volume and throughput of your incoming data. With Amazon Kinesis Data Analytics, there are no servers to manage, no minimum fee or setup cost, and you only pay for the resources your streaming applications consume.
-
 * Use cases
   * Streaming ETL: select columns, make simple transformations, on streaming data
   * Continuous metric generation: live leaderboard for a mobile game
@@ -4301,7 +4241,6 @@ Amazon Kinesis Data Analytics takes care of everything required to run streaming
 AWS Batch enables developers, scientists, and engineers to easily and efficiently run hundreds of thousands of batch computing jobs on AWS. AWS Batch dynamically provisions the optimal quantity and type of compute resources (e.g., CPU or memory optimized instances) based on the volume and specific resource requirements of the batch jobs submitted. With AWS Batch, there is no need to install and manage batch computing software or server clusters that you use to run your jobs, allowing you to focus on analyzing results and solving problems. AWS Batch plans, schedules, and executes your batch computing workloads across the full range of AWS compute services and features, such as AWS Fargate, Amazon EC2 and Spot Instances.
 
 There is no additional charge for AWS Batch. You only pay for the AWS resources (e.g. EC2 instances or Fargate jobs) you create to store and run your batch jobs.
-
 * Run batch jobs as Docker images (ECS)
 * Dynamic provisioning of the instances (EC2 & Spot Instances) – in VPC
 * Optimal quantity and type based on volume and requirements
@@ -4360,7 +4299,6 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
 <a name="10_3_1"></a>
 ### [↖](#10_3)[↑](#10_3)[↓](#10_3_2) Overview
 Amazon EMR is the industry-leading cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. Amazon EMR makes it easy to set up, operate, and scale your big data environments by automating time-consuming tasks like provisioning capacity and tuning clusters. With EMR you can run petabyte-scale analysis at less than half of the cost of traditional on-premises solutions and over 3x faster than standard Apache Spark. You can run workloads on Amazon EC2 instances, on Amazon Elastic Kubernetes Service (EKS) clusters, or on-premises using EMR on AWS Outposts.
-
 * EMR stands for “Elastic MapReduce”
 * EMR helps creating Hadoop clusters (Big Data) to analyze and process vast amount of data
 * The clusters can be made of hundreds of EC2 instances
@@ -4421,7 +4359,6 @@ EMR|.
 <a name="10_5_1"></a>
 ### [↖](#10_5)[↑](#10_5)[↓](#10_5_2) Overview
 No other data warehouse makes it as easy to gain new insights from all your data. With Redshift, you can query and combine exabytes of structured and semi-structured data across your data warehouse, operational database, and data lake using standard SQL. Redshift lets you easily save the results of your queries back to your S3 data lake using open formats, like Apache Parquet, so that you can do additional analytics from other analytics services like Amazon EMR, Amazon Athena, and Amazon SageMaker.
-
 * Redshift is based on PostgreSQL (analytics and data warehousing)
   * User for OLAP (Online Analytical Processing)
   * Not used for OLTP (Online Transaction Processing) -> RDS
@@ -4459,7 +4396,6 @@ No other data warehouse makes it as easy to gain new insights from all your data
 <a name="10_5_4"></a>
 ### [↖](#10_5)[↑](#10_5_3)[↓](#10_6) Redshift Spectrum
 Using Amazon Redshift Spectrum, you can efficiently query and retrieve structured and semistructured data from files in Amazon S3 without having to load the data into Amazon Redshift tables. Redshift Spectrum queries employ massive parallelism to execute very fast against large datasets. Much of the processing occurs in the Redshift Spectrum layer, and most of the data remains in Amazon S3. Multiple clusters can concurrently query the same dataset in Amazon S3 without the need to make copies of the data for each cluster.
-
 * Query data that is already in S3 without loading it
 * Must have a Redshift cluster available to start the query
 * The query is then submitted to thousands of Redshift Spectrum nodes
@@ -4479,7 +4415,6 @@ Amazon Athena is an interactive query service that makes it easy to analyze data
 Athena is easy to use. Simply point to your data in Amazon S3, define the schema, and start querying using standard SQL. Most results are delivered within seconds. With Athena, there’s no need for complex ETL jobs to prepare your data for analysis. This makes it easy for anyone with SQL skills to quickly analyze large-scale datasets.
 
 Athena is out-of-the-box integrated with AWS Glue Data Catalog, allowing you to create a unified metadata repository across various services, crawl data sources to discover schemas and populate your Catalog with new and modified table and partition definitions, and maintain schema versioning.
-
 * Serverless SQL queries on top of your data in S3, pay per query, output to S3
 * Supports CSV, JSON, Parquet, ORC
 * Queries are logged in CloudTrail (which can be chained with CloudWatch logs)
@@ -4709,7 +4644,6 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 <a name="11_2_1"></a>
 ### [↖](#11_2)[↑](#11_2)[↓](#12) Overview
 *AWS X-Ray* helps developers analyze and debug production, *distributed applications*, such as those built using a microservices architecture. With X-Ray, you can understand how your application and its underlying services are performing to identify and troubleshoot the root cause of performance issues and errors. X-Ray provides an end-to-end view of requests as they travel through your application, and shows a map of your application’s underlying components. You can use X-Ray to analyze both applications in development and in production, from simple three-tier applications to complex microservices applications consisting of thousands of services.
-
 * X-Ray demon runs on EC2-instances/Elastic Beanstalk instances/ECS
 * Integrations with:
   * EC2 – install the X-Ray agent
@@ -4740,7 +4674,6 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 AWS Elastic Beanstalk is an easy-to-use service for deploying and scaling web applications and services developed with `Java`, `.NET`, `PHP`, `Node.js`, `Python`, `Ruby`, `Go`, and `Docker` on familiar servers such as Apache, Nginx, Passenger, and IIS.
 
 You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring. At the same time, you retain full control over the AWS resources powering your application and can access the underlying resources at any time.
-
 * Elastic Beanstalk is a developer centric view of deploying an application on AWS
 * Allows to *deploy*, *monitor* and *scale* applications quickly
 * It uses all the component’s we’ve seen before: EC2, Auto Scaling Group, Elastic Load Balancers, RDS, etc...
@@ -4779,7 +4712,6 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
     * ALB, ASG, EC2 (x AZs), (RDS multi-AZ)
   * **ASG only**: great for non-web apps in production (workers, etc..)
     * SQS, ASG, EC2
-
 * If your application performs tasks that are long to complete, offload these tasks to a dedicated worker environment
 * Decoupling your application into two tiers is common
   * Web Tier (LB + ASG + EC2)
@@ -4806,7 +4738,6 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 <a name="12_2_1"></a>
 ### [↖](#12_2)[↑](#12_2)[↓](#12_2_2) Overview
 *AWS OpsWorks* is a configuration management service that provides managed instances of Chef and Puppet. Chef and Puppet are automation platforms that allow you to use code to automate the configurations of your servers. OpsWorks lets you use Chef and Puppet to automate how servers are configured, deployed, and managed across your Amazon EC2 instances or on-premises compute environments.
-
 * Chef & Puppet help you perform server configuration automatically, or repetitive actions
 * They work great with EC2 & On-premises VM
 * AWS OpsWorks = Managed Chef & Puppet
@@ -4855,7 +4786,6 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 <a name="12_3_1"></a>
 ### [↖](#12_3)[↑](#12_3)[↓](#12_3_2) Overview
 *AWS CodeDeploy* is a fully managed deployment service that automates software deployments to a variety of compute services such as Amazon EC2, AWS Fargate, AWS Lambda, and your on-premises servers. AWS CodeDeploy makes it easier for you to rapidly release new features, helps you avoid downtime during application deployment, and handles the complexity of updating your applications. You can use AWS CodeDeploy to automate software deployments, eliminating the need for error-prone manual operations. The service scales to match your deployment needs.
-
 * CodeDeploy can be chained into CodePipeline and can use artifacts from there
 * CodeDeploy does not provision resources
 * Automated deployments
@@ -4877,7 +4807,6 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
   * The new version of the application is started and validated.
   * You can use a load balancer so that each instance is deregistered during its deployment and then restored to service after the deployment is complete.
   * Only deployments that use the EC2/On-Premises compute platform can use in-place deployments.0
-
 * **Blue/green**
   * Instances are provisioned for the replacement environment.
   * The latest application revision is installed on the replacement instances.
@@ -4954,7 +4883,6 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 *AWS CloudFormation* provides a common language for you to describe and provision all the infrastructure resources in your cloud environment. CloudFormation allows you to use a simple text file to model and provision, in an automated and secure manner, all the resources needed for your applications across all regions and accounts. This file serves as the single source of truth for your cloud environment.
 
 AWS CloudFormation is available at no additional charge, and you pay only for the AWS resources needed to run your applications.
-
 * Allows to create and provision **resources** in a reusable **template** fashion
 * Declarative - no need for ordering and orchestration
 * Separation of concerns - different stacks for different purposes
@@ -5114,9 +5042,7 @@ SAM Framework|Leverages CloudFormation & CodeDeploy
 <a name="12_8_1"></a>
 ### [↖](#12_8)[↑](#12_8)[↓](#12_8_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
-
 *Group resources* -> *Visualize data* -> *Take action*
-
 * Manage EC2 and on-premises instances at scale
   * On-premises requires generation of secret *activation code*/*activation id*
 * Get operational insights of infrastructure
@@ -5305,7 +5231,6 @@ Enterprise|If you have mission-critical workloads
 Savings Plans is a flexible pricing model that provides savings of up to 72% on your AWS compute usage. This pricing model offers lower prices on Amazon EC2 instances usage, regardless of instance family, size, OS, tenancy or AWS Region, and also applies to AWS Fargate and AWS Lambda usage.
 
 Savings Plans offer significant savings over On Demand, just like EC2 Reserved Instances, in exchange for a commitment to use a specific amount of compute power (measured in $/hour) for a one or three year period. You can sign up for Savings Plans for a 1- or 3-year term and easily manage your plans by taking advantage of recommendations, performance reporting and budget alerts in the AWS Cost Explorer.
-
 * Complements or replaces reserved instances
 * New pricing model to get a discount based on long-term usage
 * Commit to a certain type of usage: ex $10 per hour for 1 to 3 years
@@ -5339,7 +5264,6 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 
 <a name="13_4_2"></a>
 ### [↖](#13_4)[↑](#13_4_1)[↓](#14) S3 Other Cost savings
-
 * *S3 Select* & *Glacier Select*: save in network and CPU cost
 * S3 Lifecycle Rules: transition objects between tiers
 * Compress objects to save space
@@ -5365,7 +5289,6 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 * [Retire — Get rid of.](#14_1_5)
 * [Retain — Usually this means “revisit” or do nothing (for now).](#14_1_6)
 <!-- toc_end -->
-
 * <a href="https://aws.amazon.com/blogs/enterprise-strategy/6-strategies-for-migrating-applications-to-the-cloud/" target="_blank">On AWS Blog</a>
 
 <a name="14_1_1"></a>
@@ -5425,25 +5348,28 @@ AWS Database Migration Service (DMS)|Replicate On-premises => AWS , AWS => AWS, 
 ---
 
 <a name="14_3"></a>
-## [↖](#top)[↑](#14_2)[↓](#14_3_1) Storage Gateway
+## [↖](#top)[↑](#14_2)[↓](#14_3_1) Storage Gateway (Core Topic)
 <!-- toc_start -->
 * [Overview](#14_3_1)
 * [Gateway types](#14_3_2)
   * [File gateway (NFS, SMB)](#14_3_2_1)
-  * [File gateway scenarios](#14_3_2_2)
-  * [Volume gateway (iSCSI)](#14_3_2_3)
-  * [Tape gateway (VTL)](#14_3_2_4)
+  * [Volume gateway (iSCSI)](#14_3_2_2)
+  * [Tape gateway (VTL)](#14_3_2_3)
 <!-- toc_end -->
 
 <a name="14_3_1"></a>
 ### [↖](#14_3)[↑](#14_3)[↓](#14_3_2) Overview
-*AWS Storage Gateway* is a hybrid cloud storage service that connects your existing on-premises environments with the AWS Cloud. Its features make it easy for you to run hybrid cloud workloads at any stage of your cloud adoption, whether it's getting started with cloud backups, running cloud processing workflows for data generated by on-premises machines, or performing a one-time migration of block volume data or databases.
+AWS Storage Gateway connects an on-premises software appliance with cloud-based storage to provide seamless integration with data security features between your on-premises IT environment and the AWS storage infrastructure. You can use the service to store data in the AWS Cloud for scalable and cost-effective storage that helps maintain data security.
 
 The gateway connects to AWS storage services, such as Amazon S3, Amazon Glacier, Amazon EBS, and AWS Backup, providing storage for files, volumes, snapshots, and virtual tapes in AWS.
-
 * Bridge between on-premises data and cloud data in S3
 * Use cases: disaster recovery, backup & restore, tiered storage
 * Download as VM image, install on host in datacenter
+* Gateway types
+	* File gateway
+	* Tape gateway
+	* Stored-volume gateway
+	* Cached-volume gateway
 * On AWS
 	* <a href="https://aws.amazon.com/storagegateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/storagegateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/storagegateway/latest/userguide/WhatIsStorageGateway.html" target="_blank">User Guide</a>
 
@@ -5451,9 +5377,8 @@ The gateway connects to AWS storage services, such as Amazon S3, Amazon Glacier,
 ### [↖](#14_3)[↑](#14_3_1)[↓](#14_3_2_1) Gateway types
 
 <a name="14_3_2_1"></a>
-#### [↖](#14_3)[↑](#14_3_2)[↓](#14_3_2_2) File gateway (NFS, SMB)
+#### [↖](#14_3)[↑](#14_3_2)[↓](#14_3_2_1_1) File gateway (NFS, SMB)
 The *File Gateway* presents a file interface that enables you to store files as objects in Amazon S3 using the industry-standard NFS and SMB file protocols, and access those files via NFS and SMB from your datacenter or Amazon EC2, or access those files as objects with the S3 API.
-
 * File Gateway appliance is a virtual machine to bridge between your NFS and S3
 * File gateway offers SMB or NFS-based access to data in Amazon S3 with local caching.
 * Can be managed as S3 native objects (bucket policies, cross-region replication etc)
@@ -5463,10 +5388,9 @@ The *File Gateway* presents a file interface that enables you to store files as 
 * Can be mounted on many servers
 * <a href="https://d0.awsstatic.com/whitepapers/aws-storage-gateway-file-gateway-for-hybrid-architectures.pdf" target="_blank">AWS whitepaper</a>
 
-<a name="14_3_2_2"></a>
-#### [↖](#14_3)[↑](#14_3_2_1)[↓](#14_3_2_3) File gateway scenarios
+##### File gateway scenarios
 * **Migration setup**
-	* Install File Gateway Appliance DC *and* in a VPC
+	* Install File Gateway Appliance in DC *and* in a VPC
 	* EC2s would see the same data than on-premises
 * **Read Only Replicas**
 	* Data Center 1 uses File Gateway Appliance to mirror data into S3
@@ -5482,20 +5406,19 @@ The *File Gateway* presents a file interface that enables you to store files as 
 	* Enables to have the File Gateway for *Write Once Read Many* (WORM) data
 	* If there are file modifications or renames in the file share clients, the file gateway creates a new version of the object without affecting priori versions, and the original locked version will remain unchanged
 
-<a name="14_3_2_3"></a>
-#### [↖](#14_3)[↑](#14_3_2_2)[↓](#14_3_2_4) Volume gateway (iSCSI)
-The *Volume Gateway* presents your applications storage volumes using the iSCSI block protocol. Data written to these volumes can be asynchronously backed up as point-in-time snapshots of your volumes, and stored in the cloud as Amazon EBS snapshots. You can set the schedule for when snapshots occur or create them via the AWS Management Console or service API. Snapshots are incremental backups that capture only changed blocks. All snapshot storage is also compressed to minimize your storage charges. * *Stored* volumes (all data on-prem, EBS snapshots in cloud, stored on S3) * *Cached* volumes (only recently used data on-prem, EBS volumes in cloud, stored on S3)
-
+<a name="14_3_2_2"></a>
+#### [↖](#14_3)[↑](#14_3_2_1_1)[↓](#14_3_2_3) Volume gateway (iSCSI)
+The *Volume Gateway* presents your applications storage volumes using the `iSCSI` block protocol. Data written to these volumes can be asynchronously backed up as point-in-time snapshots of your volumes, and stored in the cloud as Amazon EBS snapshots. You can set the schedule for when snapshots occur or create them via the AWS Management Console or service API. Snapshots are incremental backups that capture only changed blocks. All snapshot storage is also compressed to minimize your storage charges. * *Stored* volumes (all data on-prem, EBS snapshots in cloud, stored on S3) * *Cached* volumes (only recently used data on-prem, EBS volumes in cloud, stored on S3)
 * Block storage using iSCSI protocol backed by S3
 * **Cached volumes**: low latency access to most recent data, full data on S3
-* **Stored volumes**: entire dataset is on-premises, scheduled backups to S3
+* **Stored volumes**: entire dataset is on-premises, scheduled backups to EBS/S3
 * Can create EBS snapshots from the volumes and restore as EBS!
 * Up to 32 volumes per gateway
 	* Each volume up to 32TB in cached mode (1PB per Gateway)
 	* Each volume up to 16 TB in stored mode (512TB per Gateway)
 
-<a name="14_3_2_4"></a>
-#### [↖](#14_3)[↑](#14_3_2_3)[↓](#14_4) Tape gateway (VTL)
+<a name="14_3_2_3"></a>
+#### [↖](#14_3)[↑](#14_3_2_2)[↓](#14_4) Tape gateway (VTL)
 The *Tape Gateway* presents itself to your existing backup application as an industry-standard iSCSI-based virtual tape library (VTL), consisting of a virtual media changer and virtual tape drives. You can continue to use your existing backup applications and workflows while writing to a nearly limitless collection of virtual tapes. Each virtual tape is stored in Amazon S3. When you no longer require immediate or frequent access to data contained on a virtual tape, you can have your backup application move it from the Storage Gateway Virtual Tape Library into an archive tier that sits on top of Amazon Glacier cloud storage, further reducing storage costs.
 * Some companies still have backup processes using physical tapes
 * With Tape Gateway, companies use the same processes but in the cloud
@@ -5507,7 +5430,7 @@ The *Tape Gateway* presents itself to your existing backup application as an ind
 ---
 
 <a name="14_4"></a>
-## [↖](#top)[↑](#14_3_2_4)[↓](#14_4_1) Snowball
+## [↖](#top)[↑](#14_3_2_3)[↓](#14_4_1) Snowball
 <!-- toc_start -->
 * [Snowball Process](#14_4_1)
 <!-- toc_end -->
@@ -5515,7 +5438,6 @@ The *Tape Gateway* presents itself to your existing backup application as an ind
 Snowball is a petabyte-scale data transport solution that uses devices designed to be secure to transfer large amounts of data into and out of the AWS Cloud. Using Snowball addresses common challenges with large-scale data transfers including high network costs, long transfer times, and security concerns. Customers today use Snowball to migrate analytics data, genomics data, video libraries, image repositories, backups, and to archive part of data center shutdowns, tape replacement or application migration projects. Transferring data with Snowball is simple, fast, more secure, and can be as little as one-fifth the cost of transferring data via high-speed Internet.
 
 This replaces *Import Export* which was a manual service to ship drives to AWS.
-
 * Physical data transport solution that helps moving TBs or PBs of data in or out of AWS
 * Alternative to moving data over the network (and paying network fees)
 * Secure, tamper resistant, uses KMS 256 bit encryption
@@ -5523,7 +5445,6 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 * Snowball size: 50TB and 80TB
 * Use cases: large data cloud migrations, DC decommission, disaster recovery
 * If it takes more than a week to transfer over the network, use Snowball devices!
-
 * **Snowball** (deprecated)
   * Import/export to S3
 * **Snowball Edge**
@@ -5561,7 +5482,6 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 AWS Database Migration Service helps you migrate databases to AWS quickly and securely. The source database remains fully operational during the migration, minimizing downtime to applications that rely on the database. The AWS Database Migration Service can migrate your data to and from most widely used commercial and open-source databases.
 
 AWS Database Migration Service supports homogeneous migrations such as Oracle to Oracle, as well as heterogeneous migrations between different database platforms, such as Oracle or Microsoft SQL Server to Amazon Aurora. With AWS Database Migration Service, you can continuously replicate your data with high availability and consolidate databases into a petabyte-scale data warehouse by streaming data to Amazon Redshift and Amazon S3. Learn more about the supported source and target databases.
-
 * Quickly and securely migrate databases to AWS
 	* Resilient, self healing
 	* Source database remains available during the migration
@@ -5623,7 +5543,6 @@ AWS Application Discovery Service helps enterprise customers plan migration proj
 Planning data center migrations can involve thousands of workloads that are often deeply interdependent. Server utilization data and dependency mapping are important early first steps in the migration process. AWS Application Discovery Service collects and presents configuration, usage, and behavior data from your servers to help you better understand your workloads.
 
 The collected data is retained in encrypted format in an AWS Application Discovery Service data store. You can export this data as a CSV file and use it to estimate the Total Cost of Ownership (TCO) of running on AWS and to plan your migration to AWS. In addition, this data is also available in AWS Migration Hub, where you can migrate the discovered servers and track their progress as they get migrated to AWS.
-
 * Plan migration projects by gathering information about on-premises data centers
 * Server utilization data and dependency mapping are important for migrations
 * Agentless discovery (Application Discovery Agentless Connector):
@@ -5643,7 +5562,6 @@ The collected data is retained in encrypted format in an AWS Application Discove
 <a name="14_7"></a>
 ## [↖](#top)[↑](#14_6)[↓](#14_8) Server Migration Service
 AWS Server Migration Service (SMS) is an agentless service which makes it easier and faster for you to migrate thousands of on-premises workloads to AWS. AWS SMS allows you to automate, schedule, and track incremental replications of live server volumes, making it easier for you to coordinate large-scale server migrations.
-
 * Migrate entire VMs to AWS, improvement over EC2 VM Import/Export service (deprecated)
 	* That means the OS, the data, everything is kept intact
 	* After loading the VM onto EC2 you can update the OS, the data, make an AMI
@@ -5704,7 +5622,6 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 Amazon Virtual Private Cloud (Amazon VPC) is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
 
 As one of AWS's foundational services, Amazon VPC makes it easy to customize your VPC's network configuration. You can create a public-facing subnet for your web servers that have access to the internet. It also lets you place your backend systems, such as databases or application servers, in a private-facing subnet with no internet access. Amazon VPC lets you to use multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet.
-
 * Provisions a logically isolated section of the AWS cloud
 * Spans over all AZs in a region
 * Allows to create layered architecture
@@ -5877,7 +5794,6 @@ Security groups per region|500
 AWS Transit Gateway connects VPCs and on-premises networks through a central hub. This simplifies your network and puts an end to complex peering relationships. It acts as a cloud router – each new connection is only made once.
 
 As you expand globally, inter-Region peering connects AWS Transit Gateways together using the AWS global network. Your data is automatically encrypted, and never travels over the public internet. And, because of its central position, AWS Transit Gateway Network Manager has a unique view over your entire network, even connecting to Software-Defined Wide Area Network (SD-WAN) devices.
-
 * For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection
 * Regional resource, can work cross-region
 * Share cross-account using Resource Access Manager
@@ -5907,7 +5823,6 @@ As you expand globally, inter-Region peering connects AWS Transit Gateways toget
 * [VPC Endpoint Policies](#15_4_3)
 <!-- toc_end -->
 A VPC endpoint enables private connections between your VPC and supported AWS services and VPC endpoint services powered by AWS PrivateLink. AWS PrivateLink is a technology that enables you to privately access services by using private IP addresses. Traffic between your VPC and the other service does not leave the Amazon network. A VPC endpoint does not require an internet gateway, virtual private gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service.
-
 * Endpoints allow you to connect to AWS Services using a private network instead of the public internet
 * They scale horizontally and are redundant
 * No more IGW, NAT, etc... to access AWS Services
@@ -5963,7 +5878,6 @@ A VPC endpoint policy is an IAM resource policy that you attach to an endpoint w
 AWS PrivateLink provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet. AWS PrivateLink makes it easy to connect services across different accounts and VPCs to significantly simplify your network architecture.
 
 Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hosted by AWS Partners and supported solutions available in AWS Marketplace. By powering Gateway Load Balancer endpoints, AWS PrivateLink brings the same level of security and performance to your virtual network appliances or custom traffic inspection logic.
-
 * Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts)
 * Does not require VPC peering, internet gateway, NAT, route tables...
 * Requires a network load balancer (Service VPC) and ENI (Customer VPC)
@@ -5976,7 +5890,7 @@ Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hos
 ---
 
 <a name="15_6"></a>
-## [↖](#top)[↑](#15_5_1)[↓](#15_6_1) VPN
+## [↖](#top)[↑](#15_5_1)[↓](#15_6_1) VPN (Core Topic)
 <!-- toc_start -->
 * [Site-To-Site VPN](#15_6_1)
   * [Route Propagation](#15_6_1_1)
@@ -5985,14 +5899,23 @@ Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hos
 * [Software VPN (not AWS managed)](#15_6_4)
 * [VPN to multiple VPCs](#15_6_5)
 <!-- toc_end -->
-AWS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Together, they deliver a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.
+AWS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: **AWS Site-to-Site VPN** and **AWS Client VPN**. Together, they deliver a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.
 
-AWS Site-to-Site VPN creates encrypted tunnels between your network and your Amazon Virtual Private Clouds or AWS Transit Gateways. For managing remote access, AWS Client VPN connects your users to AWS or on-premises resources using a VPN software client.
+AWS Site-to-Site VPN creates encrypted tunnels between your network and your Amazon VPCs or AWS Transit Gateways. For managing remote access, AWS Client VPN connects your users to AWS or on-premises resources using a VPN software client.
+
+VPN connectivity option|Description
+-|-
+AWS Site-to-Site VPN|You can create an IPsec VPN connection between your VPC and your remote network. On the AWS side of the Site-to-Site VPN connection, a virtual private gateway or transit gateway provides two VPN endpoints (tunnels) for automatic failover. You configure your customer gateway device on the remote side of the Site-to-Site VPN connection.
+AWS Client VPN|AWS Client VPN is a managed client-based VPN service that enables you to securely access your AWS resources or your on-premises network. With AWS Client VPN, you configure an endpoint to which your users can connect to establish a secure TLS VPN session. This enables clients to access resources in AWS or an on-premises from any location using an OpenVPN-based VPN client.
+AWS VPN CloudHub|If you have more than one remote network (for example, multiple branch offices), you can create multiple AWS Site-to-Site VPN connections via your virtual private gateway to enable communication between these networks.
+Third party software VPN appliance|You can create a VPN connection to your remote network by using an Amazon EC2 instance in your VPC that's running a third party software VPN appliance. AWS does not provide or maintain third party software VPN appliances; however, you can choose from a range of products provided by partners and open source communities.
+
 * On AWS:
 	* <a href="https://aws.amazon.com/vpn/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpn/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/vpn/index.html" target="_blank">User Guide</a>
 
 <a name="15_6_1"></a>
 ### [↖](#15_6)[↑](#15_6)[↓](#15_6_1_1) Site-To-Site VPN
+> A customer gateway device is a physical or software appliance that you own or manage in your on-premises network (on your side of a Site-to-Site VPN connection). You or your network administrator must configure the device to work with the Site-to-Site VPN connection.
 * On-premises
 	* Setup a software or hardware VPN appliance to your on-premises network.
 	* The on-premises VPN should be accessible using a public IP
@@ -6009,14 +5932,13 @@ AWS Site-to-Site VPN creates encrypted tunnels between your network and your Ama
 	* Create static route in AWS for 10.3.0.0/20 (DC) through the VGW
 * Dynamic Routing (BGP):
 	* Uses BGP (Border Gateway Protocol) to share routes automatically (eBGP for internet)
-	* We don’t need to update the routing tables, it will be done for us dynamically
+	* Routing tables are automatically updated
 	* Just need to specify the ASN (Autonomous System Number) of the CGW and VGW
 
 <a name="15_6_2"></a>
 ### [↖](#15_6)[↑](#15_6_1_1)[↓](#15_6_3) AWS VPN CloudHub
 Building on the AWS managed VPN options described previously, you can securely communicate from one site to another using the AWS VPN CloudHub. The AWS VPN CloudHub operates on a simple hub-and-spoke model that you can use with or without a VPC. Use this approach if you have multiple branch offices and existing internet connections and would like to implement a convenient, potentially low-cost hub-and-spoke model for primary or backup connectivity between these remote offices.
-
-* Can connect up to 10 Customer Gateway for each Virtual Private Gateway (VGW)
+* Can connect up to 10 Customer Gateways for each Virtual Private Gateway
 * Low cost hub-and-spoke model for primary or secondary network connectivity between locations
 * Provide secure communication between sites, if you have multiple VPN connections
 * It’s a VPN connection so it goes over the public internet
@@ -6026,6 +5948,7 @@ Building on the AWS managed VPN options described previously, you can securely c
 
 <a name="15_6_3"></a>
 ### [↖](#15_6)[↑](#15_6_2)[↓](#15_6_4) Client VPN
+AWS Client VPN is a fully-managed, elastic VPN service that automatically scales up or down based on user demand. Because it is a cloud VPN solution, you don’t need to install and manage hardware or software-based solutions, or try to estimate how many remote users to support at one time.
 * Connect from your personal computer using OpenVPN to your private network in AWS and on-premises
 
 <a name="15_6_4"></a>
@@ -6065,7 +5988,6 @@ Building on the AWS managed VPN options described previously, you can securely c
 AWS Direct Connect is a cloud service solution that makes it easy to establish a dedicated network connection from your premises to AWS. Using AWS Direct Connect, you can establish private connectivity between AWS and your datacenter, office, or colocation environment, which in many cases can reduce your network costs, increase bandwidth throughput, and provide a more consistent network experience than Internet-based connections.
 
 AWS Direct Connect lets you establish a dedicated network connection between your network and one of the AWS Direct Connect locations. Using industry standard 802.1q VLANs, this dedicated connection can be partitioned into multiple virtual interfaces. This allows you to use the same connection to access public resources such as objects stored in Amazon S3 using public IP address space, and private resources such as Amazon EC2 instances running within an Amazon Virtual Private Cloud (VPC) using private IP space, while maintaining network separation between the public and private environments. Virtual interfaces can be reconfigured at any time to meet your changing needs.
-
 * Provides a dedicated private connection from a remote network to your VPC
 * Dedicated connection must be setup between your DC and AWS Direct Connect locations
 * More expensive than running a VPN solution
@@ -6193,7 +6115,6 @@ With Amazon Rekognition Custom Labels, you can identify the objects and scenes i
 <a name="16_5"></a>
 ## [↖](#top)[↑](#16_4)[↓](#16_6) Kinesis Video Streams
 Amazon Kinesis Video Streams makes it easy to securely stream video from connected devices to AWS for analytics, machine learning (ML), playback, and other processing. Kinesis Video Streams automatically provisions and elastically scales all the infrastructure needed to ingest streaming video data from millions of devices. It durably stores, encrypts, and indexes video data in your streams, and allows you to access your data through easy-to-use APIs. Kinesis Video Streams enables you to playback video for live and on-demand viewing, and quickly build applications that take advantage of computer vision and video analytics through integration with Amazon Rekognition Video, and libraries for ML frameworks such as Apache MxNet, TensorFlow, and OpenCV. Kinesis Video Streams also supports WebRTC, an open-source project that enables real-time media streaming and interaction between web browsers, mobile applications, and connected devices via simple APIs. Typical uses include video chat and peer-to-peer media streaming.
-
 * One video stream per streaming device (producers)
 	* Security cameras, body worn camera, smartphone
 	* Can use a Kinesis Video Streams Producer library
@@ -6211,7 +6132,6 @@ Amazon Kinesis Video Streams makes it easy to securely stream video from connect
 <a name="16_6"></a>
 ## [↖](#top)[↑](#16_5)[↓](#16_7) AWS Workspaces
 Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You can use Amazon WorkSpaces to provision either Windows or Linux desktops in just a few minutes and quickly scale to provide thousands of desktops to workers across the globe. You can pay either monthly or hourly, just for the WorkSpaces you launch, which helps you save money when compared to traditional desktops and on-premises VDI solutions. Amazon WorkSpaces helps you eliminate the complexity in managing hardware inventory, OS versions and patches, and Virtual Desktop Infrastructure (VDI), which helps simplify your desktop delivery strategy. With Amazon WorkSpaces, your users get a fast, responsive desktop of their choice that they can access anywhere, anytime, from any supported device.
-
 * Managed, Secure Cloud Desktop
 * Great to eliminate management of on-premise VDI (Virtual Desktop Infrastructure)
 * On Demand, pay per by usage
@@ -6240,7 +6160,6 @@ Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You
 * [Amazon AppStream 2.0 vs WorkSpaces](#16_7_1)
 <!-- toc_end -->
 Amazon AppStream 2.0 is a fully managed non-persistent application and desktop streaming service. You centrally manage your desktop applications on AppStream 2.0 and securely deliver them to any computer. You can easily scale to any number of users across the globe without acquiring, provisioning, and operating hardware or infrastructure. AppStream 2.0 is built on AWS, so you benefit from a data center and network architecture designed for the most security-sensitive organizations. Each end user has a fluid and responsive experience because your applications run on virtual machines optimized for specific use cases and each streaming sessions automatically adjust to network conditions.
-
 * Desktop Application Streaming Service
 * Deliver to any computer, without acquiring, provisioning infrastructure
 * The application is delivered from within a web browser
