@@ -101,10 +101,10 @@
   * [Virtual Private Cloud (VPC)](#15_1)
   * [VPC Peering](#15_2)
   * [Transit Gateway](#15_3)
-  * [VPC Endpoints](#15_4)
+  * [VPC Endpoints (Core Topic)](#15_4)
   * [PrivateLink](#15_5)
   * [VPN (Core Topic)](#15_6)
-  * [Direct Connect](#15_7)
+  * [Direct Connect (Core Topic)](#15_7)
   * [Redundant connections beweteen on-premises and AWS](#15_8)
 * [Other Services](#16)
   * [CloudSearch](#16_1)
@@ -5816,18 +5816,19 @@ As you expand globally, inter-Region peering connects AWS Transit Gateways toget
 ---
 
 <a name="15_4"></a>
-## [↖](#top)[↑](#15_3_2)[↓](#15_4_1) VPC Endpoints
+## [↖](#top)[↑](#15_3_2)[↓](#15_4_1) VPC Endpoints (Core Topic)
 <!-- toc_start -->
 * [VPC Endpoint Gateway](#15_4_1)
 * [VPC Endpoint Interface](#15_4_2)
-* [VPC Endpoint Policies](#15_4_3)
+* [VPC Endpoint Gateway Load Balancer](#15_4_3)
+* [VPC Endpoint Policies](#15_4_4)
 <!-- toc_end -->
 A VPC endpoint enables private connections between your VPC and supported AWS services and VPC endpoint services powered by AWS PrivateLink. AWS PrivateLink is a technology that enables you to privately access services by using private IP addresses. Traffic between your VPC and the other service does not leave the Amazon network. A VPC endpoint does not require an internet gateway, virtual private gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service.
 * Endpoints allow you to connect to AWS Services using a private network instead of the public internet
 * They scale horizontally and are redundant
 * No more IGW, NAT, etc... to access AWS Services
-* *VPC Endpoint Gateway* (S3 & DynamoDB)
-* *VPC Endpoint Interface* (the rest)
+* **VPC Endpoint Gateway** (S3 & DynamoDB)
+* **VPC Endpoint Interface** (the rest)
 * In case of problems:
 	* Check DNS Setting Resolution in your VPC
 	* Check Route Tables
@@ -5836,6 +5837,7 @@ A VPC endpoint enables private connections between your VPC and supported AWS se
 
 <a name="15_4_1"></a>
 ### [↖](#15_4)[↑](#15_4)[↓](#15_4_2) VPC Endpoint Gateway
+A gateway endpoint is a gateway that is a target for a specified route in your route table. This type of endpoint is used for traffic destined to a supported AWS service, such as Amazon S3 or Amazon DynamoDB.
 * Only works for S3 and DynamoDB, must create one gateway per VPC
 * Must update route tables entries
 * Gateway is defined at the VPC level
@@ -5845,6 +5847,7 @@ A VPC endpoint enables private connections between your VPC and supported AWS se
 
 <a name="15_4_2"></a>
 ### [↖](#15_4)[↑](#15_4_1)[↓](#15_4_3) VPC Endpoint Interface
+An interface endpoint is an elastic network interface with a private IP address from the IP address range of your subnet. It serves as an entry point for traffic destined to a supported AWS service or a VPC endpoint service. Interface endpoints are powered by AWS PrivateLink.
 * Provision an ENI that will have a private endpoint interface hostname
 * Leverage Security Groups for security
 * Private DNS (setting when you create the endpoint)
@@ -5859,7 +5862,11 @@ A VPC endpoint enables private connections between your VPC and supported AWS se
 	* Can be accessed from Direct Connect and Site-to-Site VPN
 
 <a name="15_4_3"></a>
-### [↖](#15_4)[↑](#15_4_2)[↓](#15_5) VPC Endpoint Policies
+### [↖](#15_4)[↑](#15_4_2)[↓](#15_4_4) VPC Endpoint Gateway Load Balancer
+A Gateway Load Balancer endpoint is an elastic network interface with a private IP address from the IP address range of your subnet. Gateway Load Balancer endpoints are powered by AWS PrivateLink
+
+<a name="15_4_4"></a>
+### [↖](#15_4)[↑](#15_4_3)[↓](#15_5) VPC Endpoint Policies
 A VPC endpoint policy is an IAM resource policy that you attach to an endpoint when you create or modify the endpoint. If you do not attach a policy when you create an endpoint, we attach a default policy for you that allows full access to the service. If a service does not support endpoint policies, the endpoint allows full access to the service. An endpoint policy does not override or replace IAM user policies or service-specific policies (such as S3 bucket policies). It is a separate policy for controlling access from the endpoint to the specified service.
 * Endpoint Policies are JSON documents to control access to services
 * Does not override or replace IAM user policies or service-specific policies (such as S3 bucket policies)
@@ -5869,7 +5876,7 @@ A VPC endpoint policy is an IAM resource policy that you attach to an endpoint w
 ---
 
 <a name="15_5"></a>
-## [↖](#top)[↑](#15_4_3)[↓](#15_5_1) PrivateLink
+## [↖](#top)[↑](#15_4_4)[↓](#15_5_1) PrivateLink
 <!-- toc_start -->
 * [Overview](#15_5_1)
 <!-- toc_end -->
@@ -5939,6 +5946,8 @@ Third party software VPN appliance|You can create a VPN connection to your remot
 ### [↖](#15_6)[↑](#15_6_1_1)[↓](#15_6_3) AWS VPN CloudHub
 Building on the AWS managed VPN options described previously, you can securely communicate from one site to another using the AWS VPN CloudHub. The AWS VPN CloudHub operates on a simple hub-and-spoke model that you can use with or without a VPC. Use this approach if you have multiple branch offices and existing internet connections and would like to implement a convenient, potentially low-cost hub-and-spoke model for primary or backup connectivity between these remote offices.
 * Can connect up to 10 Customer Gateways for each Virtual Private Gateway
+* Typically goes into a single VPC
+* The sites must not have overlapping IP ranges.
 * Low cost hub-and-spoke model for primary or secondary network connectivity between locations
 * Provide secure communication between sites, if you have multiple VPN connections
 * It’s a VPN connection so it goes over the public internet
@@ -5974,7 +5983,7 @@ AWS Client VPN is a fully-managed, elastic VPN service that automatically scales
 ---
 
 <a name="15_7"></a>
-## [↖](#top)[↑](#15_6_5)[↓](#15_7_1) Direct Connect
+## [↖](#top)[↑](#15_6_5)[↓](#15_7_1) Direct Connect (Core Topic)
 <!-- toc_start -->
 * [Overview](#15_7_1)
 * [Direct Connect Virtual Interfaces (VIF)](#15_7_2)
@@ -5993,6 +6002,7 @@ AWS Direct Connect lets you establish a dedicated network connection between you
 * More expensive than running a VPN solution
 * Private access to AWS services through virtual interfaces (VIF)
 * Bypass ISP, reduce network cost, increase bandwidth and stability
+* Private connection, but not encrypted
 * Not redundant by default (must setup a failover DX or VPN)
 * Consistent network performance
 * Compatible with all AWS services
