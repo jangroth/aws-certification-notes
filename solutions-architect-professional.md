@@ -82,7 +82,7 @@
   * [CloudFormation (Core Topic)](#12_4)
   * [Service Catalog](#12_5)
   * [AWS Serverless Application Model](#12_6)
-  * [Deployment Options](#12_7)
+  * [Deployments (Core Topic)](#12_7)
   * [Systems Manager](#12_8)
 * [Cost Control](#13)
   * [AWS Cost Allocation Tags](#13_1)
@@ -5094,8 +5094,13 @@ To get started with building SAM-based applications, use the AWS SAM CLI. SAM CL
 ---
 
 <a name="12_7"></a>
-## [↖](#top)[↑](#12_6_1)[↓](#12_8) Deployment Options
-
+## [↖](#top)[↑](#12_6_1)[↓](#12_7_1) Deployments (Core Topic)
+<!-- toc_start -->
+* [Options](#12_7_1)
+* [Mechanisms](#12_7_2)
+<!-- toc_end -->
+<a name="12_7_1"></a>
+### [↖](#12_7)[↑](#12_7)[↓](#12_7_2) Options
 .|.
 -|-
 Vanilla EC2|With User Data (just for the first launch)
@@ -5106,10 +5111,19 @@ Elastic Beanstalk|In-place all at once upgrades<br/>Rolling upgrades (with or wi
 OpsWorks|For chef/puppet stacks only<br/>Can manage ELB and EC2 instances<br/>Cannot manage an ASG
 SAM Framework|Leverages CloudFormation & CodeDeploy
 
+<a name="12_7_2"></a>
+### [↖](#12_7)[↑](#12_7_1)[↓](#12_8) Mechanisms
+.|.
+-|-
+Runtime/container|`EC2` - `ECS` - `Lambda` - `Elastic Beanstalk`
+Application deployment|`CodeDeploy` - `OpsWorks` -  `Elastic Beanstalk`
+Code/deployment management|`CodeCommit` - `CodePipeline` -  `Elastic Beanstalk`
+Infrastructure deployment|`OpsWorks` - `CloudFormation` - `Elastic Beanstalk`
+
 ---
 
 <a name="12_8"></a>
-## [↖](#top)[↑](#12_7)[↓](#12_8_1) Systems Manager
+## [↖](#top)[↑](#12_7_2)[↓](#12_8_1) Systems Manager
 <!-- toc_start -->
 * [Overview](#12_8_1)
 * [Components](#12_8_2)
