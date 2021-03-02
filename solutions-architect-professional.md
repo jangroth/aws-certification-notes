@@ -5098,6 +5098,7 @@ To get started with building SAM-based applications, use the AWS SAM CLI. SAM CL
 <!-- toc_start -->
 * [Options](#12_7_1)
 * [Mechanisms](#12_7_2)
+* [Per AWS Service](#12_7_3)
 <!-- toc_end -->
 <a name="12_7_1"></a>
 ### [↖](#12_7)[↑](#12_7)[↓](#12_7_2) Options
@@ -5112,7 +5113,7 @@ OpsWorks|For chef/puppet stacks only<br/>Can manage ELB and EC2 instances<br/>Ca
 SAM Framework|Leverages CloudFormation & CodeDeploy
 
 <a name="12_7_2"></a>
-### [↖](#12_7)[↑](#12_7_1)[↓](#12_8) Mechanisms
+### [↖](#12_7)[↑](#12_7_1)[↓](#12_7_3) Mechanisms
 .|.
 -|-
 Runtime/container|`EC2` - `ECS` - `Lambda` - `Elastic Beanstalk`
@@ -5120,10 +5121,23 @@ Application deployment|`CodeDeploy` - `OpsWorks` -  `Elastic Beanstalk`
 Code/deployment management|`CodeCommit` - `CodePipeline` -  `Elastic Beanstalk`
 Infrastructure deployment|`OpsWorks` - `CloudFormation` - `Elastic Beanstalk`
 
+<a name="12_7_3"></a>
+### [↖](#12_7)[↑](#12_7_2)[↓](#12_8) Per AWS Service
+
+Strategy|Auto Scaling<br/>Group|CodeDeploy<br/>EC2/On-Premises|CodeDeploy ECS|CodeDeploy Lambda|Elastic<br/>Beanstalk|OpsWorks
+-|-|-|-|-|-|-
+**Single Target Deployment**|.|.|.|.|redeploy|.
+**All At Once**|`AutoScalingReplacingUpdate`|*All-at-once*|.|.|*all at once*|.
+**Minimum In Service**|.|.|.|.|*rolling*|.
+**Rolling**|`AutoScalingRollingUpdate`|*One-at-at-time*|.|.|*rolling*|.
+**Rolling With Extra Batches**|.|.|.|.|*rolling with<br/>extra batches*|.
+**Blue/Green**|.|Traffic is shifted to a replacement set of instances<br/>* *All-at-once*<br/>* *Half-at-a-time*<br/>* *One-at-a-time*|Traffic is shifted to a replacement task set<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|Traffic is shifted to a new Lambda version<br/>* *Canary*<br/>* *Linear*<br/>* *All-at-once*|*immutable* comes close<br/>or: create new environment and use DNS|create new environment and use DNS
+**Canary**|.|.|See above<br/>* *Canary*|See above<br/>* *Canary*|*Traffic Splitting*|.
+
 ---
 
 <a name="12_8"></a>
-## [↖](#top)[↑](#12_7_2)[↓](#12_8_1) Systems Manager
+## [↖](#top)[↑](#12_7_3)[↓](#12_8_1) Systems Manager
 <!-- toc_start -->
 * [Overview](#12_8_1)
 * [Components](#12_8_2)
