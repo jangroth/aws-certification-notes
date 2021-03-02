@@ -94,8 +94,8 @@
   * [On-Premises strategies with AWS](#14_2)
   * [Storage Gateway (Core Topic)](#14_3)
   * [Snowball](#14_4)
-  * [Database Migration Service](#14_5)
-  * [Application Discovery Service](#14_6)
+  * [Database Migration Service (Core Topic)](#14_5)
+  * [Application Discovery Service (Core Topic)](#14_6)
   * [Server Migration Service](#14_7)
   * [Disaster Recovery](#14_8)
 * [VPC](#15)
@@ -5578,7 +5578,7 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 ---
 
 <a name="14_5"></a>
-## [↖](#top)[↑](#14_4_1)[↓](#14_5_1) Database Migration Service
+## [↖](#top)[↑](#14_4_1)[↓](#14_5_1) Database Migration Service (Core Topic)
 <!-- toc_start -->
 * [Overview](#14_5_1)
 * [Schema Conversion Tool (SCT)](#14_5_2)
@@ -5646,7 +5646,7 @@ AWS Database Migration Service supports homogeneous migrations such as Oracle to
 ---
 
 <a name="14_6"></a>
-## [↖](#top)[↑](#14_5_4)[↓](#14_7) Application Discovery Service
+## [↖](#top)[↑](#14_5_4)[↓](#14_7) Application Discovery Service (Core Topic)
 AWS Application Discovery Service helps enterprise customers plan migration projects by gathering information about their on-premises data centers.
 
 Planning data center migrations can involve thousands of workloads that are often deeply interdependent. Server utilization data and dependency mapping are important early first steps in the migration process. AWS Application Discovery Service collects and presents configuration, usage, and behavior data from your servers to help you better understand your workloads.
