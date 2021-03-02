@@ -7,12 +7,13 @@
 * [Identity and Federation](#3)
   * [Overview - possible ways to manage Identity and Federation in AWS](#3_1)
   * [Identity and Access Management (Core Topic)](#3_2)
-  * [Security Token Service](#3_3)
-  * [Identity Federation](#3_4)
-  * [AWS Active Directory Services (Core Topic)](#3_5)
-  * [AWS Organization (Core Topic)](#3_6)
-  * [AWS Resource Access Manager](#3_7)
-  * [AWS Single Sign-On](#3_8)
+  * [Security Token Service (Core Topic)](#3_3)
+  * [Amazon Cognito (Core Topic)](#3_4)
+  * [Identity Federation (Core Topic)](#3_5)
+  * [AWS Active Directory Services (Core Topic)](#3_6)
+  * [AWS Organization (Core Topic)](#3_7)
+  * [AWS Resource Access Manager](#3_8)
+  * [AWS Single Sign-On](#3_9)
 * [Security](#4)
   * [CloudTrail](#4_1)
   * [KMS](#4_2)
@@ -107,13 +108,13 @@
   * [Direct Connect (Core Topic)](#15_7)
   * [Redundant connections beweteen on-premises and AWS](#15_8)
 * [Other Services](#16)
-  * [CloudSearch](#16_1)
-  * [Alex for Business](#16_2)
-  * [Amazon Lex](#16_3)
-  * [Amazon Rekognition](#16_4)
-  * [Kinesis Video Streams](#16_5)
-  * [AWS Workspaces](#16_6)
-  * [AWS AppStream 2.0](#16_7)
+  * [Alex for Business](#16_1)
+  * [Amazon AppStream & Amazon Workspaces](#16_2)
+  * [Amazon DocumentDB](#16_3)
+  * [Amazon Lex](#16_4)
+  * [Amazon Rekognition](#16_5)
+  * [CloudSearch](#16_6)
+  * [Kinesis Video Streams](#16_7)
   * [Amazon Mechanical Turk](#16_8)
   * [Device Farm](#16_9)
 ---
@@ -370,7 +371,7 @@ IAM Access Analyzer continuously monitors policies for changes, meaning customer
 ---
 
 <a name="3_3"></a>
-## [↖](#top)[↑](#3_2_6_2)[↓](#3_3_1) Security Token Service
+## [↖](#top)[↑](#3_2_6_2)[↓](#3_3_1) Security Token Service (Core Topic)
 <!-- toc_start -->
 * [Overview](#3_3_1)
 * [Providing access to an IAM user in another AWS account that you own](#3_3_2)
@@ -430,29 +431,71 @@ STS on AWS:
 ---
 
 <a name="3_4"></a>
-## [↖](#top)[↑](#3_3_3)[↓](#3_4_1) Identity Federation
+## [↖](#top)[↑](#3_3_3)[↓](#3_4_1) Amazon Cognito (Core Topic)
 <!-- toc_start -->
 * [Overview](#3_4_1)
-* [SAML 2.0](#3_4_2)
-* [Custom Identity Broker](#3_4_3)
-* [Federating users of a mobile or web-based app with Web Identity Federation (*not* using Amazon Cognito)](#3_4_4)
-* [Federating users of a mobile or web-based app with Amazon Cognito](#3_4_5)
+* [User pools](#3_4_2)
+* [Amazon Cognito Identity Pools (Federated Identities)](#3_4_3)
 <!-- toc_end -->
-
 <a name="3_4_1"></a>
 ### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) Overview
+Amazon Cognito provides authentication, authorization, and user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, Google or Apple.
+
+The two main components of Amazon Cognito are **user pools** and **identity pools**. User pools are user directories that provide sign-up and sign-in options for your app users. Identity pools enable you to grant your users access to other AWS services. You can use identity pools and user pools separately or together.
+* Supports MFA
+* Data at-rest and in-transit encryption
+* Log in via social identiy providers
+* Support for SAML
+* On AWS: <a href="https://aws.amazon.com/cognito/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cognito/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cognito/" target="_blank">User Guide</a>
+
+<a name="3_4_2"></a>
+### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) User pools
+A user pool is a user directory in Amazon Cognito. With a user pool, your users can sign in to your web or mobile app through Amazon Cognito. Your users can also sign in through social identity providers like Google, Facebook, Amazon, or Apple, and through SAML identity providers. Whether your users sign in directly or through a third party, all members of the user pool have a directory profile that you can access through a Software Development Kit (SDK).
+* Provides a directory profile for all users which you can access through an SDK.
+* Supports user federation through a third-party identity provider.
+* Signed users receive authentication tokens.
+* Tokens can be exchanged for AWS access via Amazon Cognito identity pools.
+
+<a name="3_4_3"></a>
+### [↖](#3_4)[↑](#3_4_2)[↓](#3_5) Amazon Cognito Identity Pools (Federated Identities)
+Amazon Cognito identity pools (federated identities) enable you to create unique identities for your users and federate them with identity providers. With an identity pool, you can obtain temporary, limited-privilege AWS credentials to access other AWS services.
+
+* Supports the following identity providers:
+	* Public providers: Login with Amazon (Identity Pools), Facebook (Identity Pools), Google (Identity Pools), Sign in with Apple (Identity Pools).
+	* Amazon Cognito user pools
+	* Open ID Connect Providers (Identity Pools)
+	* SAML Identity Providers (Identity Pools)
+	* Developer Authenticated Identities (Identity Pools)
+* Authenticates users with web identity providers, including Amazon Cognito user pools.
+* Assigns temporary AWS credentials via AWS STS.
+* Supports anonymous guest users.
+
+---
+
+<a name="3_5"></a>
+## [↖](#top)[↑](#3_4_3)[↓](#3_5_1) Identity Federation (Core Topic)
+<!-- toc_start -->
+* [Overview](#3_5_1)
+* [SAML 2.0](#3_5_2)
+* [Custom Identity Broker](#3_5_3)
+* [Federating users of a mobile or web-based app with Web Identity Federation (*not* using Amazon Cognito)](#3_5_4)
+* [Federating users of a mobile or web-based app with Amazon Cognito](#3_5_5)
+<!-- toc_end -->
+
+<a name="3_5_1"></a>
+### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) Overview
 If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of AWS and give these external user identities permissions to use AWS resources in your account. These users assume identity provided access *role*.
 
 Federation can have many flavors:
 * SAML 2.0
 * Custom Identity Broker
-* Web Identity Federation with Amazon Cognito
 * Web Identity Federation without Amazon Cognito
+* Web Identity Federation with Amazon Cognito
 * Single Sign-On
 * Non-SAML with AWS Microsoft AD
 
-<a name="3_4_2"></a>
-### [↖](#3_4)[↑](#3_4_1)[↓](#3_4_3) SAML 2.0
+<a name="3_5_2"></a>
+### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_3) SAML 2.0
 > Security Assertion Markup Language (**SAML**) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider.
 
 > An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.
@@ -477,15 +520,15 @@ Federation can have many flavors:
   * If the request is successful, the API returns a set of temporary security credentials,
 * Note - federation through SAML is the 'old' way of doing things. Better to use AWS SSO
 
-<a name="3_4_3"></a>
-### [↖](#3_4)[↑](#3_4_2)[↓](#3_4_4) Custom Identity Broker
+<a name="3_5_3"></a>
+### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_4) Custom Identity Broker
 * If identity provider is not compatible with SAML 2.0
 * The identity broker must determine the appropriate IAM policy (talks directly to STS, unlike SAML scenarios)
 * Use STS `AssumeRole` or `GetFederationToken`
 * <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_federated-users.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_4_4"></a>
-### [↖](#3_4)[↑](#3_4_3)[↓](#3_4_5) Federating users of a mobile or web-based app with Web Identity Federation (*not* using Amazon Cognito)
+<a name="3_5_4"></a>
+### [↖](#3_5)[↑](#3_5_3)[↓](#3_5_5) Federating users of a mobile or web-based app with Web Identity Federation (*not* using Amazon Cognito)
 * Login with Web Identity Federation provider (Amazon, Google, Facebook or any other OpenID-Connect compatible IdP)
   * Retrieves OpenID-Connect token
 * Get temporary credentials from STS
@@ -502,8 +545,8 @@ Federation can have many flavors:
   * Does not support data syncronization
 * <a href="https://docs.amazonaws.cn/en_us/amazondynamodb/latest/developerguide/WIF.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_4_5"></a>
-### [↖](#3_4)[↑](#3_4_4)[↓](#3_5) Federating users of a mobile or web-based app with Amazon Cognito
+<a name="3_5_5"></a>
+### [↖](#3_5)[↑](#3_5_4)[↓](#3_6) Federating users of a mobile or web-based app with Amazon Cognito
 If you create a mobile or web-based app that accesses AWS resources, the app needs security credentials in order to make programmatic requests to AWS. For most mobile application scenarios, we recommend that you use Amazon Cognito.
 * Login with Web Identity Federation provider (Amazon, Google, Facebook or any other OpenID-Connect compatible IdP)
   * Retrieves OpenID-Connect token
@@ -521,21 +564,21 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 
 ---
 
-<a name="3_5"></a>
-## [↖](#top)[↑](#3_4_5)[↓](#3_5_1) AWS Active Directory Services (Core Topic)
+<a name="3_6"></a>
+## [↖](#top)[↑](#3_5_5)[↓](#3_6_1) AWS Active Directory Services (Core Topic)
 <!-- toc_start -->
-* [Overview](#3_5_1)
-* [AWS Managed Microsoft AD](#3_5_2)
-  * [Overview](#3_5_2_1)
-  * [Integrations](#3_5_2_2)
-  * [Connecting to on-premises AD](#3_5_2_3)
-  * [Syncronizing with on-premises AD](#3_5_2_4)
-* [AD Connector](#3_5_3)
-* [Simple AD](#3_5_4)
+* [Overview](#3_6_1)
+* [AWS Managed Microsoft AD](#3_6_2)
+  * [Overview](#3_6_2_1)
+  * [Integrations](#3_6_2_2)
+  * [Connecting to on-premises AD](#3_6_2_3)
+  * [Syncronizing with on-premises AD](#3_6_2_4)
+* [AD Connector](#3_6_3)
+* [Simple AD](#3_6_4)
 <!-- toc_end -->
 
-<a name="3_5_1"></a>
-### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) Overview
+<a name="3_6_1"></a>
+### [↖](#3_6)[↑](#3_6)[↓](#3_6_2) Overview
 
 > Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is included in most Windows Server operating systems as a set of processes and services.
 
@@ -554,10 +597,10 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 		* Cannot be joined with on-premises AD!
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_5_2"></a>
-### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_2_1) AWS Managed Microsoft AD
-<a name="3_5_2_1"></a>
-#### [↖](#3_5)[↑](#3_5_2)[↓](#3_5_2_2) Overview
+<a name="3_6_2"></a>
+### [↖](#3_6)[↑](#3_6_1)[↓](#3_6_2_1) AWS Managed Microsoft AD
+<a name="3_6_2_1"></a>
+#### [↖](#3_6)[↑](#3_6_2)[↓](#3_6_2_2) Overview
 AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft AD, enables your directory-aware workloads and AWS resources to use managed Active Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not require you to synchronize or replicate data from your existing Active Directory to the cloud. You can use the standard AD administration tools and take advantage of the built-in AD features, such as group policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2 and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing services, such as Amazon WorkSpaces, with AD users and groups.
 * Managed Service
 * Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
@@ -568,15 +611,15 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
   * *AD two-way forest trust*
 * On AWS: <a href="https://aws.amazon.com/directoryservice/" target="_blank">Service</a> - <a href="https://aws.amazon.com/directoryservice/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">User Guide</a>
 
-<a name="3_5_2_2"></a>
-#### [↖](#3_5)[↑](#3_5_2_1)[↓](#3_5_2_3) Integrations
+<a name="3_6_2_2"></a>
+#### [↖](#3_6)[↑](#3_6_2_1)[↓](#3_6_2_3) Integrations
 * Windows applications on EC2 can *join the domain* and run traditional AD applications
   * Sharepoint, ...
 * RDS for SQL Server, AWS Workspaces, Quicksight, ...
 * AWS SSO for 3rd party access (SAML)
 
-<a name="3_5_2_3"></a>
-#### [↖](#3_5)[↑](#3_5_2_2)[↓](#3_5_2_4) Connecting to on-premises AD
+<a name="3_6_2_3"></a>
+#### [↖](#3_6)[↑](#3_6_2_2)[↓](#3_6_2_4) Connecting to on-premises AD
 * Needs AWS Direct Connect or VPN
 * Three kinds of of forest trust
   * One way on-premises -> AWS
@@ -586,13 +629,13 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
   * Replication not supported
   * Users on both ADs are independent from each other
 
-<a name="3_5_2_4"></a>
-#### [↖](#3_5)[↑](#3_5_2_3)[↓](#3_5_3) Syncronizing with on-premises AD
+<a name="3_6_2_4"></a>
+#### [↖](#3_6)[↑](#3_6_2_3)[↓](#3_6_3) Syncronizing with on-premises AD
 * Have to install Microsoft AD on EC2 yourself and setup replication
 * Establish forest trust between this installation and AWS Managed Microsoft AD
 
-<a name="3_5_3"></a>
-### [↖](#3_5)[↑](#3_5_2_4)[↓](#3_5_4) AD Connector
+<a name="3_6_3"></a>
+### [↖](#3_6)[↑](#3_6_2_4)[↓](#3_6_4) AD Connector
 * AD Connector is a directory gateway (*proxy*) to redirect directory requests to your on-premises Microsoft Active Directory
 * No caching capability
   * Has latency
@@ -601,8 +644,8 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 * Requires VPN or Direct Connect -> can't function if connection goes down!
 * Doesn’t work with SQL Server, doesn’t do seamless joining, can’t share directory
 
-<a name="3_5_4"></a>
-### [↖](#3_5)[↑](#3_5_3)[↓](#3_6) Simple AD
+<a name="3_6_4"></a>
+### [↖](#3_6)[↑](#3_6_3)[↓](#3_7) Simple AD
 * Simple AD is an inexpensive AD–compatible service with the common directory features.
 * Supports joining EC2 instances, manage users and groups
 * Does not support MFA, RDS SQL server, AWS SSO
@@ -613,19 +656,19 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 
 ---
 
-<a name="3_6"></a>
-## [↖](#top)[↑](#3_5_4)[↓](#3_6_1) AWS Organization (Core Topic)
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_4)[↓](#3_7_1) AWS Organization (Core Topic)
 <!-- toc_start -->
-* [Overview](#3_6_1)
-  * [Benefits](#3_6_1_1)
-  * [Multi-account strategies](#3_6_1_2)
-  * [Best Practices](#3_6_1_3)
-* [Service Control Policies](#3_6_2)
-* [Tag Policies](#3_6_3)
-* [Reserved Instances](#3_6_4)
+* [Overview](#3_7_1)
+  * [Benefits](#3_7_1_1)
+  * [Multi-account strategies](#3_7_1_2)
+  * [Best Practices](#3_7_1_3)
+* [Service Control Policies](#3_7_2)
+* [Tag Policies](#3_7_3)
+* [Reserved Instances](#3_7_4)
 <!-- toc_end -->
-<a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6)[↓](#3_6_1_1) Overview
+<a name="3_7_1"></a>
+### [↖](#3_7)[↑](#3_7)[↓](#3_7_1_1) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations, you can create groups of accounts, automate account creation, apply and manage policies for those groups. Organizations enables you to centrally manage policies across multiple accounts, without requiring custom scripts and manual processes.
 
 Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS service use across multiple AWS accounts. You can also use Organizations to help automate the creation of new accounts through APIs. Organizations helps simplify the billing for multiple accounts by enabling you to setup a single payment method for all the accounts in your organization through consolidated billing. AWS Organizations is available to all AWS customers at no additional charge.
@@ -640,8 +683,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 * Integration with AWS Single Sign-On (SSO)
 * On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="3_6_1_1"></a>
-#### [↖](#3_6)[↑](#3_6_1)[↓](#3_6_1_2) Benefits
+<a name="3_7_1_1"></a>
+#### [↖](#3_7)[↑](#3_7_1)[↓](#3_7_1_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -653,8 +696,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
   * Ability to apply an SCP to prevent member accounts from leaving the org
 * Apply Tag Policies across the hierachy
 
-<a name="3_6_1_2"></a>
-#### [↖](#3_6)[↑](#3_6_1_1)[↓](#3_6_1_3) Multi-account strategies
+<a name="3_7_1_2"></a>
+#### [↖](#3_7)[↑](#3_7_1_1)[↓](#3_7_1_3) Multi-account strategies
 * Create accounts per department, per cost center, per dev/test/prod, based on regulatory restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account service limits, isolated account for logging,
 * "Multi account" vs "one account, multi VPC"
 * Use tagging standards for billing purposes
@@ -662,8 +705,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 * Send CloudWatch logs to central logging account
 * Establish cross account roles for admin purposes
 
-<a name="3_6_1_3"></a>
-#### [↖](#3_6)[↑](#3_6_1_2)[↓](#3_6_2) Best Practices
+<a name="3_7_1_3"></a>
+#### [↖](#3_7)[↑](#3_7_1_2)[↓](#3_7_2) Best Practices
 * For the management account
 	* Use the management account only for tasks that require the management account
 	* Use a group email address for the management account's root user
@@ -683,8 +726,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 	* Use an SCP to restrict what the root user in your member accounts can do
 	* Apply controls to monitor access to the root user credentials
 
-<a name="3_6_2"></a>
-### [↖](#3_6)[↑](#3_6_1_3)[↓](#3_6_3) Service Control Policies
+<a name="3_7_2"></a>
+### [↖](#3_7)[↑](#3_7_1_3)[↓](#3_7_3) Service Control Policies
 Service control policies (SCPs) are one type of policy that you can use to manage your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization, allowing you to ensure your accounts stay within your organization’s access control guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't available if your organization has enabled only the consolidated billing features. SCPs do *not* apply for the management account itself.
 * Whitelist or blacklist IAM actions
   * Applied at the Root, OU or Account level
@@ -699,12 +742,12 @@ Service control policies (SCPs) are one type of policy that you can use to manag
   * Enforce PCI compliance by explicitly disabling services
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
-<a name="3_6_3"></a>
-### [↖](#3_6)[↑](#3_6_2)[↓](#3_6_4) Tag Policies
+<a name="3_7_3"></a>
+### [↖](#3_7)[↑](#3_7_2)[↓](#3_7_4) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
-<a name="3_6_4"></a>
-### [↖](#3_6)[↑](#3_6_3)[↓](#3_7) Reserved Instances
+<a name="3_7_4"></a>
+### [↖](#3_7)[↑](#3_7_3)[↓](#3_8) Reserved Instances
 * For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
 * This means that all accounts in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
 * The payer account (management account) of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
@@ -713,13 +756,13 @@ Tag policies are a type of policy that can help you standardize tags across reso
 
 ---
 
-<a name="3_7"></a>
-## [↖](#top)[↑](#3_6_4)[↓](#3_7_1) AWS Resource Access Manager
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_4)[↓](#3_8_1) AWS Resource Access Manager
 <!-- toc_start -->
-* [Overview](#3_7_1)
+* [Overview](#3_8_1)
 <!-- toc_end -->
-<a name="3_7_1"></a>
-### [↖](#3_7)[↑](#3_7)[↓](#3_8) Overview
+<a name="3_8_1"></a>
+### [↖](#3_8)[↑](#3_8)[↓](#3_9) Overview
 AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
 * Avoids resource duplication
 * Key resources that can be shared
@@ -736,14 +779,14 @@ AWS RAM lets you share your resources with any AWS account or through AWS Organi
 
 ---
 
-<a name="3_8"></a>
-## [↖](#top)[↑](#3_7_1)[↓](#3_8_1) AWS Single Sign-On
+<a name="3_9"></a>
+## [↖](#top)[↑](#3_8_1)[↓](#3_9_1) AWS Single Sign-On
 <!-- toc_start -->
-* [Overview](#3_8_1)
+* [Overview](#3_9_1)
 <!-- toc_end -->
 
-<a name="3_8_1"></a>
-### [↖](#3_8)[↑](#3_8)[↓](#4) Overview
+<a name="3_9_1"></a>
+### [↖](#3_9)[↑](#3_9)[↓](#4) Overview
 AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO also helps you manage access and permissions to commonly used third-party software as a service (SaaS) applications, AWS SSO-integrated applications as well as custom applications that support Security Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
 * Centrally manage Single Sign-On to access multiple accounts and 3rd-party business applications.
   * No need for custom IdP login portal, AWS SSO communicates directly with SAML-compatible login portal
@@ -760,7 +803,7 @@ AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it e
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_8_1)[↓](#4_1) Security
+# [↖](#top)[↑](#3_9_1)[↓](#4_1) Security
 
 <a name="4_1"></a>
 ## [↖](#top)[↑](#4)[↓](#4_1_1) CloudTrail
@@ -6106,18 +6149,7 @@ AWS Direct Connect lets you establish a dedicated network connection between you
 # [↖](#top)[↑](#15_8)[↓](#16_1) Other Services
 
 <a name="16_1"></a>
-## [↖](#top)[↑](#16)[↓](#16_2) CloudSearch
-Amazon CloudSearch is a managed service in the AWS Cloud that makes it simple and cost-effective to set up, manage, and scale a search solution for your website or application.
-* Managed service to setup, manage and scale a search solution
-* Managed alternative to ElasticSearch
-* Free text, Boolean, autocomplete suggestions, geospatial search...
-* On AWS:
-	* <a href="https://aws.amazon.com/cloudsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudsearch/index.html" target="_blank">User Guide</a>
-
----
-
-<a name="16_2"></a>
-## [↖](#top)[↑](#16_1)[↓](#16_3) Alex for Business
+## [↖](#top)[↑](#16)[↓](#16_2) Alex for Business
 Alexa for Business is a service that enables organizations and employees to use Alexa to get more work done. With Alexa for Business, employees can use Alexa as their intelligent assistant to be more productive in meeting rooms, at their desks, and even with the Alexa devices they already use at home or on the go. IT and facilities managers can also use Alexa for Business to measure and increase the utilization of the existing meeting rooms in their workplace.
 * Use Alexa to help employees be more productive in meeting rooms and their desk
 * Measure and increase the utilization of meeting rooms in their workplace
@@ -6126,59 +6158,24 @@ Alexa for Business is a service that enables organizations and employees to use 
 
 ---
 
-<a name="16_3"></a>
-## [↖](#top)[↑](#16_2)[↓](#16_4) Amazon Lex
-Amazon Lex is a service for building conversational interfaces into any application using voice and text. Amazon Lex provides the advanced deep learning functionalities of automatic speech recognition (ASR) for converting speech to text, and natural language understanding (NLU) to recognize the intent of the text, to enable you to build applications with highly engaging user experiences and lifelike conversational interactions. With Amazon Lex, the same deep learning technologies that power Amazon Alexa are now available to any developer, enabling you to quickly and easily build sophisticated, natural language, conversational bots (“chatbots”).
-
-With Amazon Lex, you can build bots to increase contact center productivity, automate simple tasks, and drive operational efficiencies across the enterprise. As a fully managed service, Amazon Lex scales automatically, so you don’t need to worry about managing infrastructure.
-* Automatic Speech Recognition (ASR) to convert speech to text
-* Natural Language Understanding to recognize the intent of text, callers
-* Helps build chatbots, call center bots
+<a name="16_2"></a>
+## [↖](#top)[↑](#16_1)[↓](#16_2_1) Amazon AppStream & Amazon Workspaces
+<!-- toc_start -->
+* [Amazon AppStream 2.0](#16_2_1)
+* [Amazon Workspaces](#16_2_2)
+* [Amazon AppStream 2.0 vs WorkSpaces](#16_2_3)
+<!-- toc_end -->
+<a name="16_2_1"></a>
+### [↖](#16_2)[↑](#16_2)[↓](#16_2_2) Amazon AppStream 2.0
+Amazon AppStream 2.0 is a fully managed non-persistent application and desktop streaming service. You centrally manage your desktop applications on AppStream 2.0 and securely deliver them to any computer. You can easily scale to any number of users across the globe without acquiring, provisioning, and operating hardware or infrastructure. AppStream 2.0 is built on AWS, so you benefit from a data center and network architecture designed for the most security-sensitive organizations. Each end user has a fluid and responsive experience because your applications run on virtual machines optimized for specific use cases and each streaming sessions automatically adjust to network conditions.
+* Desktop Application Streaming Service
+* Deliver to any computer, without acquiring, provisioning infrastructure
+* The application is delivered from within a web browser
 * On AWS:
-	* <a href="https://aws.amazon.com/lex/" target="_blank">Service</a> - <a href="https://aws.amazon.com/lex/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/lex/" target="_blank">User Guide</a>
+	* <a href="https://aws.amazon.com/appstream2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/appstream2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/appstream2/index.html" target="_blank">User Guide</a>
 
----
-
-<a name="16_4"></a>
-## [↖](#top)[↑](#16_3)[↓](#16_5) Amazon Rekognition
-Amazon Rekognition makes it easy to add image and video analysis to your applications using proven, highly scalable, deep learning technology that requires no machine learning expertise to use. With Amazon Rekognition, you can identify objects, people, text, scenes, and activities in images and videos, as well as detect any inappropriate content. Amazon Rekognition also provides highly accurate facial analysis and facial search capabilities that you can use to detect, analyze, and compare faces for a wide variety of user verification, people counting, and public safety use cases.
-
-With Amazon Rekognition Custom Labels, you can identify the objects and scenes in images that are specific to your business needs. For example, you can build a model to classify specific machine parts on your assembly line or to detect unhealthy plants. Amazon Rekognition Custom Labels takes care of the heavy lifting of model development for you, so no machine learning experience is required. You simply need to supply images of objects or scenes you want to identify, and the service handles the rest.
-* Find objects, people, text, scenes in images and videos using ML
-* Facial analysis and facial search to do user verification, people counting
-* Create a database of “familiar faces” or compare against celebrities
-* Use cases:
-	* Labeling
-	* Content Moderation
-	* Text Detection
-	* Face Detection and Analysis (gender, age range, emotions...)
-	* Face Search and Verification
-	* Celebrity Recognition
-	* Pathing (ex: for sports game analysis)
-* On AWS:
-	* <a href="https://aws.amazon.com/rekognition/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rekognition/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rekognition/index.html" target="_blank">User Guide</a>
-
----
-
-<a name="16_5"></a>
-## [↖](#top)[↑](#16_4)[↓](#16_6) Kinesis Video Streams
-Amazon Kinesis Video Streams makes it easy to securely stream video from connected devices to AWS for analytics, machine learning (ML), playback, and other processing. Kinesis Video Streams automatically provisions and elastically scales all the infrastructure needed to ingest streaming video data from millions of devices. It durably stores, encrypts, and indexes video data in your streams, and allows you to access your data through easy-to-use APIs. Kinesis Video Streams enables you to playback video for live and on-demand viewing, and quickly build applications that take advantage of computer vision and video analytics through integration with Amazon Rekognition Video, and libraries for ML frameworks such as Apache MxNet, TensorFlow, and OpenCV. Kinesis Video Streams also supports WebRTC, an open-source project that enables real-time media streaming and interaction between web browsers, mobile applications, and connected devices via simple APIs. Typical uses include video chat and peer-to-peer media streaming.
-* One video stream per streaming device (producers)
-	* Security cameras, body worn camera, smartphone
-	* Can use a Kinesis Video Streams Producer library
-* Underlying data is stored in S3 (but we don’t have access to it)
-* Cannot output the stream data to S3 (must build custom solution)
-* Consumers:
-	* Consumed by EC2 instances for real time analysis, or in batch
-	* Can leverage the Kinesis Video Stream Parser Library
-	* Integration with AWS Rekognition for facial detection
-* On AWS:
-	* <a href="https://aws.amazon.com/kinesis/video-streams/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/video-streams/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
-
----
-
-<a name="16_6"></a>
-## [↖](#top)[↑](#16_5)[↓](#16_7) AWS Workspaces
+<a name="16_2_2"></a>
+### [↖](#16_2)[↑](#16_2_1)[↓](#16_2_3) Amazon Workspaces
 Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You can use Amazon WorkSpaces to provision either Windows or Linux desktops in just a few minutes and quickly scale to provide thousands of desktops to workers across the globe. You can pay either monthly or hourly, just for the WorkSpaces you launch, which helps you save money when compared to traditional desktops and on-premises VDI solutions. Amazon WorkSpaces helps you eliminate the complexity in managing hardware inventory, OS versions and patches, and Virtual Desktop Infrastructure (VDI), which helps simplify your desktop delivery strategy. With Amazon WorkSpaces, your users get a fast, responsive desktop of their choice that they can access anywhere, anytime, from any supported device.
 * Managed, Secure Cloud Desktop
 * Great to eliminate management of on-premise VDI (Virtual Desktop Infrastructure)
@@ -6200,24 +6197,8 @@ Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You
 * On AWS:
 	* <a href="https://aws.amazon.com/workspaces/" target="_blank">Service</a> - <a href="https://aws.amazon.com/workspaces/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/workspaces/index.html" target="_blank">User Guide</a>
 
----
-
-<a name="16_7"></a>
-## [↖](#top)[↑](#16_6)[↓](#16_7_1) AWS AppStream 2.0
-<!-- toc_start -->
-* [Amazon AppStream 2.0 vs WorkSpaces](#16_7_1)
-<!-- toc_end -->
-Amazon AppStream 2.0 is a fully managed non-persistent application and desktop streaming service. You centrally manage your desktop applications on AppStream 2.0 and securely deliver them to any computer. You can easily scale to any number of users across the globe without acquiring, provisioning, and operating hardware or infrastructure. AppStream 2.0 is built on AWS, so you benefit from a data center and network architecture designed for the most security-sensitive organizations. Each end user has a fluid and responsive experience because your applications run on virtual machines optimized for specific use cases and each streaming sessions automatically adjust to network conditions.
-* Desktop Application Streaming Service
-* Deliver to any computer, without acquiring, provisioning infrastructure
-* The application is delivered from within a web browser
-* On AWS:
-	* <a href="https://aws.amazon.com/appstream2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/appstream2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/appstream2/index.html" target="_blank">User Guide</a>
-
----
-
-<a name="16_7_1"></a>
-### [↖](#16_7)[↑](#16_7)[↓](#16_8) Amazon AppStream 2.0 vs WorkSpaces
+<a name="16_2_3"></a>
+### [↖](#16_2)[↑](#16_2_2)[↓](#16_3) Amazon AppStream 2.0 vs WorkSpaces
 * Workspaces
 	* Fully managed VDI and desktop available
 	* The users connect to the VDI and open native or WAM applications
@@ -6229,8 +6210,87 @@ Amazon AppStream 2.0 is a fully managed non-persistent application and desktop s
 
 ---
 
+<a name="16_3"></a>
+## [↖](#top)[↑](#16_2_3)[↓](#16_3_1) Amazon DocumentDB
+<!-- toc_start -->
+* [Overview](#16_3_1)
+<!-- toc_end -->
+
+<a name="16_3_1"></a>
+### [↖](#16_3)[↑](#16_3)[↓](#16_4) Overview
+Amazon DocumentDB (with MongoDB compatibility) is a fast, scalable, highly available, and fully managed document database service that supports MongoDB workloads. As a document database, Amazon DocumentDB makes it easy to store, query, and index JSON data.
+
+Amazon DocumentDB is a non-relational database service designed from the ground-up to give you the performance, scalability, and availability you need when operating mission-critical MongoDB workloads at scale. In Amazon DocumentDB, the storage and compute are decoupled, allowing each to scale independently, and you can increase the read capacity to millions of requests per second by adding up to 15 low latency read replicas in minutes, regardless of the size of your data.
+
+Amazon DocumentDB is designed for 99.99% availability and replicates six copies of your data across three AWS Availability Zones (AZs). You can use AWS Database Migration Service (DMS) for free (for six months) to easily migrate your on-premises or Amazon Elastic Compute Cloud (EC2) MongoDB databases to Amazon DocumentDB with virtually no downtime.
+
+* On AWS:
+	* <a href="https://aws.amazon.com/documentdb/" target="_blank">Service</a> - <a href="https://aws.amazon.com/documentdb/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/documentdb/latest/developerguide/what-is.html" target="_blank">User Guide</a>
+
+<a name="16_4"></a>
+## [↖](#top)[↑](#16_3_1)[↓](#16_5) Amazon Lex
+Amazon Lex is a service for building conversational interfaces into any application using voice and text. Amazon Lex provides the advanced deep learning functionalities of automatic speech recognition (ASR) for converting speech to text, and natural language understanding (NLU) to recognize the intent of the text, to enable you to build applications with highly engaging user experiences and lifelike conversational interactions. With Amazon Lex, the same deep learning technologies that power Amazon Alexa are now available to any developer, enabling you to quickly and easily build sophisticated, natural language, conversational bots (“chatbots”).
+
+With Amazon Lex, you can build bots to increase contact center productivity, automate simple tasks, and drive operational efficiencies across the enterprise. As a fully managed service, Amazon Lex scales automatically, so you don’t need to worry about managing infrastructure.
+* Automatic Speech Recognition (ASR) to convert speech to text
+* Natural Language Understanding to recognize the intent of text, callers
+* Helps build chatbots, call center bots
+* On AWS:
+	* <a href="https://aws.amazon.com/lex/" target="_blank">Service</a> - <a href="https://aws.amazon.com/lex/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/lex/" target="_blank">User Guide</a>
+
+---
+
+<a name="16_5"></a>
+## [↖](#top)[↑](#16_4)[↓](#16_6) Amazon Rekognition
+Amazon Rekognition makes it easy to add image and video analysis to your applications using proven, highly scalable, deep learning technology that requires no machine learning expertise to use. With Amazon Rekognition, you can identify objects, people, text, scenes, and activities in images and videos, as well as detect any inappropriate content. Amazon Rekognition also provides highly accurate facial analysis and facial search capabilities that you can use to detect, analyze, and compare faces for a wide variety of user verification, people counting, and public safety use cases.
+
+With Amazon Rekognition Custom Labels, you can identify the objects and scenes in images that are specific to your business needs. For example, you can build a model to classify specific machine parts on your assembly line or to detect unhealthy plants. Amazon Rekognition Custom Labels takes care of the heavy lifting of model development for you, so no machine learning experience is required. You simply need to supply images of objects or scenes you want to identify, and the service handles the rest.
+* Find objects, people, text, scenes in images and videos using ML
+* Facial analysis and facial search to do user verification, people counting
+* Create a database of “familiar faces” or compare against celebrities
+* Use cases:
+	* Labeling
+	* Content Moderation
+	* Text Detection
+	* Face Detection and Analysis (gender, age range, emotions...)
+	* Face Search and Verification
+	* Celebrity Recognition
+	* Pathing (ex: for sports game analysis)
+* On AWS:
+	* <a href="https://aws.amazon.com/rekognition/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rekognition/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rekognition/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_6"></a>
+## [↖](#top)[↑](#16_5)[↓](#16_7) CloudSearch
+Amazon CloudSearch is a managed service in the AWS Cloud that makes it simple and cost-effective to set up, manage, and scale a search solution for your website or application.
+* Managed service to setup, manage and scale a search solution
+* Managed alternative to ElasticSearch
+* Free text, Boolean, autocomplete suggestions, geospatial search...
+* On AWS:
+	* <a href="https://aws.amazon.com/cloudsearch/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudsearch/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudsearch/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="16_7"></a>
+## [↖](#top)[↑](#16_6)[↓](#16_8) Kinesis Video Streams
+Amazon Kinesis Video Streams makes it easy to securely stream video from connected devices to AWS for analytics, machine learning (ML), playback, and other processing. Kinesis Video Streams automatically provisions and elastically scales all the infrastructure needed to ingest streaming video data from millions of devices. It durably stores, encrypts, and indexes video data in your streams, and allows you to access your data through easy-to-use APIs. Kinesis Video Streams enables you to playback video for live and on-demand viewing, and quickly build applications that take advantage of computer vision and video analytics through integration with Amazon Rekognition Video, and libraries for ML frameworks such as Apache MxNet, TensorFlow, and OpenCV. Kinesis Video Streams also supports WebRTC, an open-source project that enables real-time media streaming and interaction between web browsers, mobile applications, and connected devices via simple APIs. Typical uses include video chat and peer-to-peer media streaming.
+* One video stream per streaming device (producers)
+	* Security cameras, body worn camera, smartphone
+	* Can use a Kinesis Video Streams Producer library
+* Underlying data is stored in S3 (but we don’t have access to it)
+* Cannot output the stream data to S3 (must build custom solution)
+* Consumers:
+	* Consumed by EC2 instances for real time analysis, or in batch
+	* Can leverage the Kinesis Video Stream Parser Library
+	* Integration with AWS Rekognition for facial detection
+* On AWS:
+	* <a href="https://aws.amazon.com/kinesis/video-streams/" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/video-streams/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
+
+---
+
 <a name="16_8"></a>
-## [↖](#top)[↑](#16_7_1)[↓](#16_9) Amazon Mechanical Turk
+## [↖](#top)[↑](#16_7)[↓](#16_9) Amazon Mechanical Turk
 * Crowdsourcing marketplace to perform simple human tasks
 * Distributed virtual workforce.
 * Integrates with SWF natively, does not integrate with Step Functions
