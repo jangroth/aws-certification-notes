@@ -38,7 +38,7 @@
   * [Lambda](#5_6)
   * [Elastic Load Balancing (Core Topic)](#5_7)
   * [API Gateway](#5_8)
-  * [Route 53](#5_9)
+  * [Route 53 (Core Topic)](#5_9)
   * [Solution Architeture Comparision](#5_10)
 * [Storage](#6)
   * [EBS](#6_1)
@@ -48,7 +48,7 @@
   * [S3 Solution Architecture](#6_5)
   * [S3 vs EFS vs EBS Comparison](#6_6)
 * [Caching](#7)
-  * [CloudFront](#7_1)
+  * [CloudFront (Core Topic)](#7_1)
   * [ElastiCache (Core Topic)](#7_2)
   * [Handling Extreme Rates](#7_3)
 * [Databases](#8)
@@ -2340,7 +2340,7 @@ Client-side|Server-side|.
 ---
 
 <a name="5_9"></a>
-## [↖](#top)[↑](#5_8_4)[↓](#5_9_1) Route 53
+## [↖](#top)[↑](#5_8_4)[↓](#5_9_1) Route 53 (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_9_1)
   * [Terminology](#5_9_1_1)
@@ -2597,7 +2597,8 @@ Designed for mission-critical systems, EBS volumes are replicated within an Avai
 * **Permanent block storage**, independent to instance
 * Attachable to running EC2 instances (same AZ)
 * Only accessible by a *single instance*
-* Can be resized
+* Can be resized while attached to an instance
+* Volume type and throughput can be changed while attached to an instance
 * Can be encrypted
 * Can be stopped, data will persist
 * Stores redundantly in *single* AZ
@@ -3067,7 +3068,7 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 <a name="7"></a>
 # [↖](#top)[↑](#6_6)[↓](#7_1) Caching
 <a name="7_1"></a>
-## [↖](#top)[↑](#7)[↓](#7_1_1) CloudFront
+## [↖](#top)[↑](#7)[↓](#7_1_1) CloudFront (Core Topic)
 <!-- toc_start -->
 * [Overview](#7_1_1)
 * [Basic workflow](#7_1_2)
@@ -3075,6 +3076,7 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 * [CloudFront vs S3 Cross Region Replication](#7_1_4)
 * [CloudFront Geo Restriction](#7_1_5)
 * [Signed URL/Signed Cookies](#7_1_6)
+  * [Trusted Signer](#7_1_6_1)
 * [Caching](#7_1_7)
   * [CloudFront Caching vs API Gateway Caching](#7_1_7_1)
 * [Lambda@Edge](#7_1_8)
@@ -3104,7 +3106,7 @@ You also get increased reliability and availability because copies of your files
 * You specify origin servers, like an Amazon S3 bucket or your own HTTP server, from which CloudFront gets your files which will then be distributed from CloudFront edge locations all over the world.
 * An origin server stores the original, definitive version of your objects.
 * You upload your files to your origin servers.
-* If you're using an Amazon S3 bucket as an origin server, you can make the objects in your bucket publicly readable, so that anyone who knows the CloudFront URLs for your objects can access them. You also have the option of keeping objects private and controlling who accesses them. See Serving private content with signed URLs and signed cookies.
+* If you're using an Amazon S3 bucket as an origin server, you can make the objects in your bucket publicly readable, so that anyone who knows the CloudFront URLs for your objects can access them. You also have the option of keeping objects private and controlling who accesses them. See "Serving private content with signed URLs and signed cookies".
 * You create a CloudFront distribution, which tells CloudFront which origin servers to get your files
 * CloudFront assigns a domain name to your new distribution
 * CloudFront sends your distribution's configuration (but not your content) to all of its edge locations
@@ -3148,12 +3150,12 @@ ALB (-> EC2)|ALB must have public IP, EC2 can be private
 * Use case: Copyright Laws to control access to content
 
 <a name="7_1_6"></a>
-### [↖](#7_1)[↑](#7_1_5)[↓](#7_1_7) Signed URL/Signed Cookies
+### [↖](#7_1)[↑](#7_1_5)[↓](#7_1_6_1) Signed URL/Signed Cookies
 * You want to distribute paid shared content to premium users over the world
 * We can use CloudFront Signed URL/Cookie. We attach a policy with:
   * Includes URL expiration
   * Includes IP ranges to access the data from
-  * Trusted signers (which AWS accounts can create signed URLs)
+  * Trusted signers (which AWS *accounts* can create signed URLs)
 * How long should the URL be valid for?
   * Shared content (movie, music): make it short (a few minutes)
   * Private content (private to the user): you can make it last for years
@@ -3168,8 +3170,18 @@ Account wide key-pair, only the root can manage it|Uses the IAM key of the signi
 Can filter by IP, path, date, expiration|Limited lifetime
 Can leverage caching features|.
 
+<a name="7_1_6_1"></a>
+#### [↖](#7_1)[↑](#7_1_6)[↓](#7_1_7) Trusted Signer
+To create signed URLs or signed cookies, you need a signer. A signer is either a trusted key group that you create in CloudFront, or an AWS account that contains a CloudFront key pair.We recommend that you use trusted key groups, for the following reasons:
+
+* With CloudFront key groups, you don’t need to use the AWS account root user to manage the public keys for CloudFront signed URLs and signed cookies.
+* With CloudFront key groups, you can manage public keys, key groups, and trusted signers using the CloudFront API.
+* Because you can manage key groups with the CloudFront API, you can also use AWS Identity and Access Management (IAM) permissions policies to limit what different users are allowed to do.
+* When you use the AWS account root user to manage CloudFront key pairs, you can’t restrict what the root user can do or the conditions in which it can do them.
+* With CloudFront key groups, you can associate a higher number of public keys with your CloudFront distribution.
+
 <a name="7_1_7"></a>
-### [↖](#7_1)[↑](#7_1_6)[↓](#7_1_7_1) Caching
+### [↖](#7_1)[↑](#7_1_6_1)[↓](#7_1_7_1) Caching
 * Cache based on
   * Headers
       * Strategy: Whitelist headers that should be cached on, ignore others
@@ -3309,21 +3321,25 @@ If Host header is *not* forwarded:
 
 <a name="7_2_3"></a>
 ### [↖](#7_2)[↑](#7_2_2)[↓](#7_2_4) Memcached
+* Simple key-value storage
 * A widely adopted memory object caching system. ElastiCache is protocol compliant with Memcached, so popular tools that you use today with existing Memchached environments willwork seamlessly with the service.
 * Multi-node for partitioning of data (sharding)
 * Non persistent
 * No backup and restore
-* Multi-threaded architecture
+* Support multi-threaded operations
 
 <a name="7_2_4"></a>
 ### [↖](#7_2)[↑](#7_2_3)[↓](#7_3) Redis
+* Advanced data structures
 * A popular open-source in-memory key-value store that supports data structures such as sorted sets and lists. ElastiCache supports master/slave replication and multi-AZ which can be used to achieve cross-AZ-redundancy.
 * Also offers Pub/Sub, Sorted Sets and In-Memory Data Store
-* Multi AZ with Auto-Failover
+* Multi AZ with automated failover
 * Read Replicas to scale reads and have high availability
+* Can scale up, but cannot scale down
 * Persistent, Data Durability:
   * Read Only File Feature (AOF),
-  * backup and restore features
+  * Backup and restore features
+* AOF (Append Only File) log can be enabled for recovery of nodes
 
 ---
 
