@@ -1020,8 +1020,9 @@ Secure Symmetric ..|..Communication in Place
   * Use a DNS that has DNSSEC
     * To end send a client to a pirate server, a DNS response needs to be “forged” by a server which intercepts them
     * It is possible to protect your domain name by configuring DNSSEC
-    * Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.
-    * You could run a custom DNS server on EC2
+		* Route 53 now supports full DNSSEC (12/2020)
+    * ~~Amazon Route 53 supports DNSSEC for domain registration. However, Route 53 does not support DNSSEC for DNS service, regardless of whether the domain is registered with Route 53. If you want to configure DNSSEC for a domain that is registered with Route 53, you must use another DNS service provider.~~
+    * You can also run a custom DNS server on EC2
 
 ---
 
@@ -1494,24 +1495,18 @@ Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure,
 
 <a name="5_2_2"></a>
 ### [↖](#5_2)[↑](#5_2_1)[↓](#5_2_2_1) Payment Model/Launch Type
-* **On-demand instances**
-	* Pay for compute capacity by the hour, instance can be terminated by Amazon
-* **Reserved instances**
-	* Provide a significant discount compared to On-Demand pricing and provide a capacity reservation when used in a specific Availability Zone
-  * Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a certain usage)
-  * Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to provision instances in that AZ
-  * Can resell reserved capacity on *Reserved Instance Marketplace*
-	* Can transfer between AZs
-  * Types:
-    * *Standard* reserved instances (fixed instance type)
-    * *Convertible* reserved instances (can be exchanged against another convertible instance type)
-    * *Scheduled* reserved instances (purchased by the hour on a set schedule with a set instance type)
-* **Spot instances**
-	* Bid on spare Amazon EC2 computing capacity, not available for all instance types
-* **Dedicated instance**
-  * Run on dedicated hardware, but no need to purchase the whole host
-* **Dedicated hosts**
-	* A physical server with EC2 instance capacity fully dedicated to your use
+
+.|.|.
+-|-|-
+**On-demand instances**|Short workloads, predictable pricing, reliable|Pay for compute capacity by the hour, instance can be terminated by Amazon
+**Reserved instances**|.|Provide a significant discount compared to On-Demand pricing and provide a capacity reservation when used in a specific Availability Zone<br/>Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a certain usage)<br/>Minimum 1 year<br/>Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to provision instances in that AZ<br/>Can resell reserved capacity on *Reserved Instance Marketplace*<br/>Can transfer between AZs
+Standard reserved instances|Long workloads|Fixed instance type|
+Convertible reserved instances|Long workloads with flexible instances|Can be exchanged against another convertible instance type|
+~~Scheduled reserved instances~~|.|deprecated
+**Spot instances**|Short workloads, for cheap, can lose instances (not reliable)|Bid on spare Amazon EC2 computing capacity, not available for all instance types
+**Dedicated instance**|No other customers will share your hardware|Run on dedicated hardware, but no need to purchase the whole host<br/>Great for software licenses that operate at the core, or socket level<br/>Can define host affinity so that instance reboots are kept on the same host
+**Dedicated hosts**|Book an entire physical server, control instance placement|A physical server with EC2 instance capacity fully dedicated to your use
+* <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html" target="_blank">On AWS</a>
 
 <a name="5_2_2_1"></a>
 #### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_2_2) Spot Instances
@@ -5328,7 +5323,7 @@ Enterprise|If you have mission-critical workloads
 * **Reserved**: (MINIMUM 1 year)
   * **Reserved Instances**: long workloads
   * **Convertible Reserved Instances**: long workloads with flexible instances
-  * **Scheduled Reserved Instances**: example – every Thursday between 3 and 6 pm
+  * ~~**Scheduled Reserved Instances**: example – every Thursday between 3 and 6 pm~~
 * **Dedicated Instances**: no other customers will share your hardware
 * **Dedicated Hosts**: book an entire physical server, control instance placement
   * Great for software licenses that operate at the core, or socket level
