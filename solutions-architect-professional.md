@@ -87,7 +87,7 @@
 * [Cost Control](#13)
   * [AWS Cost Allocation Tags](#13_1)
   * [Trusted Advisor](#13_2)
-  * [EC2 Purchasing Options & Saving Plans](#13_3)
+  * [EC2 Purchasing Options & Saving Plans (Core Topic)](#13_3)
   * [S3 Cost Savings](#13_4)
 * [Migration](#14)
   * [The 6R Strategies](#14_1)
@@ -1479,14 +1479,10 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 ## [↖](#top)[↑](#5_1_3)[↓](#5_2_1) EC2
 <!-- toc_start -->
 * [Overview](#5_2_1)
-* [Payment Model/Launch Type](#5_2_2)
-  * [Spot Instances](#5_2_2_1)
-  * [Spot Fleets](#5_2_2_2)
-  * [Pricing by](#5_2_2_3)
-* [Instance Types](#5_2_3)
-* [Placement Groups](#5_2_4)
-* [Key metrics for EC2](#5_2_5)
-* [EC2 Instance Recovery](#5_2_6)
+* [Instance Types](#5_2_2)
+* [Placement Groups](#5_2_3)
+* [Key metrics for EC2](#5_2_4)
+* [EC2 Instance Recovery](#5_2_5)
 <!-- toc_end -->
 <a name="5_2_1"></a>
 ### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
@@ -1494,52 +1490,7 @@ Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure,
 * On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
 
 <a name="5_2_2"></a>
-### [↖](#5_2)[↑](#5_2_1)[↓](#5_2_2_1) Payment Model/Launch Type
-
-.|.|.
--|-|-
-**On-demand instances**|Short workloads, predictable pricing, reliable|Pay for compute capacity by the hour, instance can be terminated by Amazon
-**Reserved instances**|.|Provide a significant discount compared to On-Demand pricing and provide a capacity reservation when used in a specific Availability Zone<br/>Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a certain usage)<br/>Minimum 1 year<br/>Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to provision instances in that AZ<br/>Can resell reserved capacity on *Reserved Instance Marketplace*<br/>Can transfer between AZs
-Standard reserved instances|Long workloads|Fixed instance type|
-Convertible reserved instances|Long workloads with flexible instances|Can be exchanged against another convertible instance type|
-~~Scheduled reserved instances~~|.|deprecated
-**Spot instances**|Short workloads, for cheap, can lose instances (not reliable)|Bid on spare Amazon EC2 computing capacity, not available for all instance types
-**Dedicated instance**|No other customers will share your hardware|Run on dedicated hardware, but no need to purchase the whole host<br/>Great for software licenses that operate at the core, or socket level<br/>Can define host affinity so that instance reboots are kept on the same host
-**Dedicated hosts**|Book an entire physical server, control instance placement|A physical server with EC2 instance capacity fully dedicated to your use
-* <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html" target="_blank">On AWS</a>
-
-<a name="5_2_2_1"></a>
-#### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_2_2) Spot Instances
-* Can get a discount of up to 90% compared to On-demand
-* Define max spot price and get the instance while current `spot price < max`
-  * The hourly spot price varies based on offer and capacity
-  * If the current spot price > your max price you can choose to stop or terminate your instance with a 2 minutes grace period.
-* Other strategy: Spot Block
-  * “block” spot instance during a specified time frame (1 to 6 hours) without interruptions
-* In rare situations, the instance may be reclaimed
-
-<a name="5_2_2_2"></a>
-#### [↖](#5_2)[↑](#5_2_2_1)[↓](#5_2_2_3) Spot Fleets
-* Collection (Fleet) of Spot Instances and optionally on-demand instances
-  * Set a maximum price you’re willing to pay per Spot Instances or all
-  * Can have a mix of instance types (M5.large, M5.xlarge, C5.2xlarge, etc..)
-* Supports: EC2 standalone, Auto Scaling Groups (launch template), ECS (underlying ASG), AWS Batch (Managed Compute Environment)
-* Soft limits
-  * Target capacity per Spot Fleet or EC2 fleet: 10,000
-  * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
-
-<a name="5_2_2_3"></a>
-#### [↖](#5_2)[↑](#5_2_2_2)[↓](#5_2_3) Pricing by
-* Instance Type
-* Compute time
-* Data transfer
-* Storage
-* Elastic IP address
-* Monitoring
-* Elastic load balancer
-
-<a name="5_2_3"></a>
-### [↖](#5_2)[↑](#5_2_2_3)[↓](#5_2_4) Instance Types
+### [↖](#5_2)[↑](#5_2_1)[↓](#5_2_3) Instance Types
 Family|Mnemomic|Description
 -|-|-
 **F**|FPGA|Can be reprogrammed on the fly and be tuned for  specific applications, making them faster than traditional CPU/GPU combinations
@@ -1556,8 +1507,8 @@ Family|Mnemomic|Description
 
 (*) - main types
 
-<a name="5_2_4"></a>
-### [↖](#5_2)[↑](#5_2_3)[↓](#5_2_5) Placement Groups
+<a name="5_2_3"></a>
+### [↖](#5_2)[↑](#5_2_2)[↓](#5_2_4) Placement Groups
 * Determine how instances are placed on underlying hardware
 * Recommendation to stick to one instance family
 * Cannot move running instance into placement group
@@ -1571,8 +1522,8 @@ Strategy|Pro|Con|Use case
 
 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank">On AWS</a>
 
-<a name="5_2_5"></a>
-### [↖](#5_2)[↑](#5_2_4)[↓](#5_2_6) Key metrics for EC2
+<a name="5_2_4"></a>
+### [↖](#5_2)[↑](#5_2_3)[↓](#5_2_5) Key metrics for EC2
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
 * Can install Cloudwatch agent (new)
@@ -1592,8 +1543,8 @@ Metric|Effect
 
 * Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
-<a name="5_2_6"></a>
-### [↖](#5_2)[↑](#5_2_5)[↓](#5_3) EC2 Instance Recovery
+<a name="5_2_5"></a>
+### [↖](#5_2)[↑](#5_2_4)[↓](#5_3) EC2 Instance Recovery
 You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically recovers the instance if it becomes impaired due to an underlying hardware failure or a problem that requires AWS involvement to repair (`StatusCheckFailed_System`). Terminated instances cannot be recovered. A recovered instance is identical to the original instance, including the instance ID, private IP addresses, Elastic IP addresses, and all instance metadata. If the impaired instance is in a placement group, the recovered instance runs in the placement group.
 
 If your instance has a public IPv4 address, it retains the public IPv4 address after recovery.
@@ -1601,7 +1552,7 @@ If your instance has a public IPv4 address, it retains the public IPv4 address a
 ---
 
 <a name="5_3"></a>
-## [↖](#top)[↑](#5_2_6)[↓](#5_3_1) Auto Scaling (Core Topic)
+## [↖](#top)[↑](#5_2_5)[↓](#5_3_1) Auto Scaling (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_3_1)
 * [Components](#5_3_2)
@@ -5310,28 +5261,62 @@ Enterprise|If you have mission-critical workloads
 ---
 
 <a name="13_3"></a>
-## [↖](#top)[↑](#13_2_2)[↓](#13_3_1) EC2 Purchasing Options & Saving Plans
+## [↖](#top)[↑](#13_2_2)[↓](#13_3_1) EC2 Purchasing Options & Saving Plans (Core Topic)
 <!-- toc_start -->
 * [EC2 Purchasing Options](#13_3_1)
+  * [Spot Instances](#13_3_1_1)
+  * [Spot Fleets](#13_3_1_2)
+  * [Pricing by](#13_3_1_3)
 * [Savings Plan](#13_3_2)
 <!-- toc_end -->
 
 <a name="13_3_1"></a>
-### [↖](#13_3)[↑](#13_3)[↓](#13_3_2) EC2 Purchasing Options
-* **On Demand Instances**: short workload, predictable pricing, reliable
-* **Spot Instances**: short workloads, for cheap, can lose instances (not reliable)
-* **Reserved**: (MINIMUM 1 year)
-  * **Reserved Instances**: long workloads
-  * **Convertible Reserved Instances**: long workloads with flexible instances
-  * ~~**Scheduled Reserved Instances**: example – every Thursday between 3 and 6 pm~~
-* **Dedicated Instances**: no other customers will share your hardware
-* **Dedicated Hosts**: book an entire physical server, control instance placement
-  * Great for software licenses that operate at the core, or socket level
-  * Can define host affinity so that instance reboots are kept on the same host
+### [↖](#13_3)[↑](#13_3)[↓](#13_3_1_1) EC2 Purchasing Options
+
+.|.|.
+-|-|-
+**On-demand instances**|Short workloads, predictable pricing, reliable|Pay for compute capacity by the hour, instance can be terminated by Amazon
+**Reserved instances**|.|Provide a significant discount compared to On-Demand pricing and provide a capacity reservation when used in a specific Availability Zone<br/>Up to 50% cheaper than a *fully utilized* on-demand instance (because we commit upfront to a certain usage)<br/>Minimum 1 year<br/>Guarantees to *not* run into '*insufficent instance capacity*' issues if AWS is unable to provision instances in that AZ<br/>Can resell reserved capacity on *Reserved Instance Marketplace*<br/>Can transfer between AZs
+Standard reserved instances|Long workloads|Fixed instance type|
+Convertible reserved instances|Long workloads with flexible instances|Can be exchanged against another convertible instance type|
+~~Scheduled reserved instances~~|.|deprecated
+**Spot instances**|Short workloads, for cheap, can lose instances (not reliable)|Bid on spare Amazon EC2 computing capacity, not available for all instance types
+**Dedicated instance**|No other customers will share your hardware|Run on dedicated hardware, but no need to purchase the whole host<br/>Great for software licenses that operate at the core, or socket level<br/>Can define host affinity so that instance reboots are kept on the same host
+**Dedicated hosts**|Book an entire physical server, control instance placement|A physical server with EC2 instance capacity fully dedicated to your use
 * <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html" target="_blank">On AWS</a>
 
+<a name="13_3_1_1"></a>
+#### [↖](#13_3)[↑](#13_3_1)[↓](#13_3_1_2) Spot Instances
+* Can get a discount of up to 90% compared to On-demand
+* Define max spot price and get the instance while current `spot price < max`
+  * The hourly spot price varies based on offer and capacity
+  * If the current spot price > your max price you can choose to stop or terminate your instance with a 2 minutes grace period.
+* Other strategy: Spot Block
+  * “block” spot instance during a specified time frame (1 to 6 hours) without interruptions
+* In rare situations, the instance may be reclaimed
+
+<a name="13_3_1_2"></a>
+#### [↖](#13_3)[↑](#13_3_1_1)[↓](#13_3_1_3) Spot Fleets
+* Collection (Fleet) of Spot Instances and optionally on-demand instances
+  * Set a maximum price you’re willing to pay per Spot Instances or all
+  * Can have a mix of instance types (M5.large, M5.xlarge, C5.2xlarge, etc..)
+* Supports: EC2 standalone, Auto Scaling Groups (launch template), ECS (underlying ASG), AWS Batch (Managed Compute Environment)
+* Soft limits
+  * Target capacity per Spot Fleet or EC2 fleet: 10,000
+  * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
+
+<a name="13_3_1_3"></a>
+#### [↖](#13_3)[↑](#13_3_1_2)[↓](#13_3_2) Pricing by
+* Instance Type
+* Compute time
+* Data transfer
+* Storage
+* Elastic IP address
+* Monitoring
+* Elastic load balancer
+
 <a name="13_3_2"></a>
-### [↖](#13_3)[↑](#13_3_1)[↓](#13_4) Savings Plan
+### [↖](#13_3)[↑](#13_3_1_3)[↓](#13_4) Savings Plan
 Savings Plans is a flexible pricing model that provides savings of up to 72% on your AWS compute usage. This pricing model offers lower prices on Amazon EC2 instances usage, regardless of instance family, size, OS, tenancy or AWS Region, and also applies to AWS Fargate and AWS Lambda usage.
 
 Savings Plans offer significant savings over On Demand, just like EC2 Reserved Instances, in exchange for a commitment to use a specific amount of compute power (measured in $/hour) for a one or three year period. You can sign up for Savings Plans for a 1- or 3-year term and easily manage your plans by taking advantage of recommendations, performance reporting and budget alerts in the AWS Cost Explorer.
