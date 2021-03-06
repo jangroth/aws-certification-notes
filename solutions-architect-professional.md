@@ -28,15 +28,15 @@
   * [Blocking IP addresses](#4_11)
   * [Amazon Inspector](#4_12)
   * [Config](#4_13)
-  * [AWS Managed Logs](#4_14)
+  * [AWS Managed Logs (Core Topic)](#4_14)
   * [GuardDuty](#4_15)
 * [Compute & Load Balancing](#5)
   * [AWS Solution Architectures](#5_1)
   * [EC2](#5_2)
   * [Auto Scaling (Core Topic)](#5_3)
-  * [ECS](#5_4)
+  * [ECS (Core Topic)](#5_4)
   * [Fargate](#5_5)
-  * [Lambda](#5_6)
+  * [Lambda (Core Topic)](#5_6)
   * [Elastic Load Balancing (Core Topic)](#5_7)
   * [API Gateway](#5_8)
   * [Route 53 (Core Topic)](#5_9)
@@ -54,7 +54,7 @@
   * [Handling Extreme Rates](#7_3)
 * [Databases](#8)
   * [DynamoDB](#8_1)
-  * [ElasticSearch](#8_2)
+  * [ElasticSearch (Core Topic)](#8_2)
   * [RDS](#8_3)
   * [Aurora](#8_4)
 * [Service Communication](#9)
@@ -76,19 +76,20 @@
   * [CloudWatch (Core Topic)](#11_1)
   * [X-Ray](#11_2)
 * [Deployment and Instance Management](#12)
-  * [Elastic Beanstalk](#12_1)
-  * [OpsWorks Stacks](#12_2)
-  * [CodeDeploy](#12_3)
+  * [Elastic Beanstalk (Core Topic)](#12_1)
+  * [OpsWorks Stacks (Core Topic)](#12_2)
+  * [CodeDeploy (Core Topic)](#12_3)
   * [CloudFormation (Core Topic)](#12_4)
   * [Service Catalog](#12_5)
   * [AWS Serverless Application Model](#12_6)
   * [Deployments (Core Topic)](#12_7)
-  * [Systems Manager](#12_8)
+  * [Systems Manager (Core Topic)](#12_8)
 * [Cost Control](#13)
-  * [AWS Cost Allocation Tags](#13_1)
-  * [Trusted Advisor](#13_2)
-  * [EC2 Purchasing Options & Saving Plans (Core Topic)](#13_3)
-  * [S3 Cost Savings](#13_4)
+  * [Best practices of cost management](#13_1)
+  * [AWS Cost Allocation Tags](#13_2)
+  * [Trusted Advisor (Core Topic)](#13_3)
+  * [EC2 Purchasing Options & Saving Plans (Core Topic)](#13_4)
+  * [S3 Cost Savings](#13_5)
 * [Migration](#14)
   * [The 6R Strategies](#14_1)
   * [On-Premises strategies with AWS](#14_2)
@@ -798,6 +799,10 @@ AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it e
   * AWS Managed Microsoft AD with two-way forest trust with on-premises AD
 * Centralized permission management
 * Centralized auditing with CloudTrail
+* Uses exactly one of these identity sources
+	* **AWS SSO identity store** – When you enable AWS SSO for the first time, it is automatically configured with an AWS SSO identity store as your default identity source. This is where you create your users and groups, and assign their level of access to your AWS accounts and applications.
+	* **Active Directory** – Choose this option if you want to continue managing users in either your self-managed Active Directory (AD) or your AWS Managed Microsoft AD directory using AWS Directory Service.
+	* **External identity provider** – Choose this option if you prefer to manage users in an external identity provider (IdP) such as Okta or Azure Active Directory.
 * On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
 ---
@@ -1409,20 +1414,18 @@ An aggregator is an AWS Config resource type that collects AWS Config configurat
 ---
 
 <a name="4_14"></a>
-## [↖](#top)[↑](#4_13_4)[↓](#4_15) AWS Managed Logs
-* **Load Balancer** Access Logs (ALB, NLB, CLB) => to S3
-  * Access logs for your Load Balancers
-* **CloudTrail** Logs => to S3 and CloudWatch Logs
-  * Logs for API calls made within your account
-* **VPC Flow Logs** => to S3 and CloudWatch Logs
-  * Information about IP traffic going to and from network interfaces in your VPC
-* **Route 53** Access Logs => to CloudWatch Logs
-  * Log information about the queries that Route 53 receives
-* **S3** Access Logs => to S3
-  * Server access logging provides detailed records for the requests that are made to a bucket
-* **CloudFront** Access Logs => to S3
-  * Detailed information about every user request that CloudFront receives
-* **AWS Config** => to S3
+## [↖](#top)[↑](#4_13_4)[↓](#4_15) AWS Managed Logs (Core Topic)
+
+.|S3|CloudWatch<br/>Logs|.
+-|-|-|-
+**Load Balancer** Access Logs (ALB, NLB, ELB)|+|.|Access logs for your Load Balancers
+**CloudTrail** Logs|+|+|Logs for API calls made within your account
+**VPC Flow Logs**|+|+|Information about IP traffic going to and from network interfaces in your VPC
+**Route 53** Access Logs|.|+|Log information about the queries that Route 53 receives
+**S3 Access Logs**|+|.|Server access logging provides detailed records for the requests that are made to a bucket
+**CloudFront** Access Logs|+|.|Detailed information about every user request that CloudFront receives
+**CloudWatch Logs**|.|+|.
+**AWS Config**|+|.|Provides an inventory of your AWS resources and records changes to their configuration
 
 ---
 
@@ -1662,7 +1665,7 @@ Process|Impact|On Suspension
 ---
 
 <a name="5_4"></a>
-## [↖](#top)[↑](#5_3_2_6)[↓](#5_4_1) ECS
+## [↖](#top)[↑](#5_3_2_6)[↓](#5_4_1) ECS (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_4_1)
   * [Benefits](#5_4_1_1)
@@ -1814,7 +1817,7 @@ Fargate allocates the right amount of compute, eliminating the need to choose in
 ---
 
 <a name="5_6"></a>
-## [↖](#top)[↑](#5_5_1)[↓](#5_6_1) Lambda
+## [↖](#top)[↑](#5_5_1)[↓](#5_6_1) Lambda (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_6_1)
 * [Security/IAM](#5_6_2)
@@ -2892,7 +2895,7 @@ S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
 S3 Intelligent Tiering|**11x9**|3x9|**>=3**|$0.023|**No**|Automatically moves objects between two access tiers based on changing access patterns
 S3 IA (infrequent access)|**11x9**|3x9|**>=3**|$0.0125|Yes|For data that is accessed less frequently, but requires rapid access when needed
 S3 One Zone IA (infrequent access)|**11x9**|99.5|1|**$0.01**|Yes|For data that is accessed less frequently, but requires rapid access when needed
-Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited*, *standard* or *bulk*
+Glacier|**11x9**|.|**>=3**|.|Yes|For archival only, comes as *expedited* (1-5min), *standard* (3-5h) or *bulk* (5-12h)
 Glacier Deep Archive|**11x9**|.|**>=3**|.|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
@@ -3290,7 +3293,7 @@ If Host header is *not* forwarded:
 
 <a name="7_2_1"></a>
 ### [↖](#7_2)[↑](#7_2)[↓](#7_2_2) Overview
-* Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your existing databases by retrieving data from high throughput and low latency in-memory data stores.
+Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your existing databases by retrieving data from high throughput and low latency in-memory data stores.
 * Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gamin, Geospatial Services, Real-Time Analytics, and Queuing.
 * Amazon ElastiCache offers fully managed Redis and Memcached for your most demanding applications that require sub-millisecond response times.
 * Caches are in-memory databases with really high performance, low latency
@@ -3314,6 +3317,7 @@ If Host header is *not* forwarded:
 * A widely adopted memory object caching system. ElastiCache is protocol compliant with Memcached, so popular tools that you use today with existing Memchached environments willwork seamlessly with the service.
 * Multi-node for partitioning of data (sharding)
 * Non persistent
+* Single-AZ
 * No backup and restore
 * Support multi-threaded operations
 
@@ -3322,13 +3326,20 @@ If Host header is *not* forwarded:
 * Advanced data structures
 * A popular open-source in-memory key-value store that supports data structures such as sorted sets and lists. ElastiCache supports master/slave replication and multi-AZ which can be used to achieve cross-AZ-redundancy.
 * Also offers Pub/Sub, Sorted Sets and In-Memory Data Store
-* Multi AZ with automated failover
+* Multi-AZ with automated failover
 * Read Replicas to scale reads and have high availability
 * Can scale up, but cannot scale down
 * Persistent, Data Durability:
   * Read Only File Feature (AOF),
   * Backup and restore features
 * AOF (Append Only File) log can be enabled for recovery of nodes
+* Caching Strategies
+	* **Lazy loading**
+		* As the name implies, lazy loading is a caching strategy that loads data into the cache only when necessary.
+		* Only requested data is cached. Because most data is never requested, lazy loading avoids filling up the cache with data that isn't requested.
+	* **Write-through**
+		* The write-through strategy adds data or updates data in the cache whenever data is written to the database.
+		* Data in the cache is never stale. Because the data in the cache is updated every time it's written to the database, the data in the cache is always current.
 
 ---
 
@@ -3528,7 +3539,7 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
   * too many reads on a particular row can cause throtteling
 * 5 minutes TTL for cache by default
 * Up to 10 nodes in the cluster
-* Multi AZ
+* Multi-AZ
   * 3 nodes minimum recommended for production
 * Secure
   * Encryption at rest with KMS, VPC, IAM, CloudTrail...
@@ -3552,7 +3563,7 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
 ---
 
 <a name="8_2"></a>
-## [↖](#top)[↑](#8_1_7_1)[↓](#8_2_1) ElasticSearch
+## [↖](#top)[↑](#8_1_7_1)[↓](#8_2_1) ElasticSearch (Core Topic)
 <!-- toc_start -->
 * [Overview](#8_2_1)
 * [ELK](#8_2_2)
@@ -3561,9 +3572,10 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
 
 <a name="8_2_1"></a>
 ### [↖](#8_2)[↑](#8_2)[↓](#8_2_2) Overview
-Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy, secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot your applications using the tools you love, at the scale you need. The service provides support for open source Elasticsearch APIs, managed Kibana, integration with Logstash and other AWS services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch Service, you get the ELK stack you need, without the operational overhead.
+Amazon Elasticsearch Service is a fully managed service that makes it easy for you to deploy, secure, and run Elasticsearch cost effectively at scale. You can build, monitor, and troubleshoot your applications using the tools you love, at the scale you need. The service provides support for open source Elasticsearch APIs, managed **Kibana**, integration with Logstash and other AWS services, and built-in alerting and SQL querying. Amazon Elasticsearch Service lets you pay only for what you use – there are no upfront costs or usage requirements. With Amazon Elasticsearch Service, you get the ELK stack you need, without the operational overhead.
 * Managed version of Elasticsearch (open source project)
 * Runs on servers (not a serverless offering)
+* Built-in support for Kibana
 * Use cases:
   * Log Analytics
   * Real-time application monitoring
@@ -4344,7 +4356,8 @@ Amazon EMR is the industry-leading cloud big data platform for processing vast a
 ### [↖](#10_3)[↑](#10_3_1)[↓](#10_3_3) Node types & purchasing
 * **Master Node**: Manage the cluster, coordinate, manage health
 * **Core Node**: Run tasks and store data
-* **Task Node** (optional): Just to run tasks
+* **Task Node** (optional): Just to run tasks.
+	* Spot instances can be used here
 * Purchasing options:
   * On-demand: reliable, predictable, won’t be terminated
   * Reserved (min 1 year): cost savings (EMR will automatically use if available)
@@ -4689,7 +4702,7 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 # [↖](#top)[↑](#11_2_1)[↓](#12_1) Deployment and Instance Management
 
 <a name="12_1"></a>
-## [↖](#top)[↑](#12)[↓](#12_1_1) Elastic Beanstalk
+## [↖](#top)[↑](#12)[↓](#12_1_1) Elastic Beanstalk (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_1_1)
 * [Architecture models](#12_1_2)
@@ -4757,7 +4770,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 ---
 
 <a name="12_2"></a>
-## [↖](#top)[↑](#12_1_3)[↓](#12_2_1) OpsWorks Stacks
+## [↖](#top)[↑](#12_1_3)[↓](#12_2_1) OpsWorks Stacks (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_2_1)
 * [Components](#12_2_2)
@@ -4802,7 +4815,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 ---
 
 <a name="12_3"></a>
-## [↖](#top)[↑](#12_2_2)[↓](#12_3_1) CodeDeploy
+## [↖](#top)[↑](#12_2_2)[↓](#12_3_1) CodeDeploy (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_3_1)
 * [Deploys](#12_3_2)
@@ -5083,7 +5096,7 @@ Strategy|Auto Scaling<br/>Group|CodeDeploy<br/>EC2/On-Premises|CodeDeploy ECS|Co
 ---
 
 <a name="12_8"></a>
-## [↖](#top)[↑](#12_7_3)[↓](#12_8_1) Systems Manager
+## [↖](#top)[↑](#12_7_3)[↓](#12_8_1) Systems Manager (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_8_1)
 * [Components](#12_8_2)
@@ -5203,15 +5216,24 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 # [↖](#top)[↑](#12_8_2_5)[↓](#13_1) Cost Control
 
 <a name="13_1"></a>
-## [↖](#top)[↑](#13)[↓](#13_2) AWS Cost Allocation Tags
+## [↖](#top)[↑](#13)[↓](#13_2) Best practices of cost management
+* Only allow specific groups or teams to deploy chosen AWS resources.
+* Create policies for each environment.
+* Require tags in order to instantiate resources.
+* Monitor and send alerts or shut down instances that are improperly tagged.
+* Use CloudWatch to send alerts when billing thresholds are met.
+* Analyze spend using AWS or partner tools.
+
+<a name="13_2"></a>
+## [↖](#top)[↑](#13_1)[↓](#13_3) AWS Cost Allocation Tags
 * With Tags we can track resources that relate to each other
 * With Cost Allocation Tags we can enable detailed costing reports
 * Just like Tags, but they show up as columns in Reports
-* AWS Generated Cost Allocation Tags
+* **AWS Generated Cost Allocation Tags**
   * Automatically applied to the resource you create
   * Starts with Prefix aws: (e.g. `aws:createdBy`)
   * They’re not applied to resources created before the activation
-* User tags
+* **User tags**
   * Defined by the user
   * Starts with Prefix user:
 * Cost Allocation Tags just appear in the Billing Console
@@ -5220,15 +5242,15 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
 
 ---
 
-<a name="13_2"></a>
-## [↖](#top)[↑](#13_1)[↓](#13_2_1) Trusted Advisor
+<a name="13_3"></a>
+## [↖](#top)[↑](#13_2)[↓](#13_3_1) Trusted Advisor (Core Topic)
 <!-- toc_start -->
-* [Overview](#13_2_1)
-* [Support Plans](#13_2_2)
+* [Overview](#13_3_1)
+* [Support Plans](#13_3_2)
 <!-- toc_end -->
 
-<a name="13_2_1"></a>
-### [↖](#13_2)[↑](#13_2)[↓](#13_2_2) Overview
+<a name="13_3_1"></a>
+### [↖](#13_3)[↑](#13_3)[↓](#13_3_2) Overview
 AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision your resources following AWS best practices. Whether establishing new workflows, developing applications, or as part of ongoing improvement, take advantage of the recommendations provided by Trusted Advisor on a regular basis to help keep your solutions provisioned optimally.
 * Global service
 * Creates recommendations for
@@ -5248,8 +5270,8 @@ AWS Trusted Advisor is an online tool that provides you real time guidance to he
   * Programmatic Access using AWS Support API
 * On AWS: <a href="https://aws.amazon.com/trustedadvisor/" target="_blank">Service</a> - <a href="https://aws.amazon.com/premiumsupport/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/awssupport/latest/user/getting-started.html" target="_blank">User Guide</a>
 
-<a name="13_2_2"></a>
-### [↖](#13_2)[↑](#13_2_1)[↓](#13_3) Support Plans
+<a name="13_3_2"></a>
+### [↖](#13_3)[↑](#13_3_1)[↓](#13_4) Support Plans
 
 .|.
 -|-
@@ -5260,18 +5282,18 @@ Enterprise|If you have mission-critical workloads
 
 ---
 
-<a name="13_3"></a>
-## [↖](#top)[↑](#13_2_2)[↓](#13_3_1) EC2 Purchasing Options & Saving Plans (Core Topic)
+<a name="13_4"></a>
+## [↖](#top)[↑](#13_3_2)[↓](#13_4_1) EC2 Purchasing Options & Saving Plans (Core Topic)
 <!-- toc_start -->
-* [EC2 Purchasing Options](#13_3_1)
-  * [Spot Instances](#13_3_1_1)
-  * [Spot Fleets](#13_3_1_2)
-  * [Pricing by](#13_3_1_3)
-* [Savings Plan](#13_3_2)
+* [EC2 Purchasing Options](#13_4_1)
+  * [Spot Instances](#13_4_1_1)
+  * [Spot Fleets](#13_4_1_2)
+  * [Pricing by](#13_4_1_3)
+* [Savings Plan](#13_4_2)
 <!-- toc_end -->
 
-<a name="13_3_1"></a>
-### [↖](#13_3)[↑](#13_3)[↓](#13_3_1_1) EC2 Purchasing Options
+<a name="13_4_1"></a>
+### [↖](#13_4)[↑](#13_4)[↓](#13_4_1_1) EC2 Purchasing Options
 
 .|.|.
 -|-|-
@@ -5285,8 +5307,8 @@ Convertible reserved instances|Long workloads with flexible instances|Can be exc
 **Dedicated hosts**|Book an entire physical server, control instance placement|A physical server with EC2 instance capacity fully dedicated to your use
 * <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html" target="_blank">On AWS</a>
 
-<a name="13_3_1_1"></a>
-#### [↖](#13_3)[↑](#13_3_1)[↓](#13_3_1_2) Spot Instances
+<a name="13_4_1_1"></a>
+#### [↖](#13_4)[↑](#13_4_1)[↓](#13_4_1_2) Spot Instances
 * Can get a discount of up to 90% compared to On-demand
 * Define max spot price and get the instance while current `spot price < max`
   * The hourly spot price varies based on offer and capacity
@@ -5295,8 +5317,8 @@ Convertible reserved instances|Long workloads with flexible instances|Can be exc
   * “block” spot instance during a specified time frame (1 to 6 hours) without interruptions
 * In rare situations, the instance may be reclaimed
 
-<a name="13_3_1_2"></a>
-#### [↖](#13_3)[↑](#13_3_1_1)[↓](#13_3_1_3) Spot Fleets
+<a name="13_4_1_2"></a>
+#### [↖](#13_4)[↑](#13_4_1_1)[↓](#13_4_1_3) Spot Fleets
 * Collection (Fleet) of Spot Instances and optionally on-demand instances
   * Set a maximum price you’re willing to pay per Spot Instances or all
   * Can have a mix of instance types (M5.large, M5.xlarge, C5.2xlarge, etc..)
@@ -5305,8 +5327,8 @@ Convertible reserved instances|Long workloads with flexible instances|Can be exc
   * Target capacity per Spot Fleet or EC2 fleet: 10,000
   * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
 
-<a name="13_3_1_3"></a>
-#### [↖](#13_3)[↑](#13_3_1_2)[↓](#13_3_2) Pricing by
+<a name="13_4_1_3"></a>
+#### [↖](#13_4)[↑](#13_4_1_2)[↓](#13_4_2) Pricing by
 * Instance Type
 * Compute time
 * Data transfer
@@ -5315,8 +5337,8 @@ Convertible reserved instances|Long workloads with flexible instances|Can be exc
 * Monitoring
 * Elastic load balancer
 
-<a name="13_3_2"></a>
-### [↖](#13_3)[↑](#13_3_1_3)[↓](#13_4) Savings Plan
+<a name="13_4_2"></a>
+### [↖](#13_4)[↑](#13_4_1_3)[↓](#13_5) Savings Plan
 Savings Plans is a flexible pricing model that provides savings of up to 72% on your AWS compute usage. This pricing model offers lower prices on Amazon EC2 instances usage, regardless of instance family, size, OS, tenancy or AWS Region, and also applies to AWS Fargate and AWS Lambda usage.
 
 Savings Plans offer significant savings over On Demand, just like EC2 Reserved Instances, in exchange for a commitment to use a specific amount of compute power (measured in $/hour) for a one or three year period. You can sign up for Savings Plans for a 1- or 3-year term and easily manage your plans by taking advantage of recommendations, performance reporting and budget alerts in the AWS Cost Explorer.
@@ -5331,15 +5353,15 @@ Savings Plans offer significant savings over On Demand, just like EC2 Reserved I
   * Ability to move between instance family (move from C5 to M5), region (Ireland to US), compute type (EC2, Fargate, Lambda), OS & tenancy
 * On AWS: <a href="https://aws.amazon.com/savingsplans/" target="_blank">Service</a> - <a href="https://aws.amazon.com/savingsplans/faq/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/savingsplans/" target="_blank">User Guide</a>
 
-<a name="13_4"></a>
-## [↖](#top)[↑](#13_3_2)[↓](#13_4_1) S3 Cost Savings
+<a name="13_5"></a>
+## [↖](#top)[↑](#13_4_2)[↓](#13_5_1) S3 Cost Savings
 <!-- toc_start -->
-* [S3 Storage Clsses](#13_4_1)
-* [S3 Other Cost savings](#13_4_2)
+* [S3 Storage Classes](#13_5_1)
+* [S3 Other Cost savings](#13_5_2)
 <!-- toc_end -->
 
-<a name="13_4_1"></a>
-### [↖](#13_4)[↑](#13_4)[↓](#13_4_2) S3 Storage Clsses
+<a name="13_5_1"></a>
+### [↖](#13_5)[↑](#13_5)[↓](#13_5_2) S3 Storage Classes
 
 .|Durability|Availability|AZs|Costs per GB|Retrieval Fee|.
 -|-|-|-|-|-|-
@@ -5347,12 +5369,12 @@ S3 Standard|**11x9**|**4x9**|**>=3**|$0.023|**No**|.
 S3 Intelligent Tiering|**11x9**|3x9|**>=3**|$0.023|**No**|Automatically moves objects between two access tiers based on changing access patterns
 S3 IA (infrequent access)|**11x9**|3x9|**>=3**|$0.0125|Yes|For data that is accessed less frequently, but requires rapid access when needed
 S3 One Zone IA (infrequent access)|**11x9**|99.5|1|**$0.01**|Yes|For data that is accessed less frequently, but requires rapid access when needed
-Glacier|**11x9**|.|**>=3**|$0.004<br/>min 90 days|Yes|For archival only, comes as *expedited*, *standard* or *bulk*
+Glacier|**11x9**|.|**>=3**|$0.004<br/>min 90 days|Yes|For archival only, comes as *expedited* (1-5min), *standard* (3-5h) or *bulk* (5-12h)
 Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer time span to retrieve
 ~~S3 RRS (reduced redundancy storage)~~|4x9|4x9|>=3|$0.024|.|Deprecated
 
-<a name="13_4_2"></a>
-### [↖](#13_4)[↑](#13_4_1)[↓](#14) S3 Other Cost savings
+<a name="13_5_2"></a>
+### [↖](#13_5)[↑](#13_5_1)[↓](#14) S3 Other Cost savings
 * *S3 Select* & *Glacier Select*: save in network and CPU cost
 * S3 Lifecycle Rules: transition objects between tiers
 * Compress objects to save space
@@ -5366,7 +5388,7 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 ---
 
 <a name="14"></a>
-# [↖](#top)[↑](#13_4_2)[↓](#14_1) Migration
+# [↖](#top)[↑](#13_5_2)[↓](#14_1) Migration
 
 <a name="14_1"></a>
 ## [↖](#top)[↑](#14)[↓](#14_1_1) The 6R Strategies
