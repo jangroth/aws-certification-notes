@@ -118,6 +118,8 @@
   * [Kinesis Video Streams](#16_7)
   * [Amazon Mechanical Turk](#16_8)
   * [Device Farm](#16_9)
+  * [Macie](#16_10)
+  * [AWS Data Pipeline](#16_11)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -190,20 +192,18 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 <a name="3_1"></a>
 ## [↖](#top)[↑](#3)[↓](#3_2) Overview - possible ways to manage Identity and Federation in AWS
 
-.|.|.
--|-|-
-**Identity only in AWS**|Users and Accounts all in AWS|Simplest setup
-.|AWS Organizations|In case we have multiple accounts<br/>Adds consolidated billing and compliance
-**Federation**|With SAML|.
-.|Without SAML|With a custom IdP (`GetFederationToken`)
-.|With SSO|For multiple accounts within AWS Organizations
-.|Web Identity Federation|Not recommended, use Cognito
-.|Cognito|For most web and mobile applications<br/>Has anonymous mode & MFA
-**Active Directory on AWS**|Microsoft AD|Standalone or setup trust AD with on-premises<br/>Has MFA<br/>Seamless join<br/>RDS integration
-.|AD Connector|Proxy requests to on-premises
-.|Simple AD|Standalone & cheap AD-compatible with no MFA, no advanced capabilities
-
-* AWS Single Sign-On to connect to multiple AWS Accounts (Organization) and SAML apps
+|.|.|.
+|-|-|-
+|**Identity only in AWS**|Users and accounts all in AWS|Simplest setup
+| |AWS Organizations|In case we have multiple accounts<br/>Adds consolidated billing and compliance
+|**Federation**|With SAML|With a SAML-compliant IdP
+| |Without SAML|With a custom IdP (STS `GetFederationToken`)
+| |AWS SSO|For multiple accounts within AWS Organizations and SAML
+| |Web Identity Federation|Not recommended, use AWS Cognito
+| |AWS Cognito|For most web and mobile applications<br/>Has anonymous mode & MFA
+|**Active Directory on AWS**|Microsoft AD|Standalone or setup trust AD with on-premises<br/>Has MFA<br/>Seamless join<br/>RDS integration
+| |AD Connector|Proxy requests to on-premises
+| |Simple AD|Standalone & cheap AD-compatible with no MFA, no advanced capabilities
 
 ---
 
@@ -667,6 +667,7 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 * [Service Control Policies](#3_7_2)
 * [Tag Policies](#3_7_3)
 * [Reserved Instances](#3_7_4)
+* [Trusted Access](#3_7_5)
 <!-- toc_end -->
 <a name="3_7_1"></a>
 ### [↖](#3_7)[↑](#3_7)[↓](#3_7_1_1) Overview
@@ -741,6 +742,8 @@ Service control policies (SCPs) are one type of policy that you can use to manag
 * Use cases:
   * Restrict access to certain services (for example: can’t use EMR)
   * Enforce PCI compliance by explicitly disabling services
+* SCPs do **not** affect any service-linked role.
+	* Service-linked roles enable other AWS services to integrate with AWS Organizations and can't be restricted by SCPs.
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
 <a name="3_7_3"></a>
@@ -748,17 +751,22 @@ Service control policies (SCPs) are one type of policy that you can use to manag
 Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
 <a name="3_7_4"></a>
-### [↖](#3_7)[↑](#3_7_3)[↓](#3_8) Reserved Instances
+### [↖](#3_7)[↑](#3_7_3)[↓](#3_7_5) Reserved Instances
 * For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
 * This means that all accounts in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
-* The payer account (management account) of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
+* The management account of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the management account
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
+
+<a name="3_7_5"></a>
+### [↖](#3_7)[↑](#3_7_4)[↓](#3_8) Trusted Access
+You can use trusted access to enable a supported AWS service that you specify, called the trusted service, to perform tasks in your organization and its accounts on your behalf. This involves granting permissions to the trusted service but does not otherwise affect the permissions for IAM users or roles.
+* When you enable access, the trusted service can create an IAM role called a service-linked role in every account in your organization whenever that role is needed.
 
 ---
 
 <a name="3_8"></a>
-## [↖](#top)[↑](#3_7_4)[↓](#3_8_1) AWS Resource Access Manager
+## [↖](#top)[↑](#3_7_5)[↓](#3_8_1) AWS Resource Access Manager
 <!-- toc_start -->
 * [Overview](#3_8_1)
 <!-- toc_end -->
@@ -773,9 +781,17 @@ AWS RAM lets you share your resources with any AWS account or through AWS Organi
     * Cannot share security groups and default VPC
     * Participants can manage their own resources in there
     * Participants can't view, modify, delete resources that belong to other participants or the owner
+	* VPC sharing allows customers to share subnets with other AWS accounts within the same AWS Organization. This is a very powerful concept that allows for a number of benefits:
+		* Separation of duties: centrally controlled VPC structure, routing, IP address allocation.
+		* Application owners continue to own resources, accounts, and security groups.
+		* VPC sharing participants can reference security group IDs of each other.
+		* Efficiencies: higher density in subnets, efficient use of VPNs and AWS Direct Connect.
+		* Hard limits can be avoided, for example, 50 VIFs per AWS Direct Connect connection through simplified network architecture.
+		* Costs can be optimized through reuse of NAT gateways, VPC interface endpoints, and intra-Availability Zone traffic.
   * AWS Transit Gateway
   * Route 53 Resolver Rules
   * License Manager Configurations
+* Can enable trusted access with AWS Organizations via CLI command
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
 ---
@@ -803,6 +819,8 @@ AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it e
 	* **AWS SSO identity store** – When you enable AWS SSO for the first time, it is automatically configured with an AWS SSO identity store as your default identity source. This is where you create your users and groups, and assign their level of access to your AWS accounts and applications.
 	* **Active Directory** – Choose this option if you want to continue managing users in either your self-managed Active Directory (AD) or your AWS Managed Microsoft AD directory using AWS Directory Service.
 	* **External identity provider** – Choose this option if you prefer to manage users in an external identity provider (IdP) such as Okta or Azure Active Directory.
+* Does **not** help with federated access from mobile applications, supports single sign-on to business applications through web browsers only.
+* Does **not** support OpenID Connect
 * On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
 ---
@@ -850,6 +868,7 @@ CloudTrail is enabled by default in every account. All activities in an AWS acco
 * Can validate integrity of log files using digest files
 * Can deliver trails from multiple accounts into the same bucket
   * Change bucket policy to allow that
+* For global services such as IAM, STS, CloudFront, and Route 53, events are delivered to any trail that includes global services (`IncludeGlobalServiceEvents` flag).
 
 <a name="4_1_4"></a>
 ### [↖](#4_1)[↑](#4_1_3)[↓](#4_2) Notification options
@@ -1059,7 +1078,7 @@ With AWS Certificate Manager, you can quickly request a certificate, deploy it o
   * Automatically done if generated provisioned by ACM
   * Any manually uploaded certificates must be renewed manually and re-uploaded
 * ACM is a regional service
-  * To use with a global application (multiple ALB for example), you need to issue an SSL certificate in each region where you application is deployed.
+  * To use with a global application (multiple ALB for example), you need to issue an SSL certificate **in each region** where you application is deployed.
   * You cannot copy certs across regions
 * On AWS: <a href="https://aws.amazon.com/certificate-manager/" target="_blank">Service</a> - <a href="https://aws.amazon.com/certificate-manager/faqs/?nc=sn&loc=5" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html" target="_blank">User Guide</a>
 
@@ -1093,6 +1112,10 @@ If you want a managed service for creating and controlling your encryption keys,
 * Can be deployed into a cluster for HA
 * Can perform SSL offloading, to free up compute on the server
   * Also, this keeps the private key on CloudHSM
+* CloudHSM is deployed in a cluster
+	* A cluster is a collection of individual HSMs that AWS CloudHSM keeps in sync
+	* You can place the HSMs in different Availability Zones in an AWS Region
+	* When you create an HSM, AWS CloudHSM puts an elastic network interface (ENI) in the specified subnet in your AWS account.
 * On AWS: <a href="https://aws.amazon.com/cloudhsm/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudhsm/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank">User Guide</a>
 
 <a name="4_8_2"></a>
@@ -1831,7 +1854,8 @@ Fargate allocates the right amount of compute, eliminating the need to choose in
   * [Synchronous/Asynchronous/Event Source Invocation](#5_6_4_1)
   * [Function Scaling](#5_6_4_2)
   * [Logging, Monitoring and Troubleshooting](#5_6_4_3)
-* [Limits and Latencies](#5_6_5)
+* [Connection Lambdas to a VPC](#5_6_5)
+* [Limits and Latencies](#5_6_6)
 <!-- toc_end -->
 <a name="5_6_1"></a>
 ### [↖](#5_6)[↑](#5_6)[↓](#5_6_2) Overview
@@ -1968,7 +1992,15 @@ its handler method to process the event.
 * Need *custom metric* for memory usage
 
 <a name="5_6_5"></a>
-### [↖](#5_6)[↑](#5_6_4_3)[↓](#5_7) Limits and Latencies
+### [↖](#5_6)[↑](#5_6_4_3)[↓](#5_6_6) Connection Lambdas to a VPC
+You can configure a Lambda function to connect to private subnets in a VPC. Use VPC to create a private network for resources such as databases, cache instances, or internal services. Connect your function to the VPC to access private resources while the function is running.
+
+* When you connect a function to a VPC, Lambda creates an elastic network interface for each subnet in your function's VPC configuration.
+* Lambda attaches to subnets and security groups
+* Internet access goes through VPC
+
+<a name="5_6_6"></a>
+### [↖](#5_6)[↑](#5_6_5)[↓](#5_7) Limits and Latencies
 
 .|Limit
 -|-
@@ -1992,7 +2024,7 @@ CloudFront invocation|100 ms
 ---
 
 <a name="5_7"></a>
-## [↖](#top)[↑](#5_6_5)[↓](#5_7_1) Elastic Load Balancing (Core Topic)
+## [↖](#top)[↑](#5_6_6)[↓](#5_7_1) Elastic Load Balancing (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_7_1)
 * [ELB (Classic Load Balancer)](#5_7_2)
@@ -2373,6 +2405,9 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
 * **Name Server** - Translates domain names into IP addresses
 * **Zone File** - Text file that contains mappings between domain names and IP addresses
 * **Records** - Entries in zone file, mappings beween resources and names
+* A **hosted zone** is a container for records, and records contain information about how you want to route traffic for a specific domain, such as example.com, and its subdomains (acme.example.com, zenith.example.com). A hosted zone and the corresponding domain have the same name. There are two types of hosted zones:
+	* **Public hosted zones** contain records that specify how you want to route traffic on the internet.
+	* A **private hosted zone** is a container that holds information about how you want Amazon Route 53 to respond to DNS queries for a domain and its subdomains within one or more VPCs that you create with the Amazon VPC service. Your VPC has attributes that determine whether your EC2 instance receives public DNS hostnames, and whether DNS resolution through the Amazon DNS server is supported.
 
 <a name="5_9_2"></a>
 ### [↖](#5_9)[↑](#5_9_1_1)[↓](#5_9_2_1)  How it works
@@ -2398,9 +2433,13 @@ Type|Definition|Example
 
 Route 53 specific:
 * **Alias** record
-  * Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality. Alias records let you route traffic to selected AWS resources, such as CloudFront distributions and Amazon S3 bucket. They also let you route traffic from one record in a hosted zone to another record.
-  * Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also known as the *zone apex*. For example, if you register the DNS name example.com, the zone apex is example.com. You can't create a CNAME record for example.com, but you can create an alias record for example.com that routes traffic to www.example.com
-  * Preferred choice over CNAME (TODO: why?)
+	* Amazon Route 53 alias records provide a Route 53–specific extension to DNS functionality. Alias records let you route traffic to selected AWS resources, such as CloudFront distributions and Amazon S3 bucket. They also let you route traffic from one record in a hosted zone to another record.
+	* Unlike a CNAME record, you can create an alias record at the top node of a DNS namespace, also known as the *zone apex*. For example, if you register the DNS name example.com, the zone apex is example.com. You can't create a CNAME record for example.com, but you can create an alias record for example.com that routes traffic to www.example.com
+	* Preferred choice over CNAME
+	* To route domain traffic to an ELB load balancer, use Amazon Route 53 to create an alias record that points to your load balancer. An alias record is a Route 53 extension to DNS. It's similar to a CNAME record, but you can create an alias record both for the root domain, such as example.com, and for subdomains, such as www.example.com. (You can create CNAME records only for subdomains).
+		* For EC2 instances, always use a Type A Record without an Alias.
+		* For ELB, Cloudfront and S3, always use a Type A Record with an Alias 
+		* For RDS, always use the CNAME Record with no Alias.
 
 <a name="5_9_2_3"></a>
 #### [↖](#5_9)[↑](#5_9_2_2)[↓](#5_9_3) Route 53 Routing Policies
@@ -3069,13 +3108,14 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 * [CloudFront Geo Restriction](#7_1_5)
 * [Signed URL/Signed Cookies](#7_1_6)
   * [Trusted Signer](#7_1_6_1)
-* [Caching](#7_1_7)
-  * [CloudFront Caching vs API Gateway Caching](#7_1_7_1)
-* [Lambda@Edge](#7_1_8)
-* [https](#7_1_9)
-  * [Scenario 1 (requires 2 certs)](#7_1_9_1)
-  * [Scenario 2 (doesn't work)](#7_1_9_2)
-  * [Scenario 2 (requires 1 cert)](#7_1_9_3)
+* [Field-Level Encryption](#7_1_7)
+* [Caching](#7_1_8)
+  * [CloudFront Caching vs API Gateway Caching](#7_1_8_1)
+* [Lambda@Edge](#7_1_9)
+* [https](#7_1_10)
+  * [Scenario 1 (requires 2 certs)](#7_1_10_1)
+  * [Scenario 2 (doesn't work)](#7_1_10_2)
+  * [Scenario 2 (requires 1 cert)](#7_1_10_3)
 <!-- toc_end -->
 <a name="7_1_1"></a>
 ### [↖](#7_1)[↑](#7_1)[↓](#7_1_2) Overview
@@ -3090,6 +3130,7 @@ You also get increased reliability and availability because copies of your files
 * Improves read performance, content is cached at the edge
 * 225 Point of Presence globally (edge locations)
 * DDoS protection, integration with Shield, AWS Web Application Firewall
+	* Only accepts well-formed connections to prevent many common DDoS attacks like SYN floods and UDP reflection attacks from reaching your origin.
 * Can expose external HTTPS and can talk to internal HTTPS backends
 * On AWS: <a href="https://aws.amazon.com/cloudfront/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudfront/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html" target="_blank">User Guide</a>
 
@@ -3113,7 +3154,7 @@ An origin is the location where content is stored, and from which CloudFront get
 * An AWS Elemental MediaStore container
 * Any other HTTP server, running on an Amazon EC2 instance or any other kind of host
 
-Can have primary and secondary origin (HA - Failover)
+Can have primary and secondary origin (**HA/Failover**)
 
 Origin|How content is accessed
 -|-
@@ -3123,15 +3164,14 @@ ALB (-> EC2)|ALB must have public IP, EC2 can be private
 
 <a name="7_1_4"></a>
 ### [↖](#7_1)[↑](#7_1_3)[↓](#7_1_5) CloudFront vs S3 Cross Region Replication
-* **CloudFront**
-  * Global Edge network
-  * Files are cached for a TTL (maybe a day)
-  * Great for static content that must be available everywhere
-* **S3 Cross Region Replication**
-  * Must be setup for each region you want replication to happen
-  * Files are updated in near real-time
-  * Read only
-  * Great for dynamic content that needs to be available at low-latency in few regions
+
+
+**CloudFront**|**S3 Cross Region Replication**
+-|-
+Global Edge network|Must be setup for each region you want replication to happen
+Files are cached for a TTL (maybe a day)|Files are updated in near real-time
+Great for static content that must be available everywhere|Read only
+.|Great for dynamic content that needs to be available at low-latency in few regions
 
 <a name="7_1_5"></a>
 ### [↖](#7_1)[↑](#7_1_4)[↓](#7_1_6) CloudFront Geo Restriction
@@ -3173,7 +3213,12 @@ To create signed URLs or signed cookies, you need a signer. A signer is either a
 * With CloudFront key groups, you can associate a higher number of public keys with your CloudFront distribution.
 
 <a name="7_1_7"></a>
-### [↖](#7_1)[↑](#7_1_6_1)[↓](#7_1_7_1) Caching
+### [↖](#7_1)[↑](#7_1_6_1)[↓](#7_1_8) Field-Level Encryption
+* You can enforce secure end-to-end connections to origin servers by using HTTPS. Field-level encryption adds an additional layer of security that lets you protect specific data throughout system processing so that only certain applications can see it.
+* When you configure your CloudFront distribution, specify the set of fields in POST requests that you want to be encrypted, and the public key to use to encrypt them. You can encrypt up to 10 data fields in a request.
+
+<a name="7_1_8"></a>
+### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8_1) Caching
 * Cache based on
   * Headers
       * Strategy: Whitelist headers that should be cached on, ignore others
@@ -3186,15 +3231,15 @@ To create signed URLs or signed cookies, you need a signer. A signer is either a
   * Static distribution doesn't need complicated configuration
   * Dynamic distributions caches based on correct headers and cookies
 
-<a name="7_1_7_1"></a>
-#### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8) CloudFront Caching vs API Gateway Caching
+<a name="7_1_8_1"></a>
+#### [↖](#7_1)[↑](#7_1_8)[↓](#7_1_9) CloudFront Caching vs API Gateway Caching
 API Gateway now has two different kinds of endpoints. The original design is now called *edge optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region. All existing endpoints were categorized as edge-optimized when the new regional capability was rolled out. With a regional endpoint, the CloudFront-* headers are not present in the request, unless you use your own CloudFront distribution and whitelist those headers for forwarding to the origin.
 * Can deploy API Gateway in *regional mode* (comes with its own cache), *and* deploy a CloudFront distribution at the edge, that can have a cache too.
   * Allows for fine-grained control of caching
   * Many different options from here, could e.g. also disable API-Gateway cache
 
-<a name="7_1_8"></a>
-### [↖](#7_1)[↑](#7_1_7_1)[↓](#7_1_9) Lambda@Edge
+<a name="7_1_9"></a>
+### [↖](#7_1)[↑](#7_1_8_1)[↓](#7_1_10) Lambda@Edge
 * You have deployed a CDN using CloudFront
 * What if you wanted to run a global AWS Lambda alongside?
 * Or how to implement request filtering before reaching your application?
@@ -3224,8 +3269,8 @@ API Gateway now has two different kinds of endpoints. The original design is now
   * User Prioritization, User Tracking and Analytics
   * Increasing the cache hit ratio (by modifying headers, normalize user-agent...)
 
-<a name="7_1_9"></a>
-### [↖](#7_1)[↑](#7_1_8)[↓](#7_1_9_1) https
+<a name="7_1_10"></a>
+### [↖](#7_1)[↑](#7_1_9)[↓](#7_1_10_1) https
 * A viewer submits an HTTPS request to CloudFront. There's some SSL/TLS negotiation here between the viewer and CloudFront. In the end, the viewer submits the request in an encrypted format.
 * If the object is in the CloudFront edge cache, CloudFront encrypts the response and returns it to the viewer, and the viewer decrypts it.
 * If the object is not in the CloudFront cache, CloudFront performs SSL/TLS negotiation with your origin and, when the negotiation is complete, forwards the request to your origin in an encrypted format.
@@ -3233,8 +3278,8 @@ API Gateway now has two different kinds of endpoints. The original design is now
 * CloudFront decrypts the response, re-encrypts it, and forwards the object to the viewer. CloudFront also saves the object in the edge cache so that the object is available the next time it's requested.
 * The viewer decrypts the response.
 
-<a name="7_1_9_1"></a>
-#### [↖](#7_1)[↑](#7_1_9)[↓](#7_1_9_2) Scenario 1 (requires 2 certs)
+<a name="7_1_10_1"></a>
+#### [↖](#7_1)[↑](#7_1_10)[↓](#7_1_10_2) Scenario 1 (requires 2 certs)
 
 .|CloudFront|ALB
 -|-|-
@@ -3250,8 +3295,8 @@ If Host header is *not* forwarded:
 - CloudFront will add a Host header value of the origin: origin.example.com
 - Requests & Responses will work
 
-<a name="7_1_9_2"></a>
-#### [↖](#7_1)[↑](#7_1_9_1)[↓](#7_1_9_3) Scenario 2 (doesn't work)
+<a name="7_1_10_2"></a>
+#### [↖](#7_1)[↑](#7_1_10_1)[↓](#7_1_10_3) Scenario 2 (doesn't work)
 
 .|CloudFront|ALB
 -|-|-
@@ -3261,8 +3306,8 @@ origin|www.example.com|.
 
 Impossible, as CloudFront distribution will loop over itself!
 
-<a name="7_1_9_3"></a>
-#### [↖](#7_1)[↑](#7_1_9_2)[↓](#7_2) Scenario 2 (requires 1 cert)
+<a name="7_1_10_3"></a>
+#### [↖](#7_1)[↑](#7_1_10_2)[↓](#7_2) Scenario 2 (requires 1 cert)
 
 .|CloudFront|ALB
 -|-|-
@@ -3283,7 +3328,7 @@ If Host header is *not* forwarded:
 ---
 
 <a name="7_2"></a>
-## [↖](#top)[↑](#7_1_9_3)[↓](#7_2_1) ElastiCache (Core Topic)
+## [↖](#top)[↑](#7_1_10_3)[↓](#7_2_1) ElastiCache (Core Topic)
 <!-- toc_start -->
 * [Overview](#7_2_1)
 * [Scenarios](#7_2_2)
@@ -3333,6 +3378,7 @@ Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-
   * Read Only File Feature (AOF),
   * Backup and restore features
 * AOF (Append Only File) log can be enabled for recovery of nodes
+	* When a node is rebooted and the cache engine starts, the AOF is "replayed"; the result is a warm Redis cache with all of the data intact.
 * Caching Strategies
 	* **Lazy loading**
 		* As the name implies, lazy loading is a caching strategy that loads data into the cache only when necessary.
@@ -3458,6 +3504,7 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
   * Common pattern:
     * `CRUD on DDB table` -> `Lambda` -> `Amazon ES ElasticSearch`, or `Kinesis`
 * **Global Tables** (cross region replication)
+	* Amazon DynamoDB global tables provide a fully managed solution for deploying a multiregion, multi-active database, without having to build and maintain your own replication solution. With global tables you can specify the AWS Regions where you want the table to be available. DynamoDB performs all of the necessary tasks to create identical tables in these Regions and propagate ongoing data changes to all of them.
   * Active Active replication, many regions
   * Must enable DynamoDB Streams
   * Useful for low latency, DR purposes
@@ -3754,9 +3801,9 @@ Aurora includes a high-performance storage subsystem. Its MySQL- and PostgreSQL-
 
 Aurora is part of the managed database service Amazon Relational Database Service (Amazon RDS). More cloud-native, usually preferred over RDS
 * DB Engines: PostgreSQL-compatible & MySQL-compatible
-* Storage: *automatically* grows up to 128 TB, 6 copies of data, multi-AZ
+* Storage: **automatically grows** up to 128 TB, 6 copies of data, multi-AZ
 * Read Replicas: up to 15 RR
-  * Single reader endpoint to access them all
+  * **Single reader endpoint** to access them all
 * Cross Region RR: entire database is copied (not select tables)
 * Load/Offload data directly from/to S3:
   * Efficient use of resources
@@ -3796,6 +3843,7 @@ Aurora is part of the managed database service Amazon Relational Database Servic
 
 <a name="8_4_5"></a>
 ### [↖](#8_4)[↑](#8_4_4)[↓](#8_4_6) Global Aurora
+An Aurora global database consists of one primary AWS Region where your data is mastered, and up to five read-only secondary AWS Regions. You issue write operations directly to the primary DB cluster in the primary AWS Region. Aurora replicates data to the secondary AWS Regions using dedicated infrastructure, with latency typically under a second.
 * Aurora Cross Region Read Replicas:
   * Useful for disaster recovery
   * Simple to put in place
@@ -5326,6 +5374,15 @@ Convertible reserved instances|Long workloads with flexible instances|Can be exc
 * Soft limits
   * Target capacity per Spot Fleet or EC2 fleet: 10,000
   * Target capacity across all Spot Fleet and EC2 Fleet in a region: 100,000
+* Allocation strategies
+	* `lowestPrice`
+		* The Spot Instances come from the pool with the lowest price. This is the default strategy.
+	* `diversified`
+		* The Spot Instances are distributed across all pools.
+	* `capacityOptimized`
+		* The Spot Instances come from the pools with optimal capacity for the number of instances that are launching. You can optionally set a priority for each instance type in your fleet using capacityOptimizedPrioritized. EC2 implements the priorities on a best-effort basis, but optimizes for capacity first.
+	* `InstancePoolsToUseCount`
+		* The Spot Instances are distributed across the number of Spot pools that you specify. This parameter is valid only when used in combination with lowestPrice.
 
 <a name="13_4_1_3"></a>
 #### [↖](#13_4)[↑](#13_4_1_2)[↓](#13_4_2) Pricing by
@@ -5378,7 +5435,7 @@ Glacier Deep Archive|**11x9**|.|**>=3**|$0.00099<br/>min 180 days|Yes|Longer tim
 * *S3 Select* & *Glacier Select*: save in network and CPU cost
 * S3 Lifecycle Rules: transition objects between tiers
 * Compress objects to save space
-* S3 Requester Pays:
+* **S3 Requester Pays**:
   * In general, bucket owners pay for all Amazon S3 storage and data transfer costs associated with their bucket
   * With Requester Pays buckets, the requester instead of the bucket owner pays the cost of the request and the data download from the bucket
   * The bucket owner always pays the cost of storing data
@@ -5673,10 +5730,17 @@ The collected data is retained in encrypted format in an AWS Application Discove
 <a name="14_7"></a>
 ## [↖](#top)[↑](#14_6)[↓](#14_8) Server Migration Service
 AWS Server Migration Service (SMS) is an agentless service which makes it easier and faster for you to migrate thousands of on-premises workloads to AWS. AWS SMS allows you to automate, schedule, and track incremental replications of live server volumes, making it easier for you to coordinate large-scale server migrations.
+* **Simplify the cloud migration process**. You can begin migrating a group of servers with just a few clicks in the AWS Management Console. After the migration has initiated, AWS SMS manages all the complexities of the migration process, including automatically replicating volumes of live servers to AWS and creating new AMIs periodically. You can quickly launch EC2 instances from AMIs in the console.
+* **Orchestrate multi-server migrations**. AWS SMS orchestrates server migrations by allowing you to schedule replications and track progress of a group of servers that constitutes an application. You can schedule initial replications, configure replication intervals, and track progress for each server using the console. When you launch a migrated application, you can apply customized configuration scripts that run during startup.
+* **Test server migrations incrementally**: With support for incremental replication, AWS SMS allows fast, scalable testing of migrated servers. Because AWS SMS replicates incremental changes to your on-premises servers and transfers only the delta to the cloud, you can test small changes iteratively and save on network bandwidth.
+* **Support the most widely used operating systems**. AWS SMS supports the replication of operating system images containing Windows, as well as several major Linux distributions.
+* **Minimize downtime**. Incremental AWS SMS replication minimizes the business impact associated with application downtime during the final cutover.
+
+Summary:
 * Migrate entire VMs to AWS, improvement over EC2 VM Import/Export service (deprecated)
 	* That means the OS, the data, everything is kept intact
 	* After loading the VM onto EC2 you can update the OS, the data, make an AMI
-	* Therefore SMS is used to Re-host
+	* Therefore SMS is used to re-host
 * Only works with VMware vSphere, Windows Hyper-V, and Azure VM
 * Every replication creates an EBS snapshot/AMI ready for deployment on EC2
 * Every replication is incremental
@@ -6124,9 +6188,17 @@ AWS Direct Connect lets you establish a dedicated network connection between you
 <a name="15_7_2"></a>
 ### [↖](#15_7)[↑](#15_7_1)[↓](#15_7_3) Direct Connect Virtual Interfaces (VIF)
 * **Public VIF**: Connect to Public AWS Endpoints (S3 buckets, EC2 service, anything AWS...)
+	* Connect to all AWS public IP addresses globally.
+	* Create public virtual interfaces in any DX location to receive Amazon’s global IP routes.
+	* Access publicly routable Amazon services in any AWS Region
 * **Private VIF**: To connect to resources in your VPC (EC2 instances, ALB, etc..)
+	* Connect VPC resources (such as EC2 instances or load balancers) on your private IP address or endpoint.
+	* Connect a private virtual interface to a DX gateway. Then, associate the DX gateway with one or more virtual private gateways in any AWS Region
+	* Connect to multiple VPCs in any AWS Region, because a virtual private gateway is associated with a single VPC.
+	* VPC endpoints cannot be accessed through Private VIF (Use Public VIF)
 * **Transit VIF**: To connect to resources in a VPC using a Transit Gateway
-* VPC endpoints cannot be accessed through Private VIF (Use Public VIF)
+* Watch out:
+	* If you want to establish a VPN connection from your company network to a VPC over an AWS Direct Connect connection, you **must** use a **public** virtual interface for your DX connection.
 
 <a name="15_7_3"></a>
 ### [↖](#15_7)[↑](#15_7_2)[↓](#15_7_4) Connection Types
@@ -6156,9 +6228,11 @@ AWS Direct Connect lets you establish a dedicated network connection between you
 
 <a name="15_7_6"></a>
 ### [↖](#15_7)[↑](#15_7_5)[↓](#15_8) Direct Connect Gateway
-* If you want to setup a Direct Connect to one or more VPC in many different regions (same account, cross account), you must use a Direct Connect Gateway
+* Connecting from a single Direct Connect location to multiple AWS VPCs wasn’t so straight forward.
+* Direct Connect gateway is aimed at making it easier to connect from a single Direct Connect location to multiple AWS regions or VPCs
+* If you want to setup a Direct Connect to **one or more VPCs** in many **different regions** (same account or cross account), you must use a Direct Connect Gateway
+	* Connect to a virtual private gateway if you have one VPC in the target region
 	* Connect to transit gateway when you have multiple VPCs in the same Region
-	* A virtual private gateway to extend your Local Zone
 
 ---
 
@@ -6328,7 +6402,7 @@ Amazon Kinesis Video Streams makes it easy to securely stream video from connect
 ---
 
 <a name="16_9"></a>
-## [↖](#top)[↑](#16_8) Device Farm
+## [↖](#top)[↑](#16_8)[↓](#16_10) Device Farm
 * Application testing service for your mobile and web applications
 * Test across real browsers and real mobiles devices
 * Fully automated using framework
@@ -6336,3 +6410,37 @@ Amazon Kinesis Video Streams makes it easy to securely stream video from connect
 * Generates videos and logs to document the issues encountered
 * Can remotely log-in to devices for debugging
 
+---
+
+<a name="16_10"></a>
+## [↖](#top)[↑](#16_9)[↓](#16_10_1) Macie
+<!-- toc_start -->
+* [Overview](#16_10_1)
+<!-- toc_end -->
+
+<a name="16_10_1"></a>
+### [↖](#16_10)[↑](#16_10)[↓](#16_11) Overview
+Amazon Macie is a security service that uses machine learning to automatically discover, classify,
+and protect sensitive data in AWS. Amazon Macie recognizes sensitive data such as personally
+identifiable information (PII) or intellectual property, and provides you with dashboards and
+alerts that give visibility into how this data is being accessed or moved. The fully managed
+service continuously monitors data access activity for anomalies, and generates detailed alerts
+when it detects risk of unauthorized access or inadvertent data leaks. Amazon Macie is available
+to protect data stored in Amazon S3.
+
+* Data Sources
+  * AWS CloudTrail event logs, including Amazon S3 object-level API activity
+  * S3
+* On AWS: <a href="https://aws.amazon.com/macie/" target="_blank">Service</a> - <a href="https://aws.amazon.com/macie/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/macie/latest/userguide/" target="_blank">User Guide</a>
+* See also: <a href="https://www.awsgeek.com/Amazon-Macie/Amazon-Macie.jpg" target="_blank">AWS Geek 2019</a>
+
+---
+
+<a name="16_11"></a>
+## [↖](#top)[↑](#16_10_1) AWS Data Pipeline
+
+AWS Data Pipeline is a web service that helps you reliably process and move data between different AWS compute and storage services, as well as on-premises data sources, at specified intervals. With AWS Data Pipeline, you can regularly access your data where it’s stored, transform and process it at scale, and efficiently transfer the results to AWS services such as Amazon S3, Amazon RDS, Amazon DynamoDB, and Amazon EMR.
+
+AWS Data Pipeline helps you easily create complex data processing workloads that are fault tolerant, repeatable, and highly available. You don’t have to worry about ensuring resource availability, managing inter-task dependencies, retrying transient failures or timeouts in individual tasks, or creating a failure notification system. AWS Data Pipeline also allows you to move and process data that was previously locked up in on-premises data silos.
+
+* On AWS: <a href="https://aws.amazon.com/datapipeline/" target="_blank">Service</a> - <a href="https://aws.amazon.com/datapipeline/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/data-pipeline/index.html" target="_blank">User Guide</a>
