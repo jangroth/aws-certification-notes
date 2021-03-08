@@ -10,10 +10,10 @@
   * [Security Token Service (Core Topic)](#3_3)
   * [Amazon Cognito (Core Topic)](#3_4)
   * [Identity Federation (Core Topic)](#3_5)
-  * [AWS Active Directory Services (Core Topic)](#3_6)
-  * [AWS Organization (Core Topic)](#3_7)
-  * [AWS Resource Access Manager](#3_8)
-  * [AWS Single Sign-On](#3_9)
+  * [AWS Single Sign-On](#3_6)
+  * [AWS Active Directory Services (Core Topic)](#3_7)
+  * [AWS Organization (Core Topic)](#3_8)
+  * [AWS Resource Access Manager](#3_9)
 * [Security](#4)
   * [CloudTrail](#4_1)
   * [KMS](#4_2)
@@ -71,7 +71,8 @@
   * [Amazon Redshift](#10_5)
   * [Athena](#10_6)
   * [QuickSight](#10_7)
-  * [Big Data Architecture](#10_8)
+  * [AWS Data Pipeline](#10_8)
+  * [Big Data Architecture](#10_9)
 * [Monitoring](#11)
   * [CloudWatch (Core Topic)](#11_1)
   * [X-Ray](#11_2)
@@ -98,7 +99,8 @@
   * [Database Migration Service (Core Topic)](#14_5)
   * [Application Discovery Service (Core Topic)](#14_6)
   * [Server Migration Service](#14_7)
-  * [Disaster Recovery](#14_8)
+  * [AWS Cloud Adoption Readiness Tool (CART)](#14_8)
+  * [Disaster Recovery](#14_9)
 * [VPC](#15)
   * [Virtual Private Cloud (VPC)](#15_1)
   * [VPC Peering](#15_2)
@@ -119,7 +121,8 @@
   * [Amazon Mechanical Turk](#16_8)
   * [Device Farm](#16_9)
   * [Macie](#16_10)
-  * [AWS Data Pipeline](#16_11)
+  * [Amazon Pinpoint](#16_11)
+  * [Private Marketplace](#16_12)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -485,6 +488,18 @@ Amazon Cognito identity pools (federated identities) enable you to create unique
 
 <a name="3_5_1"></a>
 ### [↖](#3_5)[↑](#3_5)[↓](#3_5_2) Overview
+> OAuth 2.0 is designed only for authorization, for granting access to data and features from one application to another.
+
+> OpenID Connect is built on the OAuth 2.0 protocol and uses an additional JSON Web Token (JWT), called an ID token, to standardize areas that OAuth 2.0 leaves up to choice, such as scopes and endpoint discovery. It is specifically focused on user authentication and is widely used to enable user logins on consumer websites and mobile apps.
+
+> Security Assertion Markup Language (**SAML**) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider. SAML is independent of OAuth, relying on an exchange of messages to authenticate in XML SAML format, as opposed to JWT. It is more commonly used to help enterprise users sign in to multiple applications using a single login.
+
+> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.
+
+> Active Directory Federation Services (**ADFS**) is a Single Sign-On (SSO) solution created by Microsoft. As a component of Windows Server operating systems, it provides users with authenticated access to applications that are not capable of using Integrated Windows Authentication (IWA) through Active Directory (**AD**).
+
+* <a href="https://www.okta.com/identity-101/whats-the-difference-between-oauth-openid-connect-and-saml/" target="_blank">What’s the Difference Between OAuth, OpenID Connect, and SAML?</a>
+
 If you already manage user identities outside of AWS, you can use IAM identity providers instead of creating IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside of AWS and give these external user identities permissions to use AWS resources in your account. These users assume identity provided access *role*.
 
 Federation can have many flavors:
@@ -494,14 +509,8 @@ Federation can have many flavors:
 * Web Identity Federation with Amazon Cognito
 * Single Sign-On
 * Non-SAML with AWS Microsoft AD
-
 <a name="3_5_2"></a>
 ### [↖](#3_5)[↑](#3_5_1)[↓](#3_5_3) SAML 2.0
-> Security Assertion Markup Language (**SAML**) is an open standard for exchanging authentication and authorization data between parties, in particular, between an identity provider and a service provider.
-
-> An identity provider (**IdP**) is a system entity that creates, maintains, and manages identity information for principals and also provides authentication services to relying applications within a federation or distributed network.
-
-> Active Directory Federation Services (**ADFS**) is a Single Sign-On (SSO) solution created by Microsoft. As a component of Windows Server operating systems, it provides users with authenticated access to applications that are not capable of using Integrated Windows Authentication (IWA) through Active Directory (**AD**).
 * Overview
   * To integrate Active Directory/ADFS (or any SAML 2.0) with AWS
   * Access through console or CI
@@ -516,7 +525,7 @@ Federation can have many flavors:
   * In IAM, you create one or more IAM roles. In the role's trust policy, you set the SAML provider as the principal, which establishes a trust relationship between your organization and AWS.
   * In your organization's IdP, you define assertions that map users or groups in your organization to the IAM roles.
   * API/Console
-    * For *API access*, in the application that you're creating, you call the AWS STS `AssumeRoleWithSAML` API, passing it the ARN of the SAML provider you created in Step 3, the ARN of the role to assume that you created in Step 4, and the SAML assertion about the current user that you get from your IdP.
+    * For *API access*, in the application that you're creating, you call the STS `AssumeRoleWithSAML` API, passing it the ARN of the SAML provider you created in Step 3, the ARN of the role to assume that you created in Step 4, and the SAML assertion about the current user that you get from your IdP.
     * For *console access*, this goes against an AWS SSO endpoint instead, SSO then invokes STS
   * If the request is successful, the API returns a set of temporary security credentials,
 * Note - federation through SAML is the 'old' way of doing things. Better to use AWS SSO
@@ -534,7 +543,7 @@ Federation can have many flavors:
   * Retrieves OpenID-Connect token
 * Get temporary credentials from STS
 	* *This is harder than interacting with Cognito!*
-* App calls STS and receives token in exchange for OpenID Connect token
+* App calls STS `AssumeRoleWithWebIdentity` and receives token in exchange for OpenID Connect token
 * Assume IAM role
 * After being authenticated with Web Identity Federation, you can identify the user with an IAM policy variable:
   * `www.amazon.com:user_id`
@@ -566,20 +575,49 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 ---
 
 <a name="3_6"></a>
-## [↖](#top)[↑](#3_5_5)[↓](#3_6_1) AWS Active Directory Services (Core Topic)
+## [↖](#top)[↑](#3_5_5)[↓](#3_6_1) AWS Single Sign-On
 <!-- toc_start -->
 * [Overview](#3_6_1)
-* [AWS Managed Microsoft AD](#3_6_2)
-  * [Overview](#3_6_2_1)
-  * [Integrations](#3_6_2_2)
-  * [Connecting to on-premises AD](#3_6_2_3)
-  * [Syncronizing with on-premises AD](#3_6_2_4)
-* [AD Connector](#3_6_3)
-* [Simple AD](#3_6_4)
 <!-- toc_end -->
 
 <a name="3_6_1"></a>
-### [↖](#3_6)[↑](#3_6)[↓](#3_6_2) Overview
+### [↖](#3_6)[↑](#3_6)[↓](#3_7) Overview
+AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO also helps you manage access and permissions to commonly used third-party software as a service (SaaS) applications, AWS SSO-integrated applications as well as custom applications that support Security Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
+* Centrally manage Single Sign-On to access multiple accounts and 3rd-party business applications.
+  * No need for custom IdP login portal, AWS SSO communicates directly with SAML-compatible login portal
+* Integrated with AWS Organizations
+* Supports SAML 2.0 markup
+* Integration with on-premises Active Directory
+  * Standalone AWS Managed Microsoft AD
+  * AD Connector to on-premises AD
+  * AWS Managed Microsoft AD with two-way forest trust with on-premises AD
+* Centralized permission management
+* Centralized auditing with CloudTrail
+* Uses exactly one of these identity sources
+	* **AWS SSO identity store** – When you enable AWS SSO for the first time, it is automatically configured with an AWS SSO identity store as your default identity source. This is where you create your users and groups, and assign their level of access to your AWS accounts and applications.
+	* **Active Directory** – Choose this option if you want to continue managing users in either your self-managed Active Directory (AD) or your AWS Managed Microsoft AD directory using AWS Directory Service.
+	* **External identity provider** – Choose this option if you prefer to manage users in an external identity provider (IdP) such as Okta or Azure Active Directory.
+* Does **not** help with federated access from mobile applications, supports single sign-on to business applications through web browsers only.
+* Does **not** support OpenID Connect
+* On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
+
+---
+
+<a name="3_7"></a>
+## [↖](#top)[↑](#3_6_1)[↓](#3_7_1) AWS Active Directory Services (Core Topic)
+<!-- toc_start -->
+* [Overview](#3_7_1)
+* [AWS Managed Microsoft AD](#3_7_2)
+  * [Overview](#3_7_2_1)
+  * [Integrations](#3_7_2_2)
+  * [Connecting to on-premises AD](#3_7_2_3)
+  * [Syncronizing with on-premises AD](#3_7_2_4)
+* [AD Connector](#3_7_3)
+* [Simple AD](#3_7_4)
+<!-- toc_end -->
+
+<a name="3_7_1"></a>
+### [↖](#3_7)[↑](#3_7)[↓](#3_7_2) Overview
 
 > Active Directory (**AD**) is a directory service developed by Microsoft for Windows domain networks. It is included in most Windows Server operating systems as a set of processes and services.
 
@@ -598,10 +636,10 @@ If you create a mobile or web-based app that accesses AWS resources, the app nee
 		* Cannot be joined with on-premises AD!
 * <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">Documentation On AWS</a>
 
-<a name="3_6_2"></a>
-### [↖](#3_6)[↑](#3_6_1)[↓](#3_6_2_1) AWS Managed Microsoft AD
-<a name="3_6_2_1"></a>
-#### [↖](#3_6)[↑](#3_6_2)[↓](#3_6_2_2) Overview
+<a name="3_7_2"></a>
+### [↖](#3_7)[↑](#3_7_1)[↓](#3_7_2_1) AWS Managed Microsoft AD
+<a name="3_7_2_1"></a>
+#### [↖](#3_7)[↑](#3_7_2)[↓](#3_7_2_2) Overview
 AWS Directory Service for Microsoft Active Directory, also known as AWS Managed Microsoft AD, enables your directory-aware workloads and AWS resources to use managed Active Directory (AD) in AWS. AWS Managed Microsoft AD is built on actual Microsoft AD and does not require you to synchronize or replicate data from your existing Active Directory to the cloud. You can use the standard AD administration tools and take advantage of the built-in AD features, such as group policy and single sign-on. With AWS Managed Microsoft AD, you can easily join Amazon EC2 and Amazon RDS for SQL Server instances to your domain, and use AWS End User Computing services, such as Amazon WorkSpaces, with AD users and groups.
 * Managed Service
 * Deploy *Domain Controllers*, different AZs for HA, multiple DCs per AZ for scaling
@@ -612,15 +650,15 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
   * *AD two-way forest trust*
 * On AWS: <a href="https://aws.amazon.com/directoryservice/" target="_blank">Service</a> - <a href="https://aws.amazon.com/directoryservice/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/directoryservice/latest/admin-guide/what_is.html" target="_blank">User Guide</a>
 
-<a name="3_6_2_2"></a>
-#### [↖](#3_6)[↑](#3_6_2_1)[↓](#3_6_2_3) Integrations
+<a name="3_7_2_2"></a>
+#### [↖](#3_7)[↑](#3_7_2_1)[↓](#3_7_2_3) Integrations
 * Windows applications on EC2 can *join the domain* and run traditional AD applications
   * Sharepoint, ...
 * RDS for SQL Server, AWS Workspaces, Quicksight, ...
 * AWS SSO for 3rd party access (SAML)
 
-<a name="3_6_2_3"></a>
-#### [↖](#3_6)[↑](#3_6_2_2)[↓](#3_6_2_4) Connecting to on-premises AD
+<a name="3_7_2_3"></a>
+#### [↖](#3_7)[↑](#3_7_2_2)[↓](#3_7_2_4) Connecting to on-premises AD
 * Needs AWS Direct Connect or VPN
 * Three kinds of of forest trust
   * One way on-premises -> AWS
@@ -630,13 +668,13 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
   * Replication not supported
   * Users on both ADs are independent from each other
 
-<a name="3_6_2_4"></a>
-#### [↖](#3_6)[↑](#3_6_2_3)[↓](#3_6_3) Syncronizing with on-premises AD
+<a name="3_7_2_4"></a>
+#### [↖](#3_7)[↑](#3_7_2_3)[↓](#3_7_3) Syncronizing with on-premises AD
 * Have to install Microsoft AD on EC2 yourself and setup replication
 * Establish forest trust between this installation and AWS Managed Microsoft AD
 
-<a name="3_6_3"></a>
-### [↖](#3_6)[↑](#3_6_2_4)[↓](#3_6_4) AD Connector
+<a name="3_7_3"></a>
+### [↖](#3_7)[↑](#3_7_2_4)[↓](#3_7_4) AD Connector
 * AD Connector is a directory gateway (*proxy*) to redirect directory requests to your on-premises Microsoft Active Directory
 * No caching capability
   * Has latency
@@ -645,8 +683,8 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 * Requires VPN or Direct Connect -> can't function if connection goes down!
 * Doesn’t work with SQL Server, doesn’t do seamless joining, can’t share directory
 
-<a name="3_6_4"></a>
-### [↖](#3_6)[↑](#3_6_3)[↓](#3_7) Simple AD
+<a name="3_7_4"></a>
+### [↖](#3_7)[↑](#3_7_3)[↓](#3_8) Simple AD
 * Simple AD is an inexpensive AD–compatible service with the common directory features.
 * Supports joining EC2 instances, manage users and groups
 * Does not support MFA, RDS SQL server, AWS SSO
@@ -657,20 +695,20 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 
 ---
 
-<a name="3_7"></a>
-## [↖](#top)[↑](#3_6_4)[↓](#3_7_1) AWS Organization (Core Topic)
+<a name="3_8"></a>
+## [↖](#top)[↑](#3_7_4)[↓](#3_8_1) AWS Organization (Core Topic)
 <!-- toc_start -->
-* [Overview](#3_7_1)
-  * [Benefits](#3_7_1_1)
-  * [Multi-account strategies](#3_7_1_2)
-  * [Best Practices](#3_7_1_3)
-* [Service Control Policies](#3_7_2)
-* [Tag Policies](#3_7_3)
-* [Reserved Instances](#3_7_4)
-* [Trusted Access](#3_7_5)
+* [Overview](#3_8_1)
+  * [Benefits](#3_8_1_1)
+  * [Multi-account strategies](#3_8_1_2)
+  * [Best Practices](#3_8_1_3)
+* [Service Control Policies](#3_8_2)
+* [Tag Policies](#3_8_3)
+* [Reserved Instances](#3_8_4)
+* [Trusted Access](#3_8_5)
 <!-- toc_end -->
-<a name="3_7_1"></a>
-### [↖](#3_7)[↑](#3_7)[↓](#3_7_1_1) Overview
+<a name="3_8_1"></a>
+### [↖](#3_8)[↑](#3_8)[↓](#3_8_1_1) Overview
 *AWS Organizations* offers policy-based management for multiple AWS accounts. With Organizations, you can create groups of accounts, automate account creation, apply and manage policies for those groups. Organizations enables you to centrally manage policies across multiple accounts, without requiring custom scripts and manual processes.
 
 Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS service use across multiple AWS accounts. You can also use Organizations to help automate the creation of new accounts through APIs. Organizations helps simplify the billing for multiple accounts by enabling you to setup a single payment method for all the accounts in your organization through consolidated billing. AWS Organizations is available to all AWS customers at no additional charge.
@@ -685,8 +723,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 * Integration with AWS Single Sign-On (SSO)
 * On AWS: <a href="https://aws.amazon.com/organizations/" target="_blank">Service</a> - <a href="https://aws.amazon.com/organizations/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/organizations/latest/userguide/" target="_blank">User Guide</a>
 
-<a name="3_7_1_1"></a>
-#### [↖](#3_7)[↑](#3_7_1)[↓](#3_7_1_2) Benefits
+<a name="3_8_1_1"></a>
+#### [↖](#3_8)[↑](#3_8_1)[↓](#3_8_1_2) Benefits
 * Centrally manage policies across multiple accounts
 * Control access to AWS services
 * Automate AWS account creation and management
@@ -698,8 +736,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
   * Ability to apply an SCP to prevent member accounts from leaving the org
 * Apply Tag Policies across the hierachy
 
-<a name="3_7_1_2"></a>
-#### [↖](#3_7)[↑](#3_7_1_1)[↓](#3_7_1_3) Multi-account strategies
+<a name="3_8_1_2"></a>
+#### [↖](#3_8)[↑](#3_8_1_1)[↓](#3_8_1_3) Multi-account strategies
 * Create accounts per department, per cost center, per dev/test/prod, based on regulatory restrictions (using SCP), for better resource isolation (ex: VPC), to have separate per-account service limits, isolated account for logging,
 * "Multi account" vs "one account, multi VPC"
 * Use tagging standards for billing purposes
@@ -707,8 +745,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 * Send CloudWatch logs to central logging account
 * Establish cross account roles for admin purposes
 
-<a name="3_7_1_3"></a>
-#### [↖](#3_7)[↑](#3_7_1_2)[↓](#3_7_2) Best Practices
+<a name="3_8_1_3"></a>
+#### [↖](#3_8)[↑](#3_8_1_2)[↓](#3_8_2) Best Practices
 * For the management account
 	* Use the management account only for tasks that require the management account
 	* Use a group email address for the management account's root user
@@ -728,8 +766,8 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 	* Use an SCP to restrict what the root user in your member accounts can do
 	* Apply controls to monitor access to the root user credentials
 
-<a name="3_7_2"></a>
-### [↖](#3_7)[↑](#3_7_1_3)[↓](#3_7_3) Service Control Policies
+<a name="3_8_2"></a>
+### [↖](#3_8)[↑](#3_8_1_3)[↓](#3_8_3) Service Control Policies
 Service control policies (SCPs) are one type of policy that you can use to manage your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization, allowing you to ensure your accounts stay within your organization’s access control guidelines. SCPs are available only in an organization that has all features enabled. SCPs aren't available if your organization has enabled only the consolidated billing features. SCPs do *not* apply for the management account itself.
 * Whitelist or blacklist IAM actions
   * Applied at the Root, OU or Account level
@@ -744,34 +782,35 @@ Service control policies (SCPs) are one type of policy that you can use to manag
   * Enforce PCI compliance by explicitly disabling services
 * SCPs do **not** affect any service-linked role.
 	* Service-linked roles enable other AWS services to integrate with AWS Organizations and can't be restricted by SCPs.
+* AWS strongly recommends that you don't attach SCPs to the root of your organization as this may impact the policies on child accounts and possibly lockout key features.
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
-<a name="3_7_3"></a>
-### [↖](#3_7)[↑](#3_7_2)[↓](#3_7_4) Tag Policies
+<a name="3_8_3"></a>
+### [↖](#3_8)[↑](#3_8_2)[↓](#3_8_4) Tag Policies
 Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged.
 
-<a name="3_7_4"></a>
-### [↖](#3_7)[↑](#3_7_3)[↓](#3_7_5) Reserved Instances
+<a name="3_8_4"></a>
+### [↖](#3_8)[↑](#3_8_3)[↓](#3_8_5) Reserved Instances
 * For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
 * This means that all accounts in the organization can receive the hourly cost benefit of Reserved Instances that are purchased by any other account.
 * The management account of an organization can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the management account
 * This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 * To share an RI or Savings Plans discount with an account, both accounts must have sharing turned on.
 
-<a name="3_7_5"></a>
-### [↖](#3_7)[↑](#3_7_4)[↓](#3_8) Trusted Access
+<a name="3_8_5"></a>
+### [↖](#3_8)[↑](#3_8_4)[↓](#3_9) Trusted Access
 You can use trusted access to enable a supported AWS service that you specify, called the trusted service, to perform tasks in your organization and its accounts on your behalf. This involves granting permissions to the trusted service but does not otherwise affect the permissions for IAM users or roles.
 * When you enable access, the trusted service can create an IAM role called a service-linked role in every account in your organization whenever that role is needed.
 
 ---
 
-<a name="3_8"></a>
-## [↖](#top)[↑](#3_7_5)[↓](#3_8_1) AWS Resource Access Manager
+<a name="3_9"></a>
+## [↖](#top)[↑](#3_8_5)[↓](#3_9_1) AWS Resource Access Manager
 <!-- toc_start -->
-* [Overview](#3_8_1)
+* [Overview](#3_9_1)
 <!-- toc_end -->
-<a name="3_8_1"></a>
-### [↖](#3_8)[↑](#3_8)[↓](#3_9) Overview
+<a name="3_9_1"></a>
+### [↖](#3_9)[↑](#3_9)[↓](#4) Overview
 AWS RAM lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
 * Avoids resource duplication
 * Key resources that can be shared
@@ -793,35 +832,6 @@ AWS RAM lets you share your resources with any AWS account or through AWS Organi
   * License Manager Configurations
 * Can enable trusted access with AWS Organizations via CLI command
 * On AWS: <a href="https://aws.amazon.com/ram/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ram/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ram/latest/userguide/what-is.html" target="_blank">User Guide</a>
-
----
-
-<a name="3_9"></a>
-## [↖](#top)[↑](#3_8_1)[↓](#3_9_1) AWS Single Sign-On
-<!-- toc_start -->
-* [Overview](#3_9_1)
-<!-- toc_end -->
-
-<a name="3_9_1"></a>
-### [↖](#3_9)[↑](#3_9)[↓](#4) Overview
-AWS Single Sign-On is a cloud-based single sign-on (SSO) service that makes it easy to centrally manage SSO access to all of your AWS accounts and cloud applications. Specifically, it helps you manage SSO access and user permissions across all your AWS accounts in AWS Organizations. AWS SSO also helps you manage access and permissions to commonly used third-party software as a service (SaaS) applications, AWS SSO-integrated applications as well as custom applications that support Security Assertion Markup Language (SAML) 2.0. AWS SSO includes a user portal where your end-users can find and access all their assigned AWS accounts, cloud applications, and custom applications in one place.
-* Centrally manage Single Sign-On to access multiple accounts and 3rd-party business applications.
-  * No need for custom IdP login portal, AWS SSO communicates directly with SAML-compatible login portal
-* Integrated with AWS Organizations
-* Supports SAML 2.0 markup
-* Integration with on-premises Active Directory
-  * Standalone AWS Managed Microsoft AD
-  * AD Connector to on-premises AD
-  * AWS Managed Microsoft AD with two-way forest trust with on-premises AD
-* Centralized permission management
-* Centralized auditing with CloudTrail
-* Uses exactly one of these identity sources
-	* **AWS SSO identity store** – When you enable AWS SSO for the first time, it is automatically configured with an AWS SSO identity store as your default identity source. This is where you create your users and groups, and assign their level of access to your AWS accounts and applications.
-	* **Active Directory** – Choose this option if you want to continue managing users in either your self-managed Active Directory (AD) or your AWS Managed Microsoft AD directory using AWS Directory Service.
-	* **External identity provider** – Choose this option if you prefer to manage users in an external identity provider (IdP) such as Okta or Azure Active Directory.
-* Does **not** help with federated access from mobile applications, supports single sign-on to business applications through web browsers only.
-* Does **not** support OpenID Connect
-* On AWS: <a href="https://aws.amazon.com/single-sign-on/" target="_blank">Service</a> - <a href="https://aws.amazon.com/single-sign-on/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html" target="_blank">User Guide</a>
 
 ---
 
@@ -2371,8 +2381,9 @@ Client-side|Server-side|.
   * [Terminology](#5_9_1_1)
 * [ How it works](#5_9_2)
   * [Basic Flow](#5_9_2_1)
-  * [Zone File & Records](#5_9_2_2)
-  * [Route 53 Routing Policies](#5_9_2_3)
+  * [Resolving DNS queries between VPCs and your network](#5_9_2_2)
+  * [Zone File & Records](#5_9_2_3)
+  * [Route 53 Routing Policies](#5_9_2_4)
 * [Health Checks with Route 53](#5_9_3)
   * [Trigger automated DNS failover](#5_9_3_1)
   * [Setup](#5_9_3_2)
@@ -2419,7 +2430,19 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
 * Client requests Route 53, receives A record (host name to ip4) and TTL, client requests IP address from A record
 
 <a name="5_9_2_2"></a>
-#### [↖](#5_9)[↑](#5_9_2_1)[↓](#5_9_2_3) Zone File & Records
+#### [↖](#5_9)[↑](#5_9_2_1)[↓](#5_9_2_3) Resolving DNS queries between VPCs and your network
+When you create a VPC using Amazon VPC, **Route 53 Resolver** automatically answers DNS queries for local VPC domain names for EC2 instances (ec2-192-0-2-44.compute-1.amazonaws.com) and records in private hosted zones (acme.example.com). For all other domain names, Resolver performs recursive lookups against public name servers.
+
+You also can integrate DNS resolution between Resolver and DNS resolvers on your network by configuring forwarding rules. Your network can include any network that is reachable from your VPC, such as the following:
+* The VPC itself
+* Another peered VPC
+* An on-premises network that is connected to AWS with AWS Direct Connect, a VPN, or a network address translation (NAT) gateway
+Before you start to forward queries, you create Resolver inbound and/or outbound endpoints in the connected VPC. These endpoints provide a path for inbound or outbound queries:
+* **Inbound endpoint**: DNS resolvers on your network can forward DNS queries to Route 53 Resolver via this endpoint
+* **Outbound endpoint**: Resolver conditionally forwards queries to resolvers on your network via this endpoint
+
+<a name="5_9_2_3"></a>
+#### [↖](#5_9)[↑](#5_9_2_2)[↓](#5_9_2_4) Zone File & Records
 Zone file stores records. Various records exists:
 
 Type|Definition|Example
@@ -2439,11 +2462,11 @@ Route 53 specific:
 	* Preferred choice over CNAME
 	* To route domain traffic to an ELB load balancer, use Amazon Route 53 to create an alias record that points to your load balancer. An alias record is a Route 53 extension to DNS. It's similar to a CNAME record, but you can create an alias record both for the root domain, such as example.com, and for subdomains, such as www.example.com. (You can create CNAME records only for subdomains).
 		* For EC2 instances, always use a Type A Record without an Alias.
-		* For ELB, Cloudfront and S3, always use a Type A Record with an Alias 
+		* For ELB, Cloudfront and S3, always use a Type A Record with an Alias
 		* For RDS, always use the CNAME Record with no Alias.
 
-<a name="5_9_2_3"></a>
-#### [↖](#5_9)[↑](#5_9_2_2)[↓](#5_9_3) Route 53 Routing Policies
+<a name="5_9_2_4"></a>
+#### [↖](#5_9)[↑](#5_9_2_3)[↓](#5_9_3) Route 53 Routing Policies
   * **Simple**
     * Default policy, typically used if only a single resource performs functionality
     * If multiple values are returned, one is picked at random *by the client*
@@ -2478,7 +2501,7 @@ Route 53 specific:
       * From there (in the regions) a *weighted* routing policy distributes traffic further
 
 <a name="5_9_3"></a>
-### [↖](#5_9)[↑](#5_9_2_3)[↓](#5_9_3_1) Health Checks with Route 53
+### [↖](#5_9)[↑](#5_9_2_4)[↓](#5_9_3_1) Health Checks with Route 53
 <a name="5_9_3_1"></a>
 #### [↖](#5_9)[↑](#5_9_3)[↓](#5_9_3_2) Trigger automated DNS failover
 * Monitor an **endpoint** (application, server, other AWS resource)
@@ -4530,8 +4553,8 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
 
 ---
 
-<a name="16_11"></a>
-## [↖](#top)[↑](#16_10_1) AWS Data Pipeline
+<a name="10_8"></a>
+## [↖](#top)[↑](#10_7_1)[↓](#10_9) AWS Data Pipeline
 AWS Data Pipeline is a web service that helps you reliably process and move data between different AWS compute and storage services, as well as on-premises data sources, at specified intervals. With AWS Data Pipeline, you can regularly access your data where it’s stored, transform and process it at scale, and efficiently transfer the results to AWS services such as Amazon S3, Amazon RDS, Amazon DynamoDB, and Amazon EMR.
 
 AWS Data Pipeline helps you easily create complex data processing workloads that are fault tolerant, repeatable, and highly available. You don’t have to worry about ensuring resource availability, managing inter-task dependencies, retrying transient failures or timeouts in individual tasks, or creating a failure notification system. AWS Data Pipeline also allows you to move and process data that was previously locked up in on-premises data silos.
@@ -4540,22 +4563,22 @@ AWS Data Pipeline helps you easily create complex data processing workloads that
 
 ---
 
-<a name="10_8"></a>
-## [↖](#top)[↑](#10_7_1)[↓](#10_8_1) Big Data Architecture
+<a name="10_9"></a>
+## [↖](#top)[↑](#10_8)[↓](#10_9_1) Big Data Architecture
 <!-- toc_start -->
-* [Analytics Layer](#10_8_1)
-* [Big Data Ingestion](#10_8_2)
-* [Comparison of warehousing technologies](#10_8_3)
+* [Analytics Layer](#10_9_1)
+* [Big Data Ingestion](#10_9_2)
+* [Comparison of warehousing technologies](#10_9_3)
 <!-- toc_end -->
-<a name="10_8_1"></a>
-### [↖](#10_8)[↑](#10_8)[↓](#10_8_2) Analytics Layer
+<a name="10_9_1"></a>
+### [↖](#10_9)[↑](#10_9)[↓](#10_9_2) Analytics Layer
 * Amazon EMR
 * Redshift/Redshift Spectrum
 * Athena
 * QuickSight (visualization)
 
-<a name="10_8_2"></a>
-### [↖](#10_8)[↑](#10_8_1)[↓](#10_8_3) Big Data Ingestion
+<a name="10_9_2"></a>
+### [↖](#10_9)[↑](#10_9_1)[↓](#10_9_3) Big Data Ingestion
 * Kinesis Data Streams
 * Kinesis Firehose (every 1 minute)
 * S3
@@ -4564,8 +4587,8 @@ AWS Data Pipeline helps you easily create complex data processing workloads that
 * S3
 * QuickSight
 
-<a name="10_8_3"></a>
-### [↖](#10_8)[↑](#10_8_2)[↓](#11) Comparison of warehousing technologies
+<a name="10_9_3"></a>
+### [↖](#10_9)[↑](#10_9_2)[↓](#11) Comparison of warehousing technologies
 * EMR
   * Need to use Big Data tools such as Apache Hive, Spark
   * One long-running cluster, many jobs, with auto-scaling, or one cluster per job?
@@ -4583,7 +4606,7 @@ AWS Data Pipeline helps you easily create complex data processing workloads that
 ---
 
 <a name="11"></a>
-# [↖](#top)[↑](#10_8_3)[↓](#11_1) Monitoring
+# [↖](#top)[↑](#10_9_3)[↓](#11_1) Monitoring
 
 <a name="11_1"></a>
 ## [↖](#top)[↑](#11)[↓](#11_1_1) CloudWatch (Core Topic)
@@ -4766,7 +4789,8 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 <!-- toc_start -->
 * [Overview](#12_1_1)
 * [Architecture models](#12_1_2)
-* [Blue/Green Deployment](#12_1_3)
+* [Deployment Types](#12_1_3)
+* [Blue/Green Deployment](#12_1_4)
 <!-- toc_end -->
 
 <a name="12_1_1"></a>
@@ -4817,10 +4841,29 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
   * Web Tier (LB + ASG + EC2)
   * Worker Tier (SQS + EC2)
 * Example: processing a video, generating a zip file, etc
-* You can define periodic tasks in a file `cron.yaml`
+* You can define periodic tasks in a file `cron.yaml**`
 
 <a name="12_1_3"></a>
-### [↖](#12_1)[↑](#12_1_2)[↓](#12_2) Blue/Green Deployment
+### [↖](#12_1)[↑](#12_1_2)[↓](#12_1_4) Deployment Types
+An **in-place upgrade** involves performing application updates on live Amazon EC2 instances. A **disposable upgrade**, on the other hand, involves rolling out a new set of EC2 instances by terminating older instances.
+* Single instance deploys
+* HA with Load Balancer
+  * *All at once*
+  * *Rolling update*
+  * *Rolling with additional batches*
+  * *Immutable*
+    * Adds new Auto Scaling Group to existing environment
+  * *Blue/Green* - not really supported, however
+		* Not a “direct feature” of Elastic Beanstalk, but can achieve Zero downtime and release facility
+		* Create a new “stage” environment and deploy v2 there
+		* The new environment (green) can be validated independently and roll back if issues
+		* Route 53 can be setup using weighted policies to redirect a little bit of traffic to the stage environment
+		* Use Elastic Beanstalk's “swap URLs” feature (DNS swap) when done with the environment test
+  * *Traffic Splitting* via Application Load Balancer
+* Can configure Elastic Beanstalk to *ignore health checks* during deployments
+
+<a name="12_1_4"></a>
+### [↖](#12_1)[↑](#12_1_3)[↓](#12_2) Blue/Green Deployment
 * Not a “direct feature” of Elastic Beanstalk, but can achieve Zero downtime and release facility
 * Create a new “stage” environment and deploy v2 there
 * The new environment (green) can be validated independently and roll back if issues
@@ -4830,7 +4873,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 ---
 
 <a name="12_2"></a>
-## [↖](#top)[↑](#12_1_3)[↓](#12_2_1) OpsWorks Stacks (Core Topic)
+## [↖](#top)[↑](#12_1_4)[↓](#12_2_1) OpsWorks Stacks (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_2_1)
 * [Components](#12_2_2)
@@ -5762,15 +5805,16 @@ Summary:
 
 ---
 
-## AWS Cloud Adoption Readiness Tool (CART)
+<a name="14_8"></a>
+## [↖](#top)[↑](#14_7)[↓](#14_9) AWS Cloud Adoption Readiness Tool (CART)
 Helps organizations of all sizes develop efficient and effective plans for cloud adoption and enterprise cloud migrations. This 16-question online survey and assessment report details your cloud migration readiness across six perspectives including business, people, process, platform, operations, and security. Once you complete a CART survey, you can provide your contact details to download a customized cloud migration assessment that charts your readiness and what you can do to improve it. This tool is designed to help organizations assess their progress with cloud adoption and identify gaps in organizational skills and processes.
 * On AWS
 	* <a href="https://cloudreadiness.amazonaws.com/#/cart" target="_blank">Tool</a>
 
 ---
 
-<a name="14_8"></a>
-## [↖](#top)[↑](#14_7)[↓](#15) Disaster Recovery
+<a name="14_9"></a>
+## [↖](#top)[↑](#14_8)[↓](#15) Disaster Recovery
 * DR is about preparing for and recovering from a disaster
 * *Recovery Point Objective* - RPO
   * How often do you run backups? How much data will be lost (since last backup)
@@ -5795,7 +5839,7 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 ---
 
 <a name="15"></a>
-# [↖](#top)[↑](#14_8)[↓](#15_1) VPC
+# [↖](#top)[↑](#14_9)[↓](#15_1) VPC
 
 <a name="15_1"></a>
 ## [↖](#top)[↑](#15)[↓](#15_1_1) Virtual Private Cloud (VPC)
@@ -5900,6 +5944,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * *Stateless*
   * Support *allow* and *deny* rules
   * Can block IP addresses (Security groups can't)
+	* **Cannot** block URLs (forward proxies can)
 * **Security Groups**
   * Acts as a virtual firewall to control inbound and outbound traffic to instances
   * Acts on instance level, not subnet level
@@ -6455,8 +6500,20 @@ to protect data stored in Amazon S3.
 
 ---
 
-## Amazon Pinpoint
+<a name="16_11"></a>
+## [↖](#top)[↑](#16_10_1)[↓](#16_12) Amazon Pinpoint
 Amazon Pinpoint is a flexible and scalable outbound and inbound marketing communications service. You can connect with customers over channels like email, SMS, push, or voice. Amazon Pinpoint is easy to set up, easy to use, and is flexible for all marketing communication scenarios. Segment your campaign audience for the right customer and personalize your messages with the right content. Delivery and campaign metrics in Amazon Pinpoint measure the success of your communications. Amazon Pinpoint can grow with you and scales globally to billions of messages per day across channels.
 
 * On AWS: <a href="https://aws.amazon.com/pinpoint/" target="_blank">Service</a> - <a href="https://aws.amazon.com/pinpoint/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/pinpoint/" target="_blank">User Guide</a>
+
+---
+
+<a name="16_12"></a>
+## [↖](#top)[↑](#16_11) Private Marketplace
+
+A private marketplace controls which products users in your AWS account, such as business users and engineering teams, can procure from AWS Marketplace. It is built on top of AWS Marketplace, and enables your administrators to create and customize curated digital catalogs of approved independent software vendors (ISVs) and products that conform to their in-house policies. Users in your AWS account can find, buy, and deploy approved products from your private marketplace, and ensure that all available products comply with your organization’s policies and standards.
+
+* On AWS: <a href="https://aws.amazon.com/marketplace/features/privatemarketplace" target="_blank">Service</a> - <a href="https://aws.amazon.com/marketplace/features/privatemarketplace/resources" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/marketplace/latest/buyerguide/private-marketplace.html" target="_blank">User Guide</a>
+
+---
 
