@@ -782,6 +782,7 @@ Service control policies (SCPs) are one type of policy that you can use to manag
   * Enforce PCI compliance by explicitly disabling services
 * SCPs do **not** affect any service-linked role.
 	* Service-linked roles enable other AWS services to integrate with AWS Organizations and can't be restricted by SCPs.
+* Attaching an SCP to an AWS Organizations entity **just defines a guardrail** for what actions the principals can perform. You still need to attach identity-based or resource-based policies to principals or resources in your organization's accounts to actually grant permission to them.
 * AWS strongly recommends that you don't attach SCPs to the root of your organization as this may impact the policies on child accounts and possibly lockout key features.
 * On AWS: <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html" target="_blank">IAM policy evaluation logic</a>
 
@@ -4413,6 +4414,7 @@ There is no additional charge for AWS Batch. You only pay for the AWS resources 
 Amazon EMR is the industry-leading cloud big data platform for processing vast amounts of data using open source tools such as Apache Spark, Apache Hive, Apache HBase, Apache Flink, Apache Hudi, and Presto. Amazon EMR makes it easy to set up, operate, and scale your big data environments by automating time-consuming tasks like provisioning capacity and tuning clusters. With EMR you can run petabyte-scale analysis at less than half of the cost of traditional on-premises solutions and over 3x faster than standard Apache Spark. You can run workloads on Amazon EC2 instances, on Amazon Elastic Kubernetes Service (EKS) clusters, or on-premises using EMR on AWS Outposts.
 * EMR stands for “Elastic MapReduce”
 * EMR helps creating Hadoop clusters (Big Data) to analyze and process vast amount of data
+	* Can **not** analyze real-time data (-> Kinesis)
 * The clusters can be made of hundreds of EC2 instances
 * Also supports Apache Spark, HBase, Presto, Flink...
 * EMR takes care of all the provisioning and configuration of EC2
@@ -5639,6 +5641,7 @@ The *Volume Gateway* presents your applications storage volumes using the `iSCSI
 * Up to 32 volumes per gateway
 	* Each volume up to 32TB in cached mode (1PB per Gateway)
 	* Each volume up to 16 TB in stored mode (512TB per Gateway)
+* Uses Challenge-Handshake Authentication Protocol (CHAP) to authenticate iSCSI and initiator connections. CHAP provides protection against playback attacks by requiring authentication to access storage volume targets.
 
 <a name="14_3_2_3"></a>
 #### [↖](#14_3)[↑](#14_3_2_2)[↓](#14_4) Tape gateway (VTL)
@@ -6002,7 +6005,8 @@ Security groups per region|500
 <!-- toc_end -->
 * Connect VPCs through direct network routing
 	* Cross-region, cross-account
-* Cannot have matching or overlapping CIDR blocks
+* Should not have matching or overlapping CIDR blocks
+	* If you have a VPC peered with multiple VPCs that have overlapping or matching CIDR blocks, ensure that your route tables are configured to avoid sending response traffic from your VPC to the incorrect VPC.
 * Allows instances to communicate with each other as if they were in the same network
 * Peering is in star configuration with 1 central VPC. No transitive peering.
 	* Must be established for each VPC that need to communicate with one another
