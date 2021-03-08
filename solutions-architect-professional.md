@@ -1321,6 +1321,7 @@ AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS r
   * Protects from common attack - SQL injection and Cross-Site Scripting (XSS)
   * Size constraints, Geo match
   * Rate-based rules (to count occurrences of events)
+	* Web ACL can be associated with CloudFront distribution
 * On AWS: <a href="https://aws.amazon.com/waf/" target="_blank">Service</a> - <a href="https://aws.amazon.com/waf/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html" target="_blank">User Guide</a>
 
 <a name="4_10_5"></a>
@@ -2353,7 +2354,7 @@ Client-side|Server-side|.
   * Enable CloudWatch logging at the Stage level (with Log Level – ERROR, INFO)
   * Can log full requests/responses data
   * Can send API Gateway Access Logs (customizable)
-  * Can send logs directly into Kinesis Data Firehose (as an alternative to CW logs)
+  * Can send logs directly into Kinesis Data Firehose (as an alternative to CloudWatch Logs)
 * CloudWatch Metrics
   * Metrics are by stage, possibility to enable detailed metrics
   * IntegrationLatency, Latency, CacheHitCount, CacheMissCount
@@ -2389,7 +2390,7 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
   * Route 53 sends automated requests over the internet to a resource, such as a web server, to verify that it's reachable, available, and functional. You also can choose to receive notifications when a resource becomes unavailable and choose to route internet traffic away from unhealthy resources.
 * Private DNS:
   * Can use Route 53 for internal private DNS
-  * Must enable the VPC settings enableDnsHostNames and enableDnsSupport
+  * Must enable the VPC settings `enableDnsHostNames` and `enableDnsSupport`
 * DNSSEC (protect against Man In the Middle attack):
   * Amazon Route 53 supports DNSSEC for domain registration
   * ~~Route 53 does not support DNSSEC for DNS service~~
@@ -2472,7 +2473,7 @@ Route 53 specific:
   * **Multivalue Answer Routing**
     * Multivalue answer routing lets you configure Amazon Route 53 to return multiple values, such as IP addresses for your web servers, in response to DNS queries. You can specify multiple values for almost any record, but multivalue answer routing also lets you check the health of each resource, so Route 53 returns only values for healthy resources. It's not a substitute for a load balancer, but the ability to return multiple health-checkable IP addresses is a way to use DNS to improve availability and load balancing.
   * **Complex/Nested records**
-    * Can combine different routing policies by routing to alias records that point to route 53 again.
+    * Can combine different routing policies by routing to alias records that point to Route 53 again.
       * E.g. can use *latency* policy to route into certain region
       * From there (in the regions) a *weighted* routing policy distributes traffic further
 
@@ -2483,7 +2484,7 @@ Route 53 specific:
 * Monitor an **endpoint** (application, server, other AWS resource)
 * Monitor other **health checks** (calculated health checks)
 * Monitor **CloudWatch alarms** (full control !!) – e.g. throttles of DynamoDB, alarms on RDS, custom metrics, etc
-* Health Checks are integrated with CW metric
+* Health Checks are integrated with CloudWatch metric
 
 <a name="5_9_3_2"></a>
 #### [↖](#5_9)[↑](#5_9_3_1)[↓](#5_9_3_3) Setup
@@ -2492,7 +2493,7 @@ Route 53 specific:
 * Calculated health checks
   * Create separate individual health checks
   * Specify how many of the health checks need to pass to make the parent pass
-* Health Checks can trigger CW Alarms
+* Health Checks can trigger CloudWatch Alarms
 
 <a name="5_9_3_3"></a>
 #### [↖](#5_9)[↑](#5_9_3_2)[↓](#5_9_4) Private Hosted Zones
@@ -2846,6 +2847,7 @@ Amazon Simple Storage Service (S3) is object storage with a simple web service i
 	* Ids cannot changed.
 	* As long as versioning is *disabled*, id is set to `null`
 	* Once enabled, versioning can only be suspended (but not disabled)
+		* `null` is the version id of the first version after enabling
 	* `PUT` creates a new version, `GET` returns the latest version. Specific versions can be requested.
 	* `DELETE` (without version) marks latest version as deleted and returns a `404` for subsequent `GET`s.
 		* Older versions (pre-delete) can still be requested.
@@ -4094,7 +4096,7 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
   * Lambda
   * Emails
   * SMS messages
-  * Mobile Notifications (SNS Mobile Push - Android, Apple, Fire OS, Windows...)
+  * Mobile Notifications (**SNS Mobile Push** - Android, Apple, Fire OS, Windows...)
 * On AWS: <a href="https://aws.amazon.com/sns" target="_blank">Service</a> - <a href="https://aws.amazon.com/sns/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/sns" target="_blank">User Guide</a>
 
 <a name="9_5_2"></a>
@@ -4525,6 +4527,16 @@ Amazon QuickSight is a fast business analytics service to build visualizations, 
 * Integrates with Athena, Redshift, EMR, RDS, ...
 * On AWS
   * <a href="https://aws.amazon.com/quicksight/" target="_blank">Service</a> - <a href="https://aws.amazon.com/quicksight/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/quicksight/" target="_blank">User Guide</a>
+
+---
+
+<a name="16_11"></a>
+## [↖](#top)[↑](#16_10_1) AWS Data Pipeline
+AWS Data Pipeline is a web service that helps you reliably process and move data between different AWS compute and storage services, as well as on-premises data sources, at specified intervals. With AWS Data Pipeline, you can regularly access your data where it’s stored, transform and process it at scale, and efficiently transfer the results to AWS services such as Amazon S3, Amazon RDS, Amazon DynamoDB, and Amazon EMR.
+
+AWS Data Pipeline helps you easily create complex data processing workloads that are fault tolerant, repeatable, and highly available. You don’t have to worry about ensuring resource availability, managing inter-task dependencies, retrying transient failures or timeouts in individual tasks, or creating a failure notification system. AWS Data Pipeline also allows you to move and process data that was previously locked up in on-premises data silos.
+
+* On AWS: <a href="https://aws.amazon.com/datapipeline/" target="_blank">Service</a> - <a href="https://aws.amazon.com/datapipeline/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/data-pipeline/index.html" target="_blank">User Guide</a>
 
 ---
 
@@ -5750,6 +5762,13 @@ Summary:
 
 ---
 
+## AWS Cloud Adoption Readiness Tool (CART)
+Helps organizations of all sizes develop efficient and effective plans for cloud adoption and enterprise cloud migrations. This 16-question online survey and assessment report details your cloud migration readiness across six perspectives including business, people, process, platform, operations, and security. Once you complete a CART survey, you can provide your contact details to download a customized cloud migration assessment that charts your readiness and what you can do to improve it. This tool is designed to help organizations assess their progress with cloud adoption and identify gaps in organizational skills and processes.
+* On AWS
+	* <a href="https://cloudreadiness.amazonaws.com/#/cart" target="_blank">Tool</a>
+
+---
+
 <a name="14_8"></a>
 ## [↖](#top)[↑](#14_7)[↓](#15) Disaster Recovery
 * DR is about preparing for and recovering from a disaster
@@ -5767,8 +5786,8 @@ Cloud Region A|Cloud Region B|.
 .|RPO|RTO|Costs|Comment|What to do for DR
 -|-|-|-|-|-
 Backup & Restore|High|High|$|Regular backups|Restore
-Pilot Light|Medium|Medium|$$|Core system is always running|Add non-critical systems
-Warm Standby|Low|Low|$$$|Full system at minimum size always running|Add resources
+Pilot Light|Medium|Medium|$$|Core system is always running, but cannot process requests with additional action being taken|Add non-critical systems
+Warm Standby|Low|Low|$$$|Full system at minimum size always running, can handle traffic immediately (at reduced capacity)|Add resources
 Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always running|Only switch traffic
 
 * <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html" target="_blank">On AWS</a>
@@ -6057,12 +6076,12 @@ A VPC endpoint policy is an IAM resource policy that you attach to an endpoint w
 <!-- toc_end -->
 <a name="15_5_1"></a>
 ### [↖](#15_5)[↑](#15_5)[↓](#15_6) Overview
-AWS PrivateLink provides private connectivity between VPCs, AWS services, and your on-premises networks, without exposing your traffic to the public internet. AWS PrivateLink makes it easy to connect services across different accounts and VPCs to significantly simplify your network architecture.
+AWS PrivateLink enables you to connect to some AWS services, services hosted by other AWS accounts (referred to as endpoint services), and supported AWS Marketplace partner services, via private IP addresses in your VPC. The interface endpoints are created directly inside of your VPC, using elastic network interfaces and IP addresses in your VPC’s subnets. That means that VPC Security Groups can be used to manage access to the endpoints.
 
-Interface VPC endpoints, powered by AWS PrivateLink, connect you to services hosted by AWS Partners and supported solutions available in AWS Marketplace. By powering Gateway Load Balancer endpoints, AWS PrivateLink brings the same level of security and performance to your virtual network appliances or custom traffic inspection logic.
+We recommend this approach if you want to use services offered by another VPC securely within AWS network, with all network traffic staying on the global AWS backbone and never traverses the public internet.
 * Most secure & scalable way to expose a service to 1000s of VPC (own or other accounts)
 * Does not require VPC peering, internet gateway, NAT, route tables...
-* Requires a network load balancer (Service VPC) and ENI (Customer VPC)
+* Requires a NLB (Service VPC) and PrivateLink Endpoint/ENI (Customer VPC)
 * If the NLB is in multiple AZ, and the ENI in multiple AZ, the solution is fault tolerant!
 * Scenario:
 	* Secure and Scale Web Filtering using Explicit Proxy
@@ -6436,11 +6455,8 @@ to protect data stored in Amazon S3.
 
 ---
 
-<a name="16_11"></a>
-## [↖](#top)[↑](#16_10_1) AWS Data Pipeline
+## Amazon Pinpoint
+Amazon Pinpoint is a flexible and scalable outbound and inbound marketing communications service. You can connect with customers over channels like email, SMS, push, or voice. Amazon Pinpoint is easy to set up, easy to use, and is flexible for all marketing communication scenarios. Segment your campaign audience for the right customer and personalize your messages with the right content. Delivery and campaign metrics in Amazon Pinpoint measure the success of your communications. Amazon Pinpoint can grow with you and scales globally to billions of messages per day across channels.
 
-AWS Data Pipeline is a web service that helps you reliably process and move data between different AWS compute and storage services, as well as on-premises data sources, at specified intervals. With AWS Data Pipeline, you can regularly access your data where it’s stored, transform and process it at scale, and efficiently transfer the results to AWS services such as Amazon S3, Amazon RDS, Amazon DynamoDB, and Amazon EMR.
+* On AWS: <a href="https://aws.amazon.com/pinpoint/" target="_blank">Service</a> - <a href="https://aws.amazon.com/pinpoint/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/pinpoint/" target="_blank">User Guide</a>
 
-AWS Data Pipeline helps you easily create complex data processing workloads that are fault tolerant, repeatable, and highly available. You don’t have to worry about ensuring resource availability, managing inter-task dependencies, retrying transient failures or timeouts in individual tasks, or creating a failure notification system. AWS Data Pipeline also allows you to move and process data that was previously locked up in on-premises data silos.
-
-* On AWS: <a href="https://aws.amazon.com/datapipeline/" target="_blank">Service</a> - <a href="https://aws.amazon.com/datapipeline/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/data-pipeline/index.html" target="_blank">User Guide</a>
