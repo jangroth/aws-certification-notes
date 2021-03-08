@@ -4155,13 +4155,13 @@ Amazon Kinesis makes it easy to collect, process, and analyze real-time, streami
 <a name="10_1_2_1"></a>
 #### [↖](#10_1)[↑](#10_1_2)[↓](#10_1_2_2) Overview
 Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time data streaming service. KDS can continuously capture gigabytes of data per second from hundreds of thousands of sources such as website clickstreams, database event streams, financial transactions, social media feeds, IT logs, and location-tracking events. The data collected is available in milliseconds to enable real-time analytics use cases such as real-time dashboards, real-time anomaly detection, dynamic pricing, and more.
-* Streams are divided in ordered *Shards*/partitions
+* Streams are divided in ordered *shards*/partitions
 * Data retention is 24 hours by default, can go up to 365 days (previously: 7 days)
 * Ability to reprocess/replay data
 * Multiple applications can consume the same stream
   * This is not possible with e.g. SQS
 * Real-time processing with scale of throughput
-  * The more Shards, the more scale
+  * The more shards, the more scale
 * Once data is inserted in Kinesis, it can’t be deleted (immutability)
   * Another difference to SQS
 * On AWS: <a href="https://aws.amazon.com/kinesis/data-streams" target="_blank">Service</a> - <a href="https://aws.amazon.com/kinesis/data-streams/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/kinesis/index.html" target="_blank">User Guide</a>
