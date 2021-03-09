@@ -266,7 +266,7 @@ A collection of IAM users. Groups let you specify permissions for multiple users
 An IAM identity that you can create in your account that has specific permissions. An IAM role has some similarities to an IAM user. Roles and users are both AWS identities with permissions policies that determine what the identity can and cannot do in AWS. However, instead of being uniquely associated with one person, a role is intended to be assumable by anyone who needs it. Also, a role does not have standard long-term credentials such as a password or access keys associated with it. Instead, when you assume a role, it provides you with temporary security credentials for your role session, provided by STS.
 * **AWS service role** - A role that a service assumes to perform actions in your account on your behalf. When you set up some AWS service environments, you must define a role for the service to assume. This service role must include all the permissions required for the service to access the AWS resources that it needs. Service roles vary from service to service, but many allow you to choose your permissions, as long as you meet the documented requirements for that service. Service roles provide access only within your account and cannot be used to grant access to services in other accounts. You can create, modify, and delete a service role from within IAM.
 	* **AWS service role for an EC2 instance** - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account. This role is assigned to the EC2 instance when it is launched. Applications running on that instance can retrieve temporary security credentials and perform actions that the role allows.
-	* **AWS service-linked role** - A unique type of service role that is linked directly to an AWS service. Service-linked roles are **predefined by the service** and include all the permissions that the service requires to call other AWS services on your behalf. The linked service also defines how you create, modify, and delete a service-linked role. A service might automatically create or delete the role. It might allow you to create, modify, or delete the role as part of a wizard or process in the service. Or it might require that you use IAM to create or delete the role. Regardless of the method, service-linked roles make setting up a service easier because you don't have to manually add the necessary permissions.
+	* **AWS service-linked role** - A unique type of service role that is **linked directly** to an AWS service. Service-linked roles are **predefined by the service** and include all the permissions that the service requires to call other AWS services on your behalf. The linked service also defines how you create, modify, and delete a service-linked role. A service might automatically create or delete the role. It might allow you to create, modify, or delete the role as part of a wizard or process in the service. Or it might require that you use IAM to create or delete the role. Regardless of the method, service-linked roles make setting up a service easier because you don't have to manually add the necessary permissions.
 		* `aws iam create-service-linked-role --aws-service-name SERVICE-NAME.amazonaws.com`
 		* <a href="https://aws.amazon.com/blogs/security/introducing-an-easier-way-to-delegate-permissions-to-aws-services-service-linked-roles/" target="_blank">AWS Blog</a>
 * **Trust policy** - A JSON policy document in which you define the principals that you trust to assume the role. A role trust policy is a required resource-based policy that is attached to a role in IAM. The principals that you can specify in the trust policy include users, roles, accounts, and services.
@@ -1078,10 +1078,12 @@ With AWS Certificate Manager, you can quickly request a certificate, deploy it o
   * Load Balancers (including the ones created by EB)
   * CloudFront distributions
   * APIs on API Gateways
-* Possibility of creating public certificates
+* Possibility of creating **public** certificates
   * Must verify public DNS (verify that you own or control all of the domain names that you specified in your request)
   * Must be issued by a trusted public certificate authority (CA)
-* Possibility of creating private certificates
+  * Public certificates generated from ACM can be used on Amazon CloudFront, Elastic Load Balancing, or API Gateway but not directly on EC2 instances, unlike private certificates.
+  * Public certificates provisioned through AWS Certificate Manager are free
+* Possibility of creating **private** certificates
   * For your internal applications
   * You create your own private CA
   * Your applications must trust your private CA
@@ -1971,8 +1973,7 @@ process reads events from the queue and runs your function.
 
 <a name="5_6_4_2"></a>
 #### [↖](#5_6)[↑](#5_6_4_1)[↓](#5_6_4_3) Function Scaling
-* The first time you invoke your function, AWS Lambda creates an instance of the function and runs
-its handler method to process the event.
+* The first time you invoke your function, AWS Lambda creates an instance of the function and runs its handler method to process the event.
   * When the function returns a response, it sticks around to process additional events.
   * If you invoke the function again while the first event is being processed, Lambda creates another instance.
   * This continues until there are enough instances to serve all requests, or a concurrency limit is reached.
@@ -1986,6 +1987,9 @@ its handler method to process the event.
     * `3000` – US West (Oregon), US East (N. Virginia), Europe (Ireland)
     * `1000` – Asia Pacific (Tokyo), Europe (Frankfurt)
     * `500` – Other Regions
+* There are two types of concurrency available:
+  * **Reserved concurrency** – Reserved concurrency creates a pool of requests that can only be used by its function, and also prevents its function from using unreserved concurrency.
+  * **Provisioned concurrency** – Provisioned concurrency initializes a requested number of execution environments so that they are prepared to respond to your function's invocations.
 
 <a name="5_6_4_3"></a>
 #### [↖](#5_6)[↑](#5_6_4_2)[↓](#5_6_5) Logging, Monitoring and Troubleshooting
@@ -3133,15 +3137,16 @@ Elastic, only pay for used storage|Fixed, pay for provisioned storage|Elastic, o
 * [CloudFront vs S3 Cross Region Replication](#7_1_4)
 * [CloudFront Geo Restriction](#7_1_5)
 * [Signed URL/Signed Cookies](#7_1_6)
-  * [Trusted Signer](#7_1_6_1)
-* [Field-Level Encryption](#7_1_7)
-* [Caching](#7_1_8)
-  * [CloudFront Caching vs API Gateway Caching](#7_1_8_1)
-* [Lambda@Edge](#7_1_9)
-* [https](#7_1_10)
-  * [Scenario 1 (requires 2 certs)](#7_1_10_1)
-  * [Scenario 2 (doesn't work)](#7_1_10_2)
-  * [Scenario 2 (requires 1 cert)](#7_1_10_3)
+* [Restricting access to files in Amazon S3 buckets](#7_1_7)
+  * [Trusted Signer](#7_1_7_1)
+* [Field-Level Encryption](#7_1_8)
+* [Caching](#7_1_9)
+  * [CloudFront Caching vs API Gateway Caching](#7_1_9_1)
+* [Lambda@Edge](#7_1_10)
+* [https](#7_1_11)
+  * [Scenario 1 (requires 2 certs)](#7_1_11_1)
+  * [Scenario 2 (doesn't work)](#7_1_11_2)
+  * [Scenario 2 (requires 1 cert)](#7_1_11_3)
 <!-- toc_end -->
 <a name="7_1_1"></a>
 ### [↖](#7_1)[↑](#7_1)[↓](#7_1_2) Overview
@@ -3191,7 +3196,6 @@ ALB (-> EC2)|ALB must have public IP, EC2 can be private
 <a name="7_1_4"></a>
 ### [↖](#7_1)[↑](#7_1_3)[↓](#7_1_5) CloudFront vs S3 Cross Region Replication
 
-
 **CloudFront**|**S3 Cross Region Replication**
 -|-
 Global Edge network|Must be setup for each region you want replication to happen
@@ -3208,7 +3212,7 @@ Great for static content that must be available everywhere|Read only
 * Use case: Copyright Laws to control access to content
 
 <a name="7_1_6"></a>
-### [↖](#7_1)[↑](#7_1_5)[↓](#7_1_6_1) Signed URL/Signed Cookies
+### [↖](#7_1)[↑](#7_1_5)[↓](#7_1_7) Signed URL/Signed Cookies
 * You want to distribute paid shared content to premium users over the world
 * We can use CloudFront Signed URL/Cookie. We attach a policy with:
   * Includes URL expiration
@@ -3228,8 +3232,17 @@ Account wide key-pair, only the root can manage it|Uses the IAM key of the signi
 Can filter by IP, path, date, expiration|Limited lifetime
 Can leverage caching features|.
 
-<a name="7_1_6_1"></a>
-#### [↖](#7_1)[↑](#7_1_6)[↓](#7_1_7) Trusted Signer
+<a name="7_1_7"></a>
+### [↖](#7_1)[↑](#7_1_6)[↓](#7_1_7_1) Restricting access to files in Amazon S3 buckets
+You can optionally secure the content in your Amazon S3 bucket so that users can access it through CloudFront but cannot access it directly by using Amazon S3 URLs. This prevents someone from bypassing CloudFront and using the Amazon S3 URL to get content that you want to restrict access to. This step isn't required to use signed URLs, but we recommend it.
+
+* To require that users access your content through CloudFront URLs, you do the following tasks:
+  * Create a special CloudFront user called an **origin access identity** (OAI) and associate it with your CloudFront distribution.
+  * Give the origin access identity permission to read the files in your bucket.
+  * Remove permission for anyone else to use Amazon S3 URLs to read the files.
+
+<a name="7_1_7_1"></a>
+#### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8) Trusted Signer
 To create signed URLs or signed cookies, you need a signer. A signer is either a trusted key group that you create in CloudFront, or an AWS account that contains a CloudFront key pair.We recommend that you use trusted key groups, for the following reasons:
 
 * With CloudFront key groups, you don’t need to use the AWS account root user to manage the public keys for CloudFront signed URLs and signed cookies.
@@ -3238,13 +3251,13 @@ To create signed URLs or signed cookies, you need a signer. A signer is either a
 * When you use the AWS account root user to manage CloudFront key pairs, you can’t restrict what the root user can do or the conditions in which it can do them.
 * With CloudFront key groups, you can associate a higher number of public keys with your CloudFront distribution.
 
-<a name="7_1_7"></a>
-### [↖](#7_1)[↑](#7_1_6_1)[↓](#7_1_8) Field-Level Encryption
+<a name="7_1_8"></a>
+### [↖](#7_1)[↑](#7_1_7_1)[↓](#7_1_9) Field-Level Encryption
 * You can enforce secure end-to-end connections to origin servers by using HTTPS. Field-level encryption adds an additional layer of security that lets you protect specific data throughout system processing so that only certain applications can see it.
 * When you configure your CloudFront distribution, specify the set of fields in POST requests that you want to be encrypted, and the public key to use to encrypt them. You can encrypt up to 10 data fields in a request.
 
-<a name="7_1_8"></a>
-### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8_1) Caching
+<a name="7_1_9"></a>
+### [↖](#7_1)[↑](#7_1_8)[↓](#7_1_9_1) Caching
 * Cache based on
   * Headers
       * Strategy: Whitelist headers that should be cached on, ignore others
@@ -3257,15 +3270,15 @@ To create signed URLs or signed cookies, you need a signer. A signer is either a
   * Static distribution doesn't need complicated configuration
   * Dynamic distributions caches based on correct headers and cookies
 
-<a name="7_1_8_1"></a>
-#### [↖](#7_1)[↑](#7_1_8)[↓](#7_1_9) CloudFront Caching vs API Gateway Caching
+<a name="7_1_9_1"></a>
+#### [↖](#7_1)[↑](#7_1_9)[↓](#7_1_10) CloudFront Caching vs API Gateway Caching
 API Gateway now has two different kinds of endpoints. The original design is now called *edge optimized*, and the new option is called *regional*. Regional endpoints do not use front-end services from CloudFront, and may offer lower latency when accessed from EC2 within the same AWS region. All existing endpoints were categorized as edge-optimized when the new regional capability was rolled out. With a regional endpoint, the CloudFront-* headers are not present in the request, unless you use your own CloudFront distribution and whitelist those headers for forwarding to the origin.
 * Can deploy API Gateway in *regional mode* (comes with its own cache), *and* deploy a CloudFront distribution at the edge, that can have a cache too.
   * Allows for fine-grained control of caching
   * Many different options from here, could e.g. also disable API-Gateway cache
 
-<a name="7_1_9"></a>
-### [↖](#7_1)[↑](#7_1_8_1)[↓](#7_1_10) Lambda@Edge
+<a name="7_1_10"></a>
+### [↖](#7_1)[↑](#7_1_9_1)[↓](#7_1_11) Lambda@Edge
 * You have deployed a CDN using CloudFront
 * What if you wanted to run a global AWS Lambda alongside?
 * Or how to implement request filtering before reaching your application?
@@ -3295,8 +3308,8 @@ API Gateway now has two different kinds of endpoints. The original design is now
   * User Prioritization, User Tracking and Analytics
   * Increasing the cache hit ratio (by modifying headers, normalize user-agent...)
 
-<a name="7_1_10"></a>
-### [↖](#7_1)[↑](#7_1_9)[↓](#7_1_10_1) https
+<a name="7_1_11"></a>
+### [↖](#7_1)[↑](#7_1_10)[↓](#7_1_11_1) https
 * A viewer submits an HTTPS request to CloudFront. There's some SSL/TLS negotiation here between the viewer and CloudFront. In the end, the viewer submits the request in an encrypted format.
 * If the object is in the CloudFront edge cache, CloudFront encrypts the response and returns it to the viewer, and the viewer decrypts it.
 * If the object is not in the CloudFront cache, CloudFront performs SSL/TLS negotiation with your origin and, when the negotiation is complete, forwards the request to your origin in an encrypted format.
@@ -3304,8 +3317,8 @@ API Gateway now has two different kinds of endpoints. The original design is now
 * CloudFront decrypts the response, re-encrypts it, and forwards the object to the viewer. CloudFront also saves the object in the edge cache so that the object is available the next time it's requested.
 * The viewer decrypts the response.
 
-<a name="7_1_10_1"></a>
-#### [↖](#7_1)[↑](#7_1_10)[↓](#7_1_10_2) Scenario 1 (requires 2 certs)
+<a name="7_1_11_1"></a>
+#### [↖](#7_1)[↑](#7_1_11)[↓](#7_1_11_2) Scenario 1 (requires 2 certs)
 
 .|CloudFront|ALB
 -|-|-
@@ -3321,8 +3334,8 @@ If Host header is *not* forwarded:
 - CloudFront will add a Host header value of the origin: origin.example.com
 - Requests & Responses will work
 
-<a name="7_1_10_2"></a>
-#### [↖](#7_1)[↑](#7_1_10_1)[↓](#7_1_10_3) Scenario 2 (doesn't work)
+<a name="7_1_11_2"></a>
+#### [↖](#7_1)[↑](#7_1_11_1)[↓](#7_1_11_3) Scenario 2 (doesn't work)
 
 .|CloudFront|ALB
 -|-|-
@@ -3332,8 +3345,8 @@ origin|www.example.com|.
 
 Impossible, as CloudFront distribution will loop over itself!
 
-<a name="7_1_10_3"></a>
-#### [↖](#7_1)[↑](#7_1_10_2)[↓](#7_2) Scenario 2 (requires 1 cert)
+<a name="7_1_11_3"></a>
+#### [↖](#7_1)[↑](#7_1_11_2)[↓](#7_2) Scenario 2 (requires 1 cert)
 
 .|CloudFront|ALB
 -|-|-
@@ -3354,7 +3367,7 @@ If Host header is *not* forwarded:
 ---
 
 <a name="7_2"></a>
-## [↖](#top)[↑](#7_1_10_3)[↓](#7_2_1) ElastiCache (Core Topic)
+## [↖](#top)[↑](#7_1_11_3)[↓](#7_2_1) ElastiCache (Core Topic)
 <!-- toc_start -->
 * [Overview](#7_2_1)
 * [Scenarios](#7_2_2)
@@ -3717,6 +3730,7 @@ Amazon RDS is available on several database instance types - optimized for memor
 * **DB Parameter group**
 	* Acts as a “container” for engine configuration values that can be applied to one or more DB Instances
 * **RDS Events**: get notified via SNS for events (operations, outages...)
+* Amazon RDS does **not** support certain features in Oracle such as Multitenant Database, Real Application Clusters (RAC), Unified Auditing, Database Vault, and many more.
 * On AWS: <a href="https://aws.amazon.com/rds/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rds/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rds/index.html" target="_blank">User Guide</a>
 
 <a name="8_3_2"></a>
@@ -3762,6 +3776,7 @@ Amazon RDS Multi-AZ deployments provide enhanced availability for database insta
   * Automatic failover in case of planned or unplanned outage of the first AZ
     * Most likely still has downtime
     * Can *force* failover by *rebooting*
+    * When automatic failover occurs, your application can remain unaware of what's happening behind the scenes. The CNAME record for your DB instance will be altered to point to the newly promoted standby. 
   * Other benefits
     * Patching
     * Backups
@@ -4495,6 +4510,7 @@ No other data warehouse makes it as easy to gain new insights from all your data
 * Can provision multiple nodes, but it’s not Multi-AZ
 * **Leader node**: for query planning, results aggregation
 * **Compute node**: for performing the queries, send results to back leader
+* **Workload management (WLM)**: enables users to flexibly manage priorities within workloads so that short, fast-running queries won't get stuck in queues behind long-running queries.
 * Backup & Restore, Security VPC/IAM/KMS, Monitoring
 * Redshift Enhanced VPC Routing: COPY/UNLOAD goes through VPC
 
@@ -5633,14 +5649,13 @@ The *File Gateway* presents a file interface that enables you to store files as 
 
 <a name="14_3_2_2"></a>
 #### [↖](#14_3)[↑](#14_3_2_1_1)[↓](#14_3_2_3) Volume gateway (iSCSI)
-The *Volume Gateway* presents your applications storage volumes using the `iSCSI` block protocol. Data written to these volumes can be asynchronously backed up as point-in-time snapshots of your volumes, and stored in the cloud as Amazon EBS snapshots. You can set the schedule for when snapshots occur or create them via the AWS Management Console or service API. Snapshots are incremental backups that capture only changed blocks. All snapshot storage is also compressed to minimize your storage charges. * *Stored* volumes (all data on-prem, EBS snapshots in cloud, stored on S3) * *Cached* volumes (only recently used data on-prem, EBS volumes in cloud, stored on S3)
+The *Volume Gateway* presents your applications storage volumes using the `iSCSI` block protocol. Data written to these volumes can be asynchronously backed up as point-in-time snapshots of your volumes, and stored in the cloud as Amazon EBS snapshots. You can set the schedule for when snapshots occur or create them via the AWS Management Console or service API. Snapshots are incremental backups that capture only changed blocks. All snapshot storage is also compressed to minimize your storage charges.
 * Block storage using iSCSI protocol backed by S3
-* **Cached volumes**: low latency access to most recent data, full data on S3
-* **Stored volumes**: entire dataset is on-premises, scheduled backups to EBS/S3
+* **Cached volumes**: low latency access as recently used data on-premises, full data on S3
+	* Up to 32 volumdes of up to 32TB each in cached mode (1PB per Gateway)
+* **Stored volumes**: entire dataset is on-premises, scheduled backups to EBS (->S)3
+	* Up to 32 volumes of up to 16 TB in stored mode (512TB per Gateway)
 * Can create EBS snapshots from the volumes and restore as EBS!
-* Up to 32 volumes per gateway
-	* Each volume up to 32TB in cached mode (1PB per Gateway)
-	* Each volume up to 16 TB in stored mode (512TB per Gateway)
 * Uses Challenge-Handshake Authentication Protocol (CHAP) to authenticate iSCSI and initiator connections. CHAP provides protection against playback attacks by requiring authentication to access storage volume targets.
 
 <a name="14_3_2_3"></a>
@@ -5659,6 +5674,7 @@ The *Tape Gateway* presents itself to your existing backup application as an ind
 ## [↖](#top)[↑](#14_3_2_3)[↓](#14_4_1) Snowball
 <!-- toc_start -->
 * [Snowball Process](#14_4_1)
+* [Speeding up transfer into Snowball Edge](#14_4_2)
 <!-- toc_end -->
 
 Snowball is a petabyte-scale data transport solution that uses devices designed to be secure to transfer large amounts of data into and out of the AWS Cloud. Using Snowball addresses common challenges with large-scale data transfers including high network costs, long transfer times, and security concerns. Customers today use Snowball to migrate analytics data, genomics data, video libraries, image repositories, backups, and to archive part of data center shutdowns, tape replacement or application migration projects. Transferring data with Snowball is simple, fast, more secure, and can be as little as one-fifth the cost of transferring data via high-speed Internet.
@@ -5683,7 +5699,7 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 	* <a href="https://aws.amazon.com/snowball/" target="_blank">Service</a> - <a href="https://aws.amazon.com/snowball/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/snowball/index.html" target="_blank">User Guide</a>
 
 <a name="14_4_1"></a>
-### [↖](#14_4)[↑](#14_4)[↓](#14_5) Snowball Process
+### [↖](#14_4)[↑](#14_4)[↓](#14_4_2) Snowball Process
 * Request snowball devices from the AWS console for delivery
 * Install the snowball client on your servers
 * Connect the snowball to your servers and copy files using the client
@@ -5692,10 +5708,25 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
 * Snowball is completely wiped
 * Tracking is done using SNS, text messages and the AWS console
 
+<a name="14_4_2"></a>
+### [↖](#14_4)[↑](#14_4_1)[↓](#14_5) Speeding up transfer into Snowball Edge
+* Perform multiple write operations at one time
+	* To do this, run each command from multiple terminal windows on a computer with a network connection to a single AWS Snowball Edge device.
+* Transfer small files in batches
+	* Each copy operation has some overhead because of encryption. To speed up the process, batch files together in a single archive. When you batch files together, they can be auto-extracted when they are imported into Amazon S3.
+* Write from multiple computers
+	* A single AWS Snowball Edge device can be connected to many computers on a network. Each computer can connect to any of the three network interfaces at once.
+* Don't perform other operations on files during transfer
+	* Renaming files during transfer, changing their metadata, or writing data to the files during a copy operation has a negative impact on transfer performance. AWS recommends that your files remain in a static state while you transfer them.
+* Reduce local network use
+	* Your AWS Snowball Edge device communicates across your local network. So you can improve data transfer speeds by reducing other local network traffic between the AWS Snowball Edge device, the switch it's connected to, and the computer that hosts your data source.
+* Eliminate unnecessary hops
+	* AWS recommends that you set up your AWS Snowball Edge device, your data source, and the computer running the terminal connection between them so that they're the only machines communicating across a single switch. Doing so can improve data transfer speeds.
+
 ---
 
 <a name="14_5"></a>
-## [↖](#top)[↑](#14_4_1)[↓](#14_5_1) Database Migration Service (Core Topic)
+## [↖](#top)[↑](#14_4_2)[↓](#14_5_1) Database Migration Service (Core Topic)
 <!-- toc_start -->
 * [Overview](#14_5_1)
 * [Schema Conversion Tool (SCT)](#14_5_2)
