@@ -99,8 +99,9 @@
   * [Database Migration Service (Core Topic)](#14_5)
   * [Application Discovery Service (Core Topic)](#14_6)
   * [Server Migration Service](#14_7)
-  * [AWS Cloud Adoption Readiness Tool (CART)](#14_8)
-  * [Disaster Recovery](#14_9)
+  * [AWS Migration Hub](#14_8)
+  * [AWS Cloud Adoption Readiness Tool (CART)](#14_9)
+  * [Disaster Recovery](#14_10)
 * [VPC](#15)
   * [Virtual Private Cloud (VPC)](#15_1)
   * [VPC Peering](#15_2)
@@ -1163,6 +1164,7 @@ Free Tier Availability|Yes|No
 * There are 4 methods of encrypting objects in S3
   * **SSE-S3**: encrypts S3 objects using keys handled & managed by AWS
   * **SSE-KMS**: leverage AWS Key Management Service to manage encryption keys
+		* But you manage the customer master key (CMK) in AWS KMS
   * **SSE-C**: when you want to manage your own encryption keys
   * **Client Side Encryption**
 * Glacier
@@ -1386,6 +1388,7 @@ Summary
 Amazon Inspector is an automated security assessment service that helps improve the security and compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications for exposure, vulnerabilities, and deviations from best practices. After performing an assessment, Amazon Inspector produces a detailed list of security findings prioritized by level of severity. These findings can be reviewed directly or as part of detailed assessment reports which are available via the Amazon Inspector console or API.
 
 Amazon Inspector security assessments help you check for unintended network accessibility of your Amazon EC2 instances and for vulnerabilities on those EC2 instances. Amazon Inspector assessments are offered to you as pre-defined rules packages mapped to common security best practices and vulnerability definitions. Examples of built-in rules include checking for access to your EC2 instances from the internet, remote root login being enabled, or vulnerable software versions installed. These rules are regularly updated by AWS security researchers.
+* Conducts a detailed scan for CVE in your fleet of EC2 instances
 * **Network Assessments**
   * Does not require agent
 * **Host Assessments**
@@ -1433,6 +1436,7 @@ AWS resources. Config continuously monitors and records your AWS resource config
 	* Checks whether these changes violate any of the conditions in your rules.
 	* If a resource violates a rule, AWS Config flags the resource and the rule as *noncompliant*.
 * Can remediate using AWS Systems Manager Automation Documents
+* Can e.g. check an EC2 instance against a list of approved AMIs `approved-amis-by-id`
 
 <a name="4_13_3"></a>
 ### [↖](#4_13)[↑](#4_13_2)[↓](#4_13_4) Automation
@@ -2954,7 +2958,7 @@ Replication enables automatic, asynchronous copying of objects across Amazon S3 
 * Use *AWS Route 53* to integrate custom domains (also to automatically fail-over from dynamic website)
 * Specify `index` & `error` documents
 * In *AWS Route 53*: create hosted zone & record set
-* Might need to add CORS configuration to bucket (cross origin resource sharing)
+* Might have to add CORS configuration to bucket (cross origin resource sharing)
 
 <a name="6_4_2_8"></a>
 #### [↖](#6_4)[↑](#6_4_2_7)[↓](#6_4_3) Storage classes
@@ -3024,7 +3028,7 @@ bucket.
 `arn:aws:s3:::mybucket/developers/($aws:username)/`|folder matching the accessing user's name
 <a name="6_4_4"></a>
 ### [↖](#6_4)[↑](#6_4_3_5)[↓](#6_4_5) Pre-signed URLs
-All objects are private by default. Only the object owner has permission to access these objects. However, the object owner can optionally share objects with others by creating a **pre-signed URL**, using their own security credentials, to grant time-limited permission to download the objects.
+All objects are private by default. Only the object owner has permission to access these objects. However, the object owner can optionally share objects with others by creating a **pre-signed URL**, using *their own security credentials*, to grant time-limited permission to download the objects.
 
 <a name="6_4_5"></a>
 ### [↖](#6_4)[↑](#6_4_4)[↓](#6_4_5_1) Encryption
@@ -3776,7 +3780,7 @@ Amazon RDS Multi-AZ deployments provide enhanced availability for database insta
   * Automatic failover in case of planned or unplanned outage of the first AZ
     * Most likely still has downtime
     * Can *force* failover by *rebooting*
-    * When automatic failover occurs, your application can remain unaware of what's happening behind the scenes. The CNAME record for your DB instance will be altered to point to the newly promoted standby. 
+    * When automatic failover occurs, your application can remain unaware of what's happening behind the scenes. The CNAME record for your DB instance will be altered to point to the newly promoted standby.
   * Other benefits
     * Patching
     * Backups
@@ -4512,6 +4516,8 @@ No other data warehouse makes it as easy to gain new insights from all your data
 * **Compute node**: for performing the queries, send results to back leader
 * **Workload management (WLM)**: enables users to flexibly manage priorities within workloads so that short, fast-running queries won't get stuck in queues behind long-running queries.
 * Backup & Restore, Security VPC/IAM/KMS, Monitoring
+* Can take cross-region snapshots
+	* Have to configure a `snapshot copy grant` for a master key in the destination region
 * Redshift Enhanced VPC Routing: COPY/UNLOAD goes through VPC
 
 <a name="10_5_3"></a>
@@ -5840,15 +5846,32 @@ Summary:
 ---
 
 <a name="14_8"></a>
-## [↖](#top)[↑](#14_7)[↓](#14_9) AWS Cloud Adoption Readiness Tool (CART)
+## [↖](#top)[↑](#14_7)[↓](#14_9) AWS Migration Hub
+AWS Migration Hub (Migration Hub) provides a single place to discover your existing servers, plan migrations, and track the status of each application migration. The Migration Hub provides visibility into your application portfolio and streamlines planning and tracking. You can visualize the connections and the status of the servers and databases that make up each of the applications you are migrating, regardless of which migration tool you are using.
+
+Migration Hub gives you the choice to start migrating right away and group servers while migration is underway, or to first discover servers and then group them into applications. Either way, you can migrate each server in an application and track progress from each tool in the AWS Migration Hub.
+
+* Migration Hub supports migration status updates from the following AWS services:
+	* AWS Database Migration Service
+	* AWS Server Migration Service
+	* CloudEndure Migration
+	* Migration Hub also supports migration status updates from the ATADATA ATAmotion partner tool.
+* Can integrate Application Discovery Service
+* On AWS
+	* <a href="https://aws.amazon.com/server-migration-service/" target="_blank">Service</a> - <a href="https://aws.amazon.com/server-migration-service/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/server-migration-service/index.html" target="_blank">User Guide</a>
+
+---
+
+<a name="14_9"></a>
+## [↖](#top)[↑](#14_8)[↓](#14_10) AWS Cloud Adoption Readiness Tool (CART)
 Helps organizations of all sizes develop efficient and effective plans for cloud adoption and enterprise cloud migrations. This 16-question online survey and assessment report details your cloud migration readiness across six perspectives including business, people, process, platform, operations, and security. Once you complete a CART survey, you can provide your contact details to download a customized cloud migration assessment that charts your readiness and what you can do to improve it. This tool is designed to help organizations assess their progress with cloud adoption and identify gaps in organizational skills and processes.
 * On AWS
 	* <a href="https://cloudreadiness.amazonaws.com/#/cart" target="_blank">Tool</a>
 
 ---
 
-<a name="14_9"></a>
-## [↖](#top)[↑](#14_8)[↓](#15) Disaster Recovery
+<a name="14_10"></a>
+## [↖](#top)[↑](#14_9)[↓](#15) Disaster Recovery
 * DR is about preparing for and recovering from a disaster
 * *Recovery Point Objective* - RPO
   * How often do you run backups? How much data will be lost (since last backup)
@@ -5873,7 +5896,7 @@ Multi Site/Hot Site|Lowest|Lowest|$$$$|Full system at production size always run
 ---
 
 <a name="15"></a>
-# [↖](#top)[↑](#14_9)[↓](#15_1) VPC
+# [↖](#top)[↑](#14_10)[↓](#15_1) VPC
 
 <a name="15_1"></a>
 ## [↖](#top)[↑](#15)[↓](#15_1_1) Virtual Private Cloud (VPC)
@@ -5901,6 +5924,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * Cannot be changed after VPC creation
 * *Security groups* and subnet-level *network ACLs*
 * Ability to extend on-premises network to cloud
+* Can be extended *after creation* by adding 1 to utmost 4 CIDR blocks
 * On AWS
 	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
 
@@ -6019,6 +6043,7 @@ Can be created at 3 levels:
 .|.
 -|-
 VPCs per region|5
+Min/max VPC size|`/28`/`/16`
 Subnets per VPC|200
 Customer gateways per region|50
 Gateway per region|5 Internet
@@ -6273,6 +6298,7 @@ AWS Direct Connect is a cloud service solution that makes it easy to establish a
 AWS Direct Connect lets you establish a dedicated network connection between your network and one of the AWS Direct Connect locations. Using industry standard 802.1q VLANs, this dedicated connection can be partitioned into multiple virtual interfaces. This allows you to use the same connection to access public resources such as objects stored in Amazon S3 using public IP address space, and private resources such as Amazon EC2 instances running within an Amazon Virtual Private Cloud (VPC) using private IP space, while maintaining network separation between the public and private environments. Virtual interfaces can be reconfigured at any time to meet your changing needs.
 * Provides a dedicated private connection from a remote network to your VPC
 * Dedicated connection must be setup between your DC and AWS Direct Connect locations
+	* Requires network device in your data center that supports Border Gateway Protocol (BGP) and BGP MD5 authentication
 * More expensive than running a VPN solution
 * Private access to AWS services through virtual interfaces (VIF)
 * Bypass ISP, reduce network cost, increase bandwidth and stability
