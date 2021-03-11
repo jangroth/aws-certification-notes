@@ -124,6 +124,7 @@
   * [Macie](#16_10)
   * [Amazon Pinpoint](#16_11)
   * [Private Marketplace](#16_12)
+  * [Amazon FSx](#16_13)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -1525,8 +1526,9 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 * [Overview](#5_2_1)
 * [Instance Types](#5_2_2)
 * [Placement Groups](#5_2_3)
-* [Key metrics for EC2](#5_2_4)
-* [EC2 Instance Recovery](#5_2_5)
+* [Elastic Fabric Adapter](#5_2_4)
+* [Key metrics for EC2](#5_2_5)
+* [EC2 Instance Recovery](#5_2_6)
 <!-- toc_end -->
 <a name="5_2_1"></a>
 ### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
@@ -1567,7 +1569,11 @@ Strategy|Pro|Con|Use case
 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank">On AWS</a>
 
 <a name="5_2_4"></a>
-### [↖](#5_2)[↑](#5_2_3)[↓](#5_2_5) Key metrics for EC2
+### [↖](#5_2)[↑](#5_2_3)[↓](#5_2_5) Elastic Fabric Adapter
+Elastic Fabric Adapter (EFA) is a network interface for Amazon EC2 instances that enables customers to run applications requiring high levels of inter-node communications at scale on AWS. Its custom-built operating system (OS) bypass hardware interface enhances the performance of inter-instance communications, which is critical to scaling these applications.
+
+<a name="5_2_5"></a>
+### [↖](#5_2)[↑](#5_2_4)[↓](#5_2_6) Key metrics for EC2
 * EC2 metrics are based on what is exposed to the hypervisor.
 * *Basic Monitoring* (default) submits values every 5 minutes, *Detailed Monitoring* every minute
 * Can install Cloudwatch agent (new)
@@ -1587,8 +1593,8 @@ Metric|Effect
 
 * Can **not** monitor **memory usage**, **available disk space**, **swap usage**
 
-<a name="5_2_5"></a>
-### [↖](#5_2)[↑](#5_2_4)[↓](#5_3) EC2 Instance Recovery
+<a name="5_2_6"></a>
+### [↖](#5_2)[↑](#5_2_5)[↓](#5_3) EC2 Instance Recovery
 You can create an Amazon CloudWatch alarm that monitors an Amazon EC2 instance and automatically recovers the instance if it becomes impaired due to an underlying hardware failure or a problem that requires AWS involvement to repair (`StatusCheckFailed_System`). Terminated instances cannot be recovered. A recovered instance is identical to the original instance, including the instance ID, private IP addresses, Elastic IP addresses, and all instance metadata. If the impaired instance is in a placement group, the recovered instance runs in the placement group.
 
 If your instance has a public IPv4 address, it retains the public IPv4 address after recovery.
@@ -1596,7 +1602,7 @@ If your instance has a public IPv4 address, it retains the public IPv4 address a
 ---
 
 <a name="5_3"></a>
-## [↖](#top)[↑](#5_2_5)[↓](#5_3_1) Auto Scaling (Core Topic)
+## [↖](#top)[↑](#5_2_6)[↓](#5_3_1) Auto Scaling (Core Topic)
 <!-- toc_start -->
 * [Overview](#5_3_1)
 * [Components](#5_3_2)
@@ -3320,6 +3326,7 @@ API Gateway now has two different kinds of endpoints. The original design is now
 * Your origin decrypts the request, encrypts the requested object, and returns the object to CloudFront.
 * CloudFront decrypts the response, re-encrypts it, and forwards the object to the viewer. CloudFront also saves the object in the edge cache so that the object is available the next time it's requested.
 * The viewer decrypts the response.
+* The *default* certificate is the certificate required for the default domain, e.g d111111abcdef8.cloudfront.net. This comes with CloudFront.
 
 <a name="7_1_11_1"></a>
 #### [↖](#7_1)[↑](#7_1_11)[↓](#7_1_11_2) Scenario 1 (requires 2 certs)
@@ -4489,6 +4496,7 @@ EMR|.
 * [How it works](#10_5_2)
 * [Snapshots and DR](#10_5_3)
 * [Redshift Spectrum](#10_5_4)
+* [Troubleshooting](#10_5_5)
 <!-- toc_end -->
 <a name="10_5_1"></a>
 ### [↖](#10_5)[↑](#10_5)[↓](#10_5_2) Overview
@@ -4531,17 +4539,31 @@ No other data warehouse makes it as easy to gain new insights from all your data
   * Great for DR
 
 <a name="10_5_4"></a>
-### [↖](#10_5)[↑](#10_5_3)[↓](#10_6) Redshift Spectrum
+### [↖](#10_5)[↑](#10_5_3)[↓](#10_5_5) Redshift Spectrum
 Using Amazon Redshift Spectrum, you can efficiently query and retrieve structured and semistructured data from files in Amazon S3 without having to load the data into Amazon Redshift tables. Redshift Spectrum queries employ massive parallelism to execute very fast against large datasets. Much of the processing occurs in the Redshift Spectrum layer, and most of the data remains in Amazon S3. Multiple clusters can concurrently query the same dataset in Amazon S3 without the need to make copies of the data for each cluster.
 * Query data that is already in S3 without loading it
 * Must have a Redshift cluster available to start the query
 * The query is then submitted to thousands of Redshift Spectrum nodes
   * Nodes are shared across customers
 
+<a name="10_5_5"></a>
+### [↖](#10_5)[↑](#10_5_4)[↓](#10_6) Troubleshooting
+In Redshift, if your query operation hangs or stops responding, below are the possible causes as well as its corresponding solution:
+* Connection to the Database Is Dropped
+	* Reduce the size of maximum transmission unit (MTU). The MTU size determines the maximum size, in bytes, of a packet that can be transferred in one Ethernet frame over your network connection.
+* Connection to the Database Times Out
+	* Your client connection to the database appears to hang or timeout when running long queries, such as a COPY command. In this case, you might observe that the Amazon Redshift console displays that the query has completed, but the client tool itself still appears to be running the query. The results of the query might be missing or incomplete depending on when the connection stopped. This effect happens when idle connections are terminated by an intermediate network component.
+* Client-Side Out-of-Memory Error Occurs with ODBC
+	* If your client application uses an ODBC connection and your query creates a result set that is too large to fit in memory, you can stream the result set to your client application by using a cursor. For more information, see DECLARE and Performance Considerations When Using Cursors.
+* Client-Side Out-of-Memory Error Occurs with JDB
+	* When you attempt to retrieve large result sets over a JDBC connection, you might encounter client-side out-of-memory errors.
+* There Is a Potential Deadlock
+	* Look at system tables
+
 ---
 
 <a name="10_6"></a>
-## [↖](#top)[↑](#10_5_4)[↓](#10_6_1) Athena
+## [↖](#top)[↑](#10_5_5)[↓](#10_6_1) Athena
 <!-- toc_start -->
 * [Overview](#10_6_1)
 <!-- toc_end -->
@@ -5979,10 +6001,11 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
     * Allows outbound communication over IPv6 from instances in your VPC to the Internet
     * Prevents the Internet from initiating an IPv6 connection with your instances.
     * (IPv6 addresses are globally unique, and are therefore public by default)
-	* *Virtual Private* Gateway
+	* *Virtual Private* Gateway (VGW)
     * AWS side of Site-to-site VPN
 		* Has VPN connection to customer gateway attached
 		* Serves as VPN concentrator on the Amazon side of the VPN connection
+		* Only one virtual private gateway can be attached to a VPC at a time
 	* *Customer Gateway*
     * Customer side of Site-to-site VPN
 		* A physical device or software application on your side of the VPN connection
@@ -6067,10 +6090,10 @@ Security groups per region|500
 * Peering is in star configuration with 1 central VPC. No transitive peering.
 	* Must be established for each VPC that need to communicate with one another
 * Only routes traffic between source and destination VPC
-  * Does not support edge to edge routing
+	* Does not support edge to edge routing
 		* Even if VPC A can route into VPC B, it cannot use VPC A's edge infrastructure
 		* VPN, Direct Connect, IGW, NAT, Gateway VPC Endpoint (S3 & DynamoDB)
-  * Does not share VPN connection into datacenter
+* Does not share VPN connection into datacenter
 * Must update route tables in each VPC’s subnets to ensure instances can communicate
 * Can reference a security group of a peered VPC (even cross-account)
 
@@ -6570,7 +6593,7 @@ Amazon Pinpoint is a flexible and scalable outbound and inbound marketing commun
 ---
 
 <a name="16_12"></a>
-## [↖](#top)[↑](#16_11) Private Marketplace
+## [↖](#top)[↑](#16_11)[↓](#16_13) Private Marketplace
 
 A private marketplace controls which products users in your AWS account, such as business users and engineering teams, can procure from AWS Marketplace. It is built on top of AWS Marketplace, and enables your administrators to create and customize curated digital catalogs of approved independent software vendors (ISVs) and products that conform to their in-house policies. Users in your AWS account can find, buy, and deploy approved products from your private marketplace, and ensure that all available products comply with your organization’s policies and standards.
 
@@ -6578,3 +6601,9 @@ A private marketplace controls which products users in your AWS account, such as
 
 ---
 
+<a name="16_13"></a>
+## [↖](#top)[↑](#16_12) Amazon FSx
+
+Amazon FSx makes it easy and cost effective to launch and run popular file systems that are fully managed by AWS. With Amazon FSx, you can leverage the rich feature sets and fast performance of widely-used open source and commercially-licensed file systems, while avoiding time-consuming administrative tasks such as hardware provisioning, software configuration, patching, and backups. It provides cost-efficient capacity with high levels of reliability, and integrates with a broad portfolio of AWS services to enable faster innovation.
+
+* On AWS: <a href="https://aws.amazon.com/fsx/" target="_blank">Service</a>
