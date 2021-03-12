@@ -125,6 +125,8 @@
   * [Amazon Pinpoint](#16_11)
   * [Private Marketplace](#16_12)
   * [Amazon FSx](#16_13)
+  * [Amazon MQ](#16_14)
+  * [Amazon WorkDocs](#16_15)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -232,6 +234,8 @@ Following [Ultimate AWS Certified Solutions Architect Professional 2021](https:/
 ### [↖](#3_2)[↑](#3_2)[↓](#3_2_2) Overview
 AWS Identity and Access Management (IAM) enables you to manage access to AWS services and resources securely. Using IAM, you can create and manage AWS users and groups, and use permissions to allow and deny their access to AWS resources.
 
+* Has certificate store
+
 Best practices:
 * Lock away your AWS account root user access keys
 * Create individual IAM users
@@ -249,9 +253,8 @@ Best practices:
 * Remove unnecessary credentials
 * Use policy conditions for extra security
 * Monitor activity in your AWS account
-
-On AWS:
-* <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
+* On AWS:
+	* <a href="https://aws.amazon.com/iam/" target="_blank">Service</a> - <a href="https://aws.amazon.com/iam/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html" target="_blank">User Guide</a>
 
 <a name="3_2_2"></a>
 ### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_3) Users
@@ -268,6 +271,7 @@ A collection of IAM users. Groups let you specify permissions for multiple users
 An IAM identity that you can create in your account that has specific permissions. An IAM role has some similarities to an IAM user. Roles and users are both AWS identities with permissions policies that determine what the identity can and cannot do in AWS. However, instead of being uniquely associated with one person, a role is intended to be assumable by anyone who needs it. Also, a role does not have standard long-term credentials such as a password or access keys associated with it. Instead, when you assume a role, it provides you with temporary security credentials for your role session, provided by STS.
 * **AWS service role** - A role that a service assumes to perform actions in your account on your behalf. When you set up some AWS service environments, you must define a role for the service to assume. This service role must include all the permissions required for the service to access the AWS resources that it needs. Service roles vary from service to service, but many allow you to choose your permissions, as long as you meet the documented requirements for that service. Service roles provide access only within your account and cannot be used to grant access to services in other accounts. You can create, modify, and delete a service role from within IAM.
 	* **AWS service role for an EC2 instance** - A special type of service role that an application running on an Amazon EC2 instance can assume to perform actions in your account. This role is assigned to the EC2 instance when it is launched. Applications running on that instance can retrieve temporary security credentials and perform actions that the role allows.
+		* CloudFormation `InstanceProfileName`
 	* **AWS service-linked role** - A unique type of service role that is **linked directly** to an AWS service. Service-linked roles are **predefined by the service** and include all the permissions that the service requires to call other AWS services on your behalf. The linked service also defines how you create, modify, and delete a service-linked role. A service might automatically create or delete the role. It might allow you to create, modify, or delete the role as part of a wizard or process in the service. Or it might require that you use IAM to create or delete the role. Regardless of the method, service-linked roles make setting up a service easier because you don't have to manually add the necessary permissions.
 		* `aws iam create-service-linked-role --aws-service-name SERVICE-NAME.amazonaws.com`
 		* <a href="https://aws.amazon.com/blogs/security/introducing-an-easier-way-to-delegate-permissions-to-aws-services-service-linked-roles/" target="_blank">AWS Blog</a>
@@ -1131,6 +1135,8 @@ If you want a managed service for creating and controlling your encryption keys,
 	* A cluster is a collection of individual HSMs that AWS CloudHSM keeps in sync
 	* You can place the HSMs in different Availability Zones in an AWS Region
 	* When you create an HSM, AWS CloudHSM puts an elastic network interface (ENI) in the specified subnet in your AWS account.
+* AWS CloudHSM key store is a special-purpose JCE key store that utilizes certificates associated with keys on your HSM through third-party tools such as keytool and jarsigner.
+	* AWS CloudHSM does not store certificates on the HSM, as certificates are public, non-confidential data.
 * On AWS: <a href="https://aws.amazon.com/cloudhsm/" target="_blank">Service</a> - <a href="https://aws.amazon.com/cloudhsm/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/cloudhsm/latest/userguide/introduction.html" target="_blank">User Guide</a>
 
 <a name="4_8_2"></a>
@@ -1533,6 +1539,10 @@ ElastiCache, DAX,<br/>DynamoDB, RDS|RDS, Aurora, DynamoDB<br/>ElasticSearch, S3,
 <a name="5_2_1"></a>
 ### [↖](#5_2)[↑](#5_2)[↓](#5_2_2) Overview
 Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud. It is designed to make web-scale cloud computing easier for developers. Amazon EC2’s simple web service interface allows you to obtain and configure capacity with minimal friction. It provides you with complete control of your computing resources and lets you run on Amazon’s proven computing environment. Amazon EC2 offers the broadest and deepest compute platform with choice of processor, storage, networking, operating system, and purchase model. We offer the fastest processors in the cloud and we are the only cloud with 400 Gbps ethernet networking. We have the most powerful GPU instances for machine learning training and graphics workloads, as well as the lowest cost-per-inference instances in the cloud.
+
+* `EC2Rescue` can help you diagnose and troubleshoot problems on Amazon EC2 Linux and Windows Server instances. You can run the tool manually or you can run the tool automatically by using Systems Manager Automation and the AWSSupport-ExecuteEC2Rescue document.
+* Can *stop* and instance and move to e.g. placement group `modify-instance-placement` - no need to terminate
+* Amazon EC2 provides enhanced networking capabilities through the Elastic Network Adapter (ENA). To use enhanced networking, you must install the required ENA module and enable ENA support
 * On AWS: <a href="https://aws.amazon.com/ec2/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ec2/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/ec2/" target="_blank">User Guide</a>
 
 <a name="5_2_2"></a>
@@ -2146,6 +2156,7 @@ An Application Load Balancer functions at the application layer, the seventh lay
 #### [↖](#5_7)[↑](#5_7_3_3)[↓](#5_7_4) SSL Certificates
 * Supports multiple listeners
 * Supports SNI - Server Name Indication
+* Certificates are associated (not uploaded) from ACM or IAM (deprecated)
 
 <a name="5_7_4"></a>
 ### [↖](#5_7)[↑](#5_7_3_4)[↓](#5_7_4_1) NLB
@@ -2674,6 +2685,7 @@ Designed for mission-critical systems, EBS volumes are replicated within an Avai
 * Stores redundantly in *single* AZ
 * Only root volumes are terminated if instance gets terminate
 * Can be striped together to RAID
+	* RAID 0 for greater I/O performance, RAID 1 for increased availability. Other RAID configs not recommended.
 * Pick instance type that's *EBS-optimized*
 * On AWS: <a href="https://aws.amazon.com/ebs/" target="_blank">Service</a> - <a href="https://aws.amazon.com/ebs/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank">User Guide</a>
 
@@ -2790,11 +2802,12 @@ Amazon EFS is a regional service storing data within and across multiple Availab
   * *General purpose* (default): latency-sensitive use cases (web server, CMS, etc...)
   * *Max I/O* – higher latency, higher throughput, highly parallel (big data, media processing)
 * Throughput Mode
-  * *Bursting Mode*: common for filesystems (intensive work, then almost nothing), linked to FS size
+  * *Bursting Mode* (default): common for filesystems (intensive work, then almost nothing), linked to FS size
   * *Provisioned IO Mode*: high throughput to storage ratio (if burst is not enough) – expensive
 * Storage Tiers (lifecycle management feature – move file after N days)
   * *Standard*: for frequently accessed file
   * *Infrequent access*: higher cost to retrieve the file, lower price point to store the file
+* EFS is always faster than S3. Also does not have to deal with eventual consistency for many writes
 
 ---
 
@@ -3414,7 +3427,7 @@ Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-
 * Non persistent
 * Single-AZ
 * No backup and restore
-* Support multi-threaded operations
+* Support multi-threaded operations (unlike Redis!)
 
 <a name="7_2_4"></a>
 ### [↖](#7_2)[↑](#7_2_3)[↓](#7_3) Redis
@@ -3424,6 +3437,7 @@ Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-
 * Multi-AZ with automated failover
 * Read Replicas to scale reads and have high availability
 * Can scale up, but cannot scale down
+* Single-threaded
 * Persistent, Data Durability:
   * Read Only File Feature (AOF),
   * Backup and restore features
@@ -3526,6 +3540,9 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
 * Supports transactions across multiple tables (ACID support)
 * Backups available, point in time recovery
 * Integrated with IAM for security
+* **Reserved capacity**
+	* Is a billing feature that allows you to obtain discounts on your provisioned DynamoDB throughput capacity in exchange for a one-time up-front payment and commitment to a certain usage level.
+	* DynamoDB reserved capacity applies to a specific AWS region and can be purchased with 1-year or 3-year terms.
 * On AWS: <a href="https://aws.amazon.com/dynamodb/" target="_blank">Service</a> - <a href="https://aws.amazon.com/dynamodb/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/dynamodb/index.html" target="_blank">User Guide</a>
 
 <a name="8_1_2"></a>
@@ -3555,12 +3572,15 @@ Amazon DynamoDB is a key-value and document database that delivers single-digit 
     * `CRUD on DDB table` -> `Lambda` -> `Amazon ES ElasticSearch`, or `Kinesis`
 * **Global Tables** (cross region replication)
 	* Amazon DynamoDB global tables provide a fully managed solution for deploying a multiregion, multi-active database, without having to build and maintain your own replication solution. With global tables you can specify the AWS Regions where you want the table to be available. DynamoDB performs all of the necessary tasks to create identical tables in these Regions and propagate ongoing data changes to all of them.
+	* Per table
   * Active Active replication, many regions
   * Must enable DynamoDB Streams
   * Useful for low latency, DR purposes
   * Common pattern:
     * Two tables in two regions
     * Replicate all CRUD changes into each other
+* **Auto scaling** uses the AWS Application Auto Scaling service to dynamically adjust provisioned throughput capacity on your behalf in response to actual traffic patterns.
+	* This enables a table or a global secondary index to increase its provisioned read and write capacity to handle sudden increases in traffic, without throttling.
 
 <a name="8_1_4"></a>
 ### [↖](#8_1)[↑](#8_1_3)[↓](#8_1_4_1) Keys and indexes
@@ -3742,6 +3762,8 @@ Amazon RDS is available on several database instance types - optimized for memor
 	* Acts as a “container” for engine configuration values that can be applied to one or more DB Instances
 * **RDS Events**: get notified via SNS for events (operations, outages...)
 * Amazon RDS does **not** support certain features in Oracle such as Multitenant Database, Real Application Clusters (RAC), Unified Auditing, Database Vault, and many more.
+* *Sharding*
+	* Partition data horizontally and distribute data partitions across database shards
 * On AWS: <a href="https://aws.amazon.com/rds/" target="_blank">Service</a> - <a href="https://aws.amazon.com/rds/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/rds/index.html" target="_blank">User Guide</a>
 
 <a name="8_3_2"></a>
@@ -3825,6 +3847,14 @@ Amazon RDS Multi-AZ deployments provide enhanced availability for database insta
   * E.g. use read replica to implement bigger changes on db level, after these have been finished promote to master instance
   * This will break replication
   * Useful for database sharding, could create replicas for each shard
+* Can set up replication between an Amazon RDS MySQL (or MariaDB DB instance) that is running in AWS and a MySQL (or MariaDB instance) to your on-premises data center.
+	* Replication to an external MySQL database is only supported during the time it takes to export a database from the source MySQL DB instance.
+	* The replication should be terminated when the data has been exported and applications can start accessing the external MySQL instance.
+		* Prepare an external MySQL DB instance.
+		* Prepare the source MySQL DB instance for replication.
+		* Use the mysqldump utility to transfer the database from the source MySQL DB instance to the external MySQL database.
+		* Start replication to the external MySQL database.
+		* After the export completes, stop replication.
 
 <a name="8_3_6"></a>
 ### [↖](#8_3)[↑](#8_3_5)[↓](#8_4) Etc
@@ -3879,6 +3909,11 @@ Aurora is part of the managed database service Amazon Relational Database Servic
 * Automated failover for master in less than 30 seconds
 * Master + up to 15 Aurora Read Replicas serve reads
 * Support for Cross Region Replication
+* Aurora Auto Scaling dynamically adjusts the number of Aurora Replicas provisioned for an Aurora DB cluster using single-master replication.
+	* Aurora Auto Scaling enables your Aurora DB cluster to handle sudden increases in connectivity or workload.
+	* When the connectivity or workload decreases, Aurora Auto Scaling removes unnecessary Aurora Replicas.
+	* You define and apply a scaling policy to an Aurora DB cluster.
+	* This is enabled for the *replicas*, **not** the master node
 
 <a name="8_4_3"></a>
 ### [↖](#8_4)[↑](#8_4_2)[↓](#8_4_4) Replicas
@@ -4533,10 +4568,11 @@ No other data warehouse makes it as easy to gain new insights from all your data
 * Snapshots are point-in-time backups of a cluster, stored internally in S3
 * Snapshots are incremental (only what has changed is saved)
 * You can restore a snapshot into a new cluster
-* Automated: every 8 hours, every 5 GB, or on a schedule. Set retention
+* Automated: every 8 hours, every 5 GB, or on a schedule. Configure retention period
 * Manual: snapshot is retained until you delete it
 * You can configure Amazon Redshift to automatically copy snapshots (automated or manual) to another AWS Region
   * Great for DR
+* Automatic snapshots feature is enabled by default, cross-region snapshot copy is not.
 
 <a name="10_5_4"></a>
 ### [↖](#10_5)[↑](#10_5_3)[↓](#10_5_5) Redshift Spectrum
@@ -5721,6 +5757,8 @@ This replaces *Import Export* which was a manual service to ship drives to AWS.
   * With onboard compute
 		* Supports a custom EC2 AMI so you can perform processing on the go
 		* Supports custom Lambda functions
+		* Use with AWS Greengrass (IoT)
+		* Transfer files through NFS with a GUI
 * **Snowmobile**
   * The thing on the truck
 * On AWS
@@ -5859,6 +5897,7 @@ Summary:
 	* After loading the VM onto EC2 you can update the OS, the data, make an AMI
 	* Therefore SMS is used to re-host
 * Only works with VMware vSphere, Windows Hyper-V, and Azure VM
+	* The Server Migration Connector is a FreeBSD VM that you install in your on-premises virtualization environment. The supported platforms are VMware vSphere, Microsoft Hyper-V/SCVMM, and Microsoft Azure.
 * Every replication creates an EBS snapshot/AMI ready for deployment on EC2
 * Every replication is incremental
 * “*One time migrations*”, or “*replication every interval*” option
@@ -6575,7 +6614,6 @@ alerts that give visibility into how this data is being accessed or moved. The f
 service continuously monitors data access activity for anomalies, and generates detailed alerts
 when it detects risk of unauthorized access or inadvertent data leaks. Amazon Macie is available
 to protect data stored in Amazon S3.
-
 * Data Sources
   * AWS CloudTrail event logs, including Amazon S3 object-level API activity
   * S3
@@ -6587,23 +6625,32 @@ to protect data stored in Amazon S3.
 <a name="16_11"></a>
 ## [↖](#top)[↑](#16_10_1)[↓](#16_12) Amazon Pinpoint
 Amazon Pinpoint is a flexible and scalable outbound and inbound marketing communications service. You can connect with customers over channels like email, SMS, push, or voice. Amazon Pinpoint is easy to set up, easy to use, and is flexible for all marketing communication scenarios. Segment your campaign audience for the right customer and personalize your messages with the right content. Delivery and campaign metrics in Amazon Pinpoint measure the success of your communications. Amazon Pinpoint can grow with you and scales globally to billions of messages per day across channels.
-
 * On AWS: <a href="https://aws.amazon.com/pinpoint/" target="_blank">Service</a> - <a href="https://aws.amazon.com/pinpoint/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/pinpoint/" target="_blank">User Guide</a>
 
 ---
 
 <a name="16_12"></a>
 ## [↖](#top)[↑](#16_11)[↓](#16_13) Private Marketplace
-
 A private marketplace controls which products users in your AWS account, such as business users and engineering teams, can procure from AWS Marketplace. It is built on top of AWS Marketplace, and enables your administrators to create and customize curated digital catalogs of approved independent software vendors (ISVs) and products that conform to their in-house policies. Users in your AWS account can find, buy, and deploy approved products from your private marketplace, and ensure that all available products comply with your organization’s policies and standards.
-
 * On AWS: <a href="https://aws.amazon.com/marketplace/features/privatemarketplace" target="_blank">Service</a> - <a href="https://aws.amazon.com/marketplace/features/privatemarketplace/resources" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/marketplace/latest/buyerguide/private-marketplace.html" target="_blank">User Guide</a>
 
 ---
 
 <a name="16_13"></a>
-## [↖](#top)[↑](#16_12) Amazon FSx
-
+## [↖](#top)[↑](#16_12)[↓](#16_14) Amazon FSx
 Amazon FSx makes it easy and cost effective to launch and run popular file systems that are fully managed by AWS. With Amazon FSx, you can leverage the rich feature sets and fast performance of widely-used open source and commercially-licensed file systems, while avoiding time-consuming administrative tasks such as hardware provisioning, software configuration, patching, and backups. It provides cost-efficient capacity with high levels of reliability, and integrates with a broad portfolio of AWS services to enable faster innovation.
-
 * On AWS: <a href="https://aws.amazon.com/fsx/" target="_blank">Service</a>
+
+---
+
+<a name="16_14"></a>
+## [↖](#top)[↑](#16_13)[↓](#16_15) Amazon MQ
+Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ that makes it easy to set up and operate message brokers on AWS. Amazon MQ reduces your operational responsibilities by managing the provisioning, setup, and maintenance of message brokers for you. Because Amazon MQ connects to your current applications with industry-standard APIs and protocols, you can easily migrate to AWS without having to rewrite code.
+* On AWS: <a href="https://aws.amazon.com/amazon-mq/" target="_blank">Service</a>
+
+---
+
+<a name="16_15"></a>
+## [↖](#top)[↑](#16_14) Amazon WorkDocs
+Amazon WorkDocs is a fully managed, secure content creation, storage, and collaboration service. With Amazon WorkDocs, you can easily create, edit, and share content, and because it’s stored centrally on AWS, access it from anywhere on any device. Amazon WorkDocs makes it easy to collaborate with others, and lets you easily share content, provide rich feedback, and collaboratively edit documents. You can use Amazon WorkDocs to retire legacy file share infrastructure by moving file shares to the cloud. Amazon WorkDocs lets you integrate with your existing systems, and offers a rich API so that you can develop your own content-rich applications. Amazon WorkDocs is built on AWS, where your content is secured on the world's largest cloud infrastructure.
+* On AWS: <a href="https://aws.amazon.com/workdocs" target="_blank">Service</a>
