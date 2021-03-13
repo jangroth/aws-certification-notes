@@ -3265,7 +3265,7 @@ You can optionally secure the content in your Amazon S3 bucket so that users can
 
 <a name="7_1_7_1"></a>
 #### [↖](#7_1)[↑](#7_1_7)[↓](#7_1_8) Trusted Signer
-To create signed URLs or signed cookies, you need a signer. A signer is either a trusted key group that you create in CloudFront, or an AWS account that contains a CloudFront key pair.We recommend that you use trusted key groups, for the following reasons:
+To create signed URLs or signed cookies, you need a signer. A signer is either a trusted key group that you create in CloudFront, or an AWS account that contains a CloudFront key pair. We recommend that you use trusted key groups, for the following reasons:
 
 * With CloudFront key groups, you don’t need to use the AWS account root user to manage the public keys for CloudFront signed URLs and signed cookies.
 * With CloudFront key groups, you can manage public keys, key groups, and trusted signers using the CloudFront API.
@@ -3401,7 +3401,7 @@ If Host header is *not* forwarded:
 <a name="7_2_1"></a>
 ### [↖](#7_2)[↑](#7_2)[↓](#7_2_2) Overview
 Amazon ElastiCache allows you to seamlessly set up, run, and scale popular open-source compatible in-memory data stores in the cloud. Build data-intensive apps or boost the performance of your existing databases by retrieving data from high throughput and low latency in-memory data stores.
-* Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gamin, Geospatial Services, Real-Time Analytics, and Queuing.
+* Amazon ElastiCache is a popular choice for real-time use cases like Caching, Session Stores, Gaming, Geospatial Services, Real-Time Analytics, and Queuing.
 * Amazon ElastiCache offers fully managed Redis and Memcached for your most demanding applications that require sub-millisecond response times.
 * Caches are in-memory databases with really high performance, low latency
 * Helps reduce load off of databases for read intensive workloads
@@ -4175,7 +4175,7 @@ The A2A pub/sub functionality provides topics for high-throughput, push-based, m
 * Up to 10,000,000 subscriptions per topic
 * 100,000 topics limit
 * Subscribers can be:
-  * QS
+  * SQS
   * TTP/HTTPS (with delivery retries – how many times)
   * Lambda
   * Emails
@@ -4274,7 +4274,7 @@ Amazon Kinesis Data Streams (KDS) is a massively scalable and durable real-time 
     * Monitor log files and sends them to Kinesis directly
     * Can write to Kinesis Data Streams AND Kinesis Data Firehose
     * Best choice when e.g. getting data out of EC2
-* **Producers**
+* **Consumers**
   * AWS SDK:
     * Simple consumer
   * Lambda: (through Event source mapping)
@@ -4309,7 +4309,7 @@ With Amazon Kinesis Data Firehose, there is no minimum fee or setup cost. You pa
 * High level picture
   * -> `data producers`(SDK/KPL, Kinesis Agent, Kinesis Data Streams, CloudWatch Logs and Events, IoT rules actions)
   * -> `Kinesis Firehose`
-    * Can optinally transform data with Lambda
+    * Can optionally transform data with Lambda
       * Several blueprint templates available
       * Can upload transfromation failures into bucket
     * Can optionally upload source records into bucket
@@ -4724,7 +4724,7 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 ### [↖](#11_1)[↑](#11_1_1)[↓](#11_1_3) CloudWatch Metrics
 * Provided by many AWS services
 * EC2 standard: 5 minutes, detailed monitoring: 1 minute
-* EC2 RAM is not a built-in metric
+* EC2 *memory usage* is not a built-in metric
 * Can create custom metrics: standard resolution 1 minute, high resolution 1 sec
 
 <a name="11_1_3"></a>
@@ -4819,7 +4819,7 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 #### [↖](#11_1)[↑](#11_1_6_3)[↓](#11_1_6_5) Log Subscriptions
 * Allow real-time delivery of log events
 * Can create subscription filter for *Lambda*, *Elasticsearch*, *Kinesis Data/Firehose* (not supported from console)
-  * Only Kinesis Stream supports cross-account
+  * Only Kinesis Data Stream supports cross-account
     * Need to establish *log data sender* and *log data recipient*.
     * The log group and the destination must be in the same AWS region. However, the AWS resource that the destination points to can be located in a different region.
 
@@ -4830,7 +4830,7 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
   * Old version of the agent
   * Can only send to CloudWatch Logs
 * CloudWatch Unified Agent
-  * Collect additional system-level metrics such as RAM, processes, etc...
+  * Collect additional system-level metrics such as memory usage, processes, etc...
   * Collect logs to send to CloudWatch Logs
   * Centralized configuration using SSM Parameter Store
 * Batch Sends
@@ -5866,7 +5866,7 @@ The collected data is retained in encrypted format in an AWS Application Discove
 	* System configuration, system performance, running processes, and details of the network connections between systems
 	* Supports Microsoft Server, Amazon Linux, Ubuntu, RedHat, CentOS, SUSE...
 	* Resulting data can be exported as CSV or viewed within AWS Migration Hub
-* Data can be explorer using pre-defined queries in Amazon Athena
+* Data can be explored using pre-defined queries in Amazon Athena
 * On AWS
 	* <a href="https://aws.amazon.com/application-discovery/" target="_blank">Service</a> - <a href="https://aws.amazon.com/application-discovery/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/application-discovery/index.html" target="_blank">User Guide</a>
 
