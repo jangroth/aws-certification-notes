@@ -125,8 +125,7 @@
   * [Amazon Pinpoint](#16_11)
   * [Private Marketplace](#16_12)
   * [Amazon FSx](#16_13)
-  * [Amazon MQ](#16_14)
-  * [Amazon WorkDocs](#16_15)
+  * [Amazon WorkDocs](#16_14)
 ---
 <!-- toc_end -->
 <a name="1"></a>
@@ -667,10 +666,10 @@ AWS Directory Service for Microsoft Active Directory, also known as AWS Managed 
 #### [↖](#3_7)[↑](#3_7_2_2)[↓](#3_7_2_4) Connecting to on-premises AD
 * Needs AWS Direct Connect or VPN
 * Three kinds of of forest trust
-  * One way on-premises -> AWS
-  * One way AWS -> on-premises
-  * Two way AWS <-> on-premises
-* Forest trust is different to syncronize!
+  * One way: on-premises -> AWS
+  * One way: AWS -> on-premises
+  * Two way: AWS <-> on-premises
+* Forest trust is difficult to synchronize!
   * Replication not supported
   * Users on both ADs are independent from each other
 
@@ -2148,7 +2147,7 @@ An Application Load Balancer functions at the application layer, the seventh lay
 * EC2 instances (can be managed by an ASG) – HTTP
 * ECS tasks (managed by ECS itself) – HTTP
 * Lambda functions – HTTP request is translated into a JSON event
-* IP Addresses – must be private IPs (example: instances in peered VPC, on-premise)
+* IP Addresses – must be private IPs (example: instances in peered VPC, on-premises)
 * ALB can route to multiple target groups
 * Health checks are at the target group level
 
@@ -4872,7 +4871,6 @@ Amazon CloudWatch is a monitoring and observability service built for DevOps eng
 * [Overview](#12_1_1)
 * [Architecture models](#12_1_2)
 * [Deployment Types](#12_1_3)
-* [Blue/Green Deployment](#12_1_4)
 <!-- toc_end -->
 
 <a name="12_1_1"></a>
@@ -4926,7 +4924,7 @@ You can simply upload your code and Elastic Beanstalk automatically handles the 
 * You can define periodic tasks in a file `cron.yaml**`
 
 <a name="12_1_3"></a>
-### [↖](#12_1)[↑](#12_1_2)[↓](#12_1_4) Deployment Types
+### [↖](#12_1)[↑](#12_1_2)[↓](#12_2) Deployment Types
 An **in-place upgrade** involves performing application updates on live Amazon EC2 instances. A **disposable upgrade**, on the other hand, involves rolling out a new set of EC2 instances by terminating older instances.
 * Single instance deploys
 * HA with Load Balancer
@@ -4936,26 +4934,18 @@ An **in-place upgrade** involves performing application updates on live Amazon E
   * *Immutable*
     * Adds new Auto Scaling Group to existing environment
   * *Blue/Green* - not really supported, however
-		* Not a “direct feature” of Elastic Beanstalk, but can achieve Zero downtime and release facility
-		* Create a new “stage” environment and deploy v2 there
-		* The new environment (green) can be validated independently and roll back if issues
-		* Route 53 can be setup using weighted policies to redirect a little bit of traffic to the stage environment
-		* Use Elastic Beanstalk's “swap URLs” feature (DNS swap) when done with the environment test
+	  * Not a “direct feature” of Elastic Beanstalk, but can achieve Zero downtime and release facility
+	  * Create a new “stage” environment and deploy v2 there
+	  * The new environment (green) can be validated independently and roll back if issues
+	  * Route 53 can be setup using weighted policies to redirect a little bit of traffic to the stage environment
+	  * Use Elastic Beanstalk's “swap URLs” feature (DNS swap) when done with the environment test
   * *Traffic Splitting* via Application Load Balancer
 * Can configure Elastic Beanstalk to *ignore health checks* during deployments
-
-<a name="12_1_4"></a>
-### [↖](#12_1)[↑](#12_1_3)[↓](#12_2) Blue/Green Deployment
-* Not a “direct feature” of Elastic Beanstalk, but can achieve Zero downtime and release facility
-* Create a new “stage” environment and deploy v2 there
-* The new environment (green) can be validated independently and roll back if issues
-* Route 53 can be setup using weighted policies to redirect a little bit of traffic to the stage environment
-* Use Elastic Beanstalk's “swap URLs” feature (DNS swap) when done with the environment test
 
 ---
 
 <a name="12_2"></a>
-## [↖](#top)[↑](#12_1_4)[↓](#12_2_1) OpsWorks Stacks (Core Topic)
+## [↖](#top)[↑](#12_1_3)[↓](#12_2_1) OpsWorks Stacks (Core Topic)
 <!-- toc_start -->
 * [Overview](#12_2_1)
 * [Components](#12_2_2)
@@ -5031,7 +5021,7 @@ An **in-place upgrade** involves performing application updates on live Amazon E
   * The latest application revision is installed
   * The new version of the application is started and validated.
   * You can use a load balancer so that each instance is deregistered during its deployment and then restored to service after the deployment is complete.
-  * Only deployments that use the EC2/On-Premises compute platform can use in-place deployments.0
+  * Only deployments that use the EC2/On-Premises compute platform can use in-place deployments.
 * **Blue/green**
   * Instances are provisioned for the replacement environment.
   * The latest application revision is installed on the replacement instances.
@@ -5295,7 +5285,7 @@ Strategy|Auto Scaling<br/>Group|CodeDeploy<br/>EC2/On-Premises|CodeDeploy ECS|Co
 <a name="12_8_1"></a>
 ### [↖](#12_8)[↑](#12_8)[↓](#12_8_2) Overview
 AWS Systems Manager gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
-*Group resources* -> *Visualize data* -> *Take action*
+* *Group resources* -> *Visualize data* -> *Take action*
 * Manage EC2 and on-premises instances at scale
   * On-premises requires generation of secret *activation code*/*activation id*
 * Get operational insights of infrastructure
@@ -5348,7 +5338,7 @@ AWS Systems Manager gives you visibility and control of your infrastructure on A
   * Monitor Automation progress and execution details by using the Amazon EC2 or the AWS Systems Manager console.
   * Can integrate manual approval step
   * Complete *list* of tasks, unlike run command which is a one-off
-  * E.g. create *Golden AMi*
+  * E.g. create *Golden AMI*
 * **Maintenance windows**
   * Define a schedule for when to perform potentially disruptive actions on your instances
 * **Change Calendar**
@@ -6469,7 +6459,7 @@ Amazon AppStream 2.0 is a fully managed non-persistent application and desktop s
 ### [↖](#16_2)[↑](#16_2_1)[↓](#16_2_3) Amazon Workspaces
 Amazon WorkSpaces is a managed, secure Desktop-as-a-Service (DaaS) solution. You can use Amazon WorkSpaces to provision either Windows or Linux desktops in just a few minutes and quickly scale to provide thousands of desktops to workers across the globe. You can pay either monthly or hourly, just for the WorkSpaces you launch, which helps you save money when compared to traditional desktops and on-premises VDI solutions. Amazon WorkSpaces helps you eliminate the complexity in managing hardware inventory, OS versions and patches, and Virtual Desktop Infrastructure (VDI), which helps simplify your desktop delivery strategy. With Amazon WorkSpaces, your users get a fast, responsive desktop of their choice that they can access anywhere, anytime, from any supported device.
 * Managed, Secure Cloud Desktop
-* Great to eliminate management of on-premise VDI (Virtual Desktop Infrastructure)
+* Great to eliminate management of on-premises VDI (Virtual Desktop Infrastructure)
 * On Demand, pay per by usage
 * Secure, Encrypted, Network Isolation
 * Integrated with Microsoft Active Directory
@@ -6644,13 +6634,6 @@ Amazon FSx makes it easy and cost effective to launch and run popular file syste
 ---
 
 <a name="16_14"></a>
-## [↖](#top)[↑](#16_13)[↓](#16_15) Amazon MQ
-Amazon MQ is a managed message broker service for Apache ActiveMQ and RabbitMQ that makes it easy to set up and operate message brokers on AWS. Amazon MQ reduces your operational responsibilities by managing the provisioning, setup, and maintenance of message brokers for you. Because Amazon MQ connects to your current applications with industry-standard APIs and protocols, you can easily migrate to AWS without having to rewrite code.
-* On AWS: <a href="https://aws.amazon.com/amazon-mq/" target="_blank">Service</a>
-
----
-
-<a name="16_15"></a>
-## [↖](#top)[↑](#16_14) Amazon WorkDocs
+## [↖](#top)[↑](#16_13) Amazon WorkDocs
 Amazon WorkDocs is a fully managed, secure content creation, storage, and collaboration service. With Amazon WorkDocs, you can easily create, edit, and share content, and because it’s stored centrally on AWS, access it from anywhere on any device. Amazon WorkDocs makes it easy to collaborate with others, and lets you easily share content, provide rich feedback, and collaboratively edit documents. You can use Amazon WorkDocs to retire legacy file share infrastructure by moving file shares to the cloud. Amazon WorkDocs lets you integrate with your existing systems, and offers a rich API so that you can develop your own content-rich applications. Amazon WorkDocs is built on AWS, where your content is secured on the world's largest cloud infrastructure.
 * On AWS: <a href="https://aws.amazon.com/workdocs" target="_blank">Service</a>
