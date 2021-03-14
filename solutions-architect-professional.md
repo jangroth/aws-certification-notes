@@ -131,7 +131,7 @@
 <a name="1"></a>
 # [↖](#top)[↓](#2) Solutions Architect Professional
 
-> 10/2020 -
+> 10/2020 - 3/2021
 
 Following [Ultimate AWS Certified Solutions Architect Professional 2021](https://www.udemy.com/course/aws-solutions-architect-professional).
 
