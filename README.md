@@ -1,6 +1,6 @@
 # AWS Certification Notes
 
-* [Advanced Network Speciality](advanced-network-speciality.md) (2021)
+* [Advanced Network Speciality](advanced-networking-speciality.md) (2021)
 * [Solutions Architect Professional](solutions-architect-professional.md) (2021)
 * [DevOps Engineer Professional](devops-engineer-professional.md) (2020)
 * [Solutions Architect Associate](solutions-architect-associate.md) (2019)
