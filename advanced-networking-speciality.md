@@ -69,3 +69,23 @@ Following [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digita
 <a name="2_1_6"></a>
 ### [↖](#2_1)[↑](#2_1_5) Domain 6: Manage, Optimize, and Troubleshoot the Network
 * 6.1 Given a scenario, troubleshoot and resolve a network issu
+
+# Design and Implement AWS Network
+
+## AWS Infrastructure
+
+### Regions, AZs, Edge Locations and Local Zones
+AWS has the concept of a **Region**, which is a physical location around the world where we cluster data centers. We call each group of logical data centers an Availability Zone. Each AWS Region consists of multiple, isolated, and physically separate AZs within a geographic area.
+
+An **Availability Zone (AZ)** is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region. AZs give customers the ability to operate production applications and databases that are more highly available, fault tolerant, and scalable than would be possible from a single data center.
+
+**Edge locations** are AWS data centers ('endpoints') designed to deliver services with the lowest latency possible. Amazon has dozens of these data centers spread across the world. They’re closer to users than Regions or Availability Zones, often in major cities, so responses can be fast and snappy. A subset of services for which latency really matters use edge locations, including:
+* *CloudFront*, which uses edge locations to cache copies of the content that it serves, so the content is closer to users and can be delivered to them faster.
+* *Lambda@Edge*, is a feature of Amazon CloudFront that lets you run code closer to users of your application, which improves performance and reduces latency.
+* *Route 53*, which serves DNS responses from edge locations, so that DNS queries that originate nearby can resolve faster (and, contrary to what you might think, is also Amazon’s premier database).
+* *Web Application Firewall* and *AWS Shield*, which filter traffic in edge locations to stop unwanted traffic as soon as possible.
+
+**AWS Local Zones** place compute, storage, database, and other select AWS services closer to end-users. With AWS Local Zones, you can easily run highly-demanding applications that require single-digit millisecond latencies to your end-users such as media & entertainment content creation, real-time gaming, reservoir simulations, electronic design automation, and machine learning:
+* A Local Zone is an extension of an AWS Region that is geographically close to your users.
+* You can extend any VPC from the parent AWS Region into Local Zones by creating a new subnet and assigning it to the AWS Local Zone. When you create a subnet in a Local Zone, your VPC is extended to that Local Zone. The subnet in the Local Zone operates the same as other subnets in your VPC.
+
