@@ -4,6 +4,8 @@
 * [Advanced Networking - Speciality](#1)
 * [Exam Objectives](#2)
   * [Content](#2_1)
+* [Design and Implement AWS Network](#3)
+  * [AWS Infrastructure](#3_1)
 ---
 <!-- toc_end -->
 ---
@@ -67,14 +69,20 @@ Following [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digita
 * 5.3 Evaluate AWS security features for managing network traffic
 * 5.4 Utilize encryption technologies to secure network communications
 <a name="2_1_6"></a>
-### [↖](#2_1)[↑](#2_1_5) Domain 6: Manage, Optimize, and Troubleshoot the Network
+### [↖](#2_1)[↑](#2_1_5)[↓](#3) Domain 6: Manage, Optimize, and Troubleshoot the Network
 * 6.1 Given a scenario, troubleshoot and resolve a network issu
 
-# Design and Implement AWS Network
+<a name="3"></a>
+# [↖](#top)[↑](#2_1_6)[↓](#3_1) Design and Implement AWS Network
 
-## AWS Infrastructure
+<a name="3_1"></a>
+## [↖](#top)[↑](#3)[↓](#3_1_1) AWS Infrastructure
+<!-- toc_start -->
+* [Regions, AZs, Edge Locations and Local Zones](#3_1_1)
+<!-- toc_end -->
 
-### Regions, AZs, Edge Locations and Local Zones
+<a name="3_1_1"></a>
+### [↖](#3_1)[↑](#3_1) Regions, AZs, Edge Locations and Local Zones
 AWS has the concept of a **Region**, which is a physical location around the world where we cluster data centers. We call each group of logical data centers an Availability Zone. Each AWS Region consists of multiple, isolated, and physically separate AZs within a geographic area.
 
 An **Availability Zone (AZ)** is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region. AZs give customers the ability to operate production applications and databases that are more highly available, fault tolerant, and scalable than would be possible from a single data center.
