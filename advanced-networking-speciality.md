@@ -87,6 +87,8 @@ AWS has the concept of a **Region**, which is a physical location around the wor
 
 An **Availability Zone (AZ)** is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region. AZs give customers the ability to operate production applications and databases that are more highly available, fault tolerant, and scalable than would be possible from a single data center.
 
+A **transit center** provides redundant connectivity between AZs and internet backbones.
+
 **Edge locations** are AWS data centers ('endpoints') designed to deliver services with the lowest latency possible. Amazon has dozens of these data centers spread across the world. They’re closer to users than Regions or Availability Zones, often in major cities, so responses can be fast and snappy. A subset of services for which latency really matters use edge locations, including:
 * *CloudFront*, which uses edge locations to cache copies of the content that it serves, so the content is closer to users and can be delivered to them faster.
 * *Lambda@Edge*, is a feature of Amazon CloudFront that lets you run code closer to users of your application, which improves performance and reduces latency.
@@ -96,4 +98,160 @@ An **Availability Zone (AZ)** is one or more discrete data centers with redundan
 **AWS Local Zones** place compute, storage, database, and other select AWS services closer to end-users. With AWS Local Zones, you can easily run highly-demanding applications that require single-digit millisecond latencies to your end-users such as media & entertainment content creation, real-time gaming, reservoir simulations, electronic design automation, and machine learning:
 * A Local Zone is an extension of an AWS Region that is geographically close to your users.
 * You can extend any VPC from the parent AWS Region into Local Zones by creating a new subnet and assigning it to the AWS Local Zone. When you create a subnet in a Local Zone, your VPC is extended to that Local Zone. The subnet in the Local Zone operates the same as other subnets in your VPC.
+
+### [↖](#top)[↑](#15)[↓](#15_1_1) Virtual Private Cloud (VPC)
+<!-- toc_start -->
+* [Overview](#15_1_1)
+  * [Default VPC (Amazon specific)](#15_1_1_1)
+  * [Non-default VPC (regular VPC)](#15_1_1_2)
+  * [VPC Scenarios](#15_1_1_3)
+* [Components](#15_1_2)
+* [Structure & Package Flow](#15_1_3)
+  * [Package flow through VPC components](#15_1_3_1)
+  * [VPC Flow Logs](#15_1_3_2)
+* [Limits](#15_1_4)
+<!-- toc_end -->
+
+<a name="15_1_1"></a>
+#### [↖](#15_1)[↑](#15_1)[↓](#15_1_1_1) Overview
+Amazon Virtual Private Cloud (Amazon VPC) is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
+
+As one of AWS's foundational services, Amazon VPC makes it easy to customize your VPC's network configuration. You can create a public-facing subnet for your web servers that have access to the internet. It also lets you place your backend systems, such as databases or application servers, in a private-facing subnet with no internet access. Amazon VPC lets you to use multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet.
+* Provisions a logically isolated section of the AWS cloud
+* Spans over all AZs in a region
+* Allows to create layered architecture
+* Shared or dedicated tenancy (exclusive hardware or not)
+  * Cannot be changed after VPC creation
+* *Security groups* and subnet-level *network ACLs*
+* Ability to extend on-premises network to cloud
+* Can be extended *after creation* by adding 1 to utmost 4 CIDR blocks
+* On AWS
+	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
+
+<a name="15_1_1_1"></a>
+##### [↖](#15_1)[↑](#15_1_1)[↓](#15_1_1_2) Default VPC (Amazon specific)
+* Gives easy access to a VPC without having to configure it from scratch
+* Has different subnets in different AZs and an internet gateway (HA, spread out to all AZs)
+* Each instance launched automatically receives a *public IP* (and a private IP), this is usually not the case for non-default VPCs)
+* Cannot be restored if deleted
+* Comes with default NACL that allows all inbound/outbound traffic
+<a name="15_1_1_2"></a>
+##### [↖](#15_1)[↑](#15_1_1_1)[↓](#15_1_1_3) Non-default VPC (regular VPC)
+* Only has private IP addresses
+* Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
+
+<a name="15_1_1_3"></a>
+##### [↖](#15_1)[↑](#15_1_1_2)[↓](#15_1_2) VPC Scenarios
+* VPC with private subnet only -> single tier apps
+* VPC with public and private subnets -> layered apps
+* VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
+* VPC with private subnets and hardware connected VPN -> extended VPN
+
+<a name="15_1_2"></a>
+#### [↖](#15_1)[↑](#15_1_1_3)[↓](#15_1_3) Components
+* **Subnet**
+	* In exactly one AZ
+	* If traffic is routed to an Internet gateway, the subnet is known as a public subnet
+	* If a subnet doesn't have a route to the Internet gateway, it's known as a private subnet
+	* EC2 instances are launched into subnets
+	* Use ssh-agent forwarding to connect from public to private instances
+	* Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
+* **Route Table**
+	* Contains a set of rules, called routes that determine where network traffic is directed to
+	* Each VPC automatically comes with a main route table that can be configured
+	* Each subnet in a VPC must be associated with a route table; the table controls the routing for the subnet. A subnet can only be associated with one route table at a time, but multiple subnets can be associated with the same route table
+	* Each route in a table specifies a destination CIDR and a target
+	* Every route table contains a local route for communication within the VPC
+	* Can have a *default route* 0.0.0.0/0 to route everything that doesn't have a specific rule
+* **Elastic IP**
+	* Static IPv4 address mapped to an instance or network interface
+	* If attached to network interface it's decoupled from the instance's lifecycle
+	* Routes to private IP address of instance
+	* Can be remapped in case of failure.
+	* For use in a specific region only
+	* Can only map to instances in public subnets
+* **Gateways**
+	* *Internet Gateway*
+		* Horizontally scaled, redundant, and highly available VPC component that allows communication between instances in a VPC and the internet
+		* Provides a target in VPC route tables for internet-routable traffic
+		* Performs network address translation (NAT) for instances that have been assigned public IPv4 addresses
+  * *Egress-Only* Gateway
+    * Allows outbound communication over IPv6 from instances in your VPC to the Internet
+    * Prevents the Internet from initiating an IPv6 connection with your instances.
+    * (IPv6 addresses are globally unique, and are therefore public by default)
+	* *Virtual Private* Gateway (VGW)
+    * AWS side of Site-to-site VPN
+		* Has VPN connection to customer gateway attached
+		* Serves as VPN concentrator on the Amazon side of the VPN connection
+		* Only one virtual private gateway can be attached to a VPC at a time
+	* *Customer Gateway*
+    * Customer side of Site-to-site VPN
+		* A physical device or software application on your side of the VPN connection
+* **NAT**
+	* *NAT Instances*
+		* Manually configured instance from an NAT AMI
+    * Need to manually disable *source/destination check* on the instance
+	* *NAT Gateway*
+		* AWS-mananged service
+    * HA per AZ, create one gateway per AZ
+* **Network ACL**
+  * Subnet level, acting as firewall
+  * One subnet can (and must) only ever be associated to one NACL, however, one NACL can be associated to many subnets
+  * Rules for inbound and outbound traffic
+  * Rules have numbers and are evaluated from low to high
+  * Default is to deny everything in and out
+  * *Stateless*
+  * Support *allow* and *deny* rules
+  * Can block IP addresses (Security groups can't)
+	* **Cannot** block URLs (forward proxies can)
+* **Security Groups**
+  * Acts as a virtual firewall to control inbound and outbound traffic to instances
+  * Acts on instance level, not subnet level
+  * 'Allow rules' for inbound and outbound traffic (*no* explicite deny rules)
+    * All outbound traffic is allowed by default
+    * All inbound traffic is denied per default
+  * Support *allow* rules only
+  * *Stateful* - will always allow response to (allowed) outbound traffic
+  * Can refer to other security group, e.g. allow traffic from there
+  * Can have mulitple security groups attached to an instance
+  * Can have any number of instances within a security group
+  * Cannot block individual IP adresses (use NACL for that)
+
+<a name="15_1_3"></a>
+#### [↖](#15_1)[↑](#15_1_2)[↓](#15_1_3_1) Structure & Package Flow
+<a name="15_1_3_1"></a>
+##### [↖](#15_1)[↑](#15_1_3)[↓](#15_1_3_2) Package flow through VPC components
+* VPC (has *CIDR*)
+	* Gateway (Internet or VPN)
+  * Router
+	* Route table (one per subnet, can be shared)
+	* Network ACL (one per subnet, can be shared)
+	* Subnets (CIDRs match VPC's CIDR)
+	* Security Group (on VPC level)
+	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
+
+<a name="15_1_3_2"></a>
+##### [↖](#15_1)[↑](#15_1_3_1)[↓](#15_1_4) VPC Flow Logs
+VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen destination.
+
+Can be created at 3 levels:
+* VPC
+* Subnet
+* Network interface
+
+<a name="15_1_4"></a>
+#### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_2) Limits
+.|.
+-|-
+VPCs per region|5
+Min/max VPC size|`/28`/`/16`
+Subnets per VPC|200
+Customer gateways per region|50
+Gateway per region|5 Internet
+Elastic IPs per account per region|5
+VPN connections per region|50
+Route tables per region|200
+Security groups per region|500
+
+---
 
