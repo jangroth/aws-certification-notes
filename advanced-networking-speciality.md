@@ -79,10 +79,15 @@ Following [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digita
 ## [↖](#top)[↑](#3)[↓](#3_1_1) AWS Infrastructure
 <!-- toc_start -->
 * [Regions, AZs, Edge Locations and Local Zones](#3_1_1)
+* [Virtual Private Cloud (VPC)](#3_1_2)
+  * [Overview](#3_1_2_1)
+  * [Components](#3_1_2_2)
+  * [Structure & Package Flow](#3_1_2_3)
+  * [Limits](#3_1_2_4)
 <!-- toc_end -->
 
 <a name="3_1_1"></a>
-### [↖](#3_1)[↑](#3_1) Regions, AZs, Edge Locations and Local Zones
+### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Regions, AZs, Edge Locations and Local Zones
 AWS has the concept of a **Region**, which is a physical location around the world where we cluster data centers. We call each group of logical data centers an Availability Zone. Each AWS Region consists of multiple, isolated, and physically separate AZs within a geographic area.
 
 An **Availability Zone (AZ)** is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region. AZs give customers the ability to operate production applications and databases that are more highly available, fault tolerant, and scalable than would be possible from a single data center.
@@ -99,22 +104,12 @@ A **transit center** provides redundant connectivity between AZs and internet ba
 * A Local Zone is an extension of an AWS Region that is geographically close to your users.
 * You can extend any VPC from the parent AWS Region into Local Zones by creating a new subnet and assigning it to the AWS Local Zone. When you create a subnet in a Local Zone, your VPC is extended to that Local Zone. The subnet in the Local Zone operates the same as other subnets in your VPC.
 
-### [↖](#top)[↑](#15)[↓](#15_1_1) Virtual Private Cloud (VPC)
-<!-- toc_start -->
-* [Overview](#15_1_1)
-  * [Default VPC (Amazon specific)](#15_1_1_1)
-  * [Non-default VPC (regular VPC)](#15_1_1_2)
-  * [VPC Scenarios](#15_1_1_3)
-* [Components](#15_1_2)
-* [Structure & Package Flow](#15_1_3)
-  * [Package flow through VPC components](#15_1_3_1)
-  * [VPC Flow Logs](#15_1_3_2)
-* [Limits](#15_1_4)
-<!-- toc_end -->
+<a name="3_1_2"></a>
+### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_2_1) Virtual Private Cloud (VPC)
 
-<a name="15_1_1"></a>
-#### [↖](#15_1)[↑](#15_1)[↓](#15_1_1_1) Overview
-Amazon Virtual Private Cloud (Amazon VPC) is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
+<a name="3_1_2_1"></a>
+#### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_2_1_1) Overview
+**Amazon Virtual Private Cloud (Amazon VPC)** is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
 
 As one of AWS's foundational services, Amazon VPC makes it easy to customize your VPC's network configuration. You can create a public-facing subnet for your web servers that have access to the internet. It also lets you place your backend systems, such as databases or application servers, in a private-facing subnet with no internet access. Amazon VPC lets you to use multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet.
 * Provisions a logically isolated section of the AWS cloud
@@ -128,33 +123,30 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 * On AWS
 	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
 
-<a name="15_1_1_1"></a>
-##### [↖](#15_1)[↑](#15_1_1)[↓](#15_1_1_2) Default VPC (Amazon specific)
+##### Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
-* Has different subnets in different AZs and an internet gateway (HA, spread out to all AZs)
-* Each instance launched automatically receives a *public IP* (and a private IP), this is usually not the case for non-default VPCs)
+* Has different subnets in different AZs and an internet Gateway (HA, spread out to all AZs)
+* Each instance launched automatically receives a *public IP* (and a private IP), this is usually not the case for non-default VPCs
 * Cannot be restored if deleted
 * Comes with default NACL that allows all inbound/outbound traffic
-<a name="15_1_1_2"></a>
-##### [↖](#15_1)[↑](#15_1_1_1)[↓](#15_1_1_3) Non-default VPC (regular VPC)
+##### Non-default VPC (regular VPC)
 * Only has private IP addresses
-* Resources *only* accessible through *Elastic IP*, *VPN* or *internet gateways*
+* Resources *only* accessible through *Elastic IP*, *VPN* or *Internet Gateways*
 
-<a name="15_1_1_3"></a>
-##### [↖](#15_1)[↑](#15_1_1_2)[↓](#15_1_2) VPC Scenarios
+##### VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
-* VPC with public, private subnets and hardware connected VPN -> extending apps to on-premise
+* VPC with public, private subnets and hardware connected VPN -> extending apps to on-premises
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
-<a name="15_1_2"></a>
-#### [↖](#15_1)[↑](#15_1_1_3)[↓](#15_1_3) Components
+<a name="3_1_2_2"></a>
+#### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Components
 * **Subnet**
 	* In exactly one AZ
-	* If traffic is routed to an Internet gateway, the subnet is known as a public subnet
-	* If a subnet doesn't have a route to the Internet gateway, it's known as a private subnet
+	* If traffic is routed to an internet Gateway, the subnet is known as a *public subnet*
+	* If a subnet doesn't have a route to the Internet Gateway, it's known as a *private subnet*
 	* EC2 instances are launched into subnets
-	* Use ssh-agent forwarding to connect from public to private instances
+  * Use ssh-agent forwarding to connect from public to private instances
 	* Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
 * **Route Table**
 	* Contains a set of rules, called routes that determine where network traffic is directed to
@@ -217,10 +209,9 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * Can have any number of instances within a security group
   * Cannot block individual IP adresses (use NACL for that)
 
-<a name="15_1_3"></a>
-#### [↖](#15_1)[↑](#15_1_2)[↓](#15_1_3_1) Structure & Package Flow
-<a name="15_1_3_1"></a>
-##### [↖](#15_1)[↑](#15_1_3)[↓](#15_1_3_2) Package flow through VPC components
+<a name="3_1_2_3"></a>
+#### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_3_1) Structure & Package Flow
+##### Package flow through VPC components
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
   * Router
@@ -230,8 +221,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 	* Security Group (on VPC level)
 	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
 
-<a name="15_1_3_2"></a>
-##### [↖](#15_1)[↑](#15_1_3_1)[↓](#15_1_4) VPC Flow Logs
+##### VPC Flow Logs
 VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen destination.
 
 Can be created at 3 levels:
@@ -239,8 +229,8 @@ Can be created at 3 levels:
 * Subnet
 * Network interface
 
-<a name="15_1_4"></a>
-#### [↖](#15_1)[↑](#15_1_3_2)[↓](#15_2) Limits
+<a name="3_1_2_4"></a>
+#### [↖](#3_1)[↑](#3_1_2_3_2) Limits
 .|.
 -|-
 VPCs per region|5
