@@ -2,26 +2,29 @@
 <a name="top"></a>
 ---
 * [Advanced Networking - Speciality](#1)
+  * [Supporting Material](#1_1)
 * [Exam Objectives](#2)
   * [Content](#2_1)
 * [Design and Implement AWS Network](#3)
   * [AWS Infrastructure](#3_1)
+* [Topics still to cover](#4)
 ---
 <!-- toc_end -->
 ---
 <a name="1"></a>
-# [↖](#top)[↓](#2) Advanced Networking - Speciality
+# [↖](#top)[↓](#1_1) Advanced Networking - Speciality
 
 > 8/2021 -
 
-## Supporting Material
+<a name="1_1"></a>
+## [↖](#top)[↑](#1)[↓](#2) Supporting Material
 * [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digital)](https://www.aws.training/Details/Curriculum?id=21330)
 * [AWS Networking Fundamentals](https://www.youtube.com/watch?v=hiKPPy584Mg)
 
 ---
 
 <a name="2"></a>
-# [↖](#top)[↑](#1)[↓](#2_1) Exam Objectives
+# [↖](#top)[↑](#1_1)[↓](#2_1) Exam Objectives
 * Design, develop, and deploy cloud-based solutions using AWS.
 * Implement core AWS services according to basic architectural best practices.
 * Design and maintain network architecture for all AWS services.
@@ -83,9 +86,10 @@
 * [Regions, AZs, Edge Locations and Local Zones](#3_1_1)
 * [Virtual Private Cloud (VPC)](#3_1_2)
   * [Overview](#3_1_2_1)
-  * [Components](#3_1_2_2)
-  * [Structure & Package Flow](#3_1_2_3)
-  * [Limits](#3_1_2_4)
+  * [Core Components](#3_1_2_2)
+  * [Security Components](#3_1_2_3)
+  * [Structure & Package Flow](#3_1_2_4)
+  * [Limits](#3_1_2_5)
 <!-- toc_end -->
 
 <a name="3_1_1"></a>
@@ -143,11 +147,11 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 <a name="3_1_2_2"></a>
 #### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Core Components
 * **CIDR range**
-  * VPCs are private network and use RFC1918 range
+  * VPCs are private networks and use RFC1918 ranges
     * 10.0.0.0/8 (-> `10.255.255.255`)
     * 172.16.0.0/12 (-> `172.31.255.255`)
     * 192.168.0.0/16 (-> `192.168.255.255`)
-  * This guarantees that VPCs cannot conflict with anything in the public internet
+  * This guarantees that VPCs cannot conflict in the public internet
 * **Subnet**
   * In exactly one AZ
   * If traffic is routed to an Internet Gateway, the subnet is known as a *public subnet*
@@ -155,7 +159,6 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * If a subnet doesn't have a route to the Internet Gateway, it's known as a *private subnet*
     * Can get internet access through NAT Gateway
   * EC2 instances are launched into subnets
-    * Use ssh-agent forwarding to connect from public to private instances
   * Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
 * **Route Table**
   * Contains a set of rules, called *routes* that determine where network traffic is directed to
@@ -166,6 +169,14 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * Every route table contains a local route for communication within the VPC
   * Has a *local route* for communication within the VPC (e.g. `172.31.0.0/16`)
   * Can have a *default route* `0.0.0.0/0` to route everything that doesn't have a specific rule
+
+|Route Table Type|Description|
+|-|-|
+|Main|The route table that automatically comes with your VPC. It controls the routing for all subnets that are not explicitly associated with any other route table.|
+|Subnet|A route table that's associated with a subnet.|
+|Gateway|A route table that's associated with an internet gateway or virtual private gateway.|
+|Local gateway|A route table that's associated with an Outposts local gateway.|
+
 * **Elastic IP**
   * Static IPv4 address mapped to an instance or network interface
   * If attached to network interface it's decoupled from the instance's lifecycle
@@ -204,7 +215,8 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * DNS hostnames are provides (can be disabled)
     * Private (internal) hostname: `ip-private-ipv4-address.region.compute.internal`
     * Public (external) hostname: `ec2-public-ipv4-address.region.compute.amazonaws.com`
-#### Security Components
+<a name="3_1_2_3"></a>
+#### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_4) Security Components
 * **Security Groups**
   * Acts as a virtual, distributed firewall to control inbound and outbound traffic to instances
   * Acts on instance level, not subnet level
@@ -236,8 +248,8 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
     * Subnet
     * Network interface
 
-<a name="3_1_2_3"></a>
-#### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_3_1) Structure & Package Flow
+<a name="3_1_2_4"></a>
+#### [↖](#3_1)[↑](#3_1_2_3)[↓](#3_1_2_4_1) Structure & Package Flow
 ##### Package flow through VPC components
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
@@ -249,8 +261,8 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
 
 
-<a name="3_1_2_4"></a>
-#### [↖](#3_1)[↑](#3_1_2_3_2) Limits
+<a name="3_1_2_5"></a>
+#### [↖](#3_1)[↑](#3_1_2_4_1)[↓](#4) Limits
 .|.
 -|-
 VPCs per region|5
@@ -265,5 +277,6 @@ Security groups per region|500
 
 ---
 
-# Topics still to cover
+<a name="4"></a>
+# [↖](#top)[↑](#3_1_2_5) Topics still to cover
 * IPv4 vs IPv6
