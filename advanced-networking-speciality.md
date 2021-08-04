@@ -14,7 +14,9 @@
 
 > 8/2021 -
 
-Following [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digital)](https://www.aws.training/Details/Curriculum?id=21330).
+## Supporting Material
+* [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digital)](https://www.aws.training/Details/Curriculum?id=21330)
+* [AWS Networking Fundamentals](https://www.youtube.com/watch?v=hiKPPy584Mg)
 
 ---
 
@@ -139,32 +141,36 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
 <a name="3_1_2_2"></a>
-#### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Components
+#### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Core Components
 * **CIDR range**
   * VPCs are private network and use RFC1918 range
-    * 10.0.0.0/8
-    * 172.16.0.0/12
-    * 192.168.0.0/16
+    * 10.0.0.0/8 (-> `10.255.255.255`)
+    * 172.16.0.0/12 (-> `172.31.255.255`)
+    * 192.168.0.0/16 (-> `192.168.255.255`)
   * This guarantees that VPCs cannot conflict with anything in the public internet
 * **Subnet**
   * In exactly one AZ
-  * If traffic is routed to an internet Gateway, the subnet is known as a *public subnet*
+  * If traffic is routed to an Internet Gateway, the subnet is known as a *public subnet*
+    * Gets public IP through Internet Gateway
   * If a subnet doesn't have a route to the Internet Gateway, it's known as a *private subnet*
+    * Can get internet access through NAT Gateway
   * EC2 instances are launched into subnets
     * Use ssh-agent forwarding to connect from public to private instances
   * Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
 * **Route Table**
-  * Contains a set of rules, called routes that determine where network traffic is directed to
-  * Each VPC automatically comes with a main route table that can be configured
-  * Each subnet in a VPC must be associated with a route table; the table controls the routing for the subnet. A subnet can only be associated with one route table at a time, but multiple subnets can be associated with the same route table
+  * Contains a set of rules, called *routes* that determine where network traffic is directed to
+  * Each VPC automatically comes with a *main route table* that can be configured
+    * Each subnet in a VPC must be associated with a route table; the table controls the routing for the subnet.
+    * A subnet can only be associated with one route table at a time, but multiple subnets can be associated with the same route table
   * Each route in a table specifies a destination CIDR and a target
   * Every route table contains a local route for communication within the VPC
-  * Can have a *default route* 0.0.0.0/0 to route everything that doesn't have a specific rule
+  * Has a *local route* for communication within the VPC (e.g. `172.31.0.0/16`)
+  * Can have a *default route* `0.0.0.0/0` to route everything that doesn't have a specific rule
 * **Elastic IP**
   * Static IPv4 address mapped to an instance or network interface
   * If attached to network interface it's decoupled from the instance's lifecycle
   * Routes to private IP address of instance
-  * Can be remapped in case of failure.
+  * Can be remapped in case of failure
   * For use in a specific region only
   * Can only map to instances in public subnets
 * **Gateways**
@@ -185,12 +191,32 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
     * Customer side of Site-to-site VPN
     * A physical device or software application on your side of the VPN connection
 * **NAT**
+  * 'One-way valve' that allows access *to* the internet, but not *from*.
   * *NAT Instances*
     * Manually configured instance from an NAT AMI
     * Need to manually disable *source/destination check* on the instance
   * *NAT Gateway*
     * AWS-mananged service
     * HA per AZ, create one gateway per AZ
+* **DNS**
+  * Route53 resolver is provided for VPC (can be disabled)
+    * Can provide DHCP options to provide own DNS configuration
+  * DNS hostnames are provides (can be disabled)
+    * Private (internal) hostname: `ip-private-ipv4-address.region.compute.internal`
+    * Public (external) hostname: `ec2-public-ipv4-address.region.compute.amazonaws.com`
+#### Security Components
+* **Security Groups**
+  * Acts as a virtual, distributed firewall to control inbound and outbound traffic to instances
+  * Acts on instance level, not subnet level
+  * 'Allow rules' for inbound and outbound traffic (*no* explicite deny rules)
+    * All outbound traffic is allowed by default
+    * All inbound traffic is denied per default
+  * Support *allow* rules only
+    * Cannot block individual IP adresses (use NACL for that)
+  * *Stateful* - will always allow response to (allowed) outbound traffic
+  * Can refer to other security groups, e.g. allow traffic from there
+  * Can have mulitple security groups attached to an instance
+  * Can have any number of instances within a security group
 * **Network ACL**
   * Subnet level, acting as firewall
   * One subnet can (and must) only ever be associated to one NACL, however, one NACL can be associated to many subnets
@@ -201,18 +227,14 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * Support *allow* and *deny* rules
   * Can block IP addresses (Security groups can't)
   * **Cannot** block URLs (forward proxies can)
-* **Security Groups**
-  * Acts as a virtual firewall to control inbound and outbound traffic to instances
-  * Acts on instance level, not subnet level
-  * 'Allow rules' for inbound and outbound traffic (*no* explicite deny rules)
-    * All outbound traffic is allowed by default
-    * All inbound traffic is denied per default
-  * Support *allow* rules only
-  * *Stateful* - will always allow response to (allowed) outbound traffic
-  * Can refer to other security group, e.g. allow traffic from there
-  * Can have mulitple security groups attached to an instance
-  * Can have any number of instances within a security group
-  * Cannot block individual IP adresses (use NACL for that)
+* **VPC Flow Logs**
+  * Capture information about the IP traffic going to and from network interfaces in a VPC.
+    * Contains description of networking packets, but not their payload
+  * Log data can be published to Amazon CloudWatch Logs and Amazon S3
+  * Can be created at 3 levels:
+    * VPC
+    * Subnet
+    * Network interface
 
 <a name="3_1_2_3"></a>
 #### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_3_1) Structure & Package Flow
@@ -226,13 +248,6 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 	* Security Group (on VPC level)
 	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
 
-##### VPC Flow Logs
-VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. Flow log data can be published to Amazon CloudWatch Logs and Amazon S3. After you've created a flow log, you can retrieve and view its data in the chosen destination.
-
-Can be created at 3 levels:
-* VPC
-* Subnet
-* Network interface
 
 <a name="3_1_2_4"></a>
 #### [↖](#3_1)[↑](#3_1_2_3_2) Limits
@@ -250,3 +265,5 @@ Security groups per region|500
 
 ---
 
+# Topics still to cover
+* IPv4 vs IPv6
