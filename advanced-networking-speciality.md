@@ -132,7 +132,6 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 ##### Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *Internet Gateways*
-
 ##### VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
@@ -141,50 +140,56 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 
 <a name="3_1_2_2"></a>
 #### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Components
+* **CIDR range**
+  * VPCs are private network and use RFC1918 range
+    * 10.0.0.0/8
+    * 172.16.0.0/12
+    * 192.168.0.0/16
+  * This guarantees that VPCs cannot conflict with anything in the public internet
 * **Subnet**
-	* In exactly one AZ
-	* If traffic is routed to an internet Gateway, the subnet is known as a *public subnet*
-	* If a subnet doesn't have a route to the Internet Gateway, it's known as a *private subnet*
-	* EC2 instances are launched into subnets
-  * Use ssh-agent forwarding to connect from public to private instances
-	* Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
+  * In exactly one AZ
+  * If traffic is routed to an internet Gateway, the subnet is known as a *public subnet*
+  * If a subnet doesn't have a route to the Internet Gateway, it's known as a *private subnet*
+  * EC2 instances are launched into subnets
+    * Use ssh-agent forwarding to connect from public to private instances
+  * Sometimes grouped into Subnet Groups, e.g. for caching or DB. Typically across AZs
 * **Route Table**
-	* Contains a set of rules, called routes that determine where network traffic is directed to
-	* Each VPC automatically comes with a main route table that can be configured
-	* Each subnet in a VPC must be associated with a route table; the table controls the routing for the subnet. A subnet can only be associated with one route table at a time, but multiple subnets can be associated with the same route table
-	* Each route in a table specifies a destination CIDR and a target
-	* Every route table contains a local route for communication within the VPC
-	* Can have a *default route* 0.0.0.0/0 to route everything that doesn't have a specific rule
+  * Contains a set of rules, called routes that determine where network traffic is directed to
+  * Each VPC automatically comes with a main route table that can be configured
+  * Each subnet in a VPC must be associated with a route table; the table controls the routing for the subnet. A subnet can only be associated with one route table at a time, but multiple subnets can be associated with the same route table
+  * Each route in a table specifies a destination CIDR and a target
+  * Every route table contains a local route for communication within the VPC
+  * Can have a *default route* 0.0.0.0/0 to route everything that doesn't have a specific rule
 * **Elastic IP**
-	* Static IPv4 address mapped to an instance or network interface
-	* If attached to network interface it's decoupled from the instance's lifecycle
-	* Routes to private IP address of instance
-	* Can be remapped in case of failure.
-	* For use in a specific region only
-	* Can only map to instances in public subnets
+  * Static IPv4 address mapped to an instance or network interface
+  * If attached to network interface it's decoupled from the instance's lifecycle
+  * Routes to private IP address of instance
+  * Can be remapped in case of failure.
+  * For use in a specific region only
+  * Can only map to instances in public subnets
 * **Gateways**
-	* *Internet Gateway*
-		* Horizontally scaled, redundant, and highly available VPC component that allows communication between instances in a VPC and the internet
-		* Provides a target in VPC route tables for internet-routable traffic
-		* Performs network address translation (NAT) for instances that have been assigned public IPv4 addresses
+  * *Internet Gateway*
+    * Horizontally scaled, redundant, and highly available VPC component that allows communication between instances in a VPC and the internet
+    * Provides a target in VPC route tables for internet-routable traffic
+    * Performs network address translation (NAT) for instances that have been assigned public IPv4 addresses
   * *Egress-Only* Gateway
     * Allows outbound communication over IPv6 from instances in your VPC to the Internet
     * Prevents the Internet from initiating an IPv6 connection with your instances.
     * (IPv6 addresses are globally unique, and are therefore public by default)
-	* *Virtual Private* Gateway (VGW)
+  * *Virtual Private* Gateway (VGW)
     * AWS side of Site-to-site VPN
-		* Has VPN connection to customer gateway attached
-		* Serves as VPN concentrator on the Amazon side of the VPN connection
-		* Only one virtual private gateway can be attached to a VPC at a time
-	* *Customer Gateway*
+    * Has VPN connection to customer gateway attached
+    * Serves as VPN concentrator on the Amazon side of the VPN connection
+    * Only one virtual private gateway can be attached to a VPC at a time
+  * *Customer Gateway*
     * Customer side of Site-to-site VPN
-		* A physical device or software application on your side of the VPN connection
+    * A physical device or software application on your side of the VPN connection
 * **NAT**
-	* *NAT Instances*
-		* Manually configured instance from an NAT AMI
+  * *NAT Instances*
+    * Manually configured instance from an NAT AMI
     * Need to manually disable *source/destination check* on the instance
-	* *NAT Gateway*
-		* AWS-mananged service
+  * *NAT Gateway*
+    * AWS-mananged service
     * HA per AZ, create one gateway per AZ
 * **Network ACL**
   * Subnet level, acting as firewall
@@ -195,7 +200,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * *Stateless*
   * Support *allow* and *deny* rules
   * Can block IP addresses (Security groups can't)
-	* **Cannot** block URLs (forward proxies can)
+  * **Cannot** block URLs (forward proxies can)
 * **Security Groups**
   * Acts as a virtual firewall to control inbound and outbound traffic to instances
   * Acts on instance level, not subnet level
