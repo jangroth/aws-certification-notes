@@ -16,11 +16,6 @@
 
 > 8/2021 -
 
-<a name="1_1"></a>
-## [↖](#top)[↑](#1)[↓](#2) Supporting Material
-* [Exam Readiness: AWS Certified Advanced Networking - Specialty (Digital)](https://www.aws.training/Details/Curriculum?id=21330)
-* [AWS Networking Fundamentals](https://www.youtube.com/watch?v=hiKPPy584Mg)
-
 ---
 
 <a name="2"></a>
@@ -81,7 +76,7 @@
 # [↖](#top)[↑](#2_1_6)[↓](#3_1) Design and Implement AWS Network
 
 <a name="3_1"></a>
-## [↖](#top)[↑](#3)[↓](#3_1_1) AWS Infrastructure
+## [↖](#top)[↑](#3)[↓](#3_1_1) AWS Global Network Infrastructure
 <!-- toc_start -->
 * [Regions, AZs, Edge Locations and Local Zones](#3_1_1)
 * [Virtual Private Cloud (VPC)](#3_1_2)
@@ -93,7 +88,7 @@
 <!-- toc_end -->
 
 <a name="3_1_1"></a>
-### [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Regions, AZs, Edge Locations and Local Zones
+## [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Overview
 AWS has the concept of a **Region**, which is a physical location around the world where we cluster data centers. We call each group of logical data centers an Availability Zone. Each AWS Region consists of multiple, isolated, and physically separate AZs within a geographic area.
 
 An **Availability Zone (AZ)** is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region. AZs give customers the ability to operate production applications and databases that are more highly available, fault tolerant, and scalable than would be possible from a single data center.
@@ -111,10 +106,10 @@ A **transit center** provides redundant connectivity between AZs and internet ba
 * You can extend any VPC from the parent AWS Region into Local Zones by creating a new subnet and assigning it to the AWS Local Zone. When you create a subnet in a Local Zone, your VPC is extended to that Local Zone. The subnet in the Local Zone operates the same as other subnets in your VPC.
 
 <a name="3_1_2"></a>
-### [↖](#3_1)[↑](#3_1_1)[↓](#3_1_2_1) Virtual Private Cloud (VPC)
+## [↖](#3_1)[↑](#3_1_1)[↓](#3_1_2_1) Virtual Private Cloud (VPC)
 
 <a name="3_1_2_1"></a>
-#### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_2_1_1) Overview
+### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_2_1_1) Overview
 **Amazon Virtual Private Cloud (Amazon VPC)** is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
 
 As one of AWS's foundational services, Amazon VPC makes it easy to customize your VPC's network configuration. You can create a public-facing subnet for your web servers that have access to the internet. It also lets you place your backend systems, such as databases or application servers, in a private-facing subnet with no internet access. Amazon VPC lets you to use multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet.
@@ -129,23 +124,23 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 * On AWS
 	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
 
-##### Default VPC (Amazon specific)
+#### Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
 * Has different subnets in different AZs and an internet Gateway (HA, spread out to all AZs)
 * Each instance launched automatically receives a *public IP* (and a private IP), this is usually not the case for non-default VPCs
 * Cannot be restored if deleted
 * Comes with default NACL that allows all inbound/outbound traffic
-##### Non-default VPC (regular VPC)
+#### Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *Internet Gateways*
-##### VPC Scenarios
+#### VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
 * VPC with public, private subnets and hardware connected VPN -> extending apps to on-premises
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
 <a name="3_1_2_2"></a>
-#### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Core Components
+### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Core Components
 * **CIDR range**
   * VPCs are private networks and use RFC1918 ranges
     * 10.0.0.0/8 (-> `10.255.255.255`)
@@ -216,7 +211,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
     * Private (internal) hostname: `ip-private-ipv4-address.region.compute.internal`
     * Public (external) hostname: `ec2-public-ipv4-address.region.compute.amazonaws.com`
 <a name="3_1_2_3"></a>
-#### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_4) Security Components
+### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_4) Security Components
 * **Security Groups**
   * Acts as a virtual, distributed firewall to control inbound and outbound traffic to instances
   * Acts on instance level, not subnet level
@@ -249,8 +244,8 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
     * Network interface
 
 <a name="3_1_2_4"></a>
-#### [↖](#3_1)[↑](#3_1_2_3)[↓](#3_1_2_4_1) Structure & Package Flow
-##### Package flow through VPC components
+### [↖](#3_1)[↑](#3_1_2_3)[↓](#3_1_2_4_1) Structure & Package Flow
+#### Package flow through VPC components
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
   * Router
@@ -262,7 +257,7 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 
 
 <a name="3_1_2_5"></a>
-#### [↖](#3_1)[↑](#3_1_2_4_1)[↓](#4) Limits
+### [↖](#3_1)[↑](#3_1_2_4_1)[↓](#4) Limits
 .|.
 -|-
 VPCs per region|5
@@ -280,3 +275,11 @@ Security groups per region|500
 <a name="4"></a>
 # [↖](#top)[↑](#3_1_2_5) Topics still to cover
 * IPv4 vs IPv6
+
+---
+
+<a name="1_1"></a>
+## [↖](#top)[↑](#1)[↓](#2) Supporting Material
+* [Exam Readiness: AWS Certified Advanced Networking - Specialty](https://www.aws.training/Details/Curriculum?id=21330) (free aws training)
+* [AWS Networking Fundamentals](https://www.youtube.com/watch?v=hiKPPy584Mg) (youtube)
+
