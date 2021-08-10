@@ -2,24 +2,26 @@
 <a name="top"></a>
 ---
 * [Advanced Networking - Speciality](#1)
-  * [Supporting Material](#1_1)
 * [Exam Objectives](#2)
   * [Content](#2_1)
-* [Design and Implement AWS Network](#3)
-  * [AWS Infrastructure](#3_1)
+* [Design and Implement AWS Networks](#3)
+  * [AWS Global Network Infrastructure](#3_1)
+  * [Virtual Private Cloud (VPC)](#3_2)
+  * [Connecting VPCs to other VPCs](#3_3)
 * [Topics still to cover](#4)
+  * [Supporting Material](#4_1)
 ---
 <!-- toc_end -->
 ---
 <a name="1"></a>
-# [↖](#top)[↓](#1_1) Advanced Networking - Speciality
+# [↖](#top)[↓](#2) Advanced Networking - Speciality
 
 > 8/2021 -
 
 ---
 
 <a name="2"></a>
-# [↖](#top)[↑](#1_1)[↓](#2_1) Exam Objectives
+# [↖](#top)[↑](#1)[↓](#2_1) Exam Objectives
 * Design, develop, and deploy cloud-based solutions using AWS.
 * Implement core AWS services according to basic architectural best practices.
 * Design and maintain network architecture for all AWS services.
@@ -73,22 +75,16 @@
 * 6.1 Given a scenario, troubleshoot and resolve a network issu
 
 <a name="3"></a>
-# [↖](#top)[↑](#2_1_6)[↓](#3_1) Design and Implement AWS Network
+# [↖](#top)[↑](#2_1_6)[↓](#3_1) Design and Implement AWS Networks
 
 <a name="3_1"></a>
 ## [↖](#top)[↑](#3)[↓](#3_1_1) AWS Global Network Infrastructure
 <!-- toc_start -->
-* [Regions, AZs, Edge Locations and Local Zones](#3_1_1)
-* [Virtual Private Cloud (VPC)](#3_1_2)
-  * [Overview](#3_1_2_1)
-  * [Core Components](#3_1_2_2)
-  * [Security Components](#3_1_2_3)
-  * [Structure & Package Flow](#3_1_2_4)
-  * [Limits](#3_1_2_5)
+* [Overview](#3_1_1)
 <!-- toc_end -->
 
 <a name="3_1_1"></a>
-## [↖](#3_1)[↑](#3_1)[↓](#3_1_2) Overview
+### [↖](#3_1)[↑](#3_1)[↓](#3_2) Overview
 AWS has the concept of a **Region**, which is a physical location around the world where we cluster data centers. We call each group of logical data centers an Availability Zone. Each AWS Region consists of multiple, isolated, and physically separate AZs within a geographic area.
 
 An **Availability Zone (AZ)** is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region. AZs give customers the ability to operate production applications and databases that are more highly available, fault tolerant, and scalable than would be possible from a single data center.
@@ -105,11 +101,22 @@ A **transit center** provides redundant connectivity between AZs and internet ba
 * A Local Zone is an extension of an AWS Region that is geographically close to your users.
 * You can extend any VPC from the parent AWS Region into Local Zones by creating a new subnet and assigning it to the AWS Local Zone. When you create a subnet in a Local Zone, your VPC is extended to that Local Zone. The subnet in the Local Zone operates the same as other subnets in your VPC.
 
-<a name="3_1_2"></a>
-## [↖](#3_1)[↑](#3_1_1)[↓](#3_1_2_1) Virtual Private Cloud (VPC)
+<a name="3_2"></a>
+## [↖](#top)[↑](#3_1_1)[↓](#3_2_1) Virtual Private Cloud (VPC)
+<!-- toc_start -->
+* [Overview](#3_2_1)
+  * [Default VPC (Amazon specific)](#3_2_1_1)
+  * [Non-default VPC (regular VPC)](#3_2_1_2)
+  * [VPC Scenarios](#3_2_1_3)
+* [Core Components](#3_2_2)
+* [Security Components](#3_2_3)
+* [Structure & Package Flow](#3_2_4)
+  * [Package flow through VPC components](#3_2_4_1)
+* [Limits](#3_2_5)
+<!-- toc_end -->
 
-<a name="3_1_2_1"></a>
-### [↖](#3_1)[↑](#3_1_2)[↓](#3_1_2_1_1) Overview
+<a name="3_2_1"></a>
+### [↖](#3_2)[↑](#3_2)[↓](#3_2_1_1) Overview
 **Amazon Virtual Private Cloud (Amazon VPC)** is a service that lets you launch AWS resources in a logically isolated virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address range, creation of subnets, and configuration of route tables and network gateways. You can use both IPv4 and IPv6 for most resources in your virtual private cloud, helping to ensure secure and easy access to resources and applications.
 
 As one of AWS's foundational services, Amazon VPC makes it easy to customize your VPC's network configuration. You can create a public-facing subnet for your web servers that have access to the internet. It also lets you place your backend systems, such as databases or application servers, in a private-facing subnet with no internet access. Amazon VPC lets you to use multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet.
@@ -124,23 +131,26 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 * On AWS
 	* <a href="https://aws.amazon.com/vpc/" target="_blank">Service</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/vpc-tkv.html" target="_blank">User Guide</a>
 
-#### Default VPC (Amazon specific)
+<a name="3_2_1_1"></a>
+#### [↖](#3_2)[↑](#3_2_1)[↓](#3_2_1_2) Default VPC (Amazon specific)
 * Gives easy access to a VPC without having to configure it from scratch
 * Has different subnets in different AZs and an internet Gateway (HA, spread out to all AZs)
 * Each instance launched automatically receives a *public IP* (and a private IP), this is usually not the case for non-default VPCs
 * Cannot be restored if deleted
 * Comes with default NACL that allows all inbound/outbound traffic
-#### Non-default VPC (regular VPC)
+<a name="3_2_1_2"></a>
+#### [↖](#3_2)[↑](#3_2_1_1)[↓](#3_2_1_3) Non-default VPC (regular VPC)
 * Only has private IP addresses
 * Resources *only* accessible through *Elastic IP*, *VPN* or *Internet Gateways*
-#### VPC Scenarios
+<a name="3_2_1_3"></a>
+#### [↖](#3_2)[↑](#3_2_1_2)[↓](#3_2_2) VPC Scenarios
 * VPC with private subnet only -> single tier apps
 * VPC with public and private subnets -> layered apps
 * VPC with public, private subnets and hardware connected VPN -> extending apps to on-premises
 * VPC with private subnets and hardware connected VPN -> extended VPN
 
-<a name="3_1_2_2"></a>
-### [↖](#3_1)[↑](#3_1_2_1_3)[↓](#3_1_2_3) Core Components
+<a name="3_2_2"></a>
+### [↖](#3_2)[↑](#3_2_1_3)[↓](#3_2_3) Core Components
 * **CIDR range**
   * VPCs are private networks and use RFC1918 ranges
     * 10.0.0.0/8 (-> `10.255.255.255`)
@@ -210,8 +220,8 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
   * DNS hostnames are provides (can be disabled)
     * Private (internal) hostname: `ip-private-ipv4-address.region.compute.internal`
     * Public (external) hostname: `ec2-public-ipv4-address.region.compute.amazonaws.com`
-<a name="3_1_2_3"></a>
-### [↖](#3_1)[↑](#3_1_2_2)[↓](#3_1_2_4) Security Components
+<a name="3_2_3"></a>
+### [↖](#3_2)[↑](#3_2_2)[↓](#3_2_4) Security Components
 * **Security Groups**
   * Acts as a virtual, distributed firewall to control inbound and outbound traffic to instances
   * Acts on instance level, not subnet level
@@ -243,9 +253,10 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
     * Subnet
     * Network interface
 
-<a name="3_1_2_4"></a>
-### [↖](#3_1)[↑](#3_1_2_3)[↓](#3_1_2_4_1) Structure & Package Flow
-#### Package flow through VPC components
+<a name="3_2_4"></a>
+### [↖](#3_2)[↑](#3_2_3)[↓](#3_2_4_1) Structure & Package Flow
+<a name="3_2_4_1"></a>
+#### [↖](#3_2)[↑](#3_2_4)[↓](#3_2_5) Package flow through VPC components
 * VPC (has *CIDR*)
 	* Gateway (Internet or VPN)
   * Router
@@ -256,30 +267,118 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 	* Instance (needs public IP for internet communication, either ELB or Elastic IP)
 
 
-<a name="3_1_2_5"></a>
-### [↖](#3_1)[↑](#3_1_2_4_1)[↓](#4) Limits
-.|.
--|-
-VPCs per region|5
-Min/max VPC size|`/28`/`/16`
-Subnets per VPC|200
-Customer gateways per region|50
-Gateway per region|5 Internet
-Elastic IPs per account per region|5
-VPN connections per region|50
-Route tables per region|200
-Security groups per region|500
+<a name="3_2_5"></a>
+### [↖](#3_2)[↑](#3_2_4_1)[↓](#3_3) Limits
+|||
+|-|-|
+|VPCs per region|5|
+|Min/max VPC size|`/28`/`/16`|
+|Subnets per VPC|200|
+|Customer gateways per region|50|
+|Gateway per region|5 Internet|
+|Elastic IPs per account per region|5|
+|VPN connections per region|50|
+|Route tables per region|200|
+|Security groups per region|500|
+
+---
+
+<a name="3_3"></a>
+## [↖](#top)[↑](#3_2_5)[↓](#3_3_1) Connecting VPCs to other VPCs
+<!-- toc_start -->
+* [VPC Peering](#3_3_1)
+  * [Unsupported VPC peering configurations](#3_3_1_1)
+  * [Establishing a VPC peering](#3_3_1_2)
+  * [Longest prefix match](#3_3_1_3)
+  * [Limits](#3_3_1_4)
+* [Transit Gateway](#3_3_2)
+  * [Overview](#3_3_2_1)
+* [Previously: Transit VPC (=Software VPN)](#3_3_3)
+* [AWS PrivateLink](#3_3_4)
+<!-- toc_end -->
+
+<a name="3_3_1"></a>
+### [↖](#3_3)[↑](#3_3)[↓](#3_3_1_1) VPC Peering
+* Connect VPCs through direct network routing
+	* Cross-region, cross-account
+* Allows instances to communicate with each other as if they were in the same network
+	* Full private IP connectivity between VPCs
+* Connectivity must be established for each VPC that need to communicate with one another
+* Can reference a security group of a peered VPC (even cross-account)
+* Must update route tables in each VPC’s subnets to ensure instances can communicate
+* On AWS:
+	* <a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank">Documentation</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a>
+
+<a name="3_3_1_1"></a>
+#### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_1_2) Unsupported VPC peering configurations
+* *Overlapping CIDR blocks*
+	* Cannot create a VPC peering connection between VPCs with matching or overlapping IPv4 CIDR blocks
+* *Transitive peering*
+	* You have a VPC peering connection between VPC A and VPC B (pcx-aaaabbbb), and between VPC A and VPC C (pcx-aaaacccc). There is no VPC peering connection between VPC B and VPC C. You cannot route packets directly from VPC B to VPC C through VPC A.
+* *Edge to edge routing through a gateway or private connection*
+	* A VPN connection or an AWS Direct Connect connection to a corporate network
+	* An internet connection through an internet gateway
+	* An internet connection in a private subnet through a NAT device
+	* A gateway VPC endpoint to an AWS service; for example, an endpoint to Amazon S3.
+	* (IPv6) A ClassicLink connection. You can enable IPv4 communication between a linked EC2-Classic instance and instances in a VPC on the other side of a VPC peering connection. However, IPv6 is not supported in EC2-Classic, so you cannot extend this connection for IPv6 communication.
+
+<a name="3_3_1_2"></a>
+#### [↖](#3_3)[↑](#3_3_1_1)[↓](#3_3_1_3) Establishing a VPC peering
+* Consumer VPC initiates peering request
+* Provider VPC accepts peering request
+* Route tables on both sides are updated, to ensure traffic can flow
+
+<a name="3_3_1_3"></a>
+#### [↖](#3_3)[↑](#3_3_1_2)[↓](#3_3_1_4) Longest prefix match
+* VPC uses the longest prefix match to select the most specific route
+* Other way of saying it is “most specific route”
+
+<a name="3_3_1_4"></a>
+#### [↖](#3_3)[↑](#3_3_1_3)[↓](#3_3_2) Limits
+||soft|hard|
+|-|-|-|
+|Active VPC peering connections per VPC|50|125|
+
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1_4)[↓](#3_3_2_1) Transit Gateway
+
+<a name="3_3_2_1"></a>
+#### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_3) Overview
+AWS Transit Gateway connects VPCs and on-premises networks through a central hub. This simplifies your network and puts an end to complex peering relationships. It acts as a cloud router – each new connection is only made once.
+
+As you expand globally, inter-Region peering connects AWS Transit Gateways together using the AWS global network. Your data is automatically encrypted, and never travels over the public internet. And, because of its central position, AWS Transit Gateway Network Manager has a unique view over your entire network, even connecting to Software-Defined Wide Area Network (SD-WAN) devices.
+* For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection
+* Regional resource, can work cross-region
+* Share cross-account using Resource Access Manager
+	* AWS Resource Access Manager (AWS RAM) lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
+* You can peer Transit Gateways across regions
+* Route Tables: limit which VPC can talk with other VPC
+* Works with Direct Connect Gateway, VPN connections
+* Supports *IP Multicast* (not supported by any other AWS service)
+* Instances in a VPC can access a NAT Gateway, NLB, PrivateLink, and EFS in others VPCs attached to the AWS Transit Gateway.
+* On AWS:
+	* <a href="https://aws.amazon.com/transit-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/transit-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank">User Guide</a>
+
+<a name="3_3_3"></a>
+### [↖](#3_3)[↑](#3_3_2_1)[↓](#3_3_4) Previously: Transit VPC (=Software VPN)
+* Not an AWS offering, newer managed solution is Transit Gateway
+* Uses the public internet with a software VPN solution
+* Allows for transitive connectivity between VPC & locations
+* More complex routing rules, overlapping CIDR ranges, network-level packet filtering
+
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3)[↓](#4) AWS PrivateLink
 
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_1_2_5) Topics still to cover
+# [↖](#top)[↑](#3_3_4)[↓](#4_1) Topics still to cover
 * IPv4 vs IPv6
 
 ---
 
-<a name="1_1"></a>
-## [↖](#top)[↑](#1)[↓](#2) Supporting Material
+<a name="4_1"></a>
+## [↖](#top)[↑](#4) Supporting Material
 * [Exam Readiness: AWS Certified Advanced Networking - Specialty](https://www.aws.training/Details/Curriculum?id=21330) (free aws training)
 * [AWS Networking Fundamentals](https://www.youtube.com/watch?v=hiKPPy584Mg) (youtube)
 
