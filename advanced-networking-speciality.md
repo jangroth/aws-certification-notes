@@ -8,8 +8,12 @@
   * [AWS Global Network Infrastructure](#3_1)
   * [Virtual Private Cloud (VPC)](#3_2)
   * [Connecting VPCs to other VPCs](#3_3)
-* [Topics still to cover](#4)
-  * [Supporting Material](#4_1)
+  * [Extending on-premises networks to VPCs](#3_4)
+* [Open](#4)
+  * [Services](#4_1)
+  * [Topics](#4_2)
+  * [Practice/Hands-on](#4_3)
+  * [Supporting Material](#4_4)
 ---
 <!-- toc_end -->
 ---
@@ -286,19 +290,31 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 <a name="3_3"></a>
 ## [↖](#top)[↑](#3_2_5)[↓](#3_3_1) Connecting VPCs to other VPCs
 <!-- toc_start -->
-* [VPC Peering](#3_3_1)
-  * [Unsupported VPC peering configurations](#3_3_1_1)
-  * [Establishing a VPC peering](#3_3_1_2)
-  * [Longest prefix match](#3_3_1_3)
-  * [Limits](#3_3_1_4)
-* [Transit Gateway](#3_3_2)
-  * [Overview](#3_3_2_1)
-* [Previously: Transit VPC (=Software VPN)](#3_3_3)
-* [AWS PrivateLink](#3_3_4)
+* [Overview](#3_3_1)
+* [VPC Peering](#3_3_2)
+  * [Establishing a VPC peering](#3_3_2_1)
+  * [Longest prefix match](#3_3_2_2)
+  * [Unsupported VPC peering configurations](#3_3_2_3)
+  * [Limits](#3_3_2_4)
+* [Transit Gateway](#3_3_3)
+  * [Overview](#3_3_3_1)
+  * [Setting up a Transit Gateway](#3_3_3_2)
+* [Transit VPC (=Software VPN, not recommended any more)](#3_3_4)
+* [AWS PrivateLink](#3_3_5)
 <!-- toc_end -->
 
 <a name="3_3_1"></a>
-### [↖](#3_3)[↑](#3_3)[↓](#3_3_1_1) VPC Peering
+### [↖](#3_3)[↑](#3_3)[↓](#3_3_2) Overview
+
+||VPC Peering|Transit Gateway|
+|-|-|-|
+|VPC-Limit|125 peerings|5,000 attachments|
+|Bandwith limit|N/A (intra-region)|50Gb/s per VPC attachment|
+|Management|Decentralized|Centralized|
+|Cost Dimensions|Data transfer|Data transfer & attachment|
+
+<a name="3_3_2"></a>
+### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_2_1) VPC Peering
 * Connect VPCs through direct network routing
 	* Cross-region, cross-account
 * Allows instances to communicate with each other as if they were in the same network
@@ -309,8 +325,19 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 * On AWS:
 	* <a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank">Documentation</a> - <a href="https://aws.amazon.com/vpc/faqs/" target="_blank">FAQs</a>
 
-<a name="3_3_1_1"></a>
-#### [↖](#3_3)[↑](#3_3_1)[↓](#3_3_1_2) Unsupported VPC peering configurations
+<a name="3_3_2_1"></a>
+#### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_2_2) Establishing a VPC peering
+* Consumer VPC initiates peering request
+* Provider VPC accepts peering request
+* Route tables on both sides are updated, to ensure traffic can flow
+
+<a name="3_3_2_2"></a>
+#### [↖](#3_3)[↑](#3_3_2_1)[↓](#3_3_2_3) Longest prefix match
+* VPC uses the longest prefix match to select the most specific route
+* Other way of saying it is “most specific route”
+
+<a name="3_3_2_3"></a>
+#### [↖](#3_3)[↑](#3_3_2_2)[↓](#3_3_2_4) Unsupported VPC peering configurations
 * *Overlapping CIDR blocks*
 	* Cannot create a VPC peering connection between VPCs with matching or overlapping IPv4 CIDR blocks
 * *Transitive peering*
@@ -322,63 +349,88 @@ As one of AWS's foundational services, Amazon VPC makes it easy to customize you
 	* A gateway VPC endpoint to an AWS service; for example, an endpoint to Amazon S3.
 	* (IPv6) A ClassicLink connection. You can enable IPv4 communication between a linked EC2-Classic instance and instances in a VPC on the other side of a VPC peering connection. However, IPv6 is not supported in EC2-Classic, so you cannot extend this connection for IPv6 communication.
 
-<a name="3_3_1_2"></a>
-#### [↖](#3_3)[↑](#3_3_1_1)[↓](#3_3_1_3) Establishing a VPC peering
-* Consumer VPC initiates peering request
-* Provider VPC accepts peering request
-* Route tables on both sides are updated, to ensure traffic can flow
-
-<a name="3_3_1_3"></a>
-#### [↖](#3_3)[↑](#3_3_1_2)[↓](#3_3_1_4) Longest prefix match
-* VPC uses the longest prefix match to select the most specific route
-* Other way of saying it is “most specific route”
-
-<a name="3_3_1_4"></a>
-#### [↖](#3_3)[↑](#3_3_1_3)[↓](#3_3_2) Limits
+<a name="3_3_2_4"></a>
+#### [↖](#3_3)[↑](#3_3_2_3)[↓](#3_3_3) Limits
 ||soft|hard|
 |-|-|-|
 |Active VPC peering connections per VPC|50|125|
 
-<a name="3_3_2"></a>
-### [↖](#3_3)[↑](#3_3_1_4)[↓](#3_3_2_1) Transit Gateway
+<a name="3_3_3"></a>
+### [↖](#3_3)[↑](#3_3_2_4)[↓](#3_3_3_1) Transit Gateway
 
-<a name="3_3_2_1"></a>
-#### [↖](#3_3)[↑](#3_3_2)[↓](#3_3_3) Overview
+<a name="3_3_3_1"></a>
+#### [↖](#3_3)[↑](#3_3_3)[↓](#3_3_3_2) Overview
 AWS Transit Gateway connects VPCs and on-premises networks through a central hub. This simplifies your network and puts an end to complex peering relationships. It acts as a cloud router – each new connection is only made once.
 
 As you expand globally, inter-Region peering connects AWS Transit Gateways together using the AWS global network. Your data is automatically encrypted, and never travels over the public internet. And, because of its central position, AWS Transit Gateway Network Manager has a unique view over your entire network, even connecting to Software-Defined Wide Area Network (SD-WAN) devices.
 * For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection
-* Regional resource, can work cross-region
+  * Private IP connectivity
+  * VPCs must be in same region as Transit Gateway
+    * However, you can peer Transit Gateways across regions
+  * VPCs can be in different accounts
+* Transit Gateway Route Tables: Control which VPC can talk with other VPC
+* Works with Direct Connect Gateway, VPN connections
+* Instances in a VPC can access a NAT Gateway, NLB, PrivateLink, and EFS in others VPCs attached to the AWS Transit Gateway.
 * Share cross-account using Resource Access Manager
 	* AWS Resource Access Manager (AWS RAM) lets you share your resources with any AWS account or through AWS Organizations. If you have multiple AWS accounts, you can create resources centrally and use AWS RAM to share those resources with other accounts.
-* You can peer Transit Gateways across regions
-* Route Tables: limit which VPC can talk with other VPC
-* Works with Direct Connect Gateway, VPN connections
 * Supports *IP Multicast* (not supported by any other AWS service)
-* Instances in a VPC can access a NAT Gateway, NLB, PrivateLink, and EFS in others VPCs attached to the AWS Transit Gateway.
 * On AWS:
 	* <a href="https://aws.amazon.com/transit-gateway/" target="_blank">Service</a> - <a href="https://aws.amazon.com/transit-gateway/faqs/" target="_blank">FAQs</a> - <a href="https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html" target="_blank">User Guide</a>
 
-<a name="3_3_3"></a>
-### [↖](#3_3)[↑](#3_3_2_1)[↓](#3_3_4) Previously: Transit VPC (=Software VPN)
+<a name="3_3_3_2"></a>
+#### [↖](#3_3)[↑](#3_3_3_1)[↓](#3_3_4) Setting up a Transit Gateway
+* Connected VPCs route to Transit Gateway
+* Transit Gateway Route Table determines which VPCs can talk to each other
+
+<a name="3_3_4"></a>
+### [↖](#3_3)[↑](#3_3_3_2)[↓](#3_3_5) Transit VPC (=Software VPN, not recommended any more)
 * Not an AWS offering, newer managed solution is Transit Gateway
 * Uses the public internet with a software VPN solution
 * Allows for transitive connectivity between VPC & locations
 * More complex routing rules, overlapping CIDR ranges, network-level packet filtering
 
-<a name="3_3_4"></a>
-### [↖](#3_3)[↑](#3_3_3)[↓](#4) AWS PrivateLink
+<a name="3_3_5"></a>
+### [↖](#3_3)[↑](#3_3_4)[↓](#3_4) AWS PrivateLink
+...
+
+---
+
+<a name="3_4"></a>
+## [↖](#top)[↑](#3_3_5)[↓](#3_4_1) Extending on-premises networks to VPCs
+<!-- toc_start -->
+* [AWS VPN](#3_4_1)
+* [AWS Direct Connect](#3_4_2)
+<!-- toc_end -->
+
+<a name="3_4_1"></a>
+### [↖](#3_4)[↑](#3_4)[↓](#3_4_2) AWS VPN
+...
+<a name="3_4_2"></a>
+### [↖](#3_4)[↑](#3_4_1)[↓](#4) AWS Direct Connect
+...
 
 ---
 
 <a name="4"></a>
-# [↖](#top)[↑](#3_3_4)[↓](#4_1) Topics still to cover
+# [↖](#top)[↑](#3_4_2)[↓](#4_1) Open
+<a name="4_1"></a>
+## [↖](#top)[↑](#4)[↓](#4_2) Services
+* RAM
+<a name="4_2"></a>
+## [↖](#top)[↑](#4_1)[↓](#4_3) Topics
 * IPv4 vs IPv6
+* Dynamic Routing Protocols (BGP)
+<a name="4_3"></a>
+## [↖](#top)[↑](#4_2)[↓](#4_4) Practice/Hands-on
+* VPC Peering
+* Transit Gateway
+* Transit VPC
+* PrivateLink/Endpoint service
 
 ---
 
-<a name="4_1"></a>
-## [↖](#top)[↑](#4) Supporting Material
+<a name="4_4"></a>
+## [↖](#top)[↑](#4_3) Supporting Material
 * [Exam Readiness: AWS Certified Advanced Networking - Specialty](https://www.aws.training/Details/Curriculum?id=21330) (free aws training)
 * [AWS Networking Fundamentals](https://www.youtube.com/watch?v=hiKPPy584Mg) (youtube)
 
